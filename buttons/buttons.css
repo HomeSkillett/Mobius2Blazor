@@ -1,0 +1,342 @@
+/*
+  buttons.css — Mobius button component styles
+  Source: DefaultControls.xaml — Mobius_UI_Resources_Templates_Button,
+          _OutlineButton, _SimpleIconButton, _LinkButton, _IconButton
+          and their corresponding Styles_ definitions.
+
+  Button types:
+    .mob-btn              Primary filled button (default)
+    .mob-btn.lg           Large variant
+    .mob-btn.xl           Extra-large variant
+    .mob-btn-outline      Outline/bordered button
+    .mob-btn-outline.rounded   Rounded-corner outline variant
+    .mob-btn-icon         Simple icon button (transparent bg)
+    .mob-btn-link         Link/hyperlink-style button
+*/
+
+
+/* =============================================
+   SHARED RESET
+   ============================================= */
+
+.mob-btn,
+.mob-btn-outline,
+.mob-btn-icon,
+.mob-btn-link {
+  box-sizing: border-box;
+  border: none;
+  cursor: pointer;
+  font: var(--font-default);
+  text-decoration: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.mob-btn:focus-visible,
+.mob-btn-outline:focus-visible,
+.mob-btn-icon:focus-visible,
+.mob-btn-link:focus-visible {
+  outline: var(--border-width-focused) solid var(--MouseOverPrimary);
+  outline-offset: var(--focus-outline-offset);
+}
+
+
+/* =============================================
+   1. PRIMARY BUTTON  (.mob-btn)
+   XAML: Mobius_UI_Resources_Templates_Button
+         Default Button Style (TargetType Button)
+
+   Hover/Pressed use direct background-color changes
+   rather than pseudo-element overlays, to avoid
+   z-index stacking issues.
+
+   XAML layers (bottom→top):
+     _buttonBackgroundElement  → background-color
+     MouseOverElement          → hover: MouseOverPrimary
+     MouseDownElement          → pressed: MouseOverPrimary + 25% black
+     _buttonContent            → text (always on top)
+   ============================================= */
+
+/* XAML: _buttonBackgroundElement — Background=SelectionPrimary */
+/* XAML: _buttonContent — Foreground=SelectionForeground (white) */
+.mob-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--btn-min-width);
+  min-height: var(--touch);
+  padding: var(--btn-padding);
+  background-color: var(--SelectionPrimary);
+  color: var(--SelectionForeground);
+  font-weight: var(--font-bold);
+  text-transform: uppercase;
+  transition:
+    background-color var(--transition-mouse-out) ease,
+    color var(--transition-mouse-out) ease,
+    opacity var(--transition-mouse-out) ease;
+}
+
+/* XAML: Icon element — Mobius-System-Icons for icon+text buttons
+   Usage: <button class="mob-btn" data-icon="&#xE555;">Action</button> */
+.mob-btn[data-icon]::before {
+  content: attr(data-icon);
+  font: var(--font-icons);
+  margin-right: var(--btn-icon-gap);
+}
+
+/* --- Hover state --- */
+/* XAML: MouseOver — MouseOverElement opacity→1 covers bg with MouseOverPrimary */
+.mob-btn:hover:not(:disabled),
+.mob-btn.is-hovered {
+  background-color: var(--MouseOverPrimary);
+  transition-duration: var(--transition-mouse-over);
+}
+
+/* --- Pressed state --- */
+/* XAML: Pressed — MouseOverPrimary + MouseDownElement (black 25% on top)
+   Blended result of MouseOverPrimary (#0CD0FF) under 25% black ≈ #099CBF */
+.mob-btn:active:not(:disabled),
+.mob-btn.is-pressed {
+  background-color: var(--btn-pressed-bg);
+  transition-duration: var(--transition-mouse-pressed);
+}
+
+/* --- Disabled state --- */
+/* XAML: Disabled — bg→BackgroundStepTwo, border→BackgroundInputOutline,
+         foreground→ForegroundPrimary, opacity→DisabledOpacity */
+.mob-btn:disabled {
+  background-color: var(--BackgroundStepTwo);
+  border: var(--border-width) solid var(--BackgroundInputOutline);
+  color: var(--ForegroundPrimary);
+  opacity: var(--opacity-disabled);
+  cursor: default;
+  transition-duration: var(--transition-disable);
+}
+
+/* --- Focused state (simulated with class) --- */
+/* XAML: Focused — MouseOverElement opacity 1, MouseDownElement opacity 0 */
+.mob-btn.is-focused {
+  outline: var(--border-width-focused) solid var(--MouseOverPrimary);
+  outline-offset: var(--focus-outline-offset);
+}
+
+
+/* =============================================
+   1a. LARGE BUTTON  (.mob-btn.lg)
+   XAML: Mobius_UI_Resources_Styles_ButtonLarge
+   ============================================= */
+
+.mob-btn.lg {
+  padding: var(--btn-padding-lg);
+}
+
+
+/* =============================================
+   1b. EXTRA-LARGE BUTTON  (.mob-btn.xl)
+   XAML: Mobius_UI_Resources_Styles_ButtonXLarge
+   ============================================= */
+
+.mob-btn.xl {
+  min-height: var(--btn-min-height-xl);
+  padding: var(--btn-padding-xl);
+}
+
+
+/* =============================================
+   2. OUTLINE BUTTON  (.mob-btn-outline)
+   XAML: Mobius_UI_Resources_Templates_OutlineButton
+         Mobius_UI_Resources_Styles_OutlineButton
+   ============================================= */
+
+/* XAML: _background=Transparent, _outline border=Foreground (ForegroundPrimary) 1px */
+.mob-btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--touch);
+  padding: var(--btn-padding-lg);
+  background-color: transparent;
+  border: var(--border-width) solid var(--ForegroundPrimary);
+  color: var(--ForegroundPrimary);
+  font-weight: var(--font-bold);
+  text-transform: uppercase;
+  transition:
+    border-color var(--transition-mouse-out) ease,
+    color var(--transition-mouse-out) ease,
+    background-color var(--transition-mouse-out) ease,
+    opacity var(--transition-mouse-out) ease;
+}
+
+/* XAML: Icon within OutlineButton — Path element, 22x22, margin-right 8
+   Usage: <button class="mob-btn-outline" data-icon="&#xE555;">Outline</button> */
+.mob-btn-outline[data-icon]::before {
+  content: attr(data-icon);
+  font: var(--btn-outline-icon-size) / var(--btn-outline-icon-size) var(--font-icon);
+  margin-right: var(--btn-icon-gap);
+}
+
+/* --- Hover state --- */
+/* XAML: MouseOver — outline border→MouseOverPrimary, content foreground→MouseOverPrimary */
+.mob-btn-outline:hover:not(:disabled),
+.mob-btn-outline.is-hovered {
+  border-color: var(--MouseOverPrimary);
+  color: var(--MouseOverPrimary);
+  transition-duration: var(--transition-mouse-over);
+}
+
+/* --- Pressed state --- */
+/* XAML: Pressed — bg→MouseOverPrimary, border→MouseOverPrimary,
+         foreground→SelectionForeground (white) */
+.mob-btn-outline:active:not(:disabled),
+.mob-btn-outline.is-pressed {
+  background-color: var(--MouseOverPrimary);
+  border-color: var(--MouseOverPrimary);
+  color: var(--SelectionForeground);
+  transition-duration: var(--transition-mouse-pressed);
+}
+
+/* --- Disabled state --- */
+/* XAML: Disabled — opacity→DisabledOpacity, colors stay default */
+.mob-btn-outline:disabled {
+  opacity: var(--opacity-disabled);
+  cursor: default;
+  transition-duration: var(--transition-disable);
+}
+
+/* --- Focused state --- */
+/* XAML: Focused — border→MouseOverPrimary, foreground→MouseOverPrimary */
+.mob-btn-outline.is-focused,
+.mob-btn-outline:focus-visible {
+  border-color: var(--MouseOverPrimary);
+  color: var(--MouseOverPrimary);
+}
+
+/* --- Rounded variant --- */
+/* XAML: Mobius_UI_Resources_Styles_OutlineButtonRoundedCorners — CornerRadius=12 */
+.mob-btn-outline.rounded {
+  border-radius: var(--btn-outline-radius);
+}
+
+/* --- Checked state (for toggle usage) --- */
+/* XAML: Checked — swap to _outlineChecked (3px border, SelectionPrimary color) */
+.mob-btn-outline.is-checked {
+  border-width: var(--size-3);
+  border-color: var(--SelectionPrimary);
+  color: var(--SelectionPrimary);
+  transition-duration: var(--transition-select);
+}
+
+
+/* =============================================
+   3. SIMPLE ICON BUTTON  (.mob-btn-icon)
+   XAML: Mobius_UI_Resources_Templates_SimpleIconButton
+         Mobius_UI_Resources_Styles_SimpleIconButton
+   ============================================= */
+
+/* XAML: background Transparent, foreground=ForegroundPrimary,
+         MinHeight=TouchSize, Padding="0,3" */
+.mob-btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--touch);
+  padding: var(--size-3) 0;
+  background-color: transparent;
+  color: var(--ForegroundPrimary);
+  transition:
+    color var(--transition-mouse-out) ease,
+    opacity var(--transition-mouse-out) ease;
+}
+
+/* XAML: Icon content — Mobius-System-Icons
+   Usage: <button class="mob-btn-icon" data-icon="&#xE555;"></button> */
+.mob-btn-icon[data-icon]::before {
+  content: attr(data-icon);
+  font: var(--font-icons);
+}
+
+/* --- Hover state --- */
+/* XAML: MouseOver — foreground→MouseOverPrimary */
+.mob-btn-icon:hover:not(:disabled),
+.mob-btn-icon.is-hovered {
+  color: var(--MouseOverPrimary);
+  transition-duration: var(--transition-mouse-over);
+}
+
+/* --- Pressed state --- */
+/* XAML: Pressed — foreground→MouseOverPrimary (same as hover) */
+.mob-btn-icon:active:not(:disabled),
+.mob-btn-icon.is-pressed {
+  color: var(--MouseOverPrimary);
+  transition-duration: var(--transition-mouse-pressed);
+}
+
+/* --- Disabled state --- */
+/* XAML: Disabled — foreground stays, opacity→DisabledOpacity */
+.mob-btn-icon:disabled {
+  opacity: var(--opacity-disabled);
+  cursor: default;
+  transition-duration: var(--transition-disable);
+}
+
+/* --- Focused state --- */
+/* XAML: Focused — foreground→MouseOverPrimary */
+.mob-btn-icon.is-focused,
+.mob-btn-icon:focus-visible {
+  color: var(--MouseOverPrimary);
+}
+
+
+/* =============================================
+   4. LINK BUTTON  (.mob-btn-link)
+   XAML: Mobius_UI_Resources_Templates_LinkButton
+         Mobius_UI_Resources_Styles_LinkButton
+   ============================================= */
+
+/* XAML: foreground=ForegroundAction, Height=TouchSize, Padding="0,10",
+         HorizontalAlignment=Left */
+.mob-btn-link {
+  display: inline-flex;
+  align-items: center;
+  height: var(--touch);
+  padding: var(--spacing-gap-lg) 0;
+  background-color: transparent;
+  color: var(--ForegroundAction);
+  text-align: left;
+  transition:
+    color var(--transition-mouse-out) ease,
+    opacity var(--transition-mouse-out) ease;
+}
+
+/* --- Hover state --- */
+/* XAML: MouseOver — foreground→MouseOverPrimary */
+.mob-btn-link:hover:not(:disabled),
+.mob-btn-link.is-hovered {
+  color: var(--MouseOverPrimary);
+  transition-duration: var(--transition-mouse-over);
+}
+
+/* --- Pressed state --- */
+/* XAML: Pressed — foreground stays, opacity→0.8 */
+.mob-btn-link:active:not(:disabled),
+.mob-btn-link.is-pressed {
+  color: var(--ForegroundAction);
+  opacity: var(--opacity-pressed);
+  transition-duration: var(--transition-mouse-pressed);
+}
+
+/* --- Disabled state --- */
+/* XAML: Disabled — foreground→ForegroundPrimary, opacity→DisabledOpacity */
+.mob-btn-link:disabled {
+  color: var(--ForegroundPrimary);
+  opacity: var(--opacity-disabled);
+  cursor: default;
+  transition-duration: var(--transition-disable);
+}
+
+/* --- Focused state --- */
+/* XAML: Focused — foreground→MouseOverPrimary */
+.mob-btn-link.is-focused,
+.mob-btn-link:focus-visible {
+  color: var(--MouseOverPrimary);
+}

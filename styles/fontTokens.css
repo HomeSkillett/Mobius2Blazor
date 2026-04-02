@@ -1,0 +1,46 @@
+/* Font tokens (assumes fonts are installed locally) */
+
+:root {
+  /* Font Family */
+  --default-font: "Roboto Condensed", "Roboto", Arial, sans-serif;
+  --header-font: "Roboto", Arial, sans-serif;
+  --font-quote: Georgia, "Times New Roman", serif;
+  --font-monospace: Consolas, "Courier New", ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+  --font-icon: "Mobius-System-Icons";
+
+  /* Font Weight (for static fonts) */
+  --font-thin: 100;
+  --font-light: 300;
+  --font-normal: 400;
+  --font-bold: 700;
+
+  /* Font Size */
+  --size-hdrLg: 36px;
+  --size-hdrMd: 24px;
+  --size-hdrSm: 18px;
+  --size-default: 14px;
+  --size-Sm: 11px;
+  --size-meta: 14px;
+  --size-metaSm: 11px;
+  --size-icons: 20px;
+
+  /* Font Shorthand (size/line-height family) */
+  --font-hdrLg: var(--size-hdrLg) / var(--lh-hdrLg) var(--header-font);
+  --font-hdrMd: var(--size-hdrMd) / var(--lh-hdrMd) var(--header-font);
+  --font-hdrSm: var(--size-hdrSm) / var(--lh-hdrSm) var(--header-font);
+  --font-default: var(--size-default) / var(--lh-default) var(--default-font);
+  --font-Sm: var(--size-Sm) / var(--lh-Sm) var(--default-font);
+  --font-meta: var(--size-meta) / var(--lh-meta) var(--default-font);
+  --font-metaSm: var(--size-metaSm) / var(--lh-metaSm) var(--default-font);
+  --font-icons: var(--size-icons) / var(--lh-icons) var(--font-icon);
+
+  /* Line Height */
+  --lh-hdrLg: 40px;
+  --lh-hdrMd: 30px;
+  --lh-hdrSm: 22px;
+  --lh-default: 20px;
+  --lh-Sm: 14px;
+  --lh-meta: 14px;
+  --lh-metaSm: 11px;
+  --lh-icons: 20px;
+}

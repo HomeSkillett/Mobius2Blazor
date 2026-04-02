@@ -1,0 +1,119 @@
+/* Typography styles (uses fontTokens.css + theme color variables) */
+
+body {
+  font: var(--font-default);
+  font-weight: var(--font-normal);
+  color: var(--ForegroundPrimary);
+  text-align: left;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: normal;
+}
+
+.H1 {
+  font: var(--font-hdrLg);
+  font-weight: var(--font-thin);
+  color: var(--ForegroundPrimary);
+}
+
+.H2 {
+  font: var(--font-hdrMd);
+  font-weight: var(--font-light);
+  color: var(--ForegroundPrimary);
+}
+
+.H3 {
+  /* Note: XAML sets this weight to Light; if you want Regular, change var(--font-light) -> var(--font-normal) */
+  font: var(--font-hdrSm);
+  font-weight: var(--font-light);
+  color: var(--ForegroundPrimary);
+}
+
+.Body {
+  font: var(--font-default);
+  font-weight: var(--font-normal);
+  color: var(--ForegroundPrimary);
+  white-space: normal;
+}
+
+.BodySm {
+  font: var(--font-Sm);
+  font-weight: var(--font-normal);
+  color: var(--ForegroundPrimary);
+}
+
+.Meta {
+  font: var(--font-meta);
+  font-weight: var(--font-bold);
+  color: var(--ForegroundPrimary);
+  text-transform: uppercase;
+  text-align: left;
+}
+
+.MetaSm {
+  font: var(--font-metaSm);
+  font-weight: var(--font-bold);
+  color: var(--ForegroundPrimary);
+  text-transform: uppercase;
+  text-align: left;
+}
+
+/* Additional styles carried over */
+/* Note: these use --header-font, not --default-font, so tokens don't apply directly */
+.CenterGravity_Grid {
+  font: var(--size-default) / var(--lh-default) var(--header-font);
+  font-weight: var(--font-normal);
+  color: var(--ForegroundPrimary);
+}
+
+.CenterGravity_Heading {
+  /* FontWeight 'ExtraBlack' isn't a standard numeric weight; leaving as-is */
+  font: 16px / 1 var(--header-font);
+  font-weight: ExtraBlack;
+  text-align: left;
+  color: var(--ForegroundPrimary);
+}
+
+.CenterGravity_Paragraph {
+  font: var(--size-default) / var(--lh-default) var(--header-font);
+  font-weight: var(--font-normal);
+  text-align: left;
+  color: var(--ForegroundPrimary);
+}
+
+.Label {
+  font: var(--size-default) / var(--lh-default) var(--header-font);
+  font-weight: var(--font-normal);
+  text-align: left;
+  color: var(--ForegroundPrimary);
+}
+
+.NoItems {
+  font: var(--size-Sm) / var(--lh-Sm) var(--header-font);
+  font-weight: var(--font-normal);
+  text-align: left;
+  color: var(--ForegroundPrimary);
+}
+
+.Quote {
+  font: var(--font-default);
+  font-weight: var(--font-bold);
+  font-style: italic;
+  font-family: var(--font-quote);
+  color: var(--ForegroundPrimary);
+}
+
+.Monospace {
+  font: var(--font-default);
+  font-weight: var(--font-normal);
+  font-family: var(--font-monospace);
+  color: var(--ForegroundPrimary);
+}
+
+.Icons {
+  font: var(--font-icons);
+  font-weight: var(--font-normal);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: var(--ForegroundPrimary);
+}

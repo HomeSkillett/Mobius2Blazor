@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mobius Buttons — All Types &amp; States</title>
+  <link rel="stylesheet" href="../styles/base.css" />
+  <link rel="stylesheet" href="buttons.css" />
+  <style>
+    @font-face {
+      font-family: "Mobius-System-Icons";
+      src:
+        url("../fonts/mobius-system-icons.woff2") format("woff2"),
+        url("../fonts/mobius-system-icons.woff") format("woff");
+      font-weight: 400;
+      font-style: normal;
+      font-display: block;
+    }
+
+    /* Preview-only layout */
+    body {
+      margin: 40px;
+      font: var(--font-default);
+      color: var(--ForegroundPrimary);
+      background: var(--BackgroundPrimary);
+    }
+    h1 {
+      font: var(--font-hdrMd);
+      margin: 0 0 32px;
+      color: var(--ForegroundStrong);
+    }
+
+    /* Grid table — 7 columns: label + 5 states + notes */
+    .btn-grid {
+      display: grid;
+      grid-template-columns: 120px repeat(5, 1fr) 200px;
+      gap: 0;
+      border-top: var(--line-size) solid var(--InnerLines);
+      border-left: var(--line-size) solid var(--InnerLines);
+    }
+    .btn-grid__cell {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 72px;
+      padding: 12px 16px;
+      border-right: var(--line-size) solid var(--InnerLines);
+      border-bottom: var(--line-size) solid var(--InnerLines);
+    }
+    /* Row header (left column) */
+    .btn-grid__cell--label {
+      justify-content: flex-start;
+      background: var(--BackgroundStepOne);
+      font: var(--font-Sm);
+      font-weight: var(--font-bold);
+      color: var(--ForegroundStrong);
+    }
+    /* Column header (top row) */
+    .btn-grid__cell--header {
+      background: var(--BackgroundStrong);
+      font: var(--font-Sm);
+      font-weight: var(--font-bold);
+      color: var(--ForegroundStrong);
+      text-transform: uppercase;
+      min-height: 40px;
+    }
+    /* Corner cell */
+    .btn-grid__cell--corner {
+      background: var(--BackgroundStrong);
+      min-height: 40px;
+    }
+    /* Notes column */
+    .btn-grid__cell--notes {
+      justify-content: flex-start;
+      font: var(--font-Sm);
+      color: var(--ForegroundPrimary);
+    }
+    .btn-grid__cell--notes code {
+      font: var(--font-Sm);
+      font-family: var(--font-monospace);
+      color: var(--ForegroundStrong);
+    }
+    /* Row label links */
+    .btn-grid__cell--label a {
+      color: var(--ForegroundAction);
+      text-decoration: none;
+    }
+    .btn-grid__cell--label a:hover {
+      color: var(--MouseOverPrimary);
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Mobius Buttons</h1>
+
+<div class="btn-grid">
+
+  <!-- ===== HEADER ROW ===== -->
+  <div class="btn-grid__cell btn-grid__cell--corner"></div>
+  <div class="btn-grid__cell btn-grid__cell--header">Normal</div>
+  <div class="btn-grid__cell btn-grid__cell--header">Hover</div>
+  <div class="btn-grid__cell btn-grid__cell--header">Pressed</div>
+  <div class="btn-grid__cell btn-grid__cell--header">Disabled</div>
+  <div class="btn-grid__cell btn-grid__cell--header">Focused</div>
+  <div class="btn-grid__cell btn-grid__cell--header">Notes</div>
+
+
+  <!-- ===== ROW: Primary Button ===== -->
+  <!-- XAML: Default Button Style → Mobius_UI_Resources_Templates_Button -->
+  <div class="btn-grid__cell btn-grid__cell--label"><a href="buttons-primary.html">Primary</a></div>
+
+  <!-- XAML: Normal — bg=SelectionPrimary, fg=SelectionForeground -->
+  <div class="btn-grid__cell">
+    <button class="mob-btn">Action</button>
+  </div>
+  <!-- XAML: MouseOver — MouseOverElement overlay opacity=1 -->
+  <div class="btn-grid__cell">
+    <button class="is-hovered mob-btn">Action</button>
+  </div>
+  <!-- XAML: Pressed — MouseOverElement + MouseDownElement both opacity=1 -->
+  <div class="btn-grid__cell">
+    <button class="is-pressed mob-btn">Action</button>
+  </div>
+  <!-- XAML: Disabled — bg→BackgroundStepTwo, border→BackgroundInputOutline, opacity→0.35 -->
+  <div class="btn-grid__cell">
+    <button class="mob-btn" disabled>Action</button>
+  </div>
+  <!-- XAML: Focused — outline ring -->
+  <div class="btn-grid__cell">
+    <button class="mob-btn is-focused">Action</button>
+  </div>
+  <div class="btn-grid__cell btn-grid__cell--notes"><code>.mob-btn</code></div>
+
+
+  <!-- ===== ROW: Primary + Icon ===== -->
+  <!-- XAML: Button with Tag icon glyph -->
+  <div class="btn-grid__cell btn-grid__cell--label"><a href="buttons-primary.html">Primary + Icon</a></div>
+
+  <div class="btn-grid__cell">
+    <button class="mob-btn" data-icon="&#xE555;">Action</button>
+  </div>
+  <div class="btn-grid__cell">
+    <button class="is-hovered mob-btn" data-icon="&#xE555;">Action</button>
+  </div>
+  <div class="btn-grid__cell">
+    <button class="is-pressed mob-btn" data-icon="&#xE555;">Action</button>
+  </div>
+  <div class="btn-grid__cell">
+    <button class="mob-btn" data-icon="&#xE555;" disabled>Action</button>
+  </div>
+  <div class="btn-grid__cell">
+    <button class="mob-btn is-focused" data-icon="&#xE555;">Action</button>
+  </div>
+  <div class="btn-grid__cell btn-grid__cell--notes"><code>.mob-btn</code> + <code>data-icon</code></div>
+
+
+  <!-- ===== ROW: Primary Large ===== -->
+  <!-- XAML: Mobius_UI_Resources_Styles_ButtonLarge -->
+  <div class="btn-grid__cell btn-grid__cell--label"><a href="buttons-primary.html">Primary Large</a></div>
+
+  <div class="btn-grid__cell">
+    <button class="mob-btn lg">Action</button>
+  </div>
+  <div class="btn-grid__cell">
+    <button class="is-hovered mob-btn lg">Action</button>
+  </div>
+  <div class="btn-grid__cell">
+    <button class="is-pressed mob-btn lg">Action</button>
+  </div>
+  <div class="btn-grid__cell">
+    <button class="mob-btn lg" disabled>Action</button>
+  </div>
+  <div class="btn-grid__cell">
+    <button class="mob-btn lg is-focused">Action</button>
+  </div>
+  <div class="btn-grid__cell btn-grid__cell--notes"><code>.mob-btn.lg</code></div>
+
+
+  <!-- ===== ROW: Primary XL ===== -->
+  <!-- XAML: Mobius_UI_Resources_Styles_ButtonXLarge -->
+  <div class="btn-grid__cell btn-grid__cell--label"><a href="buttons-primary.html">Primary XL</a></div>
+
+  <div class="btn-grid__cell">
+    <button class="mob-btn xl">Confirm</button>
+  </div>
+  <div class="btn-grid__cell">
+    <button class="is-hovered mob-btn xl">Confirm</button>
+  </div>
+  <div class="btn-grid__cell">
+    <button class="is-pressed mob-btn xl">Confirm</button>
+  </div>
+  <div class="btn-grid__cell">
+    <button class="mob-btn xl" disabled>Confirm</button>
+  </div>
+  <div class="btn-grid__cell">
+    <button class="mob-btn xl is-focused">Confirm</button>
+  </div>
+  <div class="btn-grid__cell btn-grid__cell--notes"><code>.mob-btn.xl</code></div>
+
+
+  <!-- ===== ROW: Outline Button ===== -->
+  <!-- XAML: Mobius_UI_Resources_Styles_OutlineButton → Templates_OutlineButton -->
+  <div class="btn-grid__cell btn-grid__cell--label"><a href="buttons-outline.html">Outline</a></div>
+
+  <!-- XAML: Normal — bg=Transparent, border=ForegroundPrimary 1px -->
+  <div class="btn-grid__cell">
+    <button class="mob-btn-outline">Outline</button>
+  </div>
+  <!-- XAML: MouseOver — border/fg→MouseOverPrimary -->
+  <div class="btn-grid__cell">
+    <button class="is-hovered mob-btn-outline">Outline</button>
+  </div>
+  <!-- XAML: Pressed — bg→MouseOverPrimary, fg→SelectionForeground -->
+  <div class="btn-grid__cell">
+    <button class="is-pressed mob-btn-outline">Outline</button>
+  </div>
+  <!-- XAML: Disabled — opacity→DisabledOpacity -->
+  <div class="btn-grid__cell">
+    <button class="mob-btn-outline" disabled>Outline</button>
+  </div>
+  <!-- XAML: Focused — border/fg→MouseOverPrimary -->
+  <div class="btn-grid__cell">
+    <button class="mob-btn-outline is-focused">Outline</button>
+  </div>
+  <div class="btn-grid__cell btn-grid__cell--notes"><code>.mob-btn-outline</code></div>
+
+
+  <!-- ===== ROW: Outline + Icon ===== -->
+  <!-- XAML: OutlineButton with Tag icon path data -->
+  <div class="btn-grid__cell btn-grid__cell--label"><a href="buttons-outline.html">Outline + Icon</a></div>
+
+  <div class="btn-grid__cell">
+    <button class="mob-btn-outline" data-icon="&#xE555;">Outline</button>
+  </div>
+  <div class="btn-grid__cell">
+    <button class="is-hovered mob-btn-outline" data-icon="&#xE555;">Outline</button>
+  </div>
+  <div class="btn-grid__cell">
+    <button class="is-pressed mob-btn-outline" data-icon="&#xE555;">Outline</button>
+  </div>
+  <div class="btn-grid__cell">
+    <button class="mob-btn-outline" data-icon="&#xE555;" disabled>Outline</button>
+  </div>
+  <div class="btn-grid__cell">
+    <button class="mob-btn-outline is-focused" data-icon="&#xE555;">Outline</button>
+  </div>
+  <div class="btn-grid__cell btn-grid__cell--notes"><code>.mob-btn-outline</code> + <code>data-icon</code></div>
+
+
+  <!-- ===== ROW: Outline Rounded ===== -->
+  <!-- XAML: Mobius_UI_Resources_Styles_OutlineButtonRoundedCorners — CornerRadius=12 -->
+  <div class="btn-grid__cell btn-grid__cell--label"><a href="buttons-outline.html">Outline Rounded</a></div>
+
+  <div class="btn-grid__cell">
+    <button class="mob-btn-outline rounded">Rounded</button>
+  </div>
+  <div class="btn-grid__cell">
+    <button class="is-hovered mob-btn-outline rounded">Rounded</button>
+  </div>
+  <div class="btn-grid__cell">
+    <button class="is-pressed mob-btn-outline rounded">Rounded</button>
+  </div>
+  <div class="btn-grid__cell">
+    <button class="mob-btn-outline rounded" disabled>Rounded</button>
+  </div>
+  <div class="btn-grid__cell">
+    <button class="mob-btn-outline rounded is-focused">Rounded</button>
+  </div>
+  <div class="btn-grid__cell btn-grid__cell--notes"><code>.mob-btn-outline.rounded</code></div>
+
+
+  <!-- ===== ROW: Outline Checked ===== -->
+  <!-- XAML: ToggleButton Checked — _outlineChecked border=3px, SelectionPrimary -->
+  <div class="btn-grid__cell btn-grid__cell--label"><a href="buttons-outline.html">Outline Checked</a></div>
+
+  <div class="btn-grid__cell">
+    <button class="mob-btn-outline is-checked">Selected</button>
+  </div>
+  <div class="btn-grid__cell">
+    <button class="is-hovered mob-btn-outline is-checked">Selected</button>
+  </div>
+  <div class="btn-grid__cell">
+    <button class="is-pressed mob-btn-outline is-checked">Selected</button>
+  </div>
+  <div class="btn-grid__cell">
+    <button class="mob-btn-outline is-checked" disabled>Selected</button>
+  </div>
+  <div class="btn-grid__cell">
+    <button class="mob-btn-outline is-checked is-focused">Selected</button>
+  </div>
+  <div class="btn-grid__cell btn-grid__cell--notes"><code>.mob-btn-outline.is-checked</code></div>
+
+
+  <!-- ===== ROW: Simple Icon Button ===== -->
+  <!-- XAML: Mobius_UI_Resources_Styles_SimpleIconButton → Templates_SimpleIconButton -->
+  <div class="btn-grid__cell btn-grid__cell--label"><a href="buttons-icon.html">Icon</a></div>
+
+  <!-- XAML: Normal — bg=Transparent, fg=ForegroundPrimary -->
+  <div class="btn-grid__cell">
+    <button class="mob-btn-icon" data-icon="&#xE555;"></button>
+  </div>
+  <!-- XAML: MouseOver — fg→MouseOverPrimary -->
+  <div class="btn-grid__cell">
+    <button class="is-hovered mob-btn-icon" data-icon="&#xE555;"></button>
+  </div>
+  <!-- XAML: Pressed — fg→MouseOverPrimary -->
+  <div class="btn-grid__cell">
+    <button class="is-pressed mob-btn-icon" data-icon="&#xE555;"></button>
+  </div>
+  <!-- XAML: Disabled — opacity→DisabledOpacity -->
+  <div class="btn-grid__cell">
+    <button class="mob-btn-icon" data-icon="&#xE555;" disabled></button>
+  </div>
+  <!-- XAML: Focused — fg→MouseOverPrimary -->
+  <div class="btn-grid__cell">
+    <button class="mob-btn-icon is-focused" data-icon="&#xE555;"></button>
+  </div>
+  <div class="btn-grid__cell btn-grid__cell--notes"><code>.mob-btn-icon</code> + <code>data-icon</code></div>
+
+
+  <!-- ===== ROW: Link Button ===== -->
+  <!-- XAML: Mobius_UI_Resources_Styles_LinkButton → Templates_LinkButton -->
+  <div class="btn-grid__cell btn-grid__cell--label"><a href="buttons-link.html">Link</a></div>
+
+  <!-- XAML: Normal — fg=ForegroundAction -->
+  <div class="btn-grid__cell">
+    <button class="mob-btn-link">Link Action</button>
+  </div>
+  <!-- XAML: MouseOver — fg→MouseOverPrimary -->
+  <div class="btn-grid__cell">
+    <button class="is-hovered mob-btn-link">Link Action</button>
+  </div>
+  <!-- XAML: Pressed — fg stays, opacity→0.8 -->
+  <div class="btn-grid__cell">
+    <button class="is-pressed mob-btn-link">Link Action</button>
+  </div>
+  <!-- XAML: Disabled — fg→ForegroundPrimary, opacity→DisabledOpacity -->
+  <div class="btn-grid__cell">
+    <button class="mob-btn-link" disabled>Link Action</button>
+  </div>
+  <!-- XAML: Focused — fg→MouseOverPrimary -->
+  <div class="btn-grid__cell">
+    <button class="mob-btn-link is-focused">Link Action</button>
+  </div>
+  <div class="btn-grid__cell btn-grid__cell--notes"><code>.mob-btn-link</code></div>
+
+</div><!-- /.btn-grid -->
+
+</body>
+</html>

@@ -1,0 +1,19 @@
+/*
+  base.css — Master import file for Mobius Blazor components
+  Load order matters: tokens first, then typography, then components.
+*/
+
+/* 1. Font declarations (must load before any font-family references) */
+@import "fontImport.css";
+
+/* 2. Token layers (no dependencies on each other) */
+@import "LightTheme.css";       /* Color variables */
+@import "fontTokens.css";       /* Font family, weight, size variables */
+@import "spacingTokens.css";    /* Spacing, sizing, border, transition variables */
+
+/* 3. Typography (depends on fontTokens + LightTheme) */
+@import "typography.css";
+
+/* 4. Components (depend on all tokens + typography) */
+@import "../buttons/buttons.css";
+/* @import "../buttons/status-bar.css"; */

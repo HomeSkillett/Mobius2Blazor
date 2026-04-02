@@ -1,0 +1,153 @@
+/* Spacing tokens — mapped from Mobius WPF Sizes.xaml + SizesNew.xaml */
+
+:root {
+
+  /* =============================================
+     SIZE SCALE (SizesNew.xaml — 8-point grid)
+     Use these for everything under 64px
+     ============================================= */
+  --size-1: 1px;
+  --size-3: 3px;
+  --size-6: 6px;
+  --size-12: 12px;
+  --size-18: 18px;
+  --size-20: 20px;
+  --size-24: 24px;
+  --size-36: 36px;
+  --size-44: 44px;
+  --size-56: 56px;
+
+  /* =============================================
+     SPACING
+     ============================================= */
+  --spacing-field: 18px;           /* FieldSpacing — vertical gap between form fields */
+  --spacing-item: 1px;             /* ItemSpacing — minimal gap between list items */
+  --spacing-field-to-field: 14px;  /* FieldToField — legacy field gap */
+  --spacing-section-to-header: 24px; /* SectionToHeaderDistance */
+  --spacing-section-to-section: 40px; /* SectionToSectionDistance */
+  --spacing-label-to-control-sm: 4px;  /* LabelToControlDistanceSmall */
+  --spacing-label-to-control: 10px;    /* LabelToControlDistance */
+  --spacing-label-to-control-md: 16px; /* LabelToControlDistanceMedium */
+  --spacing-label-to-control-lg: 24px; /* LabelToControlDistanceLarge */
+  --spacing-gap-sm: 1px;          /* GapSmall */
+  --spacing-gap-lg: 10px;         /* GapLarge */
+
+  /* =============================================
+     PADDING — shorthand tokens
+     XAML Thickness order: Left, Top, Right, Bottom
+     CSS shorthand order: Top, Right, Bottom, Left
+     ============================================= */
+  --padding-all-sm: 5px;                    /* PaddingAllSmall: 5 */
+  --padding-tb-sm: 5px 0;                   /* PaddingTopBottomSmall: 0,5 → top/bottom 5 */
+  --padding-lr-md: 0 10px;                  /* PaddingLeftRightMedium: 10,0 → left/right 10 */
+  --padding-lr-lg: 0 20px;                  /* PaddingLeftRightLarge: 20,0 → left/right 20 */
+  --padding-tb-md: 10px 0;                  /* PaddingTopBottomMedium: 0,10 → top/bottom 10 */
+  --padding-left-md: 0 0 0 10px;            /* PaddingLeftMedium: 10,0,0,0 */
+  --padding-left-lg: 0 0 0 20px;            /* PaddingLeftLarge: 20,0,0,0 */
+  --padding-right-md: 0 10px 0 0;           /* PaddingRightMedium: 0,0,10,0 */
+  --padding-stacked-field: 14px 0 0 0;      /* PaddingStackedFieldToField: 0,14,0,0 */
+  --padding-checkbox-indent: 0 0 0 30px;    /* PaddingCheckboxIndent: 30,0,0,0 */
+  --padding-btn-lg: 16px 24px;              /* LargeButtonPadding: 24,16 → top/bottom 16, left/right 24 */
+  --padding-icon-btn-lg: 1px 24px 0 24px;   /* LargeIconButtonPadding: 24,1,24,0 */
+
+  /* =============================================
+     MARGIN — shorthand tokens
+     ============================================= */
+  --margin-field-to-field: 0 0 14px 0;          /* FieldToField: 0,0,0,14 */
+  --margin-section-to-header: 0 0 24px 0;       /* SectionToHeader: 0,0,0,24 */
+  --margin-master-list-content: 0 40px;          /* MasterDetailsListContentMargin: 40,0 */
+  --margin-master-list: 0 0 0 40px;              /* MasterDetailsListMargin: 40,0,0,0 */
+  --margin-mode-section-title: 0 0 33px 36px;   /* ModeSectionTitleMargin: 36,0,0,33 */
+  --margin-mode-section-lg: 40px;                /* ModeSectionLargeMargin: 40 */
+  --margin-brand-offset: 113px 0 0 0;            /* BrandHeightOffset: 0,113,0,0 */
+
+  /* =============================================
+     BORDERS
+     ============================================= */
+  --border-width: 1px;             /* BorderWidth — standard */
+  --border-width-focused: 2px;     /* FocusedWidth */
+  --border-width-selected: 4px;    /* SelectedWidth */
+  --line-size: 1px;                /* LineSize — dividers/separators */
+
+  /* =============================================
+     TOUCH TARGETS
+     ============================================= */
+  --touch-sm: 36px;    /* TouchSizeSm — small interactive target */
+  --touch: 44px;       /* TouchSize — standard (WCAG minimum) */
+  --touch-lg: 56px;    /* TouchSizeLg — large interactive target */
+
+  /* =============================================
+     ICON SIZES
+     ============================================= */
+  --icon-adorner: 8px;   /* IconAdorner — badge/status dot */
+  --icon-sm: 12px;       /* IconSm */
+  --icon: 20px;          /* Icon — standard */
+  --icon-lg: 32px;       /* IconLg */
+  --icon-btn: 20px;      /* IconButtonSize */
+  --icon-btn-lg: 40px;   /* IconButtonSizeLarge */
+
+  /* =============================================
+     FIELD & PANEL SIZING
+     ============================================= */
+  --field-height: 44px;                /* FieldHeight */
+  --field-height-lg: 58px;             /* FieldHeightLarge / FieldRowMinHeight */
+  --field-label-min-width: 130px;      /* FieldLabelMinWidth */
+  --field-label-width: 180px;          /* FieldLabelWidth / FieldLabelStandardSize */
+  --field-input-width: 220px;          /* FieldInputStandardWidth */
+  --field-max-width: 300px;            /* FieldMaxWidth */
+  --dropdown-max-width: 300px;         /* DropdownPopupMaxWidth */
+  --btn-lg: 50px;                      /* ButtonSizeLarge */
+  --panel-first-min-width: 312px;      /* FirstPanelMinWidth */
+  --panel-column-width: 300px;         /* Column_Width */
+  --panel-header-height: 132px;        /* Header_Height */
+  --panel-on-object-ui: 400px;         /* OnObjectUIWidth (Sizes.xaml) */
+  --panel-on-object-ui-grid: 320px;    /* OnObjectUIWidth (GridLength) */
+  --panel-master-list-width: 236px;    /* MasterDetailsMasterListWidth */
+  --panel-mode-section-title: 158px;   /* ModeSectionTitleHeight */
+  --label-max-width: 500px;            /* MaxLabelWidth */
+  --min-window-width: 600px;           /* MinWindowContentWidth */
+  --min-window-height: 300px;          /* MinWindowContentHeight */
+
+  /* =============================================
+     VEHICLE MAP
+     ============================================= */
+  --vehicle-icon-length: 340px;        /* VehicleIconLength */
+  --vehicle-icon-perimeter: 180px;     /* VehicleIconPerimeterSize */
+  --map-blur-radius: 2px;             /* MapAssetBlurRadius */
+
+  /* =============================================
+     OPACITY
+     ============================================= */
+  --opacity-disabled: 0.35;   /* DisabledOpacity */
+  --opacity-readonly: 0.6;    /* ReadOnlyOpacity */
+  --opacity-pressed: 0.8;     /* PressedOpacity — used by LinkButton pressed state */
+
+  /* =============================================
+     BUTTON-SPECIFIC
+     Sourced from DefaultControls.xaml setters
+     ============================================= */
+  --btn-min-width: 90px;                   /* Default Button MinWidth="90" */
+  --btn-padding: 1px 12px 0 12px;         /* Default Button Padding="12,1,12,0" */
+  --btn-padding-lg: 1px 22px 0 22px;      /* ButtonLarge / OutlineButton Padding="22,1,22,0" */
+  --btn-padding-xl: 1px 60px 0 60px;      /* ButtonXLarge Padding="60,1,60,0" */
+  --btn-min-height-xl: 60px;              /* ButtonXLarge MinHeight="60" */
+  --btn-icon-gap: 8px;                    /* Icon-to-text gap (Margin="0,0,8,0" on icon Path) */
+  --btn-outline-icon-size: 22px;          /* OutlineButton Path Width/Height="22" */
+  --btn-outline-radius: 12px;             /* OutlineButtonRoundedCorners CornerRadius="12" */
+  --btn-pressed-bg: rgba(9, 156, 191, 1);       /* MouseOverPrimary + 25% black overlay, pre-blended */
+  --focus-outline-offset: 2px;            /* Focus ring offset */
+
+  /* =============================================
+     TRANSITIONS (from Duration resources)
+     ============================================= */
+  --transition-mouse-out: 500ms;     /* GeneralMouseOutDuration */
+  --transition-mouse-over: 160ms;    /* GeneralMouseOverDuration */
+  --transition-mouse-pressed: 160ms; /* GeneralMousePressedDuration */
+  --transition-disable: 100ms;       /* GeneralDisableDuration */
+  --transition-select: 160ms;        /* GeneralSelectionDuration */
+  --transition-unselect: 500ms;      /* GeneralUnselectDuration */
+  --transition-unfocus: 500ms;       /* GeneralUnfocusDuration */
+  --transition-focus: 160ms;         /* GeneralFocusDuration */
+  --transition-expand: 500ms;        /* GeneralExpandDuration */
+  --transition-fade: 500ms;          /* GeneralFadeDuration */
+}
