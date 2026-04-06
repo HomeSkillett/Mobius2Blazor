@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mobius SwitchToggle — States &amp; Usage</title>
+  <link rel="stylesheet" href="../styles/base.css" />
+  <link rel="stylesheet" href="switch-toggle.css" />
+  <style>
+    body { margin: 0; }
+    h1 {
+      font: var(--font-hdrMd);
+      margin: 0 0 32px;
+      color: var(--ForegroundStrong);
+    }
+    h2 {
+      font: var(--font-hdrSm);
+      font-weight: var(--font-light);
+      color: var(--ForegroundStrong);
+      margin: 40px 0 20px;
+    }
+
+    /* State grid — 6 columns: label + 5 states */
+    .state-grid {
+      display: grid;
+      grid-template-columns: 100px repeat(5, 1fr);
+      gap: 0;
+      border-top: var(--line-size) solid var(--InnerLines);
+      border-left: var(--line-size) solid var(--InnerLines);
+    }
+    .state-grid__cell {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 72px;
+      padding: var(--size-12);
+      border-right: var(--line-size) solid var(--InnerLines);
+      border-bottom: var(--line-size) solid var(--InnerLines);
+    }
+    .state-grid__cell--label {
+      justify-content: flex-start;
+      background: var(--BackgroundStepOne);
+      font: var(--font-Sm);
+      font-weight: var(--font-bold);
+      color: var(--ForegroundStrong);
+    }
+    .state-grid__cell--header {
+      background: var(--BackgroundStrong);
+      font: var(--font-Sm);
+      font-weight: var(--font-bold);
+      color: var(--ForegroundStrong);
+      text-transform: uppercase;
+      min-height: 40px;
+    }
+    .state-grid__cell--corner {
+      background: var(--BackgroundStrong);
+      min-height: 40px;
+    }
+
+    /* Usage example panel */
+    .usage-panel {
+      background: var(--BackgroundPrimary);
+      padding: var(--size-24);
+      margin-top: var(--size-24);
+      border: var(--border-width) solid var(--InnerLines);
+    }
+    .usage-panel__heading {
+      font: var(--font-hdrSm);
+      font-weight: var(--font-light);
+      color: var(--ForegroundStrong);
+      margin: 0 0 var(--size-18);
+    }
+    .usage-panel__row {
+      display: flex;
+      align-items: center;
+      gap: var(--size-12);
+    }
+    .usage-panel__description {
+      font: var(--font-default);
+      color: var(--ForegroundPrimary);
+    }
+  </style>
+</head>
+<body>
+
+<div class="mob-layout">
+
+  <!-- Sidebar Navigation -->
+  <nav class="mob-nav">
+    <div class="mob-nav__header">
+      <span class="mob-nav__logo">&#xE555;</span>
+      <span class="mob-nav__title">Mobius Blazor Components</span>
+    </div>
+
+    <details class="mob-nav__group--collapsible">
+      <summary>Tokens / Styles</summary>
+      <a class="mob-nav__download-all" href="../styles/tokens-styles-all.zip" download>&#x2913; Download All</a>
+      <a class="mob-nav__link" href="../styles/base.css">base.css</a>
+      <a class="mob-nav__link" href="../styles/LightTheme.css">LightTheme.css</a>
+      <a class="mob-nav__link" href="../styles/fontTokens.css">fontTokens.css</a>
+      <a class="mob-nav__link" href="../styles/spacingTokens.css">spacingTokens.css</a>
+      <a class="mob-nav__link" href="../styles/fontImport.css">fontImport.css</a>
+      <a class="mob-nav__link" href="../styles/typography.css">typography.css</a>
+      <a class="mob-nav__link" href="../styles/nav.css">nav.css</a>
+    </details>
+
+    <details class="mob-nav__group--collapsible">
+      <summary>Fonts</summary>
+      <a class="mob-nav__download-all" href="../fonts/fonts-all.zip" download>&#x2913; Download All</a>
+      <a class="mob-nav__link" href="../fonts/mobius-system-icons.woff2">mobius-system-icons.woff2</a>
+    </details>
+
+    <details class="mob-nav__group--collapsible">
+      <summary>Typography</summary>
+      <a class="mob-nav__link" href="../typography/typography.html">Font Styles</a>
+    </details>
+
+    <details class="mob-nav__group--collapsible">
+      <summary>Button</summary>
+      <a class="mob-nav__link" href="../buttons/buttons.html">All</a>
+      <a class="mob-nav__link" href="../buttons/buttons-primary.html">Primary</a>
+      <a class="mob-nav__link" href="../buttons/buttons-outline.html">Outline</a>
+      <a class="mob-nav__link" href="../buttons/buttons-link.html">Link</a>
+      <a class="mob-nav__link" href="../buttons/buttons-icon.html">Icon</a>
+    </details>
+
+    <details class="mob-nav__group--collapsible" open>
+      <summary>Forms</summary>
+      <a class="mob-nav__link" href="../text-input/text-input.html">Text Input</a>
+      <a class="mob-nav__link is-active" href="switch-toggle.html">Switch Toggle</a>
+    </details>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="mob-layout__content">
+
+<h1>Mobius Switch Toggle</h1>
+
+
+<!-- ===== STATE GRID ===== -->
+
+<div class="state-grid">
+
+  <!-- HEADER ROW -->
+  <div class="state-grid__cell state-grid__cell--corner"></div>
+  <div class="state-grid__cell state-grid__cell--header">Normal</div>
+  <div class="state-grid__cell state-grid__cell--header">Hover</div>
+  <div class="state-grid__cell state-grid__cell--header">Pressed</div>
+  <div class="state-grid__cell state-grid__cell--header">Disabled</div>
+  <div class="state-grid__cell state-grid__cell--header">Focused</div>
+
+
+  <!-- ===== ROW: OFF state ===== -->
+  <!-- XAML: SwitchToggle IsChecked="False" — UncheckedStart visual state -->
+  <div class="state-grid__cell state-grid__cell--label">Off</div>
+
+  <!-- XAML: Normal — full opacity -->
+  <div class="state-grid__cell">
+    <!-- XAML: SwitchToggle : ToggleButton -->
+    <label class="mob-switch">
+      <input type="checkbox" class="mob-switch__input">
+      <!-- XAML: _templateRoot Grid, Column 0 -->
+      <span class="mob-switch__track">
+        <!-- XAML: Knob Grid 30x30 — shadow Border, BackgroundStrong Border, SelectionPrimary Border + indicator Rectangle -->
+        <span class="mob-switch__knob"></span>
+      </span>
+      <!-- XAML: _offLabel TextBlock, Style=MetaSm, Foreground=ForegroundAction -->
+      <span class="mob-switch__label" data-off="OFF" data-on="ACTIVE"></span>
+    </label>
+  </div>
+
+  <!-- XAML: MouseOver — Opacity stays 1.0 -->
+  <div class="state-grid__cell">
+    <label class="mob-switch is-hovered">
+      <input type="checkbox" class="mob-switch__input">
+      <span class="mob-switch__track">
+        <span class="mob-switch__knob"></span>
+      </span>
+      <span class="mob-switch__label" data-off="OFF" data-on="ACTIVE"></span>
+    </label>
+  </div>
+
+  <!-- XAML: Pressed — Opacity→0.8 -->
+  <div class="state-grid__cell">
+    <label class="mob-switch is-pressed">
+      <input type="checkbox" class="mob-switch__input">
+      <span class="mob-switch__track">
+        <span class="mob-switch__knob"></span>
+      </span>
+      <span class="mob-switch__label" data-off="OFF" data-on="ACTIVE"></span>
+    </label>
+  </div>
+
+  <!-- XAML: Disabled — Opacity→DisabledOpacity (0.35) -->
+  <div class="state-grid__cell">
+    <label class="mob-switch is-disabled">
+      <input type="checkbox" class="mob-switch__input" disabled>
+      <span class="mob-switch__track">
+        <span class="mob-switch__knob"></span>
+      </span>
+      <span class="mob-switch__label" data-off="OFF" data-on="ACTIVE"></span>
+    </label>
+  </div>
+
+  <!-- XAML: Focused — FocusVisualStyle outline ring -->
+  <div class="state-grid__cell">
+    <label class="mob-switch is-focused">
+      <input type="checkbox" class="mob-switch__input">
+      <span class="mob-switch__track">
+        <span class="mob-switch__knob"></span>
+      </span>
+      <span class="mob-switch__label" data-off="OFF" data-on="ACTIVE"></span>
+    </label>
+  </div>
+
+
+  <!-- ===== ROW: ON state ===== -->
+  <!-- XAML: SwitchToggle IsChecked="True" — CheckedStart visual state -->
+  <div class="state-grid__cell state-grid__cell--label">On</div>
+
+  <!-- XAML: CheckedNormal — knob at X=20, track=InformationBlue, indicator vertical -->
+  <div class="state-grid__cell">
+    <label class="mob-switch is-checked">
+      <input type="checkbox" class="mob-switch__input">
+      <span class="mob-switch__track">
+        <span class="mob-switch__knob"></span>
+      </span>
+      <span class="mob-switch__label" data-off="OFF" data-on="ACTIVE"></span>
+    </label>
+  </div>
+
+  <!-- XAML: MouseOver + Checked -->
+  <div class="state-grid__cell">
+    <label class="mob-switch is-checked is-hovered">
+      <input type="checkbox" class="mob-switch__input">
+      <span class="mob-switch__track">
+        <span class="mob-switch__knob"></span>
+      </span>
+      <span class="mob-switch__label" data-off="OFF" data-on="ACTIVE"></span>
+    </label>
+  </div>
+
+  <!-- XAML: Pressed + Checked -->
+  <div class="state-grid__cell">
+    <label class="mob-switch is-checked is-pressed">
+      <input type="checkbox" class="mob-switch__input">
+      <span class="mob-switch__track">
+        <span class="mob-switch__knob"></span>
+      </span>
+      <span class="mob-switch__label" data-off="OFF" data-on="ACTIVE"></span>
+    </label>
+  </div>
+
+  <!-- XAML: Disabled + Checked -->
+  <div class="state-grid__cell">
+    <label class="mob-switch is-checked is-disabled">
+      <input type="checkbox" class="mob-switch__input" disabled>
+      <span class="mob-switch__track">
+        <span class="mob-switch__knob"></span>
+      </span>
+      <span class="mob-switch__label" data-off="OFF" data-on="ACTIVE"></span>
+    </label>
+  </div>
+
+  <!-- XAML: Focused + Checked -->
+  <div class="state-grid__cell">
+    <label class="mob-switch is-checked is-focused">
+      <input type="checkbox" class="mob-switch__input">
+      <span class="mob-switch__track">
+        <span class="mob-switch__knob"></span>
+      </span>
+      <span class="mob-switch__label" data-off="OFF" data-on="ACTIVE"></span>
+    </label>
+  </div>
+
+</div><!-- /.state-grid -->
+
+
+<!-- ===== INTERACTIVE DEMO ===== -->
+<h2>Interactive</h2>
+<p class="BodySm" style="color: var(--ForegroundPrimary); margin: 0 0 var(--size-18);">Click the toggles below. State is driven by the hidden checkbox — no JavaScript.</p>
+
+<!-- XAML: SwitchToggle with default OffLabelString="OFF", ActiveLabelString="ACTIVE" -->
+<label class="mob-switch" style="margin-bottom: var(--size-12);">
+  <input type="checkbox" class="mob-switch__input">
+  <span class="mob-switch__track">
+    <span class="mob-switch__knob"></span>
+  </span>
+  <span class="mob-switch__label" data-off="OFF" data-on="ACTIVE"></span>
+</label>
+
+<br>
+
+<!-- Second toggle — starts checked -->
+<label class="mob-switch">
+  <input type="checkbox" class="mob-switch__input" checked>
+  <span class="mob-switch__track">
+    <span class="mob-switch__knob"></span>
+  </span>
+  <span class="mob-switch__label" data-off="OFF" data-on="ACTIVE"></span>
+</label>
+
+
+<!-- ===== USAGE EXAMPLE ===== -->
+<!-- Replicates the "Map settings" context from the running WPF app -->
+<h2>Usage Example</h2>
+
+<div class="usage-panel">
+  <!-- XAML: Settings panel heading -->
+  <p class="usage-panel__heading">Map settings</p>
+
+  <div class="usage-panel__row">
+    <!-- XAML: SwitchToggle bound to AlwaysShowVehicleInfo property -->
+    <label class="mob-switch">
+      <input type="checkbox" class="mob-switch__input">
+      <span class="mob-switch__track">
+        <span class="mob-switch__knob"></span>
+      </span>
+      <span class="mob-switch__label" data-off="OFF" data-on="ACTIVE"></span>
+    </label>
+    <span class="usage-panel__description">Always show vehicle info</span>
+  </div>
+</div>
+
+
+  </main>
+
+</div>
+
+</body>
+</html>

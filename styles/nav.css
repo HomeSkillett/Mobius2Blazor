@@ -1,0 +1,198 @@
+/*
+  nav.css — Sidebar navigation for the Mobius component library
+  Modeled after the Blazing Story sidebar layout.
+
+  Layout:
+    .mob-layout             Page wrapper (sidebar + content)
+    .mob-layout__content    Scrollable main content area
+
+  Nav:
+    .mob-nav                Sidebar container
+    .mob-nav__header        Logo + title bar
+    .mob-nav__logo          ASI gear icon (Mobius-System-Icons \E555)
+    .mob-nav__title         "Mobius Blazor Components"
+    .mob-nav__group         Collapsible category section
+    .mob-nav__group-title   Category heading (BASIC, INPUT, etc.)
+    .mob-nav__link          Navigation item
+    .mob-nav__link.is-active Current page highlight
+*/
+
+
+/* =============================================
+   PAGE LAYOUT
+   ============================================= */
+
+.mob-layout {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.mob-layout__content {
+  flex: 1 1 0%;
+  min-width: 0;
+  padding: var(--spacing-section-to-section);
+  background: var(--BackgroundPrimary);
+  overflow-y: auto;
+}
+
+
+/* =============================================
+   SIDEBAR
+   ============================================= */
+
+.mob-nav {
+  flex-shrink: 0;
+  width: 260px;
+  background: var(--BackgroundStrong);
+  border-right: var(--line-size) solid var(--InnerLines);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+
+/* =============================================
+   HEADER — Logo + title
+   ============================================= */
+
+.mob-nav__header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-label-to-control);
+  padding: var(--size-20) var(--spacing-label-to-control-md);
+  border-bottom: var(--line-size) solid var(--InnerLines);
+}
+
+/* ASI gear icon — Mobius-System-Icons glyph \E555 */
+.mob-nav__logo {
+  flex-shrink: 0;
+  font-family: var(--font-icon);
+  font-size: var(--icon-lg);
+  line-height: 1;
+  color: var(--SelectionPrimary);
+}
+
+.mob-nav__title {
+  font: var(--font-default);
+  font-weight: var(--font-bold);
+  color: #555;
+  line-height: 1.2;
+}
+
+
+/* =============================================
+   NAVIGATION GROUPS
+   ============================================= */
+
+.mob-nav__group {
+  padding: var(--size-12) 0 var(--spacing-label-to-control-sm);
+}
+
+.mob-nav__group-title {
+  padding: 0 var(--spacing-label-to-control-md) var(--size-6);
+  font: var(--font-default);
+  font-weight: var(--font-bold);
+  color: #555;
+}
+
+
+/* =============================================
+   COLLAPSIBLE GROUPS  (<details> / <summary>)
+   Used for Tokens/Styles and Fonts sections.
+   Collapsed by default — no JS required.
+   ============================================= */
+
+.mob-nav__group--collapsible {
+  padding: var(--size-12) 0 var(--spacing-label-to-control-sm);
+  border-bottom: var(--line-size) solid var(--InnerLines);
+}
+
+.mob-nav__group--collapsible summary {
+  display: flex;
+  align-items: center;
+  gap: var(--size-6);
+  padding: 0 var(--spacing-label-to-control-md) var(--size-6);
+  font: var(--font-default);
+  font-weight: var(--font-bold);
+  color: #555;
+  cursor: pointer;
+  list-style: none;            /* hide default marker */
+}
+
+/* Custom disclosure triangle */
+.mob-nav__group--collapsible summary::before {
+  content: "\25B6";            /* right-pointing triangle ▶ */
+  font-size: var(--icon-adorner);
+  color: #555;
+  transition: transform var(--transition-mouse-over) ease;
+}
+
+.mob-nav__group--collapsible[open] summary::before {
+  transform: rotate(90deg);
+}
+
+/* Remove default <details> marker in WebKit/Blink */
+.mob-nav__group--collapsible summary::-webkit-details-marker {
+  display: none;
+}
+
+.mob-nav__group--collapsible summary:hover {
+  color: #333;
+}
+
+/* Links inside collapsible groups */
+.mob-nav__group--collapsible .mob-nav__link {
+  padding-left: calc(var(--spacing-label-to-control-md) + var(--spacing-label-to-control-md));
+  font: var(--font-default);
+  color: #555;
+}
+
+/* "Download All" link at top of collapsible group */
+.mob-nav__download-all {
+  display: block;
+  padding: var(--size-6) calc(var(--spacing-label-to-control-md) + var(--spacing-label-to-control-md));
+  font: var(--font-default);
+  font-weight: var(--font-bold);
+  color: var(--SelectionPrimary);
+  text-decoration: none;
+  transition: color var(--transition-mouse-over) ease;
+}
+
+.mob-nav__download-all:hover {
+  color: var(--MouseOverPrimary);
+}
+
+
+/* =============================================
+   NAVIGATION LINKS
+   ============================================= */
+
+.mob-nav__link {
+  display: block;
+  padding: 8px var(--spacing-label-to-control-md) 8px var(--size-24);
+  font: var(--font-default);
+  color: #555;
+  text-decoration: none;
+  transition: background-color var(--transition-mouse-over) ease,
+              color var(--transition-mouse-over) ease;
+}
+
+.mob-nav__link:hover {
+  background-color: var(--MouseOverBackground);
+  color: #333;
+}
+
+/* Active / current page */
+.mob-nav__link.is-active {
+  background-color: var(--SelectionPrimary);
+  color: var(--SelectionForeground);
+  font-weight: var(--font-bold);
+}
+
+/* Sub-item indent (for button sub-pages) */
+.mob-nav__link--sub {
+  padding-left: var(--spacing-section-to-section);
+  font: var(--font-Sm);
+  line-height: var(--lh-default);
+}

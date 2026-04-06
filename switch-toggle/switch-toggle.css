@@ -1,0 +1,253 @@
+/*
+  switch-toggle.css — Mobius SwitchToggle component
+  Source: Asi.CommonControls.Client.UI/SwitchToggle.xaml
+          Asi.CommonControls.Client.UI/SwitchToggle.cs
+
+  XAML Template: Mobius_UI_Resources_Templates_OnOffToggleButton
+  XAML Style:    Mobius_UI_Resources_Styles_OnOffToggleButton
+
+  Usage:
+    .mob-switch            Wrapper label (inline-flex)
+    .mob-switch__input     Hidden checkbox (accessible toggle state)
+    .mob-switch__track     Track pill container (50×30)
+    .mob-switch__knob      Circular knob inside track
+    .mob-switch__label     OFF / ACTIVE text (MetaSm style)
+
+  State classes (for static demos):
+    .is-checked            Checked/on appearance
+    .is-hovered            Hover appearance
+    .is-pressed            Pressed appearance
+    .is-disabled           Disabled appearance
+    .is-focused            Focus-ring appearance
+*/
+
+
+/* =============================================
+   COMPONENT TOKENS
+   Derived from theme variables where opacity
+   adjustments are needed. Update these if
+   LightTheme.css values change.
+   ============================================= */
+
+.mob-switch {
+  /* Dimensions — from XAML fixed sizes */
+  --_knob-size: 30px;                /* XAML: Grid Width/Height="30" */
+  --_track-w: 50px;                  /* XAML: ColumnDefinition Width="50" */
+  --_track-h: 30px;                  /* XAML: _templateRoot Height="30" */
+  --_track-radius: 14px;             /* XAML: CornerRadius="14" */
+  --_knob-travel: 20px;              /* XAML: TranslateTransform X → 20 */
+  --_indicator-w: 2px;               /* XAML: Rectangle Width="2" */
+
+  /* Track OFF — XAML: _toggleActiveHighlight + _toggleActiveHighlightBorder
+     ForegroundPrimary rgba(85,85,85,1) at element Opacity */
+  --_track-bg-off: rgba(85, 85, 85, 0.1);      /* ForegroundPrimary @ 10% */
+  --_track-border-off: rgba(85, 85, 85, 0.2);  /* ForegroundPrimary @ 20% */
+
+  /* Track ON — XAML: InformationBlue rgba(0,159,218,1) at element Opacity */
+  --_track-bg-on: rgba(0, 159, 218, 0.75);     /* InformationBlue @ 75% */
+  --_track-border-on: rgba(0, 159, 218, 1);    /* InformationBlue @ 100% */
+
+  /* Knob shadow — XAML: ShadowElements rgba(0,0,0,0.133) at Opacity=0.5 */
+  --_knob-shadow: rgba(0, 0, 0, 0.067);
+}
+
+
+/* =============================================
+   CONTAINER
+   XAML: _templateRoot Grid — 3 columns:
+         50px (track) | 6px (gap) | * (label)
+   ============================================= */
+
+.mob-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--size-6);                /* XAML: ColumnDefinition Width="6" */
+  height: var(--_track-h);
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+  transition: opacity var(--transition-mouse-out) ease;
+}
+
+
+/* =============================================
+   HIDDEN CHECKBOX
+   Accessible toggle input, visually hidden
+   ============================================= */
+
+.mob-switch__input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  clip: rect(0 0 0 0);
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+
+/* =============================================
+   TRACK
+   XAML: Grid Column="0" — contains the pill
+         background and the sliding knob
+   ============================================= */
+
+/* XAML: Outer Grid cell — positioning context for knob */
+.mob-switch__track {
+  position: relative;
+  width: var(--_track-w);
+  height: var(--_track-h);
+  flex-shrink: 0;
+}
+
+/* XAML: _toggleActiveHighlightBorder (border) + _toggleActiveHighlight (fill)
+   Both have Margin="1", CornerRadius="14"
+   Unchecked: ForegroundPrimary — border Opacity=0.2, fill Opacity=0.1 */
+.mob-switch__track::before {
+  content: "";
+  position: absolute;
+  inset: var(--size-1);
+  border-radius: var(--_track-radius);
+  border: var(--border-width) solid var(--_track-border-off);
+  background-color: var(--_track-bg-off);
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease;
+}
+
+
+/* =============================================
+   KNOB
+   XAML: Inner Grid 30×30, HorizontalAlignment=Left
+   Layers (bottom → top):
+     Border Margin="-2" bg=ShadowElements Opacity=0.5  → box-shadow
+     Border Margin="0.5" bg=BackgroundStrong             → background
+     Border border=SelectionPrimary 1px                   → border
+     Rectangle indicator                                  → ::after
+   ============================================= */
+
+.mob-switch__knob {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--_knob-size);
+  height: var(--_knob-size);
+  border-radius: 50%;
+  box-sizing: border-box;
+  /* XAML: BackgroundStrong fill + SelectionPrimary 1px border */
+  background-color: var(--BackgroundStrong);
+  border: var(--border-width) solid var(--SelectionPrimary);
+  /* XAML: ShadowElements border behind knob, Margin="-2", Opacity=0.5 */
+  box-shadow: 0 0 0 2px var(--_knob-shadow);
+  /* XAML: TranslateTransform X, 500ms SmoothEase EaseOut */
+  transform: translateX(0);
+  transition: transform var(--transition-expand) ease-out;
+  z-index: 1;
+}
+
+/* XAML: Rectangle Width="2", Margin="6", HorizontalAlignment=Center,
+         Fill=SelectionPrimary, RotateTransform
+   Unchecked: Angle=90° → rotate(90deg) → horizontal dash (minus icon)
+   Checked:   Angle=360° → rotate(0deg) → vertical line (pipe icon) */
+.mob-switch__knob::after {
+  content: "";
+  position: absolute;
+  top: var(--size-6);               /* XAML: Margin="6" (top) */
+  bottom: var(--size-6);            /* XAML: Margin="6" (bottom) */
+  left: 50%;
+  width: var(--_indicator-w);
+  background-color: var(--SelectionPrimary);
+  transform: translateX(-50%) rotate(90deg);
+  transition: transform var(--transition-expand) ease-out;
+}
+
+
+/* =============================================
+   LABEL
+   XAML: _offLabel / _activeLabel TextBlock
+         Style=Mobius_UI_Resources_Styles_TextBlock_MetaSm
+         Foreground=ForegroundAction
+   ============================================= */
+
+.mob-switch__label {
+  font: var(--font-metaSm);
+  font-weight: var(--font-bold);
+  color: var(--ForegroundAction);
+  text-transform: uppercase;
+  transition: opacity 200ms ease;
+}
+
+/* Default content — OFF */
+.mob-switch__label::before {
+  content: attr(data-off);
+}
+
+
+/* =============================================
+   CHECKED STATE
+   XAML: CheckedStart / CheckedNormal visual states
+   ============================================= */
+
+/* Track — XAML: bg→InformationBlue@75%, border→InformationBlue@100% */
+.mob-switch__input:checked ~ .mob-switch__track::before,
+.mob-switch.is-checked .mob-switch__track::before {
+  background-color: var(--_track-bg-on);
+  border-color: var(--_track-border-on);
+  transition-duration: 300ms;
+}
+
+/* Knob slide — XAML: _toggleSwitchTranslate X→20 */
+.mob-switch__input:checked ~ .mob-switch__track .mob-switch__knob,
+.mob-switch.is-checked .mob-switch__track .mob-switch__knob {
+  transform: translateX(var(--_knob-travel));
+}
+
+/* Indicator rotation — XAML: _toggleSwitchRotate Angle→360° (vertical) */
+.mob-switch__input:checked ~ .mob-switch__track .mob-switch__knob::after,
+.mob-switch.is-checked .mob-switch__track .mob-switch__knob::after {
+  transform: translateX(-50%) rotate(0deg);
+}
+
+/* Label swap — XAML: _activeLabel Opacity→1, _offLabel Opacity→0 */
+.mob-switch__input:checked ~ .mob-switch__label::before,
+.mob-switch.is-checked .mob-switch__label::before {
+  content: attr(data-on);
+}
+
+
+/* =============================================
+   INTERACTION STATES
+   XAML: CommonStates VisualStateGroup
+   ============================================= */
+
+/* Hover — XAML: Normal, Opacity stays 1.0, faster transition */
+.mob-switch:hover,
+.mob-switch.is-hovered {
+  transition-duration: var(--transition-mouse-over);
+}
+
+/* Pressed — XAML: Pressed, Opacity→0.8 */
+.mob-switch:active,
+.mob-switch.is-pressed {
+  opacity: var(--opacity-pressed);
+  transition-duration: var(--transition-mouse-pressed);
+}
+
+/* Disabled — XAML: Disabled, Opacity→DisabledOpacity */
+.mob-switch:has(.mob-switch__input:disabled),
+.mob-switch.is-disabled {
+  opacity: var(--opacity-disabled);
+  cursor: default;
+  pointer-events: none;
+  transition-duration: var(--transition-disable);
+}
+
+/* Focused — XAML: FocusVisualStyle ring around track */
+.mob-switch__input:focus-visible ~ .mob-switch__track,
+.mob-switch.is-focused .mob-switch__track {
+  outline: var(--border-width-focused) solid var(--MouseOverPrimary);
+  outline-offset: var(--focus-outline-offset);
+  border-radius: var(--_track-radius);
+}

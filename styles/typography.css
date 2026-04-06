@@ -81,8 +81,18 @@ body {
   color: var(--ForegroundPrimary);
 }
 
-.Label {
+/* XAML: Mobius_UI_Resources_Styles_TextBlock_Paragraph — FontStretch=Normal, TextWrapping=WrapWithOverflow */
+.Paragraph {
   font: var(--size-default) / var(--lh-default) var(--header-font);
+  font-weight: var(--font-normal);
+  color: var(--ForegroundPrimary);
+  white-space: normal;
+}
+
+/* XAML: Mobius_UI_Resources_Styles_TextBlock_Label
+   Inherits DefaultFonts: Roboto Condensed, 14px, Regular weight */
+.Label {
+  font: var(--font-default);
   font-weight: var(--font-normal);
   text-align: left;
   color: var(--ForegroundPrimary);

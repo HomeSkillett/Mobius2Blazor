@@ -1,0 +1,174 @@
+/*
+  typography.css — Page-level styles for the Typography specimen page
+  Source: Typography.xaml — all Mobius_UI_Resources_Styles_TextBlock_* styles
+          and Mobius_UI_Resources_Styles_Font_* base styles.
+
+  This file styles the specimen grid layout only.
+  The actual typographic classes (.H1, .H2, etc.) live in ../styles/typography.css.
+*/
+
+
+/* =============================================
+   PAGE HEADER
+   ============================================= */
+
+.typo-page__title {
+  font: var(--font-hdrMd);
+  font-weight: var(--font-light);
+  margin: 0 0 var(--spacing-section-to-header);
+  color: var(--ForegroundStrong);
+}
+
+
+/* =============================================
+   SPECIMEN GRID
+   6 columns: Style | Specimen | Font | Weight | Size/LH | CSS token
+   ============================================= */
+
+.typo-grid {
+  display: grid;
+  grid-template-columns: 140px 1fr 180px 100px 110px 200px;
+  gap: 0;
+  border-top: var(--line-size) solid var(--InnerLines);
+  border-left: var(--line-size) solid var(--InnerLines);
+}
+
+.typo-grid__cell {
+  display: flex;
+  align-items: center;
+  min-height: 56px;
+  padding: var(--size-12) var(--spacing-label-to-control-md);
+  border-right: var(--line-size) solid var(--InnerLines);
+  border-bottom: var(--line-size) solid var(--InnerLines);
+}
+
+/* Column headers */
+.typo-grid__cell--header {
+  background: var(--BackgroundStrong);
+  font: var(--font-Sm);
+  font-weight: var(--font-bold);
+  color: var(--ForegroundStrong);
+  text-transform: uppercase;
+  min-height: var(--touch);
+}
+
+/* Row label (first column) */
+.typo-grid__cell--label {
+  background: var(--BackgroundStepOne);
+  font: var(--font-Sm);
+  font-weight: var(--font-bold);
+  color: var(--ForegroundStrong);
+}
+
+/* Specimen column — let text flow naturally */
+.typo-grid__cell--specimen {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Property columns */
+.typo-grid__cell--prop {
+  font: var(--font-Sm);
+  color: var(--ForegroundPrimary);
+}
+
+/* Token/class column */
+.typo-grid__cell--token code {
+  font: var(--font-Sm);
+  font-family: var(--font-monospace);
+  color: var(--ForegroundStrong);
+}
+
+
+/* =============================================
+   SECTION DIVIDERS
+   Full-width rows that span all columns
+   ============================================= */
+
+.typo-grid__section {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  padding: var(--size-12) var(--spacing-label-to-control-md);
+  background: var(--BackgroundStepTwo);
+  border-right: var(--line-size) solid var(--InnerLines);
+  border-bottom: var(--line-size) solid var(--InnerLines);
+  font: var(--font-default);
+  font-weight: var(--font-bold);
+  color: var(--ForegroundStrong);
+  text-transform: uppercase;
+}
+
+
+/* Section spacing — used between grid and font-family cards */
+.typo-page__title--section {
+  margin-top: var(--spacing-section-to-section);
+}
+
+
+/* =============================================
+   FONT FAMILY CARDS (below the specimen grid)
+   ============================================= */
+
+.typo-families {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--spacing-field);
+  margin-top: var(--spacing-section-to-section);
+}
+
+.typo-family-card {
+  padding: var(--size-20);
+  background: var(--BackgroundStrong);
+  border: var(--line-size) solid var(--InnerLines);
+}
+
+.typo-family-card__name {
+  font: var(--font-hdrSm);
+  font-weight: var(--font-light);
+  color: var(--ForegroundStrong);
+  margin: 0 0 var(--size-6);
+}
+
+.typo-family-card__token {
+  font: var(--font-Sm);
+  font-family: var(--font-monospace);
+  color: var(--ForegroundPrimary);
+  margin: 0 0 var(--size-12);
+}
+
+.typo-family-card__sample {
+  font-size: var(--size-hdrMd);
+  line-height: var(--lh-hdrMd);
+  color: var(--ForegroundPrimary);
+}
+
+
+/* =============================================
+   WEIGHT STRIP (inside font-family cards)
+   ============================================= */
+
+.typo-weight-strip {
+  display: flex;
+  gap: var(--spacing-field);
+  margin-top: var(--size-12);
+}
+
+.typo-weight-strip__item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-label-to-control-sm);
+}
+
+.typo-weight-strip__label {
+  font: var(--font-metaSm);
+  font-weight: var(--font-bold);
+  text-transform: uppercase;
+  color: var(--ForegroundPrimary);
+}
+
+.typo-weight-strip__demo {
+  font-size: var(--size-hdrSm);
+  line-height: var(--lh-hdrSm);
+  color: var(--ForegroundStrong);
+}

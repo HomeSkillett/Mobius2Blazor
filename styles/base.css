@@ -14,6 +14,12 @@
 /* 3. Typography (depends on fontTokens + LightTheme) */
 @import "typography.css";
 
-/* 4. Components (depend on all tokens + typography) */
+/* 4. Layout (depends on tokens) */
+@import "nav.css";
+
+/* 5. Components (depend on all tokens + typography) */
 @import "../buttons/buttons.css";
+@import "../text-input/text-input.css";
+@import "../typography/typography.css";
+@import "../switch-toggle/switch-toggle.css";
 /* @import "../buttons/status-bar.css"; */

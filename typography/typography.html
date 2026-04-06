@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mobius Typography — Font Styles</title>
+  <link rel="stylesheet" href="../styles/base.css" />
+  <link rel="stylesheet" href="typography.css" />
+</head>
+<body>
+
+<div class="mob-layout">
+
+  <!-- Sidebar Navigation -->
+  <nav class="mob-nav">
+    <div class="mob-nav__header">
+      <span class="mob-nav__logo">&#xE555;</span>
+      <span class="mob-nav__title">Mobius Blazor Components</span>
+    </div>
+
+    <!-- Tokens / Styles -->
+    <details class="mob-nav__group--collapsible">
+      <summary>Tokens / Styles</summary>
+      <a class="mob-nav__download-all" href="../styles/tokens-styles-all.zip" download>&#x2913; Download All</a>
+      <a class="mob-nav__link" href="../styles/base.css">base.css</a>
+      <a class="mob-nav__link" href="../styles/LightTheme.css">LightTheme.css</a>
+      <a class="mob-nav__link" href="../styles/fontTokens.css">fontTokens.css</a>
+      <a class="mob-nav__link" href="../styles/spacingTokens.css">spacingTokens.css</a>
+      <a class="mob-nav__link" href="../styles/fontImport.css">fontImport.css</a>
+      <a class="mob-nav__link" href="../styles/typography.css">typography.css</a>
+      <a class="mob-nav__link" href="../styles/nav.css">nav.css</a>
+    </details>
+
+    <!-- Fonts -->
+    <details class="mob-nav__group--collapsible">
+      <summary>Fonts</summary>
+      <a class="mob-nav__download-all" href="../fonts/fonts-all.zip" download>&#x2913; Download All</a>
+      <a class="mob-nav__link" href="../fonts/mobius-system-icons.woff">mobius-system-icons.woff</a>
+      <a class="mob-nav__link" href="../fonts/mobius-system-icons.woff2">mobius-system-icons.woff2</a>
+      <a class="mob-nav__link" href="../fonts/roboto-light.woff2">roboto-light.woff2</a>
+      <a class="mob-nav__link" href="../fonts/roboto-regular.woff2">roboto-regular.woff2</a>
+      <a class="mob-nav__link" href="../fonts/roboto-thin.woff2">roboto-thin.woff2</a>
+      <a class="mob-nav__link" href="../fonts/robotocondensed-regular.woff2">robotocondensed-regular.woff2</a>
+    </details>
+
+    <!-- Typography — active -->
+    <details class="mob-nav__group--collapsible" open>
+      <summary>Typography</summary>
+      <a class="mob-nav__link is-active" href="typography.html">Font Styles</a>
+    </details>
+
+    <!-- Buttons -->
+    <details class="mob-nav__group--collapsible">
+      <summary>Button</summary>
+      <a class="mob-nav__link" href="../buttons/buttons.html">All</a>
+      <a class="mob-nav__link" href="../buttons/buttons-primary.html">Primary</a>
+      <a class="mob-nav__link" href="../buttons/buttons-outline.html">Outline</a>
+      <a class="mob-nav__link" href="../buttons/buttons-link.html">Link</a>
+      <a class="mob-nav__link" href="../buttons/buttons-icon.html">Icon</a>
+    </details>
+
+    <!-- Forms -->
+    <details class="mob-nav__group--collapsible">
+      <summary>Forms</summary>
+      <a class="mob-nav__link" href="../text-input/text-input.html">Text Input</a>
+      <a class="mob-nav__link" href="../switch-toggle/switch-toggle.html">Switch Toggle</a>
+    </details>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="mob-layout__content">
+
+    <h1 class="typo-page__title">Mobius Font Styles</h1>
+
+
+    <!-- ======================================================
+         SPECIMEN GRID
+         Source: Typography.xaml — all TextBlock styles
+         ====================================================== -->
+
+    <div class="typo-grid">
+
+      <!-- ===== HEADER ROW ===== -->
+      <div class="typo-grid__cell typo-grid__cell--header">Style</div>
+      <div class="typo-grid__cell typo-grid__cell--header">Specimen</div>
+      <div class="typo-grid__cell typo-grid__cell--header">Font Family</div>
+      <div class="typo-grid__cell typo-grid__cell--header">Weight</div>
+      <div class="typo-grid__cell typo-grid__cell--header">Size / LH</div>
+      <div class="typo-grid__cell typo-grid__cell--header">CSS Class</div>
+
+
+      <!-- ===== SECTION: Headings ===== -->
+      <div class="typo-grid__section">
+        <!-- XAML: Mobius_UI_Resources_Styles_TextBlock_HeadingLg/Md/Sm -->
+        Headings
+      </div>
+
+      <!-- ROW: H1 / Heading Large -->
+      <!-- XAML: Mobius_UI_Resources_Styles_TextBlock_HeadingLg -->
+      <div class="typo-grid__cell typo-grid__cell--label">H1</div>
+      <div class="typo-grid__cell typo-grid__cell--specimen">
+        <span class="H1">Heading Large</span>
+      </div>
+      <div class="typo-grid__cell typo-grid__cell--prop">Roboto</div>
+      <div class="typo-grid__cell typo-grid__cell--prop">Thin (100)</div>
+      <div class="typo-grid__cell typo-grid__cell--prop">36px / 40px</div>
+      <div class="typo-grid__cell typo-grid__cell--token"><code>.H1</code></div>
+
+      <!-- ROW: H2 / Heading Medium -->
+      <!-- XAML: Mobius_UI_Resources_Styles_TextBlock_HeadingMd -->
+      <div class="typo-grid__cell typo-grid__cell--label">H2</div>
+      <div class="typo-grid__cell typo-grid__cell--specimen">
+        <span class="H2">Heading Medium</span>
+      </div>
+      <div class="typo-grid__cell typo-grid__cell--prop">Roboto</div>
+      <div class="typo-grid__cell typo-grid__cell--prop">Light (300)</div>
+      <div class="typo-grid__cell typo-grid__cell--prop">24px / 30px</div>
+      <div class="typo-grid__cell typo-grid__cell--token"><code>.H2</code></div>
+
+      <!-- ROW: H3 / Heading Small -->
+      <!-- XAML: Mobius_UI_Resources_Styles_TextBlock_HeadingSm -->
+      <div class="typo-grid__cell typo-grid__cell--label">H3</div>
+      <div class="typo-grid__cell typo-grid__cell--specimen">
+        <span class="H3">Heading Small</span>
+      </div>
+      <div class="typo-grid__cell typo-grid__cell--prop">Roboto</div>
+      <div class="typo-grid__cell typo-grid__cell--prop">Light (300)</div>
+      <div class="typo-grid__cell typo-grid__cell--prop">18px / 22px</div>
+      <div class="typo-grid__cell typo-grid__cell--token"><code>.H3</code></div>
+
+
+      <!-- ===== SECTION: Body ===== -->
+      <div class="typo-grid__section">
+        <!-- XAML: Default TextBlock style + Mobius_UI_Resources_Styles_TextBlock_Sm -->
+        Body
+      </div>
+
+      <!-- ROW: Body (Default) -->
+      <!-- XAML: Default TextBlock style — FontSize=14, FontWeight=Regular, FontStretch=Condensed -->
+      <div class="typo-grid__cell typo-grid__cell--label">Body</div>
+      <div class="typo-grid__cell typo-grid__cell--specimen">
+        <span class="Body">The quick brown fox jumps over the lazy dog. Default body text used throughout the Mobius interface.</span>
+      </div>
+      <div class="typo-grid__cell typo-grid__cell--prop">Roboto Condensed</div>
+      <div class="typo-grid__cell typo-grid__cell--prop">Normal (400)</div>
+      <div class="typo-grid__cell typo-grid__cell--prop">14px / 20px</div>
+      <div class="typo-grid__cell typo-grid__cell--token"><code>.Body</code></div>
+
+      <!-- ROW: Body Small -->
+      <!-- XAML: Mobius_UI_Resources_Styles_TextBlock_Sm — FontSize=11 -->
+      <div class="typo-grid__cell typo-grid__cell--label">Body Small</div>
+      <div class="typo-grid__cell typo-grid__cell--specimen">
+        <span class="BodySm">Smaller body text for secondary information and compact layouts.</span>
+      </div>
+      <div class="typo-grid__cell typo-grid__cell--prop">Roboto Condensed</div>
+      <div class="typo-grid__cell typo-grid__cell--prop">Normal (400)</div>
+      <div class="typo-grid__cell typo-grid__cell--prop">11px / 14px</div>
+      <div class="typo-grid__cell typo-grid__cell--token"><code>.BodySm</code></div>
+
+      <!-- ROW: Paragraph -->
+      <!-- XAML: Mobius_UI_Resources_Styles_TextBlock_Paragraph — FontStretch=Normal, TextWrapping=WrapWithOverflow -->
+      <div class="typo-grid__cell typo-grid__cell--label">Paragraph</div>
+      <div class="typo-grid__cell typo-grid__cell--specimen">
+        <span class="Paragraph">Long-form paragraph text wraps naturally. Uses Roboto (non-condensed) at default size for improved readability in multi-line content blocks.</span>
+      </div>
+      <div class="typo-grid__cell typo-grid__cell--prop">Roboto</div>
+      <div class="typo-grid__cell typo-grid__cell--prop">Normal (400)</div>
+      <div class="typo-grid__cell typo-grid__cell--prop">14px / 20px</div>
+      <div class="typo-grid__cell typo-grid__cell--token"><code>.Paragraph</code></div>
+
+
+      <!-- ===== SECTION: Meta ===== -->
+      <div class="typo-grid__section">
+        <!-- XAML: Mobius_UI_Resources_Styles_Font_Meta / TextBlock_Meta / TextBlock_MetaSm -->
+        Meta
+      </div>
+
+      <!-- ROW: Meta -->
+      <!-- XAML: Mobius_UI_Resources_Styles_TextBlock_Meta — Bold, Uppercase -->
+      <div class="typo-grid__cell typo-grid__cell--label">Meta</div>
+      <div class="typo-grid__cell typo-grid__cell--specimen">
+        <span class="Meta">Column Header Label</span>
+      </div>
+      <div class="typo-grid__cell typo-grid__cell--prop">Roboto Condensed</div>
+      <div class="typo-grid__cell typo-grid__cell--prop">Bold (700)</div>
+      <div class="typo-grid__cell typo-grid__cell--prop">14px / 14px</div>
+      <div class="typo-grid__cell typo-grid__cell--token"><code>.Meta</code></div>
+
+      <!-- ROW: Meta Small -->
+      <!-- XAML: Mobius_UI_Resources_Styles_TextBlock_MetaSm — FontSize=11, Bold, Uppercase -->
+      <div class="typo-grid__cell typo-grid__cell--label">Meta Small</div>
+      <div class="typo-grid__cell typo-grid__cell--specimen">
+        <span class="MetaSm">Status Label</span>
+      </div>
+      <div class="typo-grid__cell typo-grid__cell--prop">Roboto Condensed</div>
+      <div class="typo-grid__cell typo-grid__cell--prop">Bold (700)</div>
+      <div class="typo-grid__cell typo-grid__cell--prop">11px / 11px</div>
+      <div class="typo-grid__cell typo-grid__cell--token"><code>.MetaSm</code></div>
+
+
+      <!-- ===== SECTION: Labels & Utility ===== -->
+      <div class="typo-grid__section">
+        <!-- XAML: Mobius_UI_Resources_Styles_TextBlock_Label / NoItems -->
+        Labels &amp; Utility
+      </div>
+
+      <!-- ROW: Label -->
+      <!-- XAML: Mobius_UI_Resources_Styles_TextBlock_Label — StringFormat appends colon -->
+      <div class="typo-grid__cell typo-grid__cell--label">Label</div>
+      <div class="typo-grid__cell typo-grid__cell--specimen">
+        <span class="Label">Field Name:</span>
+      </div>
+      <div class="typo-grid__cell typo-grid__cell--prop">Roboto</div>
+      <div class="typo-grid__cell typo-grid__cell--prop">Normal (400)</div>
+      <div class="typo-grid__cell typo-grid__cell--prop">14px / 20px</div>
+      <div class="typo-grid__cell typo-grid__cell--token"><code>.Label</code></div>
+
+      <!-- ROW: NoItems -->
+      <!-- XAML: Mobius_UI_Resources_Styles_TextBlock_NoItems — based on Sm, shows "No items to display" -->
+      <div class="typo-grid__cell typo-grid__cell--label">No Items</div>
+      <div class="typo-grid__cell typo-grid__cell--specimen">
+        <span class="NoItems">No items to display</span>
+      </div>
+      <div class="typo-grid__cell typo-grid__cell--prop">Roboto</div>
+      <div class="typo-grid__cell typo-grid__cell--prop">Normal (400)</div>
+      <div class="typo-grid__cell typo-grid__cell--prop">11px / 14px</div>
+      <div class="typo-grid__cell typo-grid__cell--token"><code>.NoItems</code></div>
+
+
+      <!-- ===== SECTION: Center Gravity ===== -->
+      <div class="typo-grid__section">
+        <!-- XAML: Mobius_UI_Resources_Styles_TextBlock_CenterGravity_* -->
+        Center Gravity
+      </div>
+
+      <!-- ROW: CenterGravity Heading -->
+      <!-- XAML: Mobius_UI_Resources_Styles_TextBlock_CenterGravity_Heading — FontSize=16, FontWeight=ExtraBlack, FontStretch=Normal -->
+      <div class="typo-grid__cell typo-grid__cell--label">CG Heading</div>
+      <div class="typo-grid__cell typo-grid__cell--specimen">
+        <span class="CenterGravity_Heading">Center Gravity Title</span>
+      </div>
+      <div class="typo-grid__cell typo-grid__cell--prop">Roboto</div>
+      <div class="typo-grid__cell typo-grid__cell--prop">ExtraBlack (950)</div>
+      <div class="typo-grid__cell typo-grid__cell--prop">16px / 1</div>
+      <div class="typo-grid__cell typo-grid__cell--token"><code>.CenterGravity_Heading</code></div>
+
+      <!-- ROW: CenterGravity Paragraph -->
+      <!-- XAML: Mobius_UI_Resources_Styles_TextBlock_CenterGravity_Paragraph — FontStretch=Normal, Wrap, Width=400, Margin bottom 20 -->
+      <div class="typo-grid__cell typo-grid__cell--label">CG Paragraph</div>
+      <div class="typo-grid__cell typo-grid__cell--specimen">
+        <span class="CenterGravity_Paragraph">Descriptive paragraph text used in center-gravity empty-state layouts. Wraps at 400px width.</span>
+      </div>
+      <div class="typo-grid__cell typo-grid__cell--prop">Roboto</div>
+      <div class="typo-grid__cell typo-grid__cell--prop">Normal (400)</div>
+      <div class="typo-grid__cell typo-grid__cell--prop">14px / 20px</div>
+      <div class="typo-grid__cell typo-grid__cell--token"><code>.CenterGravity_Paragraph</code></div>
+
+
+      <!-- ===== SECTION: Special ===== -->
+      <div class="typo-grid__section">
+        <!-- XAML: No direct XAML style — CSS-only utility styles -->
+        Special
+      </div>
+
+      <!-- ROW: Quote -->
+      <div class="typo-grid__cell typo-grid__cell--label">Quote</div>
+      <div class="typo-grid__cell typo-grid__cell--specimen">
+        <span class="Quote">Quoted text or callout content</span>
+      </div>
+      <div class="typo-grid__cell typo-grid__cell--prop">Georgia</div>
+      <div class="typo-grid__cell typo-grid__cell--prop">Bold (700)</div>
+      <div class="typo-grid__cell typo-grid__cell--prop">14px / 20px</div>
+      <div class="typo-grid__cell typo-grid__cell--token"><code>.Quote</code></div>
+
+      <!-- ROW: Monospace -->
+      <div class="typo-grid__cell typo-grid__cell--label">Monospace</div>
+      <div class="typo-grid__cell typo-grid__cell--specimen">
+        <span class="Monospace">vehicle.setSpeed(12.5)</span>
+      </div>
+      <div class="typo-grid__cell typo-grid__cell--prop">Consolas</div>
+      <div class="typo-grid__cell typo-grid__cell--prop">Normal (400)</div>
+      <div class="typo-grid__cell typo-grid__cell--prop">14px / 20px</div>
+      <div class="typo-grid__cell typo-grid__cell--token"><code>.Monospace</code></div>
+
+      <!-- ROW: Icons -->
+      <!-- XAML: Glyphs style — FontUri from GlyphFontFile, FontRenderingEmSize=14 -->
+      <div class="typo-grid__cell typo-grid__cell--label">Icons</div>
+      <div class="typo-grid__cell typo-grid__cell--specimen">
+        <span class="Icons">&#xE555; &#xE556; &#xE557;</span>
+      </div>
+      <div class="typo-grid__cell typo-grid__cell--prop">Mobius-System-Icons</div>
+      <div class="typo-grid__cell typo-grid__cell--prop">Normal (400)</div>
+      <div class="typo-grid__cell typo-grid__cell--prop">20px / 20px</div>
+      <div class="typo-grid__cell typo-grid__cell--token"><code>.Icons</code></div>
+
+    </div><!-- /.typo-grid -->
+
+
+    <!-- ======================================================
+         FONT FAMILIES
+         Visual reference for each font stack in fontTokens.css
+         ====================================================== -->
+
+    <h2 class="typo-page__title typo-page__title--section">Font Families</h2>
+
+    <div class="typo-families">
+
+      <!-- CARD: Roboto Condensed (default) -->
+      <!-- XAML: MobiusFontFamily — Roboto Condensed is the app-wide default via FontStretch=Condensed -->
+      <div class="typo-family-card">
+        <p class="typo-family-card__name" style="font-family: var(--default-font);">Roboto Condensed</p>
+        <p class="typo-family-card__token"><code>--default-font</code></p>
+        <p class="typo-family-card__sample" style="font-family: var(--default-font);">Aa Bb Cc 0123</p>
+        <div class="typo-weight-strip">
+          <div class="typo-weight-strip__item">
+            <span class="typo-weight-strip__label">Regular 400</span>
+            <span class="typo-weight-strip__demo" style="font-family: var(--default-font); font-weight: var(--font-normal);">Ag</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- CARD: Roboto (headers) -->
+      <!-- XAML: FontStretch=Normal on heading styles uses Roboto (non-condensed) -->
+      <div class="typo-family-card">
+        <p class="typo-family-card__name" style="font-family: var(--header-font);">Roboto</p>
+        <p class="typo-family-card__token"><code>--header-font</code></p>
+        <p class="typo-family-card__sample" style="font-family: var(--header-font);">Aa Bb Cc 0123</p>
+        <div class="typo-weight-strip">
+          <div class="typo-weight-strip__item">
+            <span class="typo-weight-strip__label">Thin 100</span>
+            <span class="typo-weight-strip__demo" style="font-family: var(--header-font); font-weight: var(--font-thin);">Ag</span>
+          </div>
+          <div class="typo-weight-strip__item">
+            <span class="typo-weight-strip__label">Light 300</span>
+            <span class="typo-weight-strip__demo" style="font-family: var(--header-font); font-weight: var(--font-light);">Ag</span>
+          </div>
+          <div class="typo-weight-strip__item">
+            <span class="typo-weight-strip__label">Regular 400</span>
+            <span class="typo-weight-strip__demo" style="font-family: var(--header-font); font-weight: var(--font-normal);">Ag</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- CARD: Georgia (quotes) -->
+      <div class="typo-family-card">
+        <p class="typo-family-card__name" style="font-family: var(--font-quote);">Georgia</p>
+        <p class="typo-family-card__token"><code>--font-quote</code></p>
+        <p class="typo-family-card__sample" style="font-family: var(--font-quote);">Aa Bb Cc 0123</p>
+        <div class="typo-weight-strip">
+          <div class="typo-weight-strip__item">
+            <span class="typo-weight-strip__label">Bold 700</span>
+            <span class="typo-weight-strip__demo" style="font-family: var(--font-quote); font-weight: var(--font-bold); font-style: italic;">Ag</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- CARD: Consolas (monospace) -->
+      <div class="typo-family-card">
+        <p class="typo-family-card__name" style="font-family: var(--font-monospace);">Consolas</p>
+        <p class="typo-family-card__token"><code>--font-monospace</code></p>
+        <p class="typo-family-card__sample" style="font-family: var(--font-monospace);">Aa Bb Cc 0123</p>
+        <div class="typo-weight-strip">
+          <div class="typo-weight-strip__item">
+            <span class="typo-weight-strip__label">Regular 400</span>
+            <span class="typo-weight-strip__demo" style="font-family: var(--font-monospace); font-weight: var(--font-normal);">Ag</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- CARD: Mobius System Icons -->
+      <!-- XAML: Glyphs style — icon font used for all UI icons -->
+      <div class="typo-family-card">
+        <p class="typo-family-card__name">Mobius System Icons</p>
+        <p class="typo-family-card__token"><code>--font-icon</code></p>
+        <p class="typo-family-card__sample Icons">&#xE555; &#xE556; &#xE557; &#xE558;</p>
+      </div>
+
+    </div><!-- /.typo-families -->
+
+  </main>
+
+</div>
+
+</body>
+</html>

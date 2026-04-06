@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mobius — Text Input States</title>
+  <link rel="stylesheet" href="../styles/base.css" />
+  <link rel="stylesheet" href="text-input.css" />
+  <style>
+    body { margin: 0; }
+    h1 {
+      font: var(--font-hdrMd);
+      margin: 0 0 32px;
+      color: var(--ForegroundStrong);
+    }
+    h2 {
+      font: var(--font-hdrSm);
+      margin: 40px 0 16px;
+      color: var(--ForegroundStrong);
+    }
+    h2:first-of-type { margin-top: 0; }
+    .states-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-field);
+      max-width: 540px;
+    }
+    .section-divider {
+      border: none;
+      border-top: var(--line-size) solid var(--InnerLines);
+      margin: 32px 0 0;
+    }
+  </style>
+</head>
+<body>
+
+<div class="mob-layout">
+
+  <!-- Sidebar Navigation -->
+  <nav class="mob-nav">
+    <div class="mob-nav__header">
+      <span class="mob-nav__logo">&#xE555;</span>
+      <span class="mob-nav__title">Mobius Blazor Components</span>
+    </div>
+
+    <!-- Tokens / Styles — collapsed by default -->
+    <details class="mob-nav__group--collapsible">
+      <summary>Tokens / Styles</summary>
+      <a class="mob-nav__download-all" href="../styles/tokens-styles-all.zip" download>&#x2913; Download All</a>
+      <a class="mob-nav__link" href="../styles/base.css">base.css</a>
+      <a class="mob-nav__link" href="../styles/LightTheme.css">LightTheme.css</a>
+      <a class="mob-nav__link" href="../styles/fontTokens.css">fontTokens.css</a>
+      <a class="mob-nav__link" href="../styles/spacingTokens.css">spacingTokens.css</a>
+      <a class="mob-nav__link" href="../styles/fontImport.css">fontImport.css</a>
+      <a class="mob-nav__link" href="../styles/typography.css">typography.css</a>
+      <a class="mob-nav__link" href="../styles/nav.css">nav.css</a>
+    </details>
+
+    <!-- Fonts — collapsed by default -->
+    <details class="mob-nav__group--collapsible">
+      <summary>Fonts</summary>
+      <a class="mob-nav__download-all" href="../fonts/fonts-all.zip" download>&#x2913; Download All</a>
+      <a class="mob-nav__link" href="../fonts/mobius-system-icons.woff">mobius-system-icons.woff</a>
+      <a class="mob-nav__link" href="../fonts/mobius-system-icons.woff2">mobius-system-icons.woff2</a>
+      <a class="mob-nav__link" href="../fonts/roboto-light.eot">roboto-light.eot</a>
+      <a class="mob-nav__link" href="../fonts/roboto-light.svg">roboto-light.svg</a>
+      <a class="mob-nav__link" href="../fonts/roboto-light.ttf">roboto-light.ttf</a>
+      <a class="mob-nav__link" href="../fonts/roboto-light.woff">roboto-light.woff</a>
+      <a class="mob-nav__link" href="../fonts/roboto-light.woff2">roboto-light.woff2</a>
+      <a class="mob-nav__link" href="../fonts/roboto-regular.eot">roboto-regular.eot</a>
+      <a class="mob-nav__link" href="../fonts/roboto-regular.svg">roboto-regular.svg</a>
+      <a class="mob-nav__link" href="../fonts/roboto-regular.ttf">roboto-regular.ttf</a>
+      <a class="mob-nav__link" href="../fonts/roboto-regular.woff">roboto-regular.woff</a>
+      <a class="mob-nav__link" href="../fonts/roboto-regular.woff2">roboto-regular.woff2</a>
+      <a class="mob-nav__link" href="../fonts/roboto-thin.eot">roboto-thin.eot</a>
+      <a class="mob-nav__link" href="../fonts/roboto-thin.svg">roboto-thin.svg</a>
+      <a class="mob-nav__link" href="../fonts/roboto-thin.ttf">roboto-thin.ttf</a>
+      <a class="mob-nav__link" href="../fonts/roboto-thin.woff">roboto-thin.woff</a>
+      <a class="mob-nav__link" href="../fonts/roboto-thin.woff2">roboto-thin.woff2</a>
+      <a class="mob-nav__link" href="../fonts/robotocondensed-regular.eot">robotocondensed-regular.eot</a>
+      <a class="mob-nav__link" href="../fonts/robotocondensed-regular.svg">robotocondensed-regular.svg</a>
+      <a class="mob-nav__link" href="../fonts/robotocondensed-regular.ttf">robotocondensed-regular.ttf</a>
+      <a class="mob-nav__link" href="../fonts/robotocondensed-regular.woff">robotocondensed-regular.woff</a>
+      <a class="mob-nav__link" href="../fonts/robotocondensed-regular.woff2">robotocondensed-regular.woff2</a>
+    </details>
+
+    <details class="mob-nav__group--collapsible">
+      <summary>Typography</summary>
+      <a class="mob-nav__link" href="../typography/typography.html">Font Styles</a>
+    </details>
+
+    <details class="mob-nav__group--collapsible">
+      <summary>Button</summary>
+      <a class="mob-nav__link" href="../buttons/buttons.html">All</a>
+      <a class="mob-nav__link" href="../buttons/buttons-primary.html">Primary</a>
+      <a class="mob-nav__link" href="../buttons/buttons-outline.html">Outline</a>
+      <a class="mob-nav__link" href="../buttons/buttons-link.html">Link</a>
+      <a class="mob-nav__link" href="../buttons/buttons-icon.html">Icon</a>
+    </details>
+
+    <details class="mob-nav__group--collapsible" open>
+      <summary>Forms</summary>
+      <a class="mob-nav__link is-active" href="text-input.html">Text Input</a>
+      <a class="mob-nav__link" href="../switch-toggle/switch-toggle.html">Switch Toggle</a>
+    </details>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="mob-layout__content">
+
+<h1>Text Input</h1>
+
+
+<!-- =========================================================
+     SECTION 1: INTERACTION STATES
+     Source: DefaultControls.xaml — Mobius_UI_Resources_Templates_TextBox
+     ========================================================= -->
+
+<h2>Interaction States</h2>
+
+<div class="states-list">
+
+  <!-- ===== Default ===== -->
+  <!-- XAML: Normal VisualState — BackgroundInputOutline border, ForegroundAction text -->
+  <div class="mob-field">
+    <label class="mob-field__label">Label:</label>
+<div class="mob-field__body">
+      <input class="mob-input" type="text" value="Default" />
+    </div>
+  </div>
+
+  <!-- ===== Hover ===== -->
+  <!-- XAML: MouseOver VisualState — border + foreground -> MouseOverPrimary -->
+  <div class="mob-field">
+    <label class="mob-field__label">Label:</label>
+<div class="mob-field__body">
+      <input class="mob-input is-hovered" type="text" value="Hover" />
+    </div>
+  </div>
+
+  <!-- ===== Focused ===== -->
+  <!-- XAML: Focused VisualState + FocusVisualStyle — 2px MouseOverPrimary border -->
+  <div class="mob-field">
+    <label class="mob-field__label">Label:</label>
+<div class="mob-field__body">
+      <input class="mob-input is-focused" type="text" value="Focused" />
+    </div>
+  </div>
+
+  <!-- ===== Read-only ===== -->
+  <!-- XAML: ReadOnly VisualState — background transparent, foreground -> ForegroundPrimary -->
+  <div class="mob-field">
+    <label class="mob-field__label">Label:</label>
+<div class="mob-field__body">
+      <input class="mob-input" type="text" value="Read-only" readonly />
+    </div>
+  </div>
+
+  <!-- ===== Placeholder ===== -->
+  <!-- XAML: _placeholderTextElement — watermark text, PlaceholderOpacity -->
+  <div class="mob-field">
+    <label class="mob-field__label">Label:</label>
+<div class="mob-field__body">
+      <input class="mob-input" type="text" placeholder="Placeholder" />
+    </div>
+  </div>
+
+  <!-- ===== Disabled ===== -->
+  <!-- XAML: Disabled VisualState — opacity -> DisabledOpacity, background transparent -->
+  <div class="mob-field">
+    <label class="mob-field__label">Label:</label>
+<div class="mob-field__body">
+      <input class="mob-input" type="text" value="Disabled" disabled />
+    </div>
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 2: VALIDATION / STATUS STATES
+     Source: FieldInput.xaml — VisualStateGroup "ShowStates"
+             SuggestionTextBox.xaml — VisualStateGroup "ShowStates"
+             DefaultControls.xaml — VisualStateGroup "ValidationStates"
+     ========================================================= -->
+
+<h2>Validation &amp; Status States</h2>
+
+<div class="states-list">
+
+  <!-- ===== Error / Invalid ===== -->
+  <!-- XAML: _validationElement — InformationRedBrush border, 2px
+       Triggered by ValidationStates → InvalidFocused / InvalidUnfocused -->
+  <div class="mob-field">
+    <label class="mob-field__label">Error:</label>
+<div class="mob-field__body">
+      <input class="mob-input is-invalid" type="text" value="Invalid entry" />
+    </div>
+  </div>
+
+  <!-- ===== Warning (with icon) ===== -->
+  <!-- XAML: ShowWarning — _validationVisualElement border -> InformationOrange, 2px
+       WarningSymbol Path: Icon_Status_WarningSm, Fill=InformationOrangeBrush
+       Icon rendered via CSS ::before pseudo-element (mask-image) -->
+  <div class="mob-field mob-field--warning">
+    <label class="mob-field__label">Warning:</label>
+    <div class="mob-field__body">
+      <input class="mob-input is-warning" type="text" value="Needs attention" />
+    </div>
+  </div>
+
+  <!-- ===== Info (with icon) ===== -->
+  <!-- XAML: ShowInfo (SuggestionTextBox only) — border -> InformationYellow, 2px
+       InfoSymbol Path: Icon_Status_CautionSm, Fill=InformationYellowBrush
+       Icon rendered via CSS ::before pseudo-element (mask-image) -->
+  <div class="mob-field mob-field--info">
+    <label class="mob-field__label">Info:</label>
+    <div class="mob-field__body">
+      <input class="mob-input is-info" type="text" value="For your information" />
+    </div>
+  </div>
+
+  <!-- ===== Working / OK (with icon) ===== -->
+  <!-- XAML: ShowWorking — _validationVisualElement border -> InformationGreen, 2px
+       WorkingSymbol Path: Icon_Status_OkaySm, Fill=InformationGreenBrush
+       Icon rendered via CSS ::before pseudo-element (mask-image) -->
+  <div class="mob-field mob-field--working">
+    <label class="mob-field__label">Working:</label>
+    <div class="mob-field__body">
+      <input class="mob-input is-working" type="text" value="Validated" />
+    </div>
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 3: UNIT LABEL
+     Source: FieldInput.xaml — PART_UnitLabel (column 3)
+             VisualStateGroup "ShowUnitLabelStates"
+     ========================================================= -->
+
+<h2>Unit Label</h2>
+
+<div class="states-list">
+
+  <!-- ===== With unit label ===== -->
+  <!-- XAML: PART_UnitLabel — TextBlock, Margin.Left=Size6 (6px) -->
+  <div class="mob-field">
+    <label class="mob-field__label">Distance:</label>
+<div class="mob-field__body">
+      <input class="mob-input" type="text" value="1500" />
+      <span class="mob-field__unit">mm</span>
+    </div>
+  </div>
+
+  <div class="mob-field">
+    <label class="mob-field__label">Angle:</label>
+<div class="mob-field__body">
+      <input class="mob-input" type="text" value="45" />
+      <span class="mob-field__unit">deg</span>
+    </div>
+  </div>
+
+  <div class="mob-field">
+    <label class="mob-field__label">Duration:</label>
+<div class="mob-field__body">
+      <input class="mob-input" type="text" value="30" />
+      <span class="mob-field__unit">sec</span>
+    </div>
+  </div>
+
+  <!-- ===== Unit label + warning ===== -->
+  <!-- XAML: ShowWarning with PART_UnitLabel visible — icon via ::before pseudo-element -->
+  <div class="mob-field mob-field--warning">
+    <label class="mob-field__label">Speed:</label>
+    <div class="mob-field__body">
+      <input class="mob-input is-warning" type="text" value="999" />
+      <span class="mob-field__unit">km/h</span>
+    </div>
+  </div>
+
+  <!-- ===== Disabled with unit ===== -->
+  <!-- XAML: IsEnabled=False — unit label Opacity dims to 0.5 -->
+  <div class="mob-field">
+    <label class="mob-field__label">Distance:</label>
+<div class="mob-field__body">
+      <input class="mob-input" type="text" value="0" disabled />
+      <span class="mob-field__unit">mm</span>
+    </div>
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 3b: HELPER TEXT
+     Source: GeneralConfiguration.xaml — TextBlock below input
+             (Grid.Row="2" Grid.Column="2" Margin="0,0,0,12")
+             ModeConfigurationSetup.xaml — same pattern
+     ========================================================= -->
+
+<h2>Helper Text</h2>
+
+<div class="states-list">
+
+  <!-- ===== Helper text — default ===== -->
+  <!-- XAML: GeneralConfiguration.xaml — TextBlock below IP input,
+       Text=LocalizedText.GeneralConfiguration.IpAddressOptionalPort
+       Margin="0,0,0,12", default font, same Grid.Column as input -->
+  <div class="mob-field">
+    <label class="mob-field__label">Address:</label>
+<div class="mob-field__body-wrap">
+      <div class="mob-field__body">
+        <input class="mob-input" type="text" value="127.0.0.1" />
+      </div>
+      <span class="mob-field__helper">(IP Address : Optional Port)</span>
+    </div>
+  </div>
+
+  <!-- ===== Helper text — with URL variant ===== -->
+  <!-- XAML: ModeConfigurationSetup.xaml — TextBlock below input,
+       Text=LocalizedText.ModeConfigurationSetup.IpAddressOptionalPortOrUrl -->
+  <div class="mob-field">
+    <label class="mob-field__label">Address:</label>
+<div class="mob-field__body-wrap">
+      <div class="mob-field__body">
+        <input class="mob-input" type="text" placeholder="192.168.1.100" />
+      </div>
+      <span class="mob-field__helper">(IP Address : Optional Port OR URL)</span>
+    </div>
+  </div>
+
+  <!-- ===== Helper text — with validation state ===== -->
+  <!-- XAML: Same pattern but input is in warning state -->
+  <div class="mob-field mob-field--warning">
+    <label class="mob-field__label">Address:</label>
+    <div class="mob-field__body-wrap">
+      <div class="mob-field__body">
+        <input class="mob-input is-warning" type="text" value="not-an-ip" />
+      </div>
+      <span class="mob-field__helper">(IP Address : Optional Port)</span>
+    </div>
+  </div>
+
+  <!-- ===== Helper text — disabled ===== -->
+  <div class="mob-field">
+    <label class="mob-field__label">Address:</label>
+<div class="mob-field__body-wrap">
+      <div class="mob-field__body">
+        <input class="mob-input" type="text" value="10.0.0.1" disabled />
+      </div>
+      <span class="mob-field__helper">(IP Address : Optional Port)</span>
+    </div>
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 4: AUTO-WIDTH LABEL
+     Source: PositionHistory/DataTemplates/Templates.xaml
+             FieldInput with LabelMinWidth="0"
+             Labels auto-size to content instead of 130px min.
+             Wrap in .mob-field-group to mimic SharedSizeGroup
+             alignment (all labels match the widest).
+     ========================================================= -->
+
+<h2>Auto-Width Label</h2>
+
+<div class="states-list">
+
+  <!-- ===== Position history example — matches screenshot ===== -->
+  <!-- XAML: PositionHistorySettingsVM DataTemplate
+       Two FieldInput controls with LabelMinWidth="0", MinWidth="300"
+       First has PhysicalType="Distance" (unit from UoM system)
+       Second has PhysicalType="Unitless" with manual "min" unit TextBlock -->
+  <div class="mob-field-group" style="min-width: 300px;">
+
+    <!-- XAML: FieldInput — MaxHistoryMeters, LabelMinWidth="0" -->
+    <div class="mob-field mob-field--auto-label">
+      <label class="mob-field__label">Maximum length:</label>
+    <div class="mob-field__body">
+        <input class="mob-input" type="text" value="3,281" />
+        <span class="mob-field__unit">ft</span>
+      </div>
+    </div>
+
+    <!-- XAML: FieldInput — MaxHistoryMinutes, LabelMinWidth="0"
+         Unit "min" is a separate TextBlock with Margin.Horizontal="-8" -->
+    <div class="mob-field mob-field--auto-label">
+      <label class="mob-field__label">Maximum time:</label>
+    <div class="mob-field__body">
+        <input class="mob-input" type="text" value="10" />
+        <span class="mob-field__unit">min</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ===== Comparison: same fields with default label width ===== -->
+  <p style="font: var(--font-Sm); color: var(--ForegroundPrimary); margin: 12px 0 4px;">
+    Compare: same fields using default <code style="font-family: var(--font-monospace);">.mob-field</code> (130px min label)
+  </p>
+
+  <div class="mob-field">
+    <label class="mob-field__label">Maximum length:</label>
+<div class="mob-field__body">
+      <input class="mob-input" type="text" value="3,281" />
+      <span class="mob-field__unit">ft</span>
+    </div>
+  </div>
+
+  <div class="mob-field">
+    <label class="mob-field__label">Maximum time:</label>
+<div class="mob-field__body">
+      <input class="mob-input" type="text" value="10" />
+      <span class="mob-field__unit">min</span>
+    </div>
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 5: VERTICAL LAYOUT
+     Source: FieldInput.xaml — Mobius_UI_Common_Templates_FieldInputVertical
+             Row 0: label (Height=TouchSize), Row 1: input
+     ========================================================= -->
+
+<h2>Vertical Layout</h2>
+
+<div class="states-list">
+
+  <!-- ===== Vertical — default ===== -->
+  <!-- XAML: FieldInputVertical — label row Height=TouchSize, input in row 1 -->
+  <div class="mob-field mob-field--vertical">
+    <label class="mob-field__label">Vehicle Name:</label>
+    <div class="mob-field__body">
+      <input class="mob-input" type="text" value="AV-001" />
+    </div>
+  </div>
+
+  <!-- ===== Vertical — with warning icon ===== -->
+  <!-- XAML: FieldInputVertical — icon expander sits left of label in row 0
+       Icon rendered via CSS ::before on .mob-field__label -->
+  <div class="mob-field mob-field--vertical mob-field--warning">
+    <label class="mob-field__label">Path Name:</label>
+    <div class="mob-field__body">
+      <input class="mob-input is-warning" type="text" value="Duplicate name" />
+    </div>
+  </div>
+
+  <!-- ===== Vertical — with working icon ===== -->
+  <!-- XAML: FieldInputVertical — icon expander sits left of label in row 0
+       Icon rendered via CSS ::before on .mob-field__label -->
+  <div class="mob-field mob-field--vertical mob-field--working">
+    <label class="mob-field__label">Zone ID:</label>
+    <div class="mob-field__body">
+      <input class="mob-input is-working" type="text" value="ZONE-14" />
+    </div>
+  </div>
+
+  <!-- ===== Vertical — placeholder ===== -->
+  <div class="mob-field mob-field--vertical">
+    <label class="mob-field__label">Description:</label>
+    <div class="mob-field__body">
+      <input class="mob-input" type="text" placeholder="Enter description..." />
+    </div>
+  </div>
+
+  <!-- ===== Vertical — disabled ===== -->
+  <div class="mob-field mob-field--vertical">
+    <label class="mob-field__label">Serial Number:</label>
+    <div class="mob-field__body">
+      <input class="mob-input" type="text" value="SN-00482" disabled />
+    </div>
+  </div>
+
+</div>
+
+  </main>
+
+</div>
+
+</body>
+</html>

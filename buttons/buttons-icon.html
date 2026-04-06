@@ -7,17 +7,8 @@
   <link rel="stylesheet" href="../styles/base.css" />
   <link rel="stylesheet" href="buttons.css" />
   <style>
-    @font-face {
-      font-family: "Mobius-System-Icons";
-      src:
-        url("../fonts/mobius-system-icons.woff2") format("woff2"),
-        url("../fonts/mobius-system-icons.woff") format("woff");
-      font-weight: 400;
-      font-style: normal;
-      font-display: block;
-    }
     body {
-      margin: 40px;
+      margin: 0;
       font: var(--font-default);
       color: var(--ForegroundPrimary);
       background: var(--BackgroundPrimary);
@@ -57,29 +48,101 @@
 </head>
 <body>
 
-<h1>Simple Icon Buttons</h1>
+<div class="mob-layout">
+  <nav class="mob-nav">
+    <div class="mob-nav__header">
+      <span class="mob-nav__logo">&#xE555;</span>
+      <span class="mob-nav__title">Mobius Blazor Components</span>
+    </div>
 
-<div class="btn-grid">
+    <!-- Tokens / Styles — collapsed by default -->
+    <details class="mob-nav__group--collapsible">
+      <summary>Tokens / Styles</summary>
+      <a class="mob-nav__download-all" href="../styles/tokens-styles-all.zip" download>&#x2913; Download All</a>
+      <a class="mob-nav__link" href="../styles/base.css">base.css</a>
+      <a class="mob-nav__link" href="../styles/LightTheme.css">LightTheme.css</a>
+      <a class="mob-nav__link" href="../styles/fontTokens.css">fontTokens.css</a>
+      <a class="mob-nav__link" href="../styles/spacingTokens.css">spacingTokens.css</a>
+      <a class="mob-nav__link" href="../styles/fontImport.css">fontImport.css</a>
+      <a class="mob-nav__link" href="../styles/typography.css">typography.css</a>
+      <a class="mob-nav__link" href="../styles/nav.css">nav.css</a>
+    </details>
 
-  <!-- ===== HEADER ROW ===== -->
-  <div class="btn-grid__cell btn-grid__cell--corner"></div>
-  <div class="btn-grid__cell btn-grid__cell--header">Normal</div>
-  <div class="btn-grid__cell btn-grid__cell--header">Hover</div>
-  <div class="btn-grid__cell btn-grid__cell--header">Pressed</div>
-  <div class="btn-grid__cell btn-grid__cell--header">Disabled</div>
-  <div class="btn-grid__cell btn-grid__cell--header">Focused</div>
-  <div class="btn-grid__cell btn-grid__cell--header">Notes</div>
+    <!-- Fonts — collapsed by default -->
+    <details class="mob-nav__group--collapsible">
+      <summary>Fonts</summary>
+      <a class="mob-nav__download-all" href="../fonts/fonts-all.zip" download>&#x2913; Download All</a>
+      <a class="mob-nav__link" href="../fonts/mobius-system-icons.woff">mobius-system-icons.woff</a>
+      <a class="mob-nav__link" href="../fonts/mobius-system-icons.woff2">mobius-system-icons.woff2</a>
+      <a class="mob-nav__link" href="../fonts/roboto-light.eot">roboto-light.eot</a>
+      <a class="mob-nav__link" href="../fonts/roboto-light.svg">roboto-light.svg</a>
+      <a class="mob-nav__link" href="../fonts/roboto-light.ttf">roboto-light.ttf</a>
+      <a class="mob-nav__link" href="../fonts/roboto-light.woff">roboto-light.woff</a>
+      <a class="mob-nav__link" href="../fonts/roboto-light.woff2">roboto-light.woff2</a>
+      <a class="mob-nav__link" href="../fonts/roboto-regular.eot">roboto-regular.eot</a>
+      <a class="mob-nav__link" href="../fonts/roboto-regular.svg">roboto-regular.svg</a>
+      <a class="mob-nav__link" href="../fonts/roboto-regular.ttf">roboto-regular.ttf</a>
+      <a class="mob-nav__link" href="../fonts/roboto-regular.woff">roboto-regular.woff</a>
+      <a class="mob-nav__link" href="../fonts/roboto-regular.woff2">roboto-regular.woff2</a>
+      <a class="mob-nav__link" href="../fonts/roboto-thin.eot">roboto-thin.eot</a>
+      <a class="mob-nav__link" href="../fonts/roboto-thin.svg">roboto-thin.svg</a>
+      <a class="mob-nav__link" href="../fonts/roboto-thin.ttf">roboto-thin.ttf</a>
+      <a class="mob-nav__link" href="../fonts/roboto-thin.woff">roboto-thin.woff</a>
+      <a class="mob-nav__link" href="../fonts/roboto-thin.woff2">roboto-thin.woff2</a>
+      <a class="mob-nav__link" href="../fonts/robotocondensed-regular.eot">robotocondensed-regular.eot</a>
+      <a class="mob-nav__link" href="../fonts/robotocondensed-regular.svg">robotocondensed-regular.svg</a>
+      <a class="mob-nav__link" href="../fonts/robotocondensed-regular.ttf">robotocondensed-regular.ttf</a>
+      <a class="mob-nav__link" href="../fonts/robotocondensed-regular.woff">robotocondensed-regular.woff</a>
+      <a class="mob-nav__link" href="../fonts/robotocondensed-regular.woff2">robotocondensed-regular.woff2</a>
+    </details>
 
-  <!-- ===== ROW: Simple Icon Button ===== -->
-  <!-- XAML: Mobius_UI_Resources_Styles_SimpleIconButton → Templates_SimpleIconButton -->
-  <div class="btn-grid__cell btn-grid__cell--label">Icon</div>
-  <div class="btn-grid__cell"><button class="mob-btn-icon" data-icon="&#xE555;"></button></div>
-  <div class="btn-grid__cell"><button class="is-hovered mob-btn-icon" data-icon="&#xE555;"></button></div>
-  <div class="btn-grid__cell"><button class="is-pressed mob-btn-icon" data-icon="&#xE555;"></button></div>
-  <div class="btn-grid__cell"><button class="mob-btn-icon" data-icon="&#xE555;" disabled></button></div>
-  <div class="btn-grid__cell"><button class="mob-btn-icon is-focused" data-icon="&#xE555;"></button></div>
-  <div class="btn-grid__cell btn-grid__cell--notes"><code>.mob-btn-icon</code> + <code>data-icon</code></div>
+    <details class="mob-nav__group--collapsible">
+      <summary>Typography</summary>
+      <a class="mob-nav__link" href="../typography/typography.html">Font Styles</a>
+    </details>
 
+    <details class="mob-nav__group--collapsible" open>
+      <summary>Button</summary>
+      <a class="mob-nav__link" href="buttons.html">All</a>
+      <a class="mob-nav__link" href="buttons-primary.html">Primary</a>
+      <a class="mob-nav__link" href="buttons-outline.html">Outline</a>
+      <a class="mob-nav__link" href="buttons-link.html">Link</a>
+      <a class="mob-nav__link is-active" href="buttons-icon.html">Icon</a>
+    </details>
+
+    <details class="mob-nav__group--collapsible">
+      <summary>Forms</summary>
+      <a class="mob-nav__link" href="../text-input/text-input.html">Text Input</a>
+      <a class="mob-nav__link" href="../switch-toggle/switch-toggle.html">Switch Toggle</a>
+    </details>
+  </nav>
+
+  <main class="mob-layout__content">
+    <h1>Simple Icon Buttons</h1>
+
+    <div class="btn-grid">
+
+      <!-- ===== HEADER ROW ===== -->
+      <div class="btn-grid__cell btn-grid__cell--corner"></div>
+      <div class="btn-grid__cell btn-grid__cell--header">Normal</div>
+      <div class="btn-grid__cell btn-grid__cell--header">Hover</div>
+      <div class="btn-grid__cell btn-grid__cell--header">Pressed</div>
+      <div class="btn-grid__cell btn-grid__cell--header">Disabled</div>
+      <div class="btn-grid__cell btn-grid__cell--header">Focused</div>
+      <div class="btn-grid__cell btn-grid__cell--header">Notes</div>
+
+      <!-- ===== ROW: Simple Icon Button ===== -->
+      <!-- XAML: Mobius_UI_Resources_Styles_SimpleIconButton → Templates_SimpleIconButton -->
+      <div class="btn-grid__cell btn-grid__cell--label">Icon</div>
+      <div class="btn-grid__cell"><button class="mob-btn-icon" data-icon="&#xE555;"></button></div>
+      <div class="btn-grid__cell"><button class="is-hovered mob-btn-icon" data-icon="&#xE555;"></button></div>
+      <div class="btn-grid__cell"><button class="is-pressed mob-btn-icon" data-icon="&#xE555;"></button></div>
+      <div class="btn-grid__cell"><button class="mob-btn-icon" data-icon="&#xE555;" disabled></button></div>
+      <div class="btn-grid__cell"><button class="mob-btn-icon is-focused" data-icon="&#xE555;"></button></div>
+      <div class="btn-grid__cell btn-grid__cell--notes"><code>.mob-btn-icon</code> + <code>data-icon</code></div>
+
+    </div>
+  </main>
 </div>
 
 </body>
