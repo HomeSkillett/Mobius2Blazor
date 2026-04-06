@@ -43,10 +43,39 @@
     </div>
 
   HTML structure (horizontal — with status icon):
-    <div class="mob-field mob-field--warning">
+    Icon uses negative margin so it does NOT push the input over.
+    <div class="mob-field">
       <label class="mob-field__label">Warning</label>
+      <span class="mob-field__icon mob-field__icon--warning">
+        <svg>...</svg>
+      </span>
       <div class="mob-field__body">
         <input class="mob-input is-warning" />
+      </div>
+    </div>
+
+  HTML structure (horizontal — with helper text):
+    <div class="mob-field">
+      <label class="mob-field__label">Label</label>
+      <div class="mob-field__body-wrap">
+        <div class="mob-field__body">
+          <input class="mob-input" />
+        </div>
+        <span class="mob-field__helper">(hint text)</span>
+      </div>
+    </div>
+
+  HTML structure (horizontal — helper text + status icon):
+    <div class="mob-field">
+      <label class="mob-field__label">Warning</label>
+      <span class="mob-field__icon mob-field__icon--warning">
+        <svg>...</svg>
+      </span>
+      <div class="mob-field__body-wrap">
+        <div class="mob-field__body">
+          <input class="mob-input is-warning" />
+        </div>
+        <span class="mob-field__helper">(hint text)</span>
       </div>
     </div>
 
@@ -202,9 +231,10 @@
          Grid columns: Auto(label) | Auto(symbol) | *(input) | Auto(unit)
          Icon is in column 1 — BETWEEN the label and the input.
 
-   HTML structure:
+   HTML structure (see doc header for all variants):
      <div class="mob-field">
        <label class="mob-field__label">Label</label>
+       <!-- optional: <span class="mob-field__icon mob-field__icon--warning"><svg>…</svg></span> -->
        <div class="mob-field__body">
          <input class="mob-input" />
          <span class="mob-field__unit">mm</span>       (optional)
@@ -224,21 +254,26 @@
    Column 0 is Auto with SharedSizeGroup — label auto-sizes to the
    widest label in the group. FieldLabelMinWidth (130px) is the floor.
    In Blazor, each form section acts as its own SharedSizeGroup. */
+/* Label always vertically centers to the input row, even when
+   body-wrap is taller due to helper text below the input. */
 .mob-field__label {
   flex-shrink: 0;
   min-width: var(--field-label-min-width);
   color: var(--ForegroundPrimary);
   font: var(--font-default);
+  align-self: flex-start;
+  min-height: var(--touch);
+  display: flex;
+  align-items: center;
 }
 
 /* Input + accessories row */
-/* XAML: Grid columns 1-3 (symbol + input + unit)
-   padding-left always reserves the icon column (24px) so inputs
-   align whether or not a status icon is visible. */
+/* XAML: Grid columns 2-3 (input + unit).
+   padding-left reserves consistent space for the icon column (24px)
+   so inputs align whether or not an icon is present. */
 .mob-field__body {
   display: flex;
   align-items: center;
-  position: relative;
   padding-left: var(--spacing-label-to-control-lg);
 }
 
@@ -249,58 +284,39 @@
 
 
 /* =============================================
-   STATUS ICON  (pseudo-element on .mob-field__body)
-   XAML: DetailsPopUp > Grid > Path (WarningSymbol / InfoSymbol / WorkingSymbol)
-         Icon_Status_WarningSm  12x12, fill=InformationOrange
-         Icon_Status_CautionSm  12x12, fill=InformationYellow
-         Icon_Status_OkaySm     12x12, fill=InformationGreen
-         Mobius_UI_Resources_Styles_PathIconSm: Width=12, Height=12
+   STATUS ICON  (.mob-field__icon)
+   XAML: SymbolSize = LabelToControlDistanceLarge (24px).
+   Icon column sits between label and input in the XAML Grid.
+   In HTML, the icon uses negative margin so it does NOT push
+   the input or helper text to the right — it floats visually
+   between label and input without affecting flow.
 
-   XAML: SymbolSize = LabelToControlDistanceLarge (24px) — the icon
-         container is 24x24, with the 12x12 SVG centered inside.
-         In CSS we use a ::before pseudo on .mob-field__body with
-         mask-image for the SVG shape and background-color for fill.
-         No empty spacer elements needed — icon only renders when
-         a modifier class (.mob-field--warning etc.) is present.
+   The body / body-wrap always has padding-left equal to the
+   icon column width, so every input starts at the same X
+   regardless of whether an icon is present.
    ============================================= */
 
-/* Shared pseudo-element setup — icon only renders when modifier present */
-.mob-field--warning .mob-field__body::before,
-.mob-field--info .mob-field__body::before,
-.mob-field--working .mob-field__body::before {
-  content: "";
-  position: absolute;
-  left: calc((var(--spacing-label-to-control-lg) - var(--icon-sm)) / 2);
-  top: 50%;
-  transform: translateY(-50%);
+.mob-field__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: var(--spacing-label-to-control-lg);   /* 24px — matches XAML SymbolSize */
+  min-height: var(--touch);                    /* match input height for vertical centering */
+  align-self: flex-start;                      /* pin to input row when helper text present */
+  margin-right: calc(-1 * var(--spacing-label-to-control-lg)); /* collapse flow space */
+  z-index: 1;
+}
+
+.mob-field__icon svg {
   width: var(--icon-sm);
   height: var(--icon-sm);
-  mask-size: contain;
-  mask-repeat: no-repeat;
-  -webkit-mask-size: contain;
-  -webkit-mask-repeat: no-repeat;
+  fill: currentColor;
 }
 
-/* XAML: WarningSymbol — Icon_Status_WarningSm, Fill=InformationOrangeBrush */
-.mob-field--warning .mob-field__body::before {
-  background-color: var(--InformationOrange);
-  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M5,0L0,9.2L1.8,12h8.3L12,9.2L7,0H5z M7,10H5V8h2V10z M7,7H5V3h2V7z'/%3E%3C/svg%3E");
-  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M5,0L0,9.2L1.8,12h8.3L12,9.2L7,0H5z M7,10H5V8h2V10z M7,7H5V3h2V7z'/%3E%3C/svg%3E");
-}
-
-/* XAML: InfoSymbol — Icon_Status_CautionSm, Fill=InformationYellowBrush */
-.mob-field--info .mob-field__body::before {
-  background-color: var(--InformationYellow);
-  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M5,0L0,5v2l5,5h2l5-5V5L7,0H5z M7,10H5V8h2V10z M7,7H5V2h2V7z'/%3E%3C/svg%3E");
-  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M5,0L0,5v2l5,5h2l5-5V5L7,0H5z M7,10H5V8h2V10z M7,7H5V2h2V7z'/%3E%3C/svg%3E");
-}
-
-/* XAML: WorkingSymbol — Icon_Status_OkaySm, Fill=InformationGreenBrush */
-.mob-field--working .mob-field__body::before {
-  background-color: var(--InformationGreen);
-  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M12,6c0,3.3-2.7,6-6,6S0,9.3,0,6s2.7-6,6-6S12,2.7,12,6z M2,5v1.4L4.6,9h0.8L10,4.4V3H8.6L5,6.6L3.4,5H2z'/%3E%3C/svg%3E");
-  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M12,6c0,3.3-2.7,6-6,6S0,9.3,0,6s2.7-6,6-6S12,2.7,12,6z M2,5v1.4L4.6,9h0.8L10,4.4V3H8.6L5,6.6L3.4,5H2z'/%3E%3C/svg%3E");
-}
+.mob-field__icon--warning { color: var(--InformationOrange); }
+.mob-field__icon--info    { color: var(--InformationYellow); }
+.mob-field__icon--working { color: var(--InformationGreen); }
 
 
 /* =============================================
@@ -347,9 +363,13 @@
   height: var(--touch);
 }
 
-/* Vertical layout: no icon column padding on body — input stretches full width.
-   Status icons move to the label instead (see ::before rules below). */
+/* Vertical layout: no icon column — input stretches full width.
+   Status icons move to the label row instead (see ::before rules below). */
 .mob-field--vertical .mob-field__body {
+  padding-left: 0;
+}
+
+.mob-field--vertical .mob-field__body-wrap {
   padding-left: 0;
 }
 
@@ -417,16 +437,24 @@
 }
 
 /* When in a horizontal field, helper text aligns with the input,
-   not the label. Skip past label + icon columns. */
+   not the label. body-wrap takes the same flex space as body would.
+   padding-left matches the icon-column reservation so helper text
+   and input share the exact same left edge. */
 .mob-field__body-wrap {
   display: flex;
   flex-direction: column;
+  flex: 1 1 auto;
+  min-width: 0;
+  padding-left: var(--spacing-label-to-control-lg);
 }
 
+/* Inside body-wrap the padding is on the wrapper — reset body's own padding */
 .mob-field__body-wrap .mob-field__body {
   display: flex;
   align-items: center;
+  padding-left: 0;
 }
+
 
 /* Disabled field dims helper text too */
 .mob-field:has(.mob-input:disabled) .mob-field__helper {
