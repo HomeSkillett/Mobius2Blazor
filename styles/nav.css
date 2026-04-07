@@ -76,8 +76,21 @@
 .mob-nav__title {
   font: var(--font-default);
   font-weight: var(--font-bold);
-  color: #555;
+  color: var(--SelectionSecondary);
   line-height: 1.2;
+}
+
+/* Header link — wraps logo + title, inherits layout from header flex */
+.mob-nav__header-link {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-label-to-control);
+  text-decoration: none;
+  min-width: 0;
+}
+
+.mob-nav__header-link:hover .mob-nav__title {
+  color: var(--MouseOverPrimary);
 }
 
 
@@ -93,7 +106,7 @@
   padding: 0 var(--spacing-label-to-control-md) var(--size-6);
   font: var(--font-default);
   font-weight: var(--font-bold);
-  color: #555;
+  color: var(--ForegroundPrimary);
 }
 
 
@@ -115,7 +128,7 @@
   padding: 0 var(--spacing-label-to-control-md) var(--size-6);
   font: var(--font-default);
   font-weight: var(--font-bold);
-  color: #555;
+  color: var(--ForegroundPrimary);
   cursor: pointer;
   list-style: none;            /* hide default marker */
 }
@@ -124,7 +137,7 @@
 .mob-nav__group--collapsible summary::before {
   content: "\25B6";            /* right-pointing triangle ▶ */
   font-size: var(--icon-adorner);
-  color: #555;
+  color: var(--ForegroundPrimary);
   transition: transform var(--transition-mouse-over) ease;
 }
 
@@ -138,14 +151,14 @@
 }
 
 .mob-nav__group--collapsible summary:hover {
-  color: #333;
+  color: var(--ForegroundStrong);
 }
 
 /* Links inside collapsible groups */
 .mob-nav__group--collapsible .mob-nav__link {
   padding-left: calc(var(--spacing-label-to-control-md) + var(--spacing-label-to-control-md));
   font: var(--font-default);
-  color: #555;
+  color: var(--ForegroundPrimary);
 }
 
 /* "Download All" link at top of collapsible group */
@@ -172,7 +185,7 @@
   display: block;
   padding: 8px var(--spacing-label-to-control-md) 8px var(--size-24);
   font: var(--font-default);
-  color: #555;
+  color: var(--ForegroundPrimary);
   text-decoration: none;
   transition: background-color var(--transition-mouse-over) ease,
               color var(--transition-mouse-over) ease;
@@ -180,7 +193,7 @@
 
 .mob-nav__link:hover {
   background-color: var(--MouseOverBackground);
-  color: #333;
+  color: var(--ForegroundStrong);
 }
 
 /* Active / current page */

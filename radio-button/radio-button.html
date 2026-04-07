@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mobius — Radio Button States</title>
+  <link id="mob-theme-link" rel="stylesheet" href="../styles/LightTheme.css" />
+  <link rel="stylesheet" href="../styles/base.css" />
+  <link rel="stylesheet" href="radio-button.css" />
+  <style>
+    body { margin: 0; }
+    h1 {
+      font: var(--font-hdrMd);
+      margin: 0 0 32px;
+      color: var(--ForegroundStrong);
+    }
+    h2 {
+      font: var(--font-hdrSm);
+      margin: 40px 0 16px;
+      color: var(--ForegroundStrong);
+    }
+    h2:first-of-type { margin-top: 0; }
+    .states-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-field);
+      max-width: 540px;
+    }
+    .section-divider {
+      border: none;
+      border-top: var(--line-size) solid var(--InnerLines);
+      margin: 32px 0 0;
+    }
+  </style>
+</head>
+<body>
+
+<div class="mob-layout">
+
+  <!-- Sidebar Navigation -->
+  <nav class="mob-nav">
+    <div class="mob-nav__header">
+      <a class="mob-nav__header-link" href="../index.html">
+      <span class="mob-nav__logo">&#xE555;</span>
+      <span class="mob-nav__title">Mobius Blazor Components</span>
+      </a>
+      <button class="mob-theme-btn" aria-label="Theme settings">&#xE50D;</button>
+      <div class="mob-theme-menu">
+        <div class="mob-theme-menu__heading">THEME</div>
+        <button class="mob-theme-menu__item is-active" data-theme="Light">
+          <span class="mob-theme-swatches"><span class="mob-theme-swatch"></span><span class="mob-theme-swatch"></span><span class="mob-theme-swatch"></span><span class="mob-theme-swatch"></span></span>
+          <span class="mob-theme-menu__label">Light</span>
+          <span class="mob-theme-menu__check">&#x2713;</span>
+        </button>
+        <button class="mob-theme-menu__item" data-theme="Dark">
+          <span class="mob-theme-swatches"><span class="mob-theme-swatch"></span><span class="mob-theme-swatch"></span><span class="mob-theme-swatch"></span><span class="mob-theme-swatch"></span></span>
+          <span class="mob-theme-menu__label">Dark</span>
+          <span class="mob-theme-menu__check">&#x2713;</span>
+        </button>
+        <button class="mob-theme-menu__item" data-theme="Blackout">
+          <span class="mob-theme-swatches"><span class="mob-theme-swatch"></span><span class="mob-theme-swatch"></span><span class="mob-theme-swatch"></span><span class="mob-theme-swatch"></span></span>
+          <span class="mob-theme-menu__label">Blackout</span>
+          <span class="mob-theme-menu__check">&#x2713;</span>
+        </button>
+        <button class="mob-theme-menu__item" data-theme="Blue">
+          <span class="mob-theme-swatches"><span class="mob-theme-swatch"></span><span class="mob-theme-swatch"></span><span class="mob-theme-swatch"></span><span class="mob-theme-swatch"></span></span>
+          <span class="mob-theme-menu__label">Blue</span>
+          <span class="mob-theme-menu__check">&#x2713;</span>
+        </button>
+        <button class="mob-theme-menu__item" data-theme="Sunlight">
+          <span class="mob-theme-swatches"><span class="mob-theme-swatch"></span><span class="mob-theme-swatch"></span><span class="mob-theme-swatch"></span><span class="mob-theme-swatch"></span></span>
+          <span class="mob-theme-menu__label">Sunlight</span>
+          <span class="mob-theme-menu__check">&#x2713;</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Tokens / Styles — collapsed by default -->
+    <details class="mob-nav__group--collapsible">
+      <summary>Tokens / Styles</summary>
+      <a class="mob-nav__download-all" href="../styles/tokens-styles-all.zip" download>&#x2913; Download All</a>
+      <a class="mob-nav__link" href="../styles/base.css">base.css</a>
+      <a class="mob-nav__link" href="../styles/LightTheme.css">LightTheme.css</a>
+      <a class="mob-nav__link" href="../styles/fontTokens.css">fontTokens.css</a>
+      <a class="mob-nav__link" href="../styles/spacingTokens.css">spacingTokens.css</a>
+      <a class="mob-nav__link" href="../styles/fontImport.css">fontImport.css</a>
+      <a class="mob-nav__link" href="../styles/typography.css">typography.css</a>
+      <a class="mob-nav__link" href="../styles/nav.css">nav.css</a>
+    </details>
+
+    <!-- Fonts — collapsed by default -->
+    <details class="mob-nav__group--collapsible">
+      <summary>Fonts</summary>
+      <a class="mob-nav__download-all" href="../fonts/fonts-all.zip" download>&#x2913; Download All</a>
+      <a class="mob-nav__link" href="../fonts/mobius-system-icons.woff">mobius-system-icons.woff</a>
+      <a class="mob-nav__link" href="../fonts/mobius-system-icons.woff2">mobius-system-icons.woff2</a>
+      <a class="mob-nav__link" href="../fonts/roboto-light.eot">roboto-light.eot</a>
+      <a class="mob-nav__link" href="../fonts/roboto-light.svg">roboto-light.svg</a>
+      <a class="mob-nav__link" href="../fonts/roboto-light.ttf">roboto-light.ttf</a>
+      <a class="mob-nav__link" href="../fonts/roboto-light.woff">roboto-light.woff</a>
+      <a class="mob-nav__link" href="../fonts/roboto-light.woff2">roboto-light.woff2</a>
+      <a class="mob-nav__link" href="../fonts/roboto-regular.eot">roboto-regular.eot</a>
+      <a class="mob-nav__link" href="../fonts/roboto-regular.svg">roboto-regular.svg</a>
+      <a class="mob-nav__link" href="../fonts/roboto-regular.ttf">roboto-regular.ttf</a>
+      <a class="mob-nav__link" href="../fonts/roboto-regular.woff">roboto-regular.woff</a>
+      <a class="mob-nav__link" href="../fonts/roboto-regular.woff2">roboto-regular.woff2</a>
+      <a class="mob-nav__link" href="../fonts/roboto-thin.eot">roboto-thin.eot</a>
+      <a class="mob-nav__link" href="../fonts/roboto-thin.svg">roboto-thin.svg</a>
+      <a class="mob-nav__link" href="../fonts/roboto-thin.ttf">roboto-thin.ttf</a>
+      <a class="mob-nav__link" href="../fonts/roboto-thin.woff">roboto-thin.woff</a>
+      <a class="mob-nav__link" href="../fonts/roboto-thin.woff2">roboto-thin.woff2</a>
+      <a class="mob-nav__link" href="../fonts/robotocondensed-regular.eot">robotocondensed-regular.eot</a>
+      <a class="mob-nav__link" href="../fonts/robotocondensed-regular.svg">robotocondensed-regular.svg</a>
+      <a class="mob-nav__link" href="../fonts/robotocondensed-regular.ttf">robotocondensed-regular.ttf</a>
+      <a class="mob-nav__link" href="../fonts/robotocondensed-regular.woff">robotocondensed-regular.woff</a>
+      <a class="mob-nav__link" href="../fonts/robotocondensed-regular.woff2">robotocondensed-regular.woff2</a>
+    </details>
+
+    <details class="mob-nav__group--collapsible">
+      <summary>Typography</summary>
+      <a class="mob-nav__link" href="../typography/typography.html">Font Styles</a>
+    </details>
+
+    <details class="mob-nav__group--collapsible">
+      <summary>Button</summary>
+      <a class="mob-nav__link" href="../buttons/buttons.html">All</a>
+      <a class="mob-nav__link" href="../buttons/buttons-primary.html">Primary</a>
+      <a class="mob-nav__link" href="../buttons/buttons-outline.html">Outline</a>
+      <a class="mob-nav__link" href="../buttons/buttons-link.html">Link</a>
+      <a class="mob-nav__link" href="../buttons/buttons-icon.html">Icon</a>
+    </details>
+
+    <details class="mob-nav__group--collapsible" open>
+      <summary>Forms</summary>
+      <a class="mob-nav__link" href="../text-input/text-input.html">Text Input</a>
+      <a class="mob-nav__link" href="../switch-toggle/switch-toggle.html">Switch Toggle</a>
+      <a class="mob-nav__link" href="../combobox/combobox.html">ComboBox</a>
+      <a class="mob-nav__link is-active" href="radio-button.html">Radio Button</a>
+    </details>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="mob-layout__content">
+
+<h1>Radio Button</h1>
+
+
+<!-- =========================================================
+     SECTION 1: INTERACTION STATES (standalone radios)
+     Source: DefaultControls.xaml — Mobius_UI_Resources_Templates_RadioButton
+     ========================================================= -->
+
+<h2>Interaction States</h2>
+
+<div class="states-list">
+
+  <!-- ===== Default (unchecked) ===== -->
+  <!-- XAML: Normal VisualState — BackgroundInputOutline border, BackgroundInput bg -->
+  <label class="mob-radio">
+    <input class="mob-radio__input" type="radio" name="states-demo" />
+    <!-- XAML: ContentControl — Foreground=ForegroundPrimary -->
+    <span class="mob-radio__label">Default</span>
+  </label>
+
+  <!-- ===== Checked ===== -->
+  <!-- XAML: Checked VisualState — CheckMark Opacity -> 1.0, duration 150ms -->
+  <label class="mob-radio">
+    <input class="mob-radio__input" type="radio" name="states-demo" checked />
+    <span class="mob-radio__label">Checked</span>
+  </label>
+
+  <!-- ===== Hover (unchecked) ===== -->
+  <!-- XAML: MouseOver — border + CheckMark bg -> MouseOverPrimary -->
+  <label class="mob-radio">
+    <input class="mob-radio__input is-hovered" type="radio" name="states-hover" />
+    <span class="mob-radio__label">Hover (unchecked)</span>
+  </label>
+
+  <!-- ===== Hover (checked) ===== -->
+  <!-- XAML: MouseOver + Checked — border -> MouseOverPrimary, dot -> MouseOverPrimary -->
+  <label class="mob-radio">
+    <input class="mob-radio__input is-hovered is-checked" type="radio" name="states-hover-checked" />
+    <span class="mob-radio__label">Hover (checked)</span>
+  </label>
+
+  <!-- ===== Focused ===== -->
+  <!-- XAML: Focused — border + CheckMark bg -> MouseOverPrimary,
+       FocusVisualStyle adorner = 2px outline -->
+  <label class="mob-radio">
+    <input class="mob-radio__input is-focused" type="radio" name="states-focus" />
+    <span class="mob-radio__label">Focused</span>
+  </label>
+
+  <!-- ===== Focused + Checked ===== -->
+  <!-- XAML: Focused + Checked — outline ring + cyan dot -->
+  <label class="mob-radio">
+    <input class="mob-radio__input is-focused is-checked" type="radio" name="states-focus-checked" />
+    <span class="mob-radio__label">Focused (checked)</span>
+  </label>
+
+  <!-- ===== Disabled (unchecked) ===== -->
+  <!-- XAML: Disabled — inputBackground Opacity -> 0, templateRoot -> DisabledOpacity -->
+  <label class="mob-radio">
+    <input class="mob-radio__input" type="radio" name="states-disabled" disabled />
+    <span class="mob-radio__label">Disabled</span>
+  </label>
+
+  <!-- ===== Disabled (checked) ===== -->
+  <!-- XAML: Disabled + Checked — same dimming, dot still visible at reduced opacity -->
+  <label class="mob-radio">
+    <input class="mob-radio__input" type="radio" name="states-disabled-checked" checked disabled />
+    <span class="mob-radio__label">Disabled (checked)</span>
+  </label>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 2: RADIO GROUP (vertical)
+     Source: Typical usage — StackPanel Orientation=Vertical
+             containing 3–4 RadioButtons sharing a GroupName.
+             e.g. TestTransmissionCalibrationControl.xaml,
+                  PlaylistCompletionCriteriaControl.xaml
+     ========================================================= -->
+
+<h2>Radio Group — Vertical</h2>
+
+<div class="states-list">
+
+  <!-- XAML: StackPanel with RadioButton children sharing GroupName -->
+  <div class="mob-radio-group" role="radiogroup" aria-label="Drive mode">
+
+    <!-- XAML: RadioButton Content="Forward" -->
+    <label class="mob-radio">
+      <input class="mob-radio__input" type="radio" name="drive-mode" checked />
+      <span class="mob-radio__label">Forward</span>
+    </label>
+
+    <!-- XAML: RadioButton Content="Reverse" -->
+    <label class="mob-radio">
+      <input class="mob-radio__input" type="radio" name="drive-mode" />
+      <span class="mob-radio__label">Reverse</span>
+    </label>
+
+    <!-- XAML: RadioButton Content="Neutral" -->
+    <label class="mob-radio">
+      <input class="mob-radio__input" type="radio" name="drive-mode" />
+      <span class="mob-radio__label">Neutral</span>
+    </label>
+
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 3: RADIO GROUP (horizontal)
+     Source: Side-by-side radio options in calibration views
+             e.g. TestBrakeCalibrationControl.xaml — 2 options
+     ========================================================= -->
+
+<h2>Radio Group — Horizontal</h2>
+
+<div class="states-list">
+
+  <!-- XAML: StackPanel Orientation=Horizontal with RadioButtons -->
+  <div class="mob-radio-group mob-radio-group--horizontal" role="radiogroup" aria-label="Acquisition method">
+
+    <label class="mob-radio">
+      <input class="mob-radio__input" type="radio" name="acq-method" checked />
+      <span class="mob-radio__label">Automatic</span>
+    </label>
+
+    <label class="mob-radio">
+      <input class="mob-radio__input" type="radio" name="acq-method" />
+      <span class="mob-radio__label">Manual</span>
+    </label>
+
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 4: RADIO IN FORM FIELD LAYOUT
+     Source: FieldInput pattern — label column (130px min) +
+             radio group in body column, matching horizontal
+             field alignment from text-input / combobox.
+     ========================================================= -->
+
+<h2>Form Field Layout</h2>
+
+<div class="states-list">
+
+  <!-- ===== Standard form field with radio group ===== -->
+  <!-- XAML: FieldInput-like layout — label left, options right -->
+  <div class="mob-field">
+    <span class="mob-field__label">Steering:</span>
+    <div class="mob-field__body">
+      <div class="mob-radio-group" role="radiogroup">
+        <label class="mob-radio">
+          <input class="mob-radio__input" type="radio" name="steering" checked />
+          <span class="mob-radio__label">Front axle</span>
+        </label>
+        <label class="mob-radio">
+          <input class="mob-radio__input" type="radio" name="steering" />
+          <span class="mob-radio__label">Rear axle</span>
+        </label>
+        <label class="mob-radio">
+          <input class="mob-radio__input" type="radio" name="steering" />
+          <span class="mob-radio__label">All-wheel</span>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Disabled form field ===== -->
+  <!-- XAML: IsEnabled=False on parent — dims entire row -->
+  <div class="mob-field">
+    <span class="mob-field__label">Direction:</span>
+    <div class="mob-field__body">
+      <div class="mob-radio-group" role="radiogroup">
+        <label class="mob-radio">
+          <input class="mob-radio__input" type="radio" name="direction" checked disabled />
+          <span class="mob-radio__label">Clockwise</span>
+        </label>
+        <label class="mob-radio">
+          <input class="mob-radio__input" type="radio" name="direction" disabled />
+          <span class="mob-radio__label">Counter-clockwise</span>
+        </label>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 5: MIXED WITH OTHER CONTROLS
+     Source: Common pattern in calibration/config panels —
+             radio selection followed by related input fields.
+             e.g. PlaylistCompletionCriteriaControl.xaml
+     ========================================================= -->
+
+<h2>Mixed with Other Controls</h2>
+
+<div class="states-list">
+
+  <!-- ===== Radio selects which input is active ===== -->
+  <!-- XAML: RadioButton + FieldInput in same panel,
+       radio IsChecked enables/disables associated input -->
+  <div class="mob-radio-group" role="radiogroup" aria-label="Completion criteria">
+
+    <div>
+      <label class="mob-radio">
+        <input class="mob-radio__input" type="radio" name="criteria" checked />
+        <span class="mob-radio__label">Distance limit</span>
+      </label>
+      <!-- XAML: Associated FieldInput — enabled when this radio is selected -->
+      <div class="mob-field" style="padding-left: 26px; margin-top: 4px;">
+        <label class="mob-field__label">Max distance:</label>
+        <div class="mob-field__body">
+          <input class="mob-input" type="text" value="500" />
+          <span class="mob-field__unit">m</span>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <label class="mob-radio">
+        <input class="mob-radio__input" type="radio" name="criteria" />
+        <span class="mob-radio__label">Time limit</span>
+      </label>
+      <!-- XAML: Associated FieldInput — disabled when sibling radio is selected -->
+      <div class="mob-field" style="padding-left: 26px; margin-top: 4px;">
+        <label class="mob-field__label">Max time:</label>
+        <div class="mob-field__body">
+          <input class="mob-input" type="text" value="30" disabled />
+          <span class="mob-field__unit">min</span>
+        </div>
+      </div>
+    </div>
+
+    <label class="mob-radio">
+      <input class="mob-radio__input" type="radio" name="criteria" />
+      <span class="mob-radio__label">Manual stop</span>
+    </label>
+
+  </div>
+
+</div>
+
+  </main>
+
+</div>
+
+<script src="../styles/theme-switcher.js"></script>
+</body>
+</html>

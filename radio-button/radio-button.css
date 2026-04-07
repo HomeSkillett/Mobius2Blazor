@@ -1,0 +1,289 @@
+/*
+  radio-button.css — Mobius RadioButton component styles
+  Sources:
+    DefaultControls.xaml — Mobius_UI_Resources_Templates_RadioButton
+                           Default RadioButton Style
+                           Mobius_UI_Resources_Styles_RadioButtonInvert
+
+  XAML Template layers (bottom -> top):
+    templateRoot             -> .mob-radio  (flex row, transparent background)
+      Grid[Col0]  16×16     -> input[type="radio"]  (the circular control)
+        inputBackground      -> background-color (BackgroundInput)
+        _inputContainerBorder-> border 1px (BackgroundInputOutline), border-radius 100%
+          CheckMark          -> ::after pseudo-element (filled circle, 4px inset)
+          IndeterminateMark  -> ::after at 0.75 opacity (indeterminate state)
+      Grid[Col1]             -> gap via spacing token (LabelToControlDistance = 10px)
+      ContentControl[Col2]   -> .mob-radio__label (ForegroundPrimary)
+
+  XAML Style setters:
+    Foreground  = ForegroundPrimaryBrush        -> checked dot + label color
+    BorderBrush = BackgroundInputOutlineBrush   -> ring border
+    Background  = BackgroundInputBrush          -> ring fill
+
+  Visual states:
+    CommonStates:  Normal, MouseOver, Pressed, Disabled
+    CheckStates:   Unchecked, Checked, Indeterminate
+    FocusStates:   Unfocused, Focused
+
+  Classes:
+    .mob-radio               Wrapper label (inline-flex, touch-target height)
+    .mob-radio__input        Native <input type="radio"> (styled circular control)
+    .mob-radio__label        Text label beside the radio
+
+  Static demo classes:
+    .is-hovered              Simulated hover
+    .is-focused              Simulated focus ring
+    .is-checked              Simulated checked (visual only)
+    .is-disabled             Simulated disabled
+    .is-indeterminate        Simulated indeterminate (0.75 opacity dot)
+*/
+
+
+/* =============================================
+   RADIO CONTAINER  (.mob-radio)
+   XAML: templateRoot Grid — 3 columns:
+         Auto (16px control) | LabelToControlDistance | * (content)
+         Row 0 height = FieldHeight (touch target)
+   ============================================= */
+
+.mob-radio {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-label-to-control);   /* XAML: Col1 = LabelToControlDistance (10px) */
+  min-height: var(--touch);               /* XAML: Row0 Height = FieldHeight (44px) */
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+
+/* =============================================
+   RADIO CONTROL  (.mob-radio__input)
+   XAML: Grid[Col0] 16×16 with two Borders:
+         inputBackground  (BackgroundInput fill)
+         _inputContainerBorder (1px BackgroundInputOutline, CornerRadius=100000)
+         CheckMark (inner Border, Margin=4, CornerRadius=100000)
+   ============================================= */
+
+.mob-radio__input {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  /* XAML: Width="16" Height="16" */
+  width: 16px;
+  height: 16px;
+
+  /* XAML: inputBackground + _inputContainerBorder */
+  background-color: var(--BackgroundInput);
+  border: var(--border-width) solid var(--BackgroundInputOutline);
+  border-radius: 50%;                    /* XAML: CornerRadius="100000" */
+
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+
+  transition:
+    border-color var(--transition-mouse-out) ease,
+    opacity var(--transition-mouse-out) ease;
+}
+
+
+/* --- Checked dot --- */
+/* XAML: CheckMark — Border inside _inputContainerBorder with Margin="4",
+         CornerRadius="100000", Background={TemplateBinding Foreground}
+         (ForegroundPrimary), Opacity 0 -> 1 on Checked state (150ms) */
+.mob-radio__input::after {
+  content: "";
+  display: block;
+
+  /* XAML: parent is 16px, border 1px each side → inner = 14px, Margin=4 → 6px circle */
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+
+  background-color: var(--ForegroundPrimary);
+  opacity: 0;
+  transition: opacity 150ms ease;        /* XAML: CheckStates duration="0:0:0.15" */
+}
+
+
+/* =============================================
+   CHECKED STATE
+   XAML: CheckStates → Checked — CheckMark Opacity -> 1.0
+   ============================================= */
+
+.mob-radio__input:checked::after,
+.mob-radio__input.is-checked::after {
+  opacity: 1;
+}
+
+
+/* =============================================
+   INDETERMINATE STATE
+   XAML: CheckStates → Indeterminate — IndeterminateMark Opacity -> 0.75
+   ============================================= */
+
+.mob-radio__input:indeterminate::after,
+.mob-radio__input.is-indeterminate::after {
+  opacity: 0.75;
+}
+
+
+/* =============================================
+   HOVER STATE
+   XAML: MouseOver — _inputContainerBorder border + CheckMark bg
+         -> MouseOverPrimary, duration = GeneralMouseOverDuration
+   ============================================= */
+
+.mob-radio:hover .mob-radio__input:not(:disabled),
+.mob-radio__input:hover:not(:disabled),
+.mob-radio__input.is-hovered {
+  border-color: var(--MouseOverPrimary);
+  transition-duration: var(--transition-mouse-over);
+}
+
+.mob-radio:hover .mob-radio__input:not(:disabled)::after,
+.mob-radio__input:hover:not(:disabled)::after,
+.mob-radio__input.is-hovered::after {
+  background-color: var(--MouseOverPrimary);
+}
+
+
+/* =============================================
+   PRESSED STATE
+   XAML: Pressed — border + CheckMark bg revert to
+         TemplateBinding values (BorderBrush / Foreground),
+         duration = GeneralMousePressedDuration
+   ============================================= */
+
+.mob-radio__input:active:not(:disabled) {
+  border-color: var(--BackgroundInputOutline);
+  transition-duration: var(--transition-mouse-pressed);
+}
+
+.mob-radio__input:active:not(:disabled)::after {
+  background-color: var(--ForegroundPrimary);
+}
+
+
+/* =============================================
+   FOCUS STATE
+   XAML: Focused — _inputContainerBorder border + CheckMark bg
+         -> MouseOverPrimary, duration = GeneralFocusDuration
+   XAML: FocusVisualStyle — Mobius_UI_Resources_Styles_FocusVisualStyle
+         (2px outline adorner on the whole control)
+   ============================================= */
+
+.mob-radio__input:focus-visible,
+.mob-radio__input.is-focused {
+  border-color: var(--MouseOverPrimary);
+  outline: var(--border-width-focused) solid var(--MouseOverPrimary);
+  outline-offset: var(--focus-outline-offset);
+  transition-duration: var(--transition-focus);
+}
+
+.mob-radio__input:focus-visible::after,
+.mob-radio__input.is-focused::after {
+  background-color: var(--MouseOverPrimary);
+}
+
+/* Remove default outline — custom focus ring replaces it */
+.mob-radio__input:focus:not(:focus-visible) {
+  outline: none;
+}
+
+
+/* =============================================
+   DISABLED STATE
+   XAML: Disabled — inputBackground Opacity -> 0,
+         templateRoot Opacity -> DisabledOpacity
+   ============================================= */
+
+.mob-radio__input:disabled,
+.mob-radio__input.is-disabled {
+  background-color: transparent;           /* XAML: inputBackground Opacity=0 */
+  opacity: var(--opacity-disabled);        /* XAML: templateRoot Opacity -> DisabledOpacity */
+  cursor: default;
+  transition-duration: var(--transition-disable);
+}
+
+.mob-radio:has(.mob-radio__input:disabled),
+.mob-radio:has(.mob-radio__input.is-disabled) {
+  opacity: var(--opacity-disabled);
+  cursor: default;
+}
+
+/* Prevent double-dimming — input already inherits container opacity */
+.mob-radio:has(.mob-radio__input:disabled) .mob-radio__input,
+.mob-radio:has(.mob-radio__input.is-disabled) .mob-radio__input {
+  opacity: 1;
+}
+
+
+/* =============================================
+   LABEL  (.mob-radio__label)
+   XAML: ContentControl in Col2 — VerticalAlignment=Center,
+         Foreground={TemplateBinding Foreground} = ForegroundPrimary,
+         Margin="0,1,0,0"
+   ============================================= */
+
+.mob-radio__label {
+  color: var(--ForegroundPrimary);
+  font: var(--font-default);
+}
+
+
+/* =============================================
+   RADIO GROUP  (.mob-radio-group)
+   XAML: Typically a StackPanel with Orientation=Vertical
+         containing multiple RadioButtons.
+         Spacing between items = FieldSpacing or FieldToField
+   ============================================= */
+
+.mob-radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-field-to-field);     /* 14px — XAML FieldToField distance */
+}
+
+/* Horizontal variant — e.g. side-by-side options */
+.mob-radio-group--horizontal {
+  flex-direction: row;
+  gap: var(--spacing-label-to-control-lg);  /* 24px between options */
+}
+
+
+/* =============================================
+   FIELD LAYOUT — RADIO IN A FORM FIELD
+   Reuses .mob-field from text-input.css.
+   Label sits at 130px min-width, radio group in body.
+
+   HTML structure:
+     <div class="mob-field">
+       <span class="mob-field__label">Group label:</span>
+       <div class="mob-field__body">
+         <div class="mob-radio-group">
+           <label class="mob-radio">
+             <input class="mob-radio__input" type="radio" name="x" />
+             <span class="mob-radio__label">Option A</span>
+           </label>
+           ...
+         </div>
+       </div>
+     </div>
+   ============================================= */
+
+/* When radios are inside a field body, align group to top */
+.mob-field__body .mob-radio-group {
+  padding-top: 0;
+}
+
+/* Field label aligns to first radio's center line */
+.mob-field:has(.mob-radio-group) .mob-field__label {
+  align-self: flex-start;
+}
