@@ -1,182 +1,293 @@
 /* =============================================
-   ComboBox — converted from DefaultControls.xaml
-   Template: Mobius_UI_Resources_Templates_ComboBox
-   Style:    Mobius_UI_Resources_Styles_ComboBox
-   Item:     Mobius_UI_Resources_Templates_ComboBoxItem
+   ComboBox — native <select> styled to match
+   DefaultControls.xaml ComboBox template.
+
+   Uses appearance: base-select (Chrome 134+) for
+   full dropdown styling with graceful fallback
+   to appearance: none for older browsers.
+
+   XAML source:
+     Template:  Mobius_UI_Resources_Templates_ComboBox
+     Style:     Mobius_UI_Resources_Styles_ComboBox
+     Item:      Mobius_UI_Resources_Templates_ComboBoxItem
    ============================================= */
 
-/* --- Closed ComboBox trigger --- */
+
+/* =============================================
+   FALLBACK — appearance: none (all browsers)
+   Styles the closed trigger only.
+   The dropdown is browser-native.
+   ============================================= */
+
 .combobox {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  min-width: 120px;
+  appearance: none;
+  -webkit-appearance: none;
+  width: var(--field-input-width);                /* FieldInputStandardWidth 220px */
+  min-width: 120px;                               /* XAML MinWidth="120" */
   min-height: var(--field-height);                /* TouchSize 44px */
-  background: var(--BackgroundInput);
+  background-color: var(--BackgroundInput);
   border: var(--border-width) solid var(--BackgroundInputOutline);
   color: var(--ForegroundAction);
   font-family: var(--default-font);
   font-size: var(--size-default);
   line-height: var(--lh-default);
   font-weight: var(--font-normal);
-  padding: 0 var(--size-12);                      /* PaddingLeftRightMedium */
+  padding: 0 calc(var(--size-12) + var(--icon-sm) + var(--size-6)) 0 var(--size-12);
   cursor: pointer;
   box-sizing: border-box;
   transition:
     border-color var(--transition-mouse-out),
     color var(--transition-mouse-out);
+  background-image: none;
 }
 
-/* Selected-value text */
-.combobox__value {
-  flex: 1 1 auto;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+/* Wrapper provides the custom arrow */
+.combobox-wrap {
+  position: relative;
+  display: inline-block;
 }
 
-/* Dropdown chevron arrow — Mobius-System-Icons \uE00B */
-.combobox__arrow {
-  flex: 0 0 auto;
+.combobox-wrap::after {
+  content: "\e00b";                               /* Icon_Arrow_PointerDownSm */
   font-family: var(--font-icon);
-  font-size: var(--icon-sm);                      /* PathIconSm 12px */
+  font-size: var(--icon-sm);                      /* 12px */
   line-height: 1;
-  margin-left: var(--size-6);
   color: var(--ForegroundAction);
+  position: absolute;
+  right: var(--size-12);
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
   transition: color var(--transition-mouse-out);
 }
 
-.combobox__arrow::before {
-  content: "\e00b";                               /* Icon_Arrow_PointerDownSm */
-}
 
-/* --- Hover state --- */
-.combobox:hover {
+/* Hover */
+.combobox-wrap:hover .combobox {
   border-color: var(--MouseOverPrimary);
-  transition:
-    border-color var(--transition-mouse-over),
-    color var(--transition-mouse-over);
+  transition: border-color var(--transition-mouse-over);
 }
 
-.combobox:hover .combobox__arrow {
+.combobox-wrap:hover::after {
   color: var(--MouseOverPrimary);
   transition: color var(--transition-mouse-over);
 }
 
-/* --- Focus state --- */
+
+/* Focus */
 .combobox:focus,
 .combobox:focus-visible {
   outline: none;
   border-color: var(--MouseOverPrimary);
-  transition:
-    border-color var(--transition-focus),
-    color var(--transition-focus);
+  transition: border-color var(--transition-focus);
 }
 
-.combobox:focus .combobox__arrow,
-.combobox:focus-visible .combobox__arrow {
+.combobox-wrap:focus-within::after {
   color: var(--MouseOverPrimary);
   transition: color var(--transition-focus);
 }
 
-/* --- Disabled state --- */
-.combobox--disabled {
+
+/* Disabled */
+.combobox:disabled {
   pointer-events: none;
   opacity: var(--opacity-disabled);
-  background: transparent;
-}
-
-.combobox--disabled .combobox__arrow {
+  background-color: transparent;
   color: var(--ForegroundDisabled);
+  border-color: var(--BackgroundInputOutline);
 }
 
-.combobox--disabled .combobox__value {
+.combobox-wrap:has(.combobox:disabled)::after {
   color: var(--ForegroundDisabled);
-}
-
-/* --- Open modifier (applied when dropdown is visible) --- */
-.combobox--open {
-  border-color: var(--MouseOverPrimary);
-}
-
-.combobox--open .combobox__arrow {
-  color: var(--MouseOverPrimary);
+  opacity: var(--opacity-disabled);
 }
 
 
 /* =============================================
-   Dropdown panel (Popup)
-   XAML: PART_Popup > Grid > BoxShadow + ScrollViewer > SubmenuBorder > StackPanel
+   FIELD LAYOUT — .mob-field integration
+   Reuses .mob-field / .mob-field__body from
+   text-input.css (loaded via base.css).
    ============================================= */
-.combobox__dropdown {
-  display: none;
-  position: absolute;
-  top: 100%;
-  left: 0;
-  min-width: 100%;
-  max-height: 300px;                              /* MaxDropDownHeight default */
-  overflow-y: auto;
-  overflow-x: hidden;
-  background: var(--BackgroundInput);
-  box-shadow: 0 2px 8px var(--ShadowElements);
-  z-index: 10;
-  box-sizing: border-box;
+
+/* Horizontal label: let combobox-wrap fill the body */
+.mob-field__body .combobox-wrap {
+  flex: 1 1 auto;
 }
 
-/* Show dropdown when parent has --open modifier */
-.combobox--open .combobox__dropdown {
-  display: block;
+/* Vertical label: select fills full width */
+.mob-field--vertical .mob-field__body .combobox-wrap {
+  width: 100%;
+}
+
+.mob-field--vertical .mob-field__body .combobox {
+  width: 100%;
 }
 
 
 /* =============================================
-   ComboBoxItem
-   Template: Mobius_UI_Resources_Templates_ComboBoxItem
+   ENHANCED — appearance: base-select
+   Chrome 134+, Edge 134+
+   Unlocks full dropdown + option styling.
    ============================================= */
-.combobox__item {
-  position: relative;
-  display: flex;
-  align-items: center;
-  min-height: var(--field-height);                /* TouchSize 44px */
-  max-width: var(--dropdown-max-width);           /* DropdownPopupMaxWidth 300px */
-  padding: 0 var(--size-12);                      /* PaddingLeftRightMedium */
-  color: var(--ForegroundStrong);
-  font-family: var(--default-font);
-  font-size: var(--size-default);
-  line-height: var(--lh-default);
-  font-weight: var(--font-normal);
-  cursor: pointer;
-  box-sizing: border-box;
-  transition:
-    background-color var(--transition-mouse-out),
-    color var(--transition-mouse-out);
-}
 
-/* Hover — MouseOverPrimary at 30% opacity overlay */
-.combobox__item:hover {
-  background-color: color-mix(in srgb, var(--MouseOverPrimary) 30%, transparent); /* MouseOverPrimary @ 30% */
-  transition:
-    background-color var(--transition-mouse-over),
-    color var(--transition-mouse-over);
-}
+@supports (appearance: base-select) {
 
-/* Selected — solid SelectionPrimary background, white text */
-.combobox__item--selected {
-  background-color: var(--SelectionPrimary);
-  color: var(--SelectionForeground);
-  transition:
-    background-color var(--transition-select),
-    color var(--transition-select);
-}
+  /* Opt in to customizable select */
+  .combobox,
+  .combobox::picker(select) {
+    appearance: base-select;
+  }
 
-/* Selected + hover — keep selected look */
-.combobox__item--selected:hover {
-  background-color: var(--SelectionPrimary);
-  color: var(--SelectionForeground);
-}
+  /* --- Trigger button (closed state) --- */
+  /* XAML: Grid (templateRoot) + ContentPresenter (ContentSite) */
+  .combobox {
+    display: flex;
+    align-items: center;                          /* vertical center text + arrow */
+    width: var(--field-input-width);              /* FieldInputStandardWidth 220px */
+    min-width: 120px;
+    min-height: var(--field-height);              /* TouchSize 44px */
+    background-color: var(--BackgroundInput);
+    border: var(--border-width) solid var(--BackgroundInputOutline);
+    color: var(--ForegroundAction);
+    font-family: var(--default-font);
+    font-size: var(--size-default);
+    line-height: var(--lh-default);
+    font-weight: var(--font-normal);
+    padding: 0 var(--size-12);
+    cursor: pointer;
+    box-sizing: border-box;
+    border-radius: 0;
+    transition:
+      border-color var(--transition-mouse-out),
+      color var(--transition-mouse-out);
+  }
 
-/* Disabled item */
-.combobox__item--disabled {
-  pointer-events: none;
-  opacity: var(--opacity-disabled);
+  /* --- Custom arrow icon --- */
+  /* XAML: Path (_toggleArrow) — Icon_Arrow_PointerDownSm */
+  .combobox::picker-icon {
+    content: "\e00b";
+    font-family: var(--font-icon);
+    font-size: var(--icon-sm);                    /* 12px */
+    color: var(--ForegroundAction);
+    transition: color var(--transition-mouse-out);
+  }
+
+  /* Hide the fallback wrapper arrow when base-select is active */
+  .combobox-wrap::after {
+    display: none;
+  }
+
+  /* --- Open state --- */
+  /* XAML: IsDropDownOpen="True" */
+  .combobox:open {
+    border-color: var(--MouseOverPrimary);
+  }
+
+  .combobox:open::picker-icon {
+    color: var(--MouseOverPrimary);
+  }
+
+  /* --- Hover on trigger --- */
+  .combobox:hover {
+    border-color: var(--MouseOverPrimary);
+    transition: border-color var(--transition-mouse-over);
+  }
+
+  .combobox:hover::picker-icon {
+    color: var(--MouseOverPrimary);
+    transition: color var(--transition-mouse-over);
+  }
+
+  /* --- Focus on trigger --- */
+  .combobox:focus,
+  .combobox:focus-visible {
+    outline: none;
+    border-color: var(--MouseOverPrimary);
+    transition: border-color var(--transition-focus);
+  }
+
+  .combobox:focus::picker-icon,
+  .combobox:focus-visible::picker-icon {
+    color: var(--MouseOverPrimary);
+    transition: color var(--transition-focus);
+  }
+
+  /* --- Dropdown panel --- */
+  /* XAML: PART_Popup > Grid > BoxShadow + ScrollViewer > Border (SubmenuBorder) */
+  .combobox::picker(select) {
+    background: var(--BackgroundInput);
+    border: none;
+    border-radius: 0;
+    padding: 0;
+    box-shadow: 0 2px 8px var(--ShadowElements);
+    max-height: 300px;
+    overflow-y: auto;
+
+    /* Align flush with the trigger — full width, no offset */
+    min-width: anchor-size(self-inline);
+    margin: 0;
+    position-area: block-end span-all;
+  }
+
+  /* --- Options (normal state) --- */
+  /* XAML: ComboBoxItem > Grid (_templateRoot) > ContentControl (_contentElement) */
+  .combobox option {
+    min-height: var(--field-height);              /* TouchSize 44px */
+    width: 100%;                                  /* fill the full dropdown width */
+    padding: 0 var(--size-12);                    /* PaddingLeftRightMedium */
+    display: flex;
+    align-items: center;
+    color: var(--ForegroundStrong);
+    font-family: var(--default-font);
+    font-size: var(--size-default);
+    line-height: var(--lh-default);
+    font-weight: var(--font-normal);
+    background: transparent;
+    transition:
+      background-color var(--transition-mouse-out),
+      color var(--transition-mouse-out);
+  }
+
+  /* Hide the default checkmark */
+  .combobox option::checkmark {
+    display: none;
+  }
+
+  /* --- Option hover --- */
+  /* XAML: _mouseOverElement opacity 0.3 with MouseOverPrimaryBrush */
+  .combobox option:hover {
+    background-color: color-mix(in srgb, var(--MouseOverPrimary) 30%, transparent);
+    transition:
+      background-color var(--transition-mouse-over),
+      color var(--transition-mouse-over);
+  }
+
+  /* --- Option selected (checked) --- */
+  /* XAML: _selectionElement opacity 1.0 with SelectionPrimaryBrush */
+  .combobox option:checked {
+    background-color: var(--SelectionPrimary);
+    color: var(--SelectionForeground);
+    transition:
+      background-color var(--transition-select),
+      color var(--transition-select);
+  }
+
+  /* Selected + hover — keep selected look */
+  .combobox option:checked:hover {
+    background-color: var(--SelectionPrimary);
+    color: var(--SelectionForeground);
+  }
+
+  /* --- Disabled --- */
+  .combobox:disabled {
+    pointer-events: none;
+    opacity: var(--opacity-disabled);
+    background-color: transparent;
+    color: var(--ForegroundDisabled);
+    border-color: var(--BackgroundInputOutline);
+  }
+
+  .combobox:disabled::picker-icon {
+    color: var(--ForegroundDisabled);
+  }
 }

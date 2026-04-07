@@ -3,42 +3,34 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mobius — Outline Buttons</title>
+  <title>Mobius — ComboBox States</title>
   <link id="mob-theme-link" rel="stylesheet" href="../styles/LightTheme.css" />
   <link rel="stylesheet" href="../styles/base.css" />
-  <link rel="stylesheet" href="buttons.css" />
+  <link rel="stylesheet" href="combobox.css" />
   <style>
     body { margin: 0; }
-    h1 { font: var(--font-hdrMd); margin: 0 0 32px; color: var(--ForegroundStrong); }
-    .btn-grid {
-      display: grid;
-      grid-template-columns: 120px repeat(5, 1fr) 200px;
-      gap: 0;
+    h1 {
+      font: var(--font-hdrMd);
+      margin: 0 0 32px;
+      color: var(--ForegroundStrong);
+    }
+    h2 {
+      font: var(--font-hdrSm);
+      font-weight: var(--font-light);
+      color: var(--ForegroundStrong);
+      margin: 40px 0 20px;
+    }
+    h2:first-of-type { margin-top: 0; }
+    .states-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-section-to-section);
+      max-width: 540px;
+    }
+    .section-divider {
+      border: none;
       border-top: var(--line-size) solid var(--InnerLines);
-      border-left: var(--line-size) solid var(--InnerLines);
-    }
-    .btn-grid__cell {
-      display: flex; align-items: center; justify-content: center;
-      min-height: 72px; padding: 12px 16px;
-      border-right: var(--line-size) solid var(--InnerLines);
-      border-bottom: var(--line-size) solid var(--InnerLines);
-    }
-    .btn-grid__cell--label {
-      justify-content: flex-start; background: var(--BackgroundStepOne);
-      font: var(--font-Sm); font-weight: var(--font-bold); color: var(--ForegroundStrong);
-    }
-    .btn-grid__cell--header {
-      background: var(--BackgroundStrong); font: var(--font-Sm);
-      font-weight: var(--font-bold); color: var(--ForegroundStrong);
-      text-transform: uppercase; min-height: 40px;
-    }
-    .btn-grid__cell--corner { background: var(--BackgroundStrong); min-height: 40px; }
-    .btn-grid__cell--notes {
-      justify-content: flex-start; font: var(--font-Sm);
-      color: var(--ForegroundPrimary);
-    }
-    .btn-grid__cell--notes code {
-      font: var(--font-Sm); font-family: var(--font-monospace); color: var(--ForegroundStrong);
+      margin: 0;
     }
   </style>
 </head>
@@ -46,6 +38,7 @@
 
 <div class="mob-layout">
 
+  <!-- Sidebar Navigation -->
   <nav class="mob-nav">
     <div class="mob-nav__header">
       <span class="mob-nav__logo">&#xE555;</span>
@@ -127,83 +120,151 @@
       <a class="mob-nav__link" href="../typography/typography.html">Font Styles</a>
     </details>
 
-    <details class="mob-nav__group--collapsible" open>
+    <details class="mob-nav__group--collapsible">
       <summary>Button</summary>
-      <a class="mob-nav__link" href="buttons.html">All</a>
-      <a class="mob-nav__link" href="buttons-primary.html">Primary</a>
-      <a class="mob-nav__link is-active" href="buttons-outline.html">Outline</a>
-      <a class="mob-nav__link" href="buttons-link.html">Link</a>
-      <a class="mob-nav__link" href="buttons-icon.html">Icon</a>
+      <a class="mob-nav__link" href="../buttons/buttons.html">All</a>
+      <a class="mob-nav__link" href="../buttons/buttons-primary.html">Primary</a>
+      <a class="mob-nav__link" href="../buttons/buttons-outline.html">Outline</a>
+      <a class="mob-nav__link" href="../buttons/buttons-link.html">Link</a>
+      <a class="mob-nav__link" href="../buttons/buttons-icon.html">Icon</a>
     </details>
 
-    <details class="mob-nav__group--collapsible">
+    <details class="mob-nav__group--collapsible" open>
       <summary>Forms</summary>
       <a class="mob-nav__link" href="../text-input/text-input.html">Text Input</a>
       <a class="mob-nav__link" href="../switch-toggle/switch-toggle.html">Switch Toggle</a>
-      <a class="mob-nav__link" href="../combobox/combobox.html">ComboBox</a>
+      <a class="mob-nav__link is-active" href="combobox.html">ComboBox</a>
     </details>
   </nav>
 
+  <!-- Main Content -->
   <main class="mob-layout__content">
 
-<h1>Outline Buttons</h1>
+<h1>Mobius ComboBox</h1>
 
-<div class="btn-grid">
+<div class="states-list">
 
-  <!-- ===== HEADER ROW ===== -->
-  <div class="btn-grid__cell btn-grid__cell--corner"></div>
-  <div class="btn-grid__cell btn-grid__cell--header">Normal</div>
-  <div class="btn-grid__cell btn-grid__cell--header">Hover</div>
-  <div class="btn-grid__cell btn-grid__cell--header">Pressed</div>
-  <div class="btn-grid__cell btn-grid__cell--header">Disabled</div>
-  <div class="btn-grid__cell btn-grid__cell--header">Focused</div>
-  <div class="btn-grid__cell btn-grid__cell--header">Notes</div>
+  <!-- =============================================
+       XAML source:  DatabaseExportControl.xaml > ComboBox (line 57)
+       Style:        Mobius_UI_Resources_Styles_ComboBox
+       Template:     Mobius_UI_Resources_Templates_ComboBox
 
-  <!-- ===== ROW: Outline Button ===== -->
-  <!-- XAML: Mobius_UI_Resources_Styles_OutlineButton → Templates_OutlineButton -->
-  <div class="btn-grid__cell btn-grid__cell--label">Outline</div>
-  <div class="btn-grid__cell"><button class="mob-btn-outline">Outline</button></div>
-  <div class="btn-grid__cell"><button class="is-hovered mob-btn-outline">Outline</button></div>
-  <div class="btn-grid__cell"><button class="is-pressed mob-btn-outline">Outline</button></div>
-  <div class="btn-grid__cell"><button class="mob-btn-outline" disabled>Outline</button></div>
-  <div class="btn-grid__cell"><button class="mob-btn-outline is-focused">Outline</button></div>
-  <div class="btn-grid__cell btn-grid__cell--notes"><code>.mob-btn-outline</code></div>
+       Uses appearance: base-select (Chrome 134+) for pixel-perfect
+       dropdown styling. Falls back to appearance: none with a styled
+       trigger on older browsers.
 
-  <!-- ===== ROW: Outline + Icon ===== -->
-  <!-- XAML: OutlineButton with Tag icon path data -->
-  <div class="btn-grid__cell btn-grid__cell--label">Outline + Icon</div>
-  <div class="btn-grid__cell"><button class="mob-btn-outline" data-icon="&#xE555;">Outline</button></div>
-  <div class="btn-grid__cell"><button class="is-hovered mob-btn-outline" data-icon="&#xE555;">Outline</button></div>
-  <div class="btn-grid__cell"><button class="is-pressed mob-btn-outline" data-icon="&#xE555;">Outline</button></div>
-  <div class="btn-grid__cell"><button class="mob-btn-outline" data-icon="&#xE555;" disabled>Outline</button></div>
-  <div class="btn-grid__cell"><button class="mob-btn-outline is-focused" data-icon="&#xE555;">Outline</button></div>
-  <div class="btn-grid__cell btn-grid__cell--notes"><code>.mob-btn-outline</code> + <code>data-icon</code></div>
+       Blazor usage:
+       ┌─────────────────────────────────────────────────────────┐
+       │  <div class="combobox-wrap">                            │
+       │    <InputSelect class="combobox"                        │
+       │                 @bind-Value="Model.OutputFormat">       │
+       │      <option value="RawData">Raw data</option>          │
+       │      <option value="DesignatedIntervals">               │
+       │        Designated intervals</option>                    │
+       │      <option value="GroupedByVehicle">                  │
+       │        Grouped by vehicle</option>                      │
+       │      <option value="EventsAndRoutes">                   │
+       │        Events and Routes</option>                       │
+       │    </InputSelect>                                       │
+       │  </div>                                                 │
+       │                                                         │
+       │  Note: The <selectedcontent> element is HTML-only;      │
+       │  Blazor's <InputSelect> does not support it yet.        │
+       │  The CSS handles both cases via @supports.              │
+       └─────────────────────────────────────────────────────────┘
 
-  <!-- ===== ROW: Outline Rounded ===== -->
-  <!-- XAML: Mobius_UI_Resources_Styles_OutlineButtonRoundedCorners — CornerRadius=12 -->
-  <div class="btn-grid__cell btn-grid__cell--label">Outline Rounded</div>
-  <div class="btn-grid__cell"><button class="mob-btn-outline rounded">Rounded</button></div>
-  <div class="btn-grid__cell"><button class="is-hovered mob-btn-outline rounded">Rounded</button></div>
-  <div class="btn-grid__cell"><button class="is-pressed mob-btn-outline rounded">Rounded</button></div>
-  <div class="btn-grid__cell"><button class="mob-btn-outline rounded" disabled>Rounded</button></div>
-  <div class="btn-grid__cell"><button class="mob-btn-outline rounded is-focused">Rounded</button></div>
-  <div class="btn-grid__cell btn-grid__cell--notes"><code>.mob-btn-outline.rounded</code></div>
+       Browser support:
+         Chrome/Edge 134+  — full dropdown + option styling
+         Firefox/Safari     — styled trigger, native dropdown
+       ============================================= -->
 
-  <!-- ===== ROW: Outline Checked ===== -->
-  <!-- XAML: ToggleButton Checked — _outlineChecked border=3px, SelectionPrimary -->
-  <div class="btn-grid__cell btn-grid__cell--label">Outline Checked</div>
-  <div class="btn-grid__cell"><button class="mob-btn-outline is-checked">Selected</button></div>
-  <div class="btn-grid__cell"><button class="is-hovered mob-btn-outline is-checked">Selected</button></div>
-  <div class="btn-grid__cell"><button class="is-pressed mob-btn-outline is-checked">Selected</button></div>
-  <div class="btn-grid__cell"><button class="mob-btn-outline is-checked" disabled>Selected</button></div>
-  <div class="btn-grid__cell"><button class="mob-btn-outline is-checked is-focused">Selected</button></div>
-  <div class="btn-grid__cell btn-grid__cell--notes"><code>.mob-btn-outline.is-checked</code></div>
 
-</div>
+  <!-- STATE 1 — Default -->
+  <h2>Default</h2>
+
+  <!-- XAML: ComboBox > Grid (templateRoot) -->
+  <div class="combobox-wrap">
+    <!-- XAML: ComboBox — native <select> with appearance: base-select -->
+    <!-- XAML: Arrow = Path (_toggleArrow) Icon_Arrow_PointerDownSm — via ::picker-icon -->
+    <!-- XAML: ContentPresenter (ContentSite) — via <selectedcontent> -->
+    <!-- XAML: PART_Popup > SubmenuBorder — via ::picker(select) -->
+    <!-- XAML: ComboBoxItem — via <option> with :checked / :hover states -->
+    <select class="combobox">
+      <option value="RawData" selected>Raw data</option>
+      <option value="DesignatedIntervals">Designated intervals</option>
+      <option value="GroupedByVehicle">Grouped by vehicle</option>
+      <option value="EventsAndRoutes">Events and Routes</option>
+    </select>
+  </div>
+
+  <hr class="section-divider">
+
+
+  <!-- STATE 2 — Disabled -->
+  <h2>Disabled</h2>
+
+  <!-- XAML: ComboBox IsEnabled="False" (HasItems trigger) -->
+  <div class="combobox-wrap">
+    <select class="combobox" disabled>
+      <option value="RawData" selected>Raw data</option>
+      <option value="DesignatedIntervals">Designated intervals</option>
+      <option value="GroupedByVehicle">Grouped by vehicle</option>
+      <option value="EventsAndRoutes">Events and Routes</option>
+    </select>
+  </div>
+
+
+  <hr class="section-divider">
+
+
+  <!-- STATE 3 — Horizontal Label (Left) -->
+  <h2>With Label (Left)</h2>
+
+  <!-- XAML: DatabaseExportControl.xaml — FieldLabel + ComboBox in horizontal StackPanel -->
+  <div class="mob-field">
+    <!-- XAML: TextBlock (field label) -->
+    <label class="mob-field__label">Database output format:</label>
+    <!-- XAML: ComboBox wrapped in field body -->
+    <div class="mob-field__body">
+      <div class="combobox-wrap">
+        <select class="combobox">
+          <option value="RawData" selected>Raw data</option>
+          <option value="DesignatedIntervals">Designated intervals</option>
+          <option value="GroupedByVehicle">Grouped by vehicle</option>
+          <option value="EventsAndRoutes">Events and Routes</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+
+  <!-- STATE 4 — Vertical Label (Top) -->
+  <h2>With Label (Top)</h2>
+
+  <!-- XAML: FieldLabel + ComboBox in vertical StackPanel -->
+  <div class="mob-field mob-field--vertical">
+    <!-- XAML: TextBlock (field label) -->
+    <label class="mob-field__label">Database output format:</label>
+    <!-- XAML: ComboBox wrapped in field body -->
+    <div class="mob-field__body">
+      <div class="combobox-wrap">
+        <select class="combobox">
+          <option value="RawData" selected>Raw data</option>
+          <option value="DesignatedIntervals">Designated intervals</option>
+          <option value="GroupedByVehicle">Grouped by vehicle</option>
+          <option value="EventsAndRoutes">Events and Routes</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+
+</div><!-- /.states-list -->
 
   </main>
-
-</div>
+</div><!-- /.mob-layout -->
 
 <script src="../styles/theme-switcher.js"></script>
 </body>
