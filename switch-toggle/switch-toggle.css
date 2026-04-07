@@ -39,16 +39,16 @@
   --_indicator-w: 2px;               /* XAML: Rectangle Width="2" */
 
   /* Track OFF — XAML: _toggleActiveHighlight + _toggleActiveHighlightBorder
-     ForegroundPrimary rgba(85,85,85,1) at element Opacity */
-  --_track-bg-off: rgba(85, 85, 85, 0.1);      /* ForegroundPrimary @ 10% */
-  --_track-border-off: rgba(85, 85, 85, 0.2);  /* ForegroundPrimary @ 20% */
+     ForegroundPrimary at element Opacity */
+  --_track-bg-off: color-mix(in srgb, var(--ForegroundPrimary) 10%, transparent);
+  --_track-border-off: color-mix(in srgb, var(--ForegroundPrimary) 20%, transparent);
 
-  /* Track ON — XAML: InformationBlue rgba(0,159,218,1) at element Opacity */
-  --_track-bg-on: rgba(0, 159, 218, 0.75);     /* InformationBlue @ 75% */
-  --_track-border-on: rgba(0, 159, 218, 1);    /* InformationBlue @ 100% */
+  /* Track ON — XAML: InformationBlue at element Opacity */
+  --_track-bg-on: color-mix(in srgb, var(--InformationBlue) 75%, transparent);
+  --_track-border-on: var(--InformationBlue);   /* 100% — use var directly */
 
-  /* Knob shadow — XAML: ShadowElements rgba(0,0,0,0.133) at Opacity=0.5 */
-  --_knob-shadow: rgba(0, 0, 0, 0.067);
+  /* Knob shadow — XAML: ShadowElements at Opacity=0.5 */
+  --_knob-shadow: color-mix(in srgb, var(--ShadowElements) 50%, transparent);
 }
 
 

@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Mobius — Primary Buttons</title>
+  <link id="mob-theme-link" rel="stylesheet" href="../styles/LightTheme.css" />
   <link rel="stylesheet" href="../styles/base.css" />
   <link rel="stylesheet" href="buttons.css" />
   <style>
@@ -50,6 +51,35 @@
     <div class="mob-nav__header">
       <span class="mob-nav__logo">&#xE555;</span>
       <span class="mob-nav__title">Mobius Blazor Components</span>
+      <button class="mob-theme-btn" aria-label="Theme settings">&#xE50D;</button>
+      <div class="mob-theme-menu">
+        <div class="mob-theme-menu__heading">THEME</div>
+        <button class="mob-theme-menu__item is-active" data-theme="Light">
+          <span class="mob-theme-swatches"><span class="mob-theme-swatch"></span><span class="mob-theme-swatch"></span><span class="mob-theme-swatch"></span><span class="mob-theme-swatch"></span></span>
+          <span class="mob-theme-menu__label">Light</span>
+          <span class="mob-theme-menu__check">&#x2713;</span>
+        </button>
+        <button class="mob-theme-menu__item" data-theme="Dark">
+          <span class="mob-theme-swatches"><span class="mob-theme-swatch"></span><span class="mob-theme-swatch"></span><span class="mob-theme-swatch"></span><span class="mob-theme-swatch"></span></span>
+          <span class="mob-theme-menu__label">Dark</span>
+          <span class="mob-theme-menu__check">&#x2713;</span>
+        </button>
+        <button class="mob-theme-menu__item" data-theme="Blackout">
+          <span class="mob-theme-swatches"><span class="mob-theme-swatch"></span><span class="mob-theme-swatch"></span><span class="mob-theme-swatch"></span><span class="mob-theme-swatch"></span></span>
+          <span class="mob-theme-menu__label">Blackout</span>
+          <span class="mob-theme-menu__check">&#x2713;</span>
+        </button>
+        <button class="mob-theme-menu__item" data-theme="Blue">
+          <span class="mob-theme-swatches"><span class="mob-theme-swatch"></span><span class="mob-theme-swatch"></span><span class="mob-theme-swatch"></span><span class="mob-theme-swatch"></span></span>
+          <span class="mob-theme-menu__label">Blue</span>
+          <span class="mob-theme-menu__check">&#x2713;</span>
+        </button>
+        <button class="mob-theme-menu__item" data-theme="Sunlight">
+          <span class="mob-theme-swatches"><span class="mob-theme-swatch"></span><span class="mob-theme-swatch"></span><span class="mob-theme-swatch"></span><span class="mob-theme-swatch"></span></span>
+          <span class="mob-theme-menu__label">Sunlight</span>
+          <span class="mob-theme-menu__check">&#x2713;</span>
+        </button>
+      </div>
     </div>
 
     <!-- Tokens / Styles — collapsed by default -->
@@ -174,5 +204,6 @@
 
 </div>
 
+<script src="../styles/theme-switcher.js"></script>
 </body>
 </html>

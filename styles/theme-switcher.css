@@ -1,0 +1,167 @@
+/*
+  theme-switcher.css — Settings gear + theme picker dropdown
+  Sits inside the .mob-nav__header bar.
+
+  Markup:
+    .mob-theme-btn          Gear icon trigger
+    .mob-theme-menu         Dropdown panel (hidden by default)
+    .mob-theme-menu__heading  "THEME" label
+    .mob-theme-menu__item   One theme row (button)
+    .mob-theme-swatches     Color preview bars container
+    .mob-theme-swatch       Individual color bar
+    .mob-theme-menu__label  Theme name text
+    .mob-theme-menu__check  Checkmark for active theme
+*/
+
+
+/* =============================================
+   GEAR BUTTON
+   ============================================= */
+
+.mob-theme-btn {
+  position: fixed;
+  top: var(--size-12);
+  right: var(--size-12);
+  z-index: 101;
+  padding: 0;
+  border: none;
+  background: none;
+  font-family: var(--font-icon);
+  font-size: 15px;
+  width: 15px;
+  height: 15px;
+  line-height: 1;
+  color: var(--ForegroundWatermark);
+  cursor: pointer;
+  transition: color var(--transition-mouse-over) ease;
+}
+
+.mob-theme-btn:hover {
+  color: var(--SelectionPrimary);
+}
+
+
+/* =============================================
+   DROPDOWN MENU
+   ============================================= */
+
+.mob-theme-menu {
+  display: none;
+  position: fixed;
+  top: calc(var(--size-12) + 20px);
+  right: var(--size-12);
+  z-index: 100;
+  min-width: 220px;
+  margin-top: var(--size-4);
+  padding: var(--size-16) 0;
+  background: var(--BackgroundStrong);
+  border: var(--line-size) solid var(--InnerLines);
+  border-radius: var(--corner-radius);
+  box-shadow: 0 4px 12px var(--ShadowElements);
+}
+
+.mob-theme-menu.is-open {
+  display: block;
+}
+
+.mob-theme-menu__heading {
+  padding: 0 var(--size-20) var(--size-12);
+  font: var(--font-default);
+  font-weight: var(--font-bold);
+  color: var(--ForegroundPrimary);
+  letter-spacing: 0.05em;
+}
+
+
+/* =============================================
+   THEME ITEM ROW
+   ============================================= */
+
+.mob-theme-menu__item {
+  display: flex;
+  align-items: center;
+  gap: var(--size-12);
+  width: 100%;
+  padding: var(--size-12) var(--size-20);
+  border: none;
+  background: none;
+  font: var(--font-Md);
+  color: var(--ForegroundPrimary);
+  cursor: pointer;
+  text-align: left;
+  transition: background-color var(--transition-mouse-over) ease;
+}
+
+.mob-theme-menu__item:hover {
+  background-color: var(--MouseOverBackground);
+}
+
+.mob-theme-menu__label {
+  flex: 1 1 auto;
+}
+
+.mob-theme-menu__check {
+  flex-shrink: 0;
+  width: var(--size-16);
+  font-size: var(--font-md);
+  color: var(--SelectionPrimary);
+  visibility: hidden;
+}
+
+.mob-theme-menu__item.is-active .mob-theme-menu__check {
+  visibility: visible;
+}
+
+
+/* =============================================
+   COLOR SWATCHES (static theme previews)
+   ============================================= */
+
+.mob-theme-swatches {
+  display: flex;
+  gap: 2px;
+  flex-shrink: 0;
+  padding: 3px;
+  border: var(--line-size) solid var(--InnerLines);
+  border-radius: 3px;
+}
+
+.mob-theme-swatch {
+  display: block;
+  width: 7px;
+  height: 28px;
+  border-radius: 2px;
+}
+
+
+/* Swatches: BackgroundStrong | ForegroundStrong | SelectionPrimary | accent (InformationGreen or InformationBlue per theme) */
+
+/* ----- Light — white bg, dark-navy text, bright cyan accents ----- */
+[data-theme="Light"] .mob-theme-swatch:nth-child(1) { background: rgba(255, 255, 255, 1); }
+[data-theme="Light"] .mob-theme-swatch:nth-child(2) { background: rgba(0, 43, 69, 1); }
+[data-theme="Light"] .mob-theme-swatch:nth-child(3) { background: rgba(0, 159, 218, 1); }
+[data-theme="Light"] .mob-theme-swatch:nth-child(4) { background: rgba(146, 212, 0, 1); }
+
+/* ----- Dark — near-black bg, white text, muted blue accents ----- */
+[data-theme="Dark"] .mob-theme-swatch:nth-child(1) { background: rgba(22, 22, 22, 1); }
+[data-theme="Dark"] .mob-theme-swatch:nth-child(2) { background: rgba(255, 255, 255, 1); }
+[data-theme="Dark"] .mob-theme-swatch:nth-child(3) { background: rgba(0, 126, 174, 1); }
+[data-theme="Dark"] .mob-theme-swatch:nth-child(4) { background: rgba(30, 193, 255, 1); }
+
+/* ----- Blackout — pure black bg, white text, deep blue accents ----- */
+[data-theme="Blackout"] .mob-theme-swatch:nth-child(1) { background: rgba(0, 0, 0, 1); }
+[data-theme="Blackout"] .mob-theme-swatch:nth-child(2) { background: rgba(255, 255, 255, 1); }
+[data-theme="Blackout"] .mob-theme-swatch:nth-child(3) { background: rgba(0, 126, 174, 1); }
+[data-theme="Blackout"] .mob-theme-swatch:nth-child(4) { background: rgba(91, 210, 255, 1); }
+
+/* ----- Blue — white bg, dark text, vivid cyan + sky-blue accents ----- */
+[data-theme="Blue"] .mob-theme-swatch:nth-child(1) { background: rgba(255, 255, 255, 1); }
+[data-theme="Blue"] .mob-theme-swatch:nth-child(2) { background: rgba(34, 34, 34, 1); }
+[data-theme="Blue"] .mob-theme-swatch:nth-child(3) { background: rgba(0, 159, 218, 1); }
+[data-theme="Blue"] .mob-theme-swatch:nth-child(4) { background: rgba(91, 210, 255, 1); }
+
+/* ----- Sunlight — white bg, black text, teal + mid-blue accents ----- */
+[data-theme="Sunlight"] .mob-theme-swatch:nth-child(1) { background: rgba(255, 255, 255, 1); }
+[data-theme="Sunlight"] .mob-theme-swatch:nth-child(2) { background: rgba(0, 0, 0, 1); }
+[data-theme="Sunlight"] .mob-theme-swatch:nth-child(3) { background: rgba(0, 105, 145, 1); }
+[data-theme="Sunlight"] .mob-theme-swatch:nth-child(4) { background: rgba(0, 159, 218, 1); }

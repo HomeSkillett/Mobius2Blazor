@@ -226,6 +226,18 @@
   transition-duration: var(--transition-select);
 }
 
+/* --- Checked + Pressed state --- */
+/* XAML: Checked → Pressed — _background→MouseOverPrimary,
+         _buttonContentChecked fg→SelectionForeground (white),
+         _outlineChecked border STAYS SelectionPrimary 3px */
+.mob-btn-outline.is-checked:active:not(:disabled),
+.mob-btn-outline.is-checked.is-pressed {
+  background-color: var(--MouseOverPrimary);
+  border-color: var(--SelectionPrimary);
+  color: var(--SelectionForeground);
+  transition-duration: var(--transition-mouse-pressed);
+}
+
 
 /* =============================================
    3. SIMPLE ICON BUTTON  (.mob-btn-icon)

@@ -7,7 +7,8 @@
 @import "fontImport.css";
 
 /* 2. Token layers (no dependencies on each other) */
-@import "LightTheme.css";       /* Color variables */
+/*    Color theme is loaded via <link id="mob-theme-link"> in each HTML file    */
+/*    so the JS theme-switcher can swap it. Default: LightTheme.css             */
 @import "fontTokens.css";       /* Font family, weight, size variables */
 @import "spacingTokens.css";    /* Spacing, sizing, border, transition variables */
 
@@ -16,6 +17,7 @@
 
 /* 4. Layout (depends on tokens) */
 @import "nav.css";
+@import "theme-switcher.css";
 
 /* 5. Components (depend on all tokens + typography) */
 @import "../buttons/buttons.css";

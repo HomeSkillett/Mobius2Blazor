@@ -134,7 +134,7 @@
   --btn-icon-gap: 8px;                    /* Icon-to-text gap (Margin="0,0,8,0" on icon Path) */
   --btn-outline-icon-size: 22px;          /* OutlineButton Path Width/Height="22" */
   --btn-outline-radius: 12px;             /* OutlineButtonRoundedCorners CornerRadius="12" */
-  --btn-pressed-bg: rgba(9, 156, 191, 1);       /* MouseOverPrimary + 25% black overlay, pre-blended */
+  --btn-pressed-bg: color-mix(in srgb, var(--MouseOverPrimary) 75%, black); /* MouseOverPrimary + 25% black overlay */
   --focus-outline-offset: 2px;            /* Focus ring offset */
 
   /* =============================================
