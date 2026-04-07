@@ -287,3 +287,16 @@
 .mob-field:has(.mob-radio-group) .mob-field__label {
   align-self: flex-start;
 }
+
+
+/* =============================================
+   INDENTED SUB-FIELD  (.mob-field--radio-sub)
+   XAML: FieldInput nested below a RadioButton,
+         indented by radio width (16px) + gap (10px) = 26px.
+         Small top margin keeps it visually grouped.
+   ============================================= */
+
+.mob-field--radio-sub {
+  padding-left: 26px;                    /* 16px radio + 10px gap */
+  margin-top: var(--spacing-label-to-control-sm);  /* 4px */
+}

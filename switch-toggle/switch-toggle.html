@@ -87,83 +87,7 @@
 <div class="mob-layout">
 
   <!-- Sidebar Navigation -->
-  <nav class="mob-nav">
-    <div class="mob-nav__header">
-      <a class="mob-nav__header-link" href="../index.html">
-      <span class="mob-nav__logo">&#xE555;</span>
-      <span class="mob-nav__title">Mobius Blazor Components</span>
-      </a>
-      <button class="mob-theme-btn" aria-label="Theme settings">&#xE50D;</button>
-      <div class="mob-theme-menu">
-        <div class="mob-theme-menu__heading">THEME</div>
-        <button class="mob-theme-menu__item is-active" data-theme="Light">
-          <span class="mob-theme-swatches"><span class="mob-theme-swatch"></span><span class="mob-theme-swatch"></span><span class="mob-theme-swatch"></span><span class="mob-theme-swatch"></span></span>
-          <span class="mob-theme-menu__label">Light</span>
-          <span class="mob-theme-menu__check">&#x2713;</span>
-        </button>
-        <button class="mob-theme-menu__item" data-theme="Dark">
-          <span class="mob-theme-swatches"><span class="mob-theme-swatch"></span><span class="mob-theme-swatch"></span><span class="mob-theme-swatch"></span><span class="mob-theme-swatch"></span></span>
-          <span class="mob-theme-menu__label">Dark</span>
-          <span class="mob-theme-menu__check">&#x2713;</span>
-        </button>
-        <button class="mob-theme-menu__item" data-theme="Blackout">
-          <span class="mob-theme-swatches"><span class="mob-theme-swatch"></span><span class="mob-theme-swatch"></span><span class="mob-theme-swatch"></span><span class="mob-theme-swatch"></span></span>
-          <span class="mob-theme-menu__label">Blackout</span>
-          <span class="mob-theme-menu__check">&#x2713;</span>
-        </button>
-        <button class="mob-theme-menu__item" data-theme="Blue">
-          <span class="mob-theme-swatches"><span class="mob-theme-swatch"></span><span class="mob-theme-swatch"></span><span class="mob-theme-swatch"></span><span class="mob-theme-swatch"></span></span>
-          <span class="mob-theme-menu__label">Blue</span>
-          <span class="mob-theme-menu__check">&#x2713;</span>
-        </button>
-        <button class="mob-theme-menu__item" data-theme="Sunlight">
-          <span class="mob-theme-swatches"><span class="mob-theme-swatch"></span><span class="mob-theme-swatch"></span><span class="mob-theme-swatch"></span><span class="mob-theme-swatch"></span></span>
-          <span class="mob-theme-menu__label">Sunlight</span>
-          <span class="mob-theme-menu__check">&#x2713;</span>
-        </button>
-      </div>
-    </div>
-
-    <details class="mob-nav__group--collapsible">
-      <summary>Tokens / Styles</summary>
-      <a class="mob-nav__download-all" href="../styles/tokens-styles-all.zip" download>&#x2913; Download All</a>
-      <a class="mob-nav__link" href="../styles/base.css">base.css</a>
-      <a class="mob-nav__link" href="../styles/LightTheme.css">LightTheme.css</a>
-      <a class="mob-nav__link" href="../styles/fontTokens.css">fontTokens.css</a>
-      <a class="mob-nav__link" href="../styles/spacingTokens.css">spacingTokens.css</a>
-      <a class="mob-nav__link" href="../styles/fontImport.css">fontImport.css</a>
-      <a class="mob-nav__link" href="../styles/typography.css">typography.css</a>
-      <a class="mob-nav__link" href="../styles/nav.css">nav.css</a>
-    </details>
-
-    <details class="mob-nav__group--collapsible">
-      <summary>Fonts</summary>
-      <a class="mob-nav__download-all" href="../fonts/fonts-all.zip" download>&#x2913; Download All</a>
-      <a class="mob-nav__link" href="../fonts/mobius-system-icons.woff2">mobius-system-icons.woff2</a>
-    </details>
-
-    <details class="mob-nav__group--collapsible">
-      <summary>Typography</summary>
-      <a class="mob-nav__link" href="../typography/typography.html">Font Styles</a>
-    </details>
-
-    <details class="mob-nav__group--collapsible">
-      <summary>Button</summary>
-      <a class="mob-nav__link" href="../buttons/buttons.html">All</a>
-      <a class="mob-nav__link" href="../buttons/buttons-primary.html">Primary</a>
-      <a class="mob-nav__link" href="../buttons/buttons-outline.html">Outline</a>
-      <a class="mob-nav__link" href="../buttons/buttons-link.html">Link</a>
-      <a class="mob-nav__link" href="../buttons/buttons-icon.html">Icon</a>
-    </details>
-
-    <details class="mob-nav__group--collapsible" open>
-      <summary>Forms</summary>
-      <a class="mob-nav__link" href="../text-input/text-input.html">Text Input</a>
-      <a class="mob-nav__link is-active" href="switch-toggle.html">Switch Toggle</a>
-      <a class="mob-nav__link" href="../combobox/combobox.html">ComboBox</a>
-      <a class="mob-nav__link" href="../radio-button/radio-button.html">Radio Button</a>
-    </details>
-  </nav>
+  <nav class="mob-nav" id="mob-nav"></nav>
 
   <!-- Main Content -->
   <main class="mob-layout__content">
@@ -361,6 +285,6 @@
 
 </div>
 
-<script src="../styles/theme-switcher.js"></script>
+<script src="../styles/nav.js"></script>
 </body>
 </html>
