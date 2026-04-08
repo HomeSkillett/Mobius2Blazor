@@ -96,7 +96,8 @@
         { label: "ComboBox",      href: "combobox/combobox.html" },
         { label: "Switch Toggle", href: "switch-toggle/switch-toggle.html" },
         { label: "Radio Button",  href: "radio-button/radio-button.html" },
-        { label: "Checkbox",      href: "checkbox/checkbox.html" }
+        { label: "Checkbox",      href: "checkbox/checkbox.html" },
+        { label: "Slider",        href: "slider/slider.html" }
       ]
     },
     {
@@ -110,7 +111,18 @@
     {
       title: "Data & Status",
       links: [
-        { label: "Status Icon",  href: "status-icon/status-icon.html" }
+        { label: "Status Icon",      href: "status-icon/status-icon.html" },
+        { label: "Status Button",    href: "status-button/status-button.html" },
+        { label: "IconLabelButton",  href: "icon-label-button/icon-label-button.html" },
+        { label: "Progress",         href: "progress/progress.html" }
+      ]
+    },
+    {
+      title: "List & Collection Patterns",
+      links: [
+        { label: "ItemsControl",                href: "items-control/items-control.html" },
+        { label: "ExpanderItem + IconLabelExpander", href: "expander-item/expander-item.html" },
+        { label: "DataGrid",     href: "data-grid/data-grid.html" }
       ]
     }
   ];
@@ -143,6 +155,13 @@
     html += '    <span class="mob-nav__logo">\uE555</span>';
     html += '    <span class="mob-nav__title">Mobius Blazor Components</span>';
     html += '  </a>';
+    html += '</div>';
+
+    /* ---- Search bar ---- */
+    html += '<div class="mob-nav__search">';
+    html += '  <span class="mob-nav__search-icon">\uE511</span>';
+    html += '  <input class="mob-nav__search-input" type="text" placeholder="Find components">';
+    html += '  <kbd class="mob-nav__search-kbd">\u2303 K</kbd>';
     html += '</div>';
 
     /* ---- Nav groups ---- */
@@ -267,6 +286,54 @@
     }
 
     document.addEventListener("click", closeMenu);
+
+    /* Wire up component search */
+    var searchInput = document.querySelector(".mob-nav__search-input");
+    var kbd = document.querySelector(".mob-nav__search-kbd");
+
+    if (searchInput) {
+      searchInput.addEventListener("input", function () {
+        var query = this.value.toLowerCase().trim();
+        var groups = nav.querySelectorAll(".mob-nav__group--collapsible");
+
+        for (var g = 0; g < groups.length; g++) {
+          var links = groups[g].querySelectorAll(".mob-nav__link");
+          var visibleCount = 0;
+
+          for (var l = 0; l < links.length; l++) {
+            var match = !query || links[l].textContent.toLowerCase().indexOf(query) !== -1;
+            links[l].style.display = match ? "" : "none";
+            if (match) visibleCount++;
+          }
+
+          /* Hide download-all links when filtering */
+          var dl = groups[g].querySelector(".mob-nav__download-all");
+          if (dl) dl.style.display = query ? "none" : "";
+
+          /* Hide entire group if no matches; open groups that have matches */
+          groups[g].style.display = (query && visibleCount === 0) ? "none" : "";
+          if (query && visibleCount > 0) groups[g].open = true;
+        }
+
+        /* Hide keyboard hint while typing */
+        if (kbd) kbd.style.display = query ? "none" : "";
+      });
+
+      /* Ctrl+K / Cmd+K shortcut to focus search */
+      document.addEventListener("keydown", function (e) {
+        if ((e.ctrlKey || e.metaKey) && e.key === "k") {
+          e.preventDefault();
+          searchInput.focus();
+          searchInput.select();
+        }
+        /* Escape clears and blurs */
+        if (e.key === "Escape" && document.activeElement === searchInput) {
+          searchInput.value = "";
+          searchInput.dispatchEvent(new Event("input"));
+          searchInput.blur();
+        }
+      });
+    }
   }
 
   if (document.readyState === "loading") {

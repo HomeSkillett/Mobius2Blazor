@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mobius — Status Button</title>
+  <link id="mob-theme-link" rel="stylesheet" href="../styles/LightTheme.css" />
+  <link rel="stylesheet" href="../styles/base.css" />
+  <link rel="stylesheet" href="../status-icon/status-icon.css" />
+  <link rel="stylesheet" href="status-button.css" />
+  <style>
+    body { margin: 0; }
+    h1 {
+      font: var(--font-hdrMd);
+      margin: 0 0 32px;
+      color: var(--ForegroundStrong);
+    }
+    h2 {
+      font: var(--font-hdrSm);
+      margin: 40px 0 16px;
+      color: var(--ForegroundStrong);
+    }
+    h2:first-of-type { margin-top: 0; }
+
+    .section-divider {
+      border: none;
+      border-top: var(--line-size) solid var(--InnerLines);
+      margin: 32px 0 0;
+    }
+
+    /* Grid table — 7 columns: label + 5 states + notes */
+    .btn-grid {
+      display: grid;
+      grid-template-columns: 120px repeat(5, 1fr) 220px;
+      gap: 0;
+      border-top: var(--line-size) solid var(--InnerLines);
+      border-left: var(--line-size) solid var(--InnerLines);
+    }
+    .btn-grid__cell {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 72px;
+      padding: 12px 16px;
+      border-right: var(--line-size) solid var(--InnerLines);
+      border-bottom: var(--line-size) solid var(--InnerLines);
+    }
+    .btn-grid__cell--label {
+      justify-content: flex-start;
+      background: var(--BackgroundStepOne);
+      font: var(--font-Sm);
+      font-weight: var(--font-bold);
+      color: var(--ForegroundStrong);
+    }
+    .btn-grid__cell--header {
+      background: var(--BackgroundStrong);
+      font: var(--font-Sm);
+      font-weight: var(--font-bold);
+      color: var(--ForegroundStrong);
+      text-transform: uppercase;
+      min-height: 40px;
+    }
+    .btn-grid__cell--corner {
+      background: var(--BackgroundStrong);
+      min-height: 40px;
+    }
+    .btn-grid__cell--notes {
+      justify-content: flex-start;
+      font: var(--font-Sm);
+      color: var(--ForegroundPrimary);
+    }
+    .btn-grid__cell--notes code {
+      font: var(--font-Sm);
+      font-family: var(--font-monospace);
+      color: var(--ForegroundStrong);
+    }
+
+    /* Vertical state list for overview */
+    .states-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-field);
+      max-width: 540px;
+    }
+    .demo-row {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-label-to-control);
+    }
+    .demo-row__label {
+      font: var(--font-bodyMd);
+      color: var(--ForegroundPrimary);
+    }
+  </style>
+</head>
+<body>
+
+<div class="mob-layout">
+
+  <!-- Sidebar Navigation -->
+  <nav class="mob-nav" id="mob-nav"></nav>
+
+  <!-- Main Content -->
+  <main class="mob-layout__content">
+
+<h1>Status Button</h1>
+
+
+<!-- =========================================================
+     SECTION 1: STANDARD TEMPLATE — STATUS STATES
+     Source: StatusButton.xaml — Mobius_UI_Common_StatusButton
+     C#:     StatusButton.cs — StatusIndicator enum drives visual state
+     Parent: IconLabelButton.xaml / IconLabelButton.xaml.cs
+     Style:  Mobius_UI_Common_Style_StatusButton
+             Height=36, IconButtonSize=20, Spacing=6, bg=Transparent
+
+     Layout (5-column grid):
+       [12px StatusIcon] [6px] [20px Icon] [6px] [* TextBlock]
+
+     StatusIndicator states: OK, Warning, Critical, Unknown
+     OK/Warning/Critical → icon gets status color, opacity 1.0
+     Unknown → icon inherits foreground, opacity 0.35
+     ========================================================= -->
+
+<h2>Standard Template — Status States</h2>
+
+<div class="states-list">
+
+  <!-- ===== OK ===== -->
+  <!-- XAML: VisualState "OK" — _icon Fill → InformationGreen,
+       _contentElement Opacity → 1.0 -->
+  <div class="demo-row">
+    <!-- XAML: StatusButton — StatusIndicator=OK -->
+    <button class="mob-status-btn" data-status="ok">
+      <!-- XAML: StatusButton.Grid (5-col layout) -->
+      <span class="mob-status-btn__layout">
+        <!-- XAML: common:StatusIcon Width=12 Height=12 -->
+        <span class="mob-status-btn__status mob-status-icon mob-status-icon--sm" data-status="ok" aria-label="OK"></span>
+        <!-- XAML: Grid._contentElement col=2 — Path Icon + Path AdornerIcon -->
+        <span class="mob-status-btn__icon" aria-hidden="true">&#xE870;</span>
+        <!-- XAML: TextBlock col=4 — Text + ToolTip -->
+        <span class="mob-status-btn__text">LiDAR — Connected</span>
+      </span>
+    </button>
+    <span class="demo-row__label">OK</span>
+  </div>
+
+  <!-- ===== Warning ===== -->
+  <!-- XAML: VisualState "Warning" — _icon Fill → InformationOrange,
+       _contentElement Opacity → 1.0 -->
+  <div class="demo-row">
+    <button class="mob-status-btn" data-status="warning">
+      <span class="mob-status-btn__layout">
+        <span class="mob-status-btn__status mob-status-icon mob-status-icon--sm" data-status="warning" aria-label="Warning"></span>
+        <span class="mob-status-btn__icon" aria-hidden="true">&#xE762;</span>
+        <span class="mob-status-btn__text">GPS — Signal Weak</span>
+      </span>
+    </button>
+    <span class="demo-row__label">Warning</span>
+  </div>
+
+  <!-- ===== Critical ===== -->
+  <!-- XAML: VisualState "Critical" — _icon Fill → InformationRed,
+       _contentElement Opacity → 1.0 -->
+  <div class="demo-row">
+    <button class="mob-status-btn" data-status="critical">
+      <span class="mob-status-btn__layout">
+        <span class="mob-status-btn__status mob-status-icon mob-status-icon--sm" data-status="critical" aria-label="Critical"></span>
+        <span class="mob-status-btn__icon" aria-hidden="true">&#xE412;</span>
+        <span class="mob-status-btn__text">E-Stop — Triggered</span>
+      </span>
+    </button>
+    <span class="demo-row__label">Critical</span>
+  </div>
+
+  <!-- ===== Unknown (default) ===== -->
+  <!-- XAML: VisualState "Unknown" — _icon Fill → Foreground (inherited),
+       _contentElement Opacity → 0.35 -->
+  <div class="demo-row">
+    <button class="mob-status-btn" data-status="unknown">
+      <span class="mob-status-btn__layout">
+        <span class="mob-status-btn__status mob-status-icon mob-status-icon--sm" data-status="unknown" aria-label="Unknown"></span>
+        <span class="mob-status-btn__icon" aria-hidden="true">&#xE940;</span>
+        <span class="mob-status-btn__text">Radar — No Data</span>
+      </span>
+    </button>
+    <span class="demo-row__label">Unknown (default)</span>
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 2: STANDARD TEMPLATE — INTERACTION STATES
+     Source: StatusButton.xaml — Button Style=SimpleIconButton
+     Shows hover / pressed / disabled / focused for each
+     status, using the "OK" state as the representative.
+     ========================================================= -->
+
+<h2>Interaction States (Standard)</h2>
+
+<div class="btn-grid">
+
+  <!-- ===== HEADER ROW ===== -->
+  <div class="btn-grid__cell btn-grid__cell--corner"></div>
+  <div class="btn-grid__cell btn-grid__cell--header">Normal</div>
+  <div class="btn-grid__cell btn-grid__cell--header">Hover</div>
+  <div class="btn-grid__cell btn-grid__cell--header">Pressed</div>
+  <div class="btn-grid__cell btn-grid__cell--header">Disabled</div>
+  <div class="btn-grid__cell btn-grid__cell--header">Focused</div>
+  <div class="btn-grid__cell btn-grid__cell--header">Notes</div>
+
+
+  <!-- ===== ROW: OK ===== -->
+  <!-- XAML: StatusButton StatusIndicator=OK + SimpleIconButton states -->
+  <div class="btn-grid__cell btn-grid__cell--label">OK</div>
+
+  <div class="btn-grid__cell">
+    <button class="mob-status-btn" data-status="ok">
+      <span class="mob-status-btn__layout">
+        <span class="mob-status-btn__status mob-status-icon mob-status-icon--sm" data-status="ok"></span>
+        <span class="mob-status-btn__icon">&#xE870;</span>
+        <span class="mob-status-btn__text">LiDAR OK</span>
+      </span>
+    </button>
+  </div>
+  <div class="btn-grid__cell">
+    <button class="mob-status-btn is-hovered" data-status="ok">
+      <span class="mob-status-btn__layout">
+        <span class="mob-status-btn__status mob-status-icon mob-status-icon--sm" data-status="ok"></span>
+        <span class="mob-status-btn__icon">&#xE870;</span>
+        <span class="mob-status-btn__text">LiDAR OK</span>
+      </span>
+    </button>
+  </div>
+  <div class="btn-grid__cell">
+    <button class="mob-status-btn is-pressed" data-status="ok">
+      <span class="mob-status-btn__layout">
+        <span class="mob-status-btn__status mob-status-icon mob-status-icon--sm" data-status="ok"></span>
+        <span class="mob-status-btn__icon">&#xE870;</span>
+        <span class="mob-status-btn__text">LiDAR OK</span>
+      </span>
+    </button>
+  </div>
+  <div class="btn-grid__cell">
+    <button class="mob-status-btn" data-status="ok" disabled>
+      <span class="mob-status-btn__layout">
+        <span class="mob-status-btn__status mob-status-icon mob-status-icon--sm" data-status="ok"></span>
+        <span class="mob-status-btn__icon">&#xE870;</span>
+        <span class="mob-status-btn__text">LiDAR OK</span>
+      </span>
+    </button>
+  </div>
+  <div class="btn-grid__cell">
+    <button class="mob-status-btn is-focused" data-status="ok">
+      <span class="mob-status-btn__layout">
+        <span class="mob-status-btn__status mob-status-icon mob-status-icon--sm" data-status="ok"></span>
+        <span class="mob-status-btn__icon">&#xE870;</span>
+        <span class="mob-status-btn__text">LiDAR OK</span>
+      </span>
+    </button>
+  </div>
+  <div class="btn-grid__cell btn-grid__cell--notes"><code>data-status="ok"</code></div>
+
+
+  <!-- ===== ROW: Warning ===== -->
+  <div class="btn-grid__cell btn-grid__cell--label">Warning</div>
+
+  <div class="btn-grid__cell">
+    <button class="mob-status-btn" data-status="warning">
+      <span class="mob-status-btn__layout">
+        <span class="mob-status-btn__status mob-status-icon mob-status-icon--sm" data-status="warning"></span>
+        <span class="mob-status-btn__icon">&#xE762;</span>
+        <span class="mob-status-btn__text">GPS Weak</span>
+      </span>
+    </button>
+  </div>
+  <div class="btn-grid__cell">
+    <button class="mob-status-btn is-hovered" data-status="warning">
+      <span class="mob-status-btn__layout">
+        <span class="mob-status-btn__status mob-status-icon mob-status-icon--sm" data-status="warning"></span>
+        <span class="mob-status-btn__icon">&#xE762;</span>
+        <span class="mob-status-btn__text">GPS Weak</span>
+      </span>
+    </button>
+  </div>
+  <div class="btn-grid__cell">
+    <button class="mob-status-btn is-pressed" data-status="warning">
+      <span class="mob-status-btn__layout">
+        <span class="mob-status-btn__status mob-status-icon mob-status-icon--sm" data-status="warning"></span>
+        <span class="mob-status-btn__icon">&#xE762;</span>
+        <span class="mob-status-btn__text">GPS Weak</span>
+      </span>
+    </button>
+  </div>
+  <div class="btn-grid__cell">
+    <button class="mob-status-btn" data-status="warning" disabled>
+      <span class="mob-status-btn__layout">
+        <span class="mob-status-btn__status mob-status-icon mob-status-icon--sm" data-status="warning"></span>
+        <span class="mob-status-btn__icon">&#xE762;</span>
+        <span class="mob-status-btn__text">GPS Weak</span>
+      </span>
+    </button>
+  </div>
+  <div class="btn-grid__cell">
+    <button class="mob-status-btn is-focused" data-status="warning">
+      <span class="mob-status-btn__layout">
+        <span class="mob-status-btn__status mob-status-icon mob-status-icon--sm" data-status="warning"></span>
+        <span class="mob-status-btn__icon">&#xE762;</span>
+        <span class="mob-status-btn__text">GPS Weak</span>
+      </span>
+    </button>
+  </div>
+  <div class="btn-grid__cell btn-grid__cell--notes"><code>data-status="warning"</code></div>
+
+
+  <!-- ===== ROW: Critical ===== -->
+  <div class="btn-grid__cell btn-grid__cell--label">Critical</div>
+
+  <div class="btn-grid__cell">
+    <button class="mob-status-btn" data-status="critical">
+      <span class="mob-status-btn__layout">
+        <span class="mob-status-btn__status mob-status-icon mob-status-icon--sm" data-status="critical"></span>
+        <span class="mob-status-btn__icon">&#xE412;</span>
+        <span class="mob-status-btn__text">E-Stop</span>
+      </span>
+    </button>
+  </div>
+  <div class="btn-grid__cell">
+    <button class="mob-status-btn is-hovered" data-status="critical">
+      <span class="mob-status-btn__layout">
+        <span class="mob-status-btn__status mob-status-icon mob-status-icon--sm" data-status="critical"></span>
+        <span class="mob-status-btn__icon">&#xE412;</span>
+        <span class="mob-status-btn__text">E-Stop</span>
+      </span>
+    </button>
+  </div>
+  <div class="btn-grid__cell">
+    <button class="mob-status-btn is-pressed" data-status="critical">
+      <span class="mob-status-btn__layout">
+        <span class="mob-status-btn__status mob-status-icon mob-status-icon--sm" data-status="critical"></span>
+        <span class="mob-status-btn__icon">&#xE412;</span>
+        <span class="mob-status-btn__text">E-Stop</span>
+      </span>
+    </button>
+  </div>
+  <div class="btn-grid__cell">
+    <button class="mob-status-btn" data-status="critical" disabled>
+      <span class="mob-status-btn__layout">
+        <span class="mob-status-btn__status mob-status-icon mob-status-icon--sm" data-status="critical"></span>
+        <span class="mob-status-btn__icon">&#xE412;</span>
+        <span class="mob-status-btn__text">E-Stop</span>
+      </span>
+    </button>
+  </div>
+  <div class="btn-grid__cell">
+    <button class="mob-status-btn is-focused" data-status="critical">
+      <span class="mob-status-btn__layout">
+        <span class="mob-status-btn__status mob-status-icon mob-status-icon--sm" data-status="critical"></span>
+        <span class="mob-status-btn__icon">&#xE412;</span>
+        <span class="mob-status-btn__text">E-Stop</span>
+      </span>
+    </button>
+  </div>
+  <div class="btn-grid__cell btn-grid__cell--notes"><code>data-status="critical"</code></div>
+
+
+  <!-- ===== ROW: Unknown ===== -->
+  <div class="btn-grid__cell btn-grid__cell--label">Unknown</div>
+
+  <div class="btn-grid__cell">
+    <button class="mob-status-btn" data-status="unknown">
+      <span class="mob-status-btn__layout">
+        <span class="mob-status-btn__status mob-status-icon mob-status-icon--sm" data-status="unknown"></span>
+        <span class="mob-status-btn__icon">&#xE940;</span>
+        <span class="mob-status-btn__text">No Data</span>
+      </span>
+    </button>
+  </div>
+  <div class="btn-grid__cell">
+    <button class="mob-status-btn is-hovered" data-status="unknown">
+      <span class="mob-status-btn__layout">
+        <span class="mob-status-btn__status mob-status-icon mob-status-icon--sm" data-status="unknown"></span>
+        <span class="mob-status-btn__icon">&#xE940;</span>
+        <span class="mob-status-btn__text">No Data</span>
+      </span>
+    </button>
+  </div>
+  <div class="btn-grid__cell">
+    <button class="mob-status-btn is-pressed" data-status="unknown">
+      <span class="mob-status-btn__layout">
+        <span class="mob-status-btn__status mob-status-icon mob-status-icon--sm" data-status="unknown"></span>
+        <span class="mob-status-btn__icon">&#xE940;</span>
+        <span class="mob-status-btn__text">No Data</span>
+      </span>
+    </button>
+  </div>
+  <div class="btn-grid__cell">
+    <button class="mob-status-btn" data-status="unknown" disabled>
+      <span class="mob-status-btn__layout">
+        <span class="mob-status-btn__status mob-status-icon mob-status-icon--sm" data-status="unknown"></span>
+        <span class="mob-status-btn__icon">&#xE940;</span>
+        <span class="mob-status-btn__text">No Data</span>
+      </span>
+    </button>
+  </div>
+  <div class="btn-grid__cell">
+    <button class="mob-status-btn is-focused" data-status="unknown">
+      <span class="mob-status-btn__layout">
+        <span class="mob-status-btn__status mob-status-icon mob-status-icon--sm" data-status="unknown"></span>
+        <span class="mob-status-btn__icon">&#xE940;</span>
+        <span class="mob-status-btn__text">No Data</span>
+      </span>
+    </button>
+  </div>
+  <div class="btn-grid__cell btn-grid__cell--notes"><code>data-status="unknown"</code></div>
+
+</div><!-- /.btn-grid -->
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 3: LIST-ITEM VARIANT
+     Source: StatusButton.xaml — Mobius_UI_Common_StatusButtonContentListItem
+     Style:  Mobius_UI_Common_Style_StatusButtonContentListItem
+             (BasedOn StatusButton style)
+
+     Key difference from standard:
+       _contentElement is a ContentControl wrapping icon + text.
+       Status state drives Foreground on the ContentControl,
+       so BOTH icon and text inherit the status color.
+       StatusIcon has Margin="-1".
+     ========================================================= -->
+
+<h2>List-Item Variant</h2>
+
+<div class="states-list">
+
+  <!-- ===== OK — list-item ===== -->
+  <!-- XAML: StatusButtonContentListItem, StatusIndicator=OK
+       ContentControl Foreground → InformationGreen, Opacity → 1.0
+       Both Path.Fill and TextBlock.Foreground inherit from ContentControl -->
+  <div class="demo-row">
+    <button class="mob-status-btn mob-status-btn--list-item" data-status="ok">
+      <span class="mob-status-btn__layout">
+        <span class="mob-status-btn__status mob-status-icon mob-status-icon--sm" data-status="ok"></span>
+        <span class="mob-status-btn__icon">&#xE870;</span>
+        <span class="mob-status-btn__text">LiDAR — Connected</span>
+      </span>
+    </button>
+    <span class="demo-row__label">OK — icon + text green</span>
+  </div>
+
+  <!-- ===== Warning — list-item ===== -->
+  <div class="demo-row">
+    <button class="mob-status-btn mob-status-btn--list-item" data-status="warning">
+      <span class="mob-status-btn__layout">
+        <span class="mob-status-btn__status mob-status-icon mob-status-icon--sm" data-status="warning"></span>
+        <span class="mob-status-btn__icon">&#xE762;</span>
+        <span class="mob-status-btn__text">GPS — Signal Weak</span>
+      </span>
+    </button>
+    <span class="demo-row__label">Warning — icon + text orange</span>
+  </div>
+
+  <!-- ===== Critical — list-item ===== -->
+  <div class="demo-row">
+    <button class="mob-status-btn mob-status-btn--list-item" data-status="critical">
+      <span class="mob-status-btn__layout">
+        <span class="mob-status-btn__status mob-status-icon mob-status-icon--sm" data-status="critical"></span>
+        <span class="mob-status-btn__icon">&#xE412;</span>
+        <span class="mob-status-btn__text">E-Stop — Triggered</span>
+      </span>
+    </button>
+    <span class="demo-row__label">Critical — icon + text red</span>
+  </div>
+
+  <!-- ===== Unknown — list-item ===== -->
+  <!-- XAML: Unknown — ContentControl Foreground → inherited,
+       Opacity → 0.35 on BOTH icon and text -->
+  <div class="demo-row">
+    <button class="mob-status-btn mob-status-btn--list-item" data-status="unknown">
+      <span class="mob-status-btn__layout">
+        <span class="mob-status-btn__status mob-status-icon mob-status-icon--sm" data-status="unknown"></span>
+        <span class="mob-status-btn__icon">&#xE940;</span>
+        <span class="mob-status-btn__text">Radar — No Data</span>
+      </span>
+    </button>
+    <span class="demo-row__label">Unknown — icon + text dimmed</span>
+  </div>
+
+</div>
+
+
+  </main>
+
+</div>
+
+<script src="../styles/nav.js"></script>
+</body>
+</html>

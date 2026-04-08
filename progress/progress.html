@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mobius — Progress Bar &amp; Progress Radial</title>
+  <link id="mob-theme-link" rel="stylesheet" href="../styles/LightTheme.css" />
+  <link rel="stylesheet" href="../styles/base.css" />
+  <link rel="stylesheet" href="progress-bar.css" />
+  <link rel="stylesheet" href="progress-radial.css" />
+  <style>
+    body { margin: 0; }
+    h1 {
+      font: var(--font-hdrMd);
+      margin: 0 0 32px;
+      color: var(--ForegroundStrong);
+    }
+    h2 {
+      font: var(--font-hdrSm);
+      margin: 40px 0 16px;
+      color: var(--ForegroundStrong);
+    }
+    h2:first-of-type { margin-top: 0; }
+    .states-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-field);
+      max-width: 540px;
+    }
+    .section-divider {
+      border: none;
+      border-top: var(--line-size) solid var(--InnerLines);
+      margin: 32px 0 0;
+    }
+    .demo-row {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-label-to-control);
+    }
+    .demo-row__label {
+      font: var(--font-bodyMd);
+      color: var(--ForegroundPrimary);
+      min-width: 140px;
+    }
+    .demo-bar-wrap {
+      flex: 1;
+      min-width: 260px;
+    }
+    .size-row {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-section-to-header);
+    }
+    .size-row__item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--spacing-label-to-control-sm);
+    }
+    .size-row__caption {
+      font: var(--font-bodySm);
+      color: var(--ForegroundDisabled);
+    }
+  </style>
+</head>
+<body>
+
+<div class="mob-layout">
+
+  <!-- Sidebar Navigation -->
+  <nav class="mob-nav" id="mob-nav"></nav>
+
+  <!-- Main Content -->
+  <main class="mob-layout__content">
+
+<h1>Progress Bar &amp; Progress Radial</h1>
+
+
+<!-- =========================================================
+     SECTION 1: PROGRESS BAR — DETERMINATE
+     Source: DefaultControls.xaml — Mobius_UI_Resources_Templates_ProgressBar
+     Style:  Mobius_UI_Resources_Styles_ProgressBarBase
+             Height="8", Foreground=InformationPurpleBrush,
+             Background=InnerLinesBrush
+
+     The template is a Grid containing:
+       - Rectangle Fill=Background (track)
+       - Rectangle x:Name="PART_Indicator" Fill=Foreground (fill)
+       - Rectangle x:Name="PART_Track"
+     ========================================================= -->
+
+<h2>Progress Bar — Determinate</h2>
+
+<div class="states-list">
+
+  <!-- XAML: ProgressBar Value="0" — empty state -->
+  <div class="demo-row">
+    <span class="demo-row__label">0%</span>
+    <div class="demo-bar-wrap">
+      <div class="mob-progress-bar" style="--progress: 0%;">
+        <div class="mob-progress-bar__fill"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- XAML: ProgressBar Value="25" -->
+  <div class="demo-row">
+    <span class="demo-row__label">25%</span>
+    <div class="demo-bar-wrap">
+      <div class="mob-progress-bar" style="--progress: 25%;">
+        <div class="mob-progress-bar__fill"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- XAML: ProgressBar Value="50" -->
+  <div class="demo-row">
+    <span class="demo-row__label">50%</span>
+    <div class="demo-bar-wrap">
+      <div class="mob-progress-bar" style="--progress: 50%;">
+        <div class="mob-progress-bar__fill"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- XAML: ProgressBar Value="75" -->
+  <div class="demo-row">
+    <span class="demo-row__label">75%</span>
+    <div class="demo-bar-wrap">
+      <div class="mob-progress-bar" style="--progress: 75%;">
+        <div class="mob-progress-bar__fill"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- XAML: ProgressBar Value="100" — complete state -->
+  <div class="demo-row">
+    <span class="demo-row__label">100%</span>
+    <div class="demo-bar-wrap">
+      <div class="mob-progress-bar" style="--progress: 100%;">
+        <div class="mob-progress-bar__fill"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 2: PROGRESS BAR — SIZE VARIANTS
+     Source: DefaultControls.xaml — Height="8" (default)
+             PlaylistProgressBarControl.xaml — Height="15"
+     ========================================================= -->
+
+<h2>Progress Bar — Size Variants</h2>
+
+<div class="states-list">
+
+  <!-- Thin: 4px — compact inline usage -->
+  <div class="demo-row">
+    <span class="demo-row__label">Thin (4px)</span>
+    <div class="demo-bar-wrap">
+      <div class="mob-progress-bar mob-progress-bar--thin" style="--progress: 60%;">
+        <div class="mob-progress-bar__fill"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Default: 8px — standard ProgressBar Height="8" -->
+  <div class="demo-row">
+    <span class="demo-row__label">Default (8px)</span>
+    <div class="demo-bar-wrap">
+      <div class="mob-progress-bar" style="--progress: 60%;">
+        <div class="mob-progress-bar__fill"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tall: 15px — PlaylistProgressBarControl Height="15" -->
+  <div class="demo-row">
+    <span class="demo-row__label">Tall (15px)</span>
+    <div class="demo-bar-wrap">
+      <div class="mob-progress-bar mob-progress-bar--tall" style="--progress: 60%;">
+        <div class="mob-progress-bar__fill"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 3: PROGRESS BAR — COLOR VARIANTS
+     Source: Various usage contexts — status-colored bars
+     ========================================================= -->
+
+<h2>Progress Bar — Color Variants</h2>
+
+<div class="states-list">
+
+  <!-- Default: InformationPurple -->
+  <div class="demo-row">
+    <span class="demo-row__label">Default (Purple)</span>
+    <div class="demo-bar-wrap">
+      <div class="mob-progress-bar" style="--progress: 65%;">
+        <div class="mob-progress-bar__fill"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Info: InformationBlue -->
+  <div class="demo-row">
+    <span class="demo-row__label">Info (Blue)</span>
+    <div class="demo-bar-wrap">
+      <div class="mob-progress-bar mob-progress-bar--info" style="--progress: 65%;">
+        <div class="mob-progress-bar__fill"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OK: InformationGreen -->
+  <div class="demo-row">
+    <span class="demo-row__label">OK (Green)</span>
+    <div class="demo-bar-wrap">
+      <div class="mob-progress-bar mob-progress-bar--ok" style="--progress: 65%;">
+        <div class="mob-progress-bar__fill"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Warning: InformationOrange -->
+  <div class="demo-row">
+    <span class="demo-row__label">Warning (Orange)</span>
+    <div class="demo-bar-wrap">
+      <div class="mob-progress-bar mob-progress-bar--warning" style="--progress: 65%;">
+        <div class="mob-progress-bar__fill"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Critical: InformationRed -->
+  <div class="demo-row">
+    <span class="demo-row__label">Critical (Red)</span>
+    <div class="demo-bar-wrap">
+      <div class="mob-progress-bar mob-progress-bar--critical" style="--progress: 65%;">
+        <div class="mob-progress-bar__fill"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 4: PROGRESS BAR — WITH LABEL OVERLAY
+     Source: PlaylistProgressBarControl.xaml —
+             StackPanel centered over ProgressBar with
+             TextBlock PercentCompleteText
+     ========================================================= -->
+
+<h2>Progress Bar — With Label</h2>
+
+<div class="states-list">
+
+  <!-- XAML: PlaylistProgressBarControl — PercentCompleteText overlaid -->
+  <div class="demo-row">
+    <span class="demo-row__label">Labeled</span>
+    <div class="demo-bar-wrap">
+      <!-- XAML: Grid > ProgressBar + StackPanel overlay -->
+      <div class="mob-progress-bar mob-progress-bar--labeled" style="--progress: 42%;">
+        <div class="mob-progress-bar__fill"></div>
+        <!-- XAML: TextBlock PercentCompleteText, MetaSm uppercase -->
+        <span class="mob-progress-bar__label">42% complete</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 5: PROGRESS BAR — INDETERMINATE
+     Standard WPF IsIndeterminate=true behavior — shimmer/loop.
+     ========================================================= -->
+
+<h2>Progress Bar — Indeterminate</h2>
+
+<div class="states-list">
+
+  <div class="demo-row">
+    <span class="demo-row__label">Indeterminate</span>
+    <div class="demo-bar-wrap">
+      <div class="mob-progress-bar mob-progress-bar--indeterminate">
+        <div class="mob-progress-bar__fill"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 6: PROGRESS BAR — PLAYLIST COMPOSITE
+     Source: PlaylistProgressBarControl.xaml — full composite
+             Grid with Title, ProgressBar, and TimeRemaining rows
+     ========================================================= -->
+
+<h2>Progress Bar — Playlist Composite</h2>
+
+<div class="states-list">
+
+  <!-- XAML: PlaylistProgressBarControl full template
+       Grid.Row 0: Title TextBlock (MetaSm uppercase)
+       Grid.Row 1: ProgressBar + PercentCompleteText overlay
+       Grid.Row 2: "Estimated time remaining" + TimeRemaining -->
+  <div class="mob-progress-composite">
+    <!-- XAML: TextBlock Grid.Row="0" Text=Title -->
+    <span class="mob-progress-composite__title">Uploading playlist</span>
+    <!-- XAML: Grid Grid.Row="1" — ProgressBar + overlay -->
+    <div class="mob-progress-bar mob-progress-bar--labeled" style="--progress: 68%; max-width: 260px;">
+      <div class="mob-progress-bar__fill"></div>
+      <span class="mob-progress-bar__label">68%</span>
+    </div>
+    <!-- XAML: StackPanel Grid.Row="2" — TimeRemaining -->
+    <span class="mob-progress-composite__meta">Estimated time remaining: 01:23</span>
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 7: PROGRESS RADIAL — SPINNER STATES
+     Source: ProgressRadial.xaml — Mobius_UI_CustomControls_Templates_ProgressRadial
+     C#:     ProgressRadial.cs — IsAnimated toggles VisualState
+
+     Canvas 26×26 with two Path arcs:
+       Background arc (270 deg) — Fill=Background (Transparent)
+       Foreground arc ( 90 deg) — Fill=Foreground (InformationPurpleBrush)
+     RotateTransform animates 0→720 in 1s (SineEase InOut, Forever)
+     ========================================================= -->
+
+<h2>Progress Radial — Spinner States</h2>
+
+<div class="states-list">
+
+  <!-- XAML: IsAnimated="true" — VisualState "Animating" -->
+  <div class="demo-row">
+    <span class="demo-row__label">Spinning</span>
+    <span class="mob-progress-radial is-spinning" aria-label="Loading"></span>
+  </div>
+
+  <!-- XAML: IsAnimated="false" — VisualState "NoAnimation" (static) -->
+  <div class="demo-row">
+    <span class="demo-row__label">Static</span>
+    <span class="mob-progress-radial" aria-label="Idle"></span>
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 8: PROGRESS RADIAL — SIZE VARIANTS
+     Source: ProgressRadial.xaml — Canvas 26×26 (default)
+             ProgressRadialWithStatus.xaml — Height="40" Width="40"
+     ========================================================= -->
+
+<h2>Progress Radial — Size Variants</h2>
+
+<div class="states-list">
+
+  <div class="size-row">
+
+    <!-- Small: 20px -->
+    <div class="size-row__item">
+      <span class="mob-progress-radial mob-progress-radial--sm is-spinning" aria-label="Loading"></span>
+      <span class="size-row__caption">Small (20px)</span>
+    </div>
+
+    <!-- Default: 26px — matches Canvas 26×26 -->
+    <div class="size-row__item">
+      <span class="mob-progress-radial is-spinning" aria-label="Loading"></span>
+      <span class="size-row__caption">Default (26px)</span>
+    </div>
+
+    <!-- Large: 40px — ProgressRadialWithStatus -->
+    <div class="size-row__item">
+      <span class="mob-progress-radial mob-progress-radial--lg is-spinning" aria-label="Loading"></span>
+      <span class="size-row__caption">Large (40px)</span>
+    </div>
+
+    <!-- XL: 56px — hero loaders -->
+    <div class="size-row__item">
+      <span class="mob-progress-radial mob-progress-radial--xl is-spinning" aria-label="Loading"></span>
+      <span class="size-row__caption">XL (56px)</span>
+    </div>
+
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 9: PROGRESS RADIAL — WITH CENTER ICON
+     Source: ProgressRadial.xaml — Path Data=TemplateBinding Icon,
+             Fill=TemplateBinding IconBrush, Stretch=Uniform,
+             Width=12, Height=12
+     ========================================================= -->
+
+<h2>Progress Radial — With Icon</h2>
+
+<div class="states-list">
+
+  <div class="size-row">
+
+    <!-- XAML: Icon=Icon_Status_OkaySm, IconBrush=ForegroundPrimaryBrush -->
+    <div class="size-row__item">
+      <span class="mob-progress-radial mob-progress-radial--lg is-spinning" aria-label="Loading">
+        <span class="mob-progress-radial__icon" data-icon="&#xE449;"></span>
+      </span>
+      <span class="size-row__caption">OK icon</span>
+    </div>
+
+    <!-- XAML: Icon=gear, IconBrush=ForegroundPrimaryBrush -->
+    <div class="size-row__item">
+      <span class="mob-progress-radial mob-progress-radial--lg is-spinning" aria-label="Loading">
+        <span class="mob-progress-radial__icon" data-icon="&#xE555;"></span>
+      </span>
+      <span class="size-row__caption">Gear icon</span>
+    </div>
+
+    <!-- Static with icon -->
+    <div class="size-row__item">
+      <span class="mob-progress-radial mob-progress-radial--lg" aria-label="Complete">
+        <span class="mob-progress-radial__icon" data-icon="&#xE449;"></span>
+      </span>
+      <span class="size-row__caption">Static + icon</span>
+    </div>
+
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 10: PROGRESS RADIAL WITH STATUS
+     Source: ProgressRadialWithStatus.xaml — UserControl
+             Border (BackgroundStrong, BoxShadow) >
+               StackPanel (horizontal) >
+                 TextBlock (Text binding, Gray, FontSize=20) +
+                 ProgressRadial (40×40, IsAnimated=IsSpinning)
+     ========================================================= -->
+
+<h2>Progress Radial — With Status Text</h2>
+
+<div class="states-list">
+
+  <!-- XAML: ProgressRadialWithStatus — full composite
+       Border Background=BackgroundStrongBrush, BoxShadow
+       StackPanel Horizontal: TextBlock + ProgressRadial 40×40 -->
+  <div class="mob-progress-status">
+    <!-- XAML: TextBlock Text=Binding Text, Foreground=Gray, FontSize=20 -->
+    <span class="mob-progress-status__text">Loading data...</span>
+    <!-- XAML: ProgressRadial Height="40" Width="40" IsAnimated=true -->
+    <span class="mob-progress-radial mob-progress-radial--lg is-spinning" aria-label="Loading"></span>
+  </div>
+
+</div>
+
+
+  </main>
+
+</div>
+
+<script src="../styles/nav.js"></script>
+</body>
+</html>

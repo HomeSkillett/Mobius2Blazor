@@ -36,8 +36,20 @@
   transition: color var(--transition-mouse-over) ease;
 }
 
+/* Hover — XAML: MouseOverElement → MouseOverPrimary */
 .mob-theme-btn:hover {
-  color: var(--SelectionPrimary);
+  color: var(--MouseOverPrimary);
+}
+
+/* Pressed — XAML: MouseDownElement → MouseOverPrimary + 25% black */
+.mob-theme-btn:active {
+  color: var(--btn-pressed-bg);
+}
+
+/* Focused — XAML: outline ring matching button focus style */
+.mob-theme-btn:focus-visible {
+  outline: var(--border-width-focused) solid var(--MouseOverPrimary);
+  outline-offset: var(--focus-outline-offset);
 }
 
 

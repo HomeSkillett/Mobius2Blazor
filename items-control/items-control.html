@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mobius — ItemsControl</title>
+  <link id="mob-theme-link" rel="stylesheet" href="../styles/LightTheme.css" />
+  <link rel="stylesheet" href="../styles/base.css" />
+  <link rel="stylesheet" href="items-control.css" />
+  <style>
+    body { margin: 0; }
+    h1 {
+      font: var(--font-hdrMd);
+      margin: 0 0 32px;
+      color: var(--ForegroundStrong);
+    }
+    h2 {
+      font: var(--font-hdrSm);
+      margin: 40px 0 16px;
+      color: var(--ForegroundStrong);
+    }
+    h2:first-of-type { margin-top: 0; }
+    .states-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-field);
+      max-width: 540px;
+    }
+    .section-divider {
+      border: none;
+      border-top: var(--line-size) solid var(--InnerLines);
+      margin: 32px 0 0;
+    }
+    .note {
+      font: var(--font-default);
+      color: var(--ForegroundPrimary);
+      margin: 0 0 var(--spacing-section-to-header) 0;
+      max-width: 540px;
+    }
+    .note code {
+      font-family: var(--font-monospace);
+      background: var(--BackgroundPrimary);
+      padding: 1px 4px;
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="mob-layout">
+
+  <!-- Sidebar Navigation -->
+  <nav class="mob-nav" id="mob-nav"></nav>
+
+  <!-- Main Content -->
+  <main class="mob-layout__content">
+
+<h1>ItemsControl</h1>
+
+
+<!-- =========================================================
+     SECTION 1: DEFAULT VERTICAL LIST
+     Source: DefaultControls.xaml — Style TargetType=ItemsControl (line 3909)
+     XAML: <ItemsControl ItemsSource="{Binding Items}">
+             (default ItemsPanel = StackPanel vertical)
+     ========================================================= -->
+
+<h2>Default — Vertical Stack</h2>
+
+<p class="note">
+  The base <code>ItemsControl</code> renders each bound item top-to-bottom in a
+  vertical <code>StackPanel</code>. No selection, no scroll — just a repeater.
+  XAML style sets <code>BorderThickness="0"</code> and templates a transparent
+  <code>Border</code> wrapping an <code>ItemsPresenter</code>.
+</p>
+
+<div class="states-list">
+
+  <!-- XAML: ItemsControl — default StackPanel, ItemsSource bound to collection -->
+  <div class="mob-items-control">
+    <!-- XAML: DataTemplate — single TextBlock per item -->
+    <div class="mob-items-control__item">Front LiDAR</div>
+    <div class="mob-items-control__item">Rear LiDAR</div>
+    <div class="mob-items-control__item">Side Camera — Left</div>
+    <div class="mob-items-control__item">Side Camera — Right</div>
+    <div class="mob-items-control__item">Ultrasonic Array</div>
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 2: MULTI-COLUMN ITEM TEMPLATE
+     Source: ErrorReport.xaml — lines 510-565
+     XAML: DataTemplate with Grid.ColumnDefinitions
+           [16px pad | Name (1fr) | 16px gap | CheckBox (auto) | 24px pad]
+     ========================================================= -->
+
+<h2>Multi-Column Item Template</h2>
+
+<p class="note">
+  Each item uses a <code>Grid</code> inside its <code>DataTemplate</code> to lay out
+  multiple columns — text on the left, a control on the right, with fixed gutters.
+  Source: <code>ErrorReport.xaml</code> vehicle selection list.
+</p>
+
+<div class="states-list" style="max-width: 420px;">
+
+  <!-- XAML: ItemsControl with VirtualizingStackPanel, Grid-based DataTemplate -->
+  <!-- XAML: ItemsControl.ItemsPanel → VirtualizingStackPanel -->
+  <div class="mob-items-control">
+
+    <!-- XAML: DataTemplate DataType=IErrorReportVehicleSelectionVM -->
+    <!-- XAML: Grid Height="40", 5 ColumnDefinitions: 16, *, 16, Auto, 24 -->
+    <div class="mob-items-control__item mob-items-control__item--grid">
+      <!-- XAML: TextBlock Grid.Column="1" — vehicle name -->
+      <span class="mob-items-control__cell" style="grid-column: 2;">Truck 01 — Haulage</span>
+      <!-- XAML: CheckBox Grid.Column="3" — selection toggle -->
+      <label class="mob-checkbox" style="grid-column: 4;">
+        <input class="mob-checkbox__input" type="checkbox" checked />
+      </label>
+    </div>
+
+    <div class="mob-items-control__item mob-items-control__item--grid">
+      <span class="mob-items-control__cell" style="grid-column: 2;">Truck 02 — Haulage</span>
+      <label class="mob-checkbox" style="grid-column: 4;">
+        <input class="mob-checkbox__input" type="checkbox" checked />
+      </label>
+    </div>
+
+    <div class="mob-items-control__item mob-items-control__item--grid">
+      <span class="mob-items-control__cell" style="grid-column: 2;">Loader 01 — Excavation</span>
+      <label class="mob-checkbox" style="grid-column: 4;">
+        <input class="mob-checkbox__input" type="checkbox" />
+      </label>
+    </div>
+
+    <div class="mob-items-control__item mob-items-control__item--grid">
+      <span class="mob-items-control__cell" style="grid-column: 2;">Dozer 03 — Grading</span>
+      <label class="mob-checkbox" style="grid-column: 4;">
+        <input class="mob-checkbox__input" type="checkbox" disabled />
+      </label>
+    </div>
+
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 3: WRAP PANEL (icon grid)
+     Source: Asi.MobiusIconsViewer/MainWindow.xaml — lines 87-120
+     XAML: <ItemsControl.ItemsPanel>
+             <ItemsPanelTemplate><WrapPanel/></ItemsPanelTemplate>
+           </ItemsControl.ItemsPanel>
+           <ItemsControl.ItemTemplate>
+             <DataTemplate>
+               <StackPanel Orientation="Vertical" Width="64" Margin="16">
+                 <Path Width="32" Height="32" />
+                 <TextBlock />
+               </StackPanel>
+             </DataTemplate>
+           </ItemsControl.ItemTemplate>
+     ========================================================= -->
+
+<h2>WrapPanel — Icon Grid</h2>
+
+<p class="note">
+  Overrides the default <code>ItemsPanel</code> with a <code>WrapPanel</code> so items
+  flow left-to-right and wrap. Each item is a 64 px column showing an icon + label.
+  Source: <code>MobiusIconsViewer/MainWindow.xaml</code>.
+</p>
+
+<div class="states-list" style="max-width: 640px;">
+
+  <!-- XAML: ItemsControl with WrapPanel ItemsPanel -->
+  <div class="mob-items-control mob-items-control--wrap">
+
+    <!-- XAML: DataTemplate → StackPanel Vertical, Width=64 -->
+    <div class="mob-items-control__item">
+      <!-- XAML: Path Data="{Binding Geometry}" Width="32" Height="32" -->
+      <span class="mob-items-control__icon">&#xE555;</span>
+      <!-- XAML: TextBlock Text="{Binding Key}" -->
+      <span class="mob-items-control__text">Vehicle</span>
+    </div>
+
+    <div class="mob-items-control__item">
+      <span class="mob-items-control__icon">&#xE50D;</span>
+      <span class="mob-items-control__text">Settings</span>
+    </div>
+
+    <div class="mob-items-control__item">
+      <span class="mob-items-control__icon">&#xE511;</span>
+      <span class="mob-items-control__text">Search</span>
+    </div>
+
+    <div class="mob-items-control__item">
+      <span class="mob-items-control__icon">&#xE509;</span>
+      <span class="mob-items-control__text">Map</span>
+    </div>
+
+    <div class="mob-items-control__item">
+      <span class="mob-items-control__icon">&#xE52A;</span>
+      <span class="mob-items-control__text">Camera</span>
+    </div>
+
+    <div class="mob-items-control__item">
+      <span class="mob-items-control__icon">&#xE500;</span>
+      <span class="mob-items-control__text">Alert</span>
+    </div>
+
+    <div class="mob-items-control__item">
+      <span class="mob-items-control__icon">&#xE51E;</span>
+      <span class="mob-items-control__text">Route</span>
+    </div>
+
+    <div class="mob-items-control__item">
+      <span class="mob-items-control__icon">&#xE53C;</span>
+      <span class="mob-items-control__text">Sensor</span>
+    </div>
+
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 4: CARD ITEMS (accent bar + content)
+     Source: CameraConfigurationListViewer.xaml
+     XAML: DataTemplate with Border → Grid [8px accent | content]
+           Background=BackgroundInvertPrimaryBrush, Width=200, MaxWidth=250
+     ========================================================= -->
+
+<h2>Card Items — Accent Bar</h2>
+
+<p class="note">
+  Each item renders as a card with a coloured accent strip on the left and an
+  <code>IconLabelButton</code> on the right. Source:
+  <code>CameraConfigurationListViewer.xaml</code>.
+</p>
+
+<div class="states-list">
+
+  <!-- XAML: ItemsControl ItemsSource="{Binding CameraConfigurations}" -->
+  <div class="mob-items-control mob-items-control--cards">
+
+    <!-- XAML: DataTemplate DataType=ICameraConfigurationVM -->
+    <!-- XAML: Border Margin="0 0 0 6" Background=BackgroundInvertPrimary Width=200 MaxWidth=250 -->
+    <div class="mob-items-control__item">
+      <!-- XAML: Grid ColumnDefinition Width="8" (accent) -->
+      <span class="mob-items-control__item-accent"></span>
+      <!-- XAML: IconLabelButton Grid.Column="1" Icon=Icon_Video Text="{Binding Name}" -->
+      <span class="mob-items-control__item-body">Front Camera</span>
+    </div>
+
+    <div class="mob-items-control__item">
+      <span class="mob-items-control__item-accent"></span>
+      <span class="mob-items-control__item-body">Rear Camera</span>
+    </div>
+
+    <div class="mob-items-control__item">
+      <span class="mob-items-control__item-accent"></span>
+      <span class="mob-items-control__item-body">Left Side Camera</span>
+    </div>
+
+    <div class="mob-items-control__item">
+      <span class="mob-items-control__item-accent"></span>
+      <span class="mob-items-control__item-body">Overhead Boom Cam</span>
+    </div>
+
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 5: GROUPED ITEMS
+     Source: ErrorReport.xaml — lines 547-549
+     XAML: <ItemsControl.GroupStyle>
+             <GroupStyle HeaderTemplate="{StaticResource CategoryTemplate}" />
+           </ItemsControl.GroupStyle>
+     ========================================================= -->
+
+<h2>Grouped Items</h2>
+
+<p class="note">
+  <code>GroupStyle</code> adds a header template above each category.
+  The <code>CollectionViewSource</code> in the ViewModel defines the grouping
+  property. Source: <code>ErrorReport.xaml</code> vehicle categories.
+</p>
+
+<div class="states-list" style="max-width: 420px;">
+
+  <!-- XAML: ItemsControl with GroupStyle + CategoryTemplate header -->
+  <div class="mob-items-control">
+
+    <!-- XAML: GroupStyle HeaderTemplate — category name -->
+    <div class="mob-items-control__group">
+      <div class="mob-items-control__group-header">Affected Vehicles</div>
+      <div class="mob-items-control__item mob-items-control__item--grid">
+        <span class="mob-items-control__cell" style="grid-column: 2;">Truck 01</span>
+        <label class="mob-checkbox" style="grid-column: 4;">
+          <!-- XAML: DataTrigger Binding=Category Value=Affected → IsEnabled=False -->
+          <input class="mob-checkbox__input" type="checkbox" checked disabled />
+        </label>
+      </div>
+      <div class="mob-items-control__item mob-items-control__item--grid">
+        <span class="mob-items-control__cell" style="grid-column: 2;">Truck 02</span>
+        <label class="mob-checkbox" style="grid-column: 4;">
+          <input class="mob-checkbox__input" type="checkbox" checked disabled />
+        </label>
+      </div>
+    </div>
+
+    <div class="mob-items-control__group">
+      <div class="mob-items-control__group-header">Other Vehicles</div>
+      <div class="mob-items-control__item mob-items-control__item--grid">
+        <span class="mob-items-control__cell" style="grid-column: 2;">Loader 01</span>
+        <label class="mob-checkbox" style="grid-column: 4;">
+          <input class="mob-checkbox__input" type="checkbox" />
+        </label>
+      </div>
+      <div class="mob-items-control__item mob-items-control__item--grid">
+        <span class="mob-items-control__cell" style="grid-column: 2;">Dozer 03</span>
+        <label class="mob-checkbox" style="grid-column: 4;">
+          <input class="mob-checkbox__input" type="checkbox" />
+        </label>
+      </div>
+      <div class="mob-items-control__item mob-items-control__item--grid">
+        <span class="mob-items-control__cell" style="grid-column: 2;">Grader 02</span>
+        <label class="mob-checkbox" style="grid-column: 4;">
+          <input class="mob-checkbox__input" type="checkbox" checked />
+        </label>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 6: EMPTY STATE
+     Source: ErrorReport.xaml — lines 550-564
+     XAML: <ItemsControl.Style>
+             <Trigger Property="HasItems" Value="False">
+               <Setter Property="Template">
+                 <ControlTemplate>
+                   <TextBlock Text="No matching vehicles" />
+                 </ControlTemplate>
+               </Setter>
+             </Trigger>
+           </ItemsControl.Style>
+     ========================================================= -->
+
+<h2>Empty State</h2>
+
+<p class="note">
+  When <code>HasItems</code> is <code>False</code>, a style trigger replaces
+  the entire <code>ControlTemplate</code> with a placeholder message.
+  In Blazor: conditionally render the empty message when the collection count is zero.
+</p>
+
+<div class="states-list">
+
+  <!-- XAML: ItemsControl with HasItems=False trigger -->
+  <div class="mob-items-control">
+    <!-- XAML: ControlTemplate override — TextBlock FontSize=12, Margin=15,9,24,9 -->
+    <span class="mob-items-control__empty">No matching vehicles</span>
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 7: SCROLLABLE LIST
+     Source: Common pattern — ScrollViewer wrapping ItemsControl
+     XAML: <ScrollViewer>
+             <ItemsControl ItemsSource="{Binding LargeCollection}" />
+           </ScrollViewer>
+     ========================================================= -->
+
+<h2>Scrollable List</h2>
+
+<p class="note">
+  Wrap the <code>ItemsControl</code> in a <code>ScrollViewer</code> when the item
+  count can exceed the available height. In Blazor, consider
+  <code>&lt;Virtualize&gt;</code> for large data sets instead of rendering all items.
+</p>
+
+<div class="states-list" style="max-width: 420px;">
+
+  <!-- XAML: ScrollViewer → ItemsControl -->
+  <div class="mob-items-control mob-items-control--scrollable">
+    <div class="mob-items-control__item">Vehicle 01 — Haul Truck</div>
+    <div class="mob-items-control__item">Vehicle 02 — Haul Truck</div>
+    <div class="mob-items-control__item">Vehicle 03 — Excavator</div>
+    <div class="mob-items-control__item">Vehicle 04 — Wheel Loader</div>
+    <div class="mob-items-control__item">Vehicle 05 — Dozer</div>
+    <div class="mob-items-control__item">Vehicle 06 — Grader</div>
+    <div class="mob-items-control__item">Vehicle 07 — Water Cart</div>
+    <div class="mob-items-control__item">Vehicle 08 — Haul Truck</div>
+    <div class="mob-items-control__item">Vehicle 09 — Drill Rig</div>
+    <div class="mob-items-control__item">Vehicle 10 — Haul Truck</div>
+    <div class="mob-items-control__item">Vehicle 11 — Excavator</div>
+    <div class="mob-items-control__item">Vehicle 12 — Compactor</div>
+  </div>
+
+</div>
+
+
+  </main>
+
+</div>
+
+<script src="../styles/nav.js"></script>
+</body>
+</html>

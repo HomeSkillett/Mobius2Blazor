@@ -1,0 +1,357 @@
+/*
+  slider.css — Mobius Slider component styles
+  Sources:
+    DefaultControls.xaml — Controls.SliderTemplate (line 6029)
+                           Mobius_UI_Resources_Styles_Slider (line 6198)
+                           Mobius_UI_Resources_Templates_SliderThumb (line 5819)
+                           Mobius_UI_Resources_Styles_SliderThumb (line 5986)
+
+  XAML Template layers (bottom -> top):
+    Grid (3 rows: Auto | Auto MinHeight | Auto)
+      TopTick (TickBar)           -> not rendered by default (Collapsed)
+      Border (right-edge tick)    -> .mob-slider__endcap (1×5 vertical line)
+      TrackBackground (Border)    -> transparent (no visible bg)
+      PART_Track (Track)          -> .mob-slider__track wrapper
+        DecreaseRepeatButton      -> .mob-slider__fill (9px blue bar, rounded left)
+        Thumb (28×28 circle)      -> .mob-slider__thumb-visual
+        IncreaseRepeatButton      -> .mob-slider__track-line (1px top-border line)
+      BottomTick (TickBar)        -> not rendered by default (Collapsed)
+
+  XAML Style setters (Mobius_UI_Resources_Styles_Slider):
+    Background  = BackgroundStrongBrush    -> thumb fill
+    BorderBrush = ForegroundPrimaryBrush   -> track line color
+    Foreground  = SelectionPrimaryBrush    -> thumb border + decrease fill
+    MinWidth    = 88 (Horizontal)
+
+  XAML Thumb (Mobius_UI_Resources_Styles_SliderThumb):
+    Width/Height    = 28
+    Background      = BackgroundStrongBrush     -> thumb fill (white)
+    BorderBrush     = SelectionPrimaryBrush     -> thumb stroke (cyan)
+    BorderThickness = 1
+    Cursor          = SizeWE
+    Inner elements:
+      Shadow Ellipse — ShadowElements, StrokeThickness=3, Opacity=0.5
+      _outerVisualElement (Ellipse) — Margin=2, Stroke=SelectionPrimary
+      _slider (Rectangle 2×13)     — center tick line, fill=SelectionPrimary
+
+  Visual states (SliderThumb):
+    Normal    — stroke reverts to SelectionPrimary (mouse-out duration)
+    MouseOver — stroke + inner border -> MouseOverPrimary (mouse-over duration)
+
+  NOTE: The WPF slider uses a split track — thick filled bar left of thumb,
+        thin line right of thumb. Native <input type="range"> cannot replicate
+        this split in CSS alone. This component uses a structural HTML approach:
+        a hidden native input drives the value, overlaid with visual elements
+        that match the WPF rendering exactly.
+
+  Classes:
+    .mob-slider              Wrapper container (inline-flex, touch-target height)
+    .mob-slider__track       Track wrapper (positioned, holds fill + line + thumb)
+    .mob-slider__fill        Filled portion left of thumb (9px, InformationBlueAlt)
+    .mob-slider__track-line  Unfilled portion right of thumb (1px border-top)
+    .mob-slider__endcap      Right-edge vertical tick (1×5, ForegroundPrimary)
+    .mob-slider__thumb       Thumb hit area (touch-target sized, transparent)
+    .mob-slider__thumb-visual  Visible thumb circle (28×28 ellipse + center tick)
+    .mob-slider__input       Hidden native <input type="range"> (drives value)
+    .mob-slider__label       Optional text label beside the slider
+    .mob-slider__value       Optional live value display
+
+  Static demo classes:
+    .is-hovered              Simulated hover
+    .is-focused              Simulated focus ring
+    .is-disabled             Simulated disabled
+*/
+
+
+/* =============================================
+   SLIDER CONTAINER  (.mob-slider)
+   XAML: Slider control — horizontal by default,
+         MinWidth="88", touch target height
+   ============================================= */
+
+.mob-slider {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-label-to-control);   /* XAML: label-to-control gap (10px) */
+  min-height: var(--touch);               /* XAML: touch target (44px) */
+  min-width: 88px;                        /* XAML: MinWidth="88" on Horizontal */
+  width: 100%;
+}
+
+
+/* =============================================
+   TRACK WRAPPER  (.mob-slider__track)
+   XAML: Grid Row=1 containing TrackBackground + PART_Track.
+         Positioned container for the visual track elements.
+   ============================================= */
+
+.mob-slider__track {
+  position: relative;
+  flex: 1;
+  height: var(--touch);                   /* full touch target for click area */
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+
+/* =============================================
+   HIDDEN NATIVE INPUT  (.mob-slider__input)
+   The native range input is stretched over the track
+   wrapper at full opacity:0 so it captures all pointer
+   events (drag, click, keyboard) while the visual
+   elements render underneath.
+   ============================================= */
+
+.mob-slider__input {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 2;                             /* above visual elements */
+}
+
+
+/* =============================================
+   FILLED TRACK  (.mob-slider__fill)
+   XAML: DecreaseRepeatButton template —
+         Inner Border: MaxHeight="9", Margin="0,0,-2,1",
+         Background=InformationBlueAltBrush,
+         CornerRadius="4.5,0,0,4.5", Opacity=0.5
+   ============================================= */
+
+.mob-slider__fill {
+  height: 9px;                            /* XAML: MaxHeight="9" */
+  background: var(--InformationBlueAlt);  /* XAML: InformationBlueAltBrush */
+  border-radius: 4.5px 0 0 4.5px;        /* XAML: CornerRadius="4.5,0,0,4.5" */
+  opacity: 0.5;                           /* XAML: Opacity="0.5" */
+  flex-shrink: 0;
+  pointer-events: none;
+}
+
+
+/* =============================================
+   UNFILLED TRACK LINE  (.mob-slider__track-line)
+   XAML: IncreaseRepeatButton template —
+         Inner Border: Height="2", Margin="1,0",
+         BorderBrush={TemplateBinding BorderBrush}
+           = ForegroundPrimary,
+         BorderThickness="0,1,0,0", Opacity="0.5"
+   ============================================= */
+
+.mob-slider__track-line {
+  flex: 1;
+  height: 0;
+  border-top: var(--border-width) solid var(--ForegroundPrimary);  /* XAML: BorderThickness="0,1,0,0" */
+  opacity: 0.5;                           /* XAML: Opacity="0.5" */
+  pointer-events: none;
+}
+
+
+/* =============================================
+   RIGHT-EDGE END CAP  (.mob-slider__endcap)
+   XAML: Border in Grid Row=1 —
+         Width="1", Height="5", Margin="0,0,0,1",
+         HorizontalAlignment=Right, VerticalAlignment=Center,
+         BorderBrush={TemplateBinding BorderBrush}
+           = ForegroundPrimary,
+         BorderThickness="0,0,1,0", Opacity="0.5"
+   ============================================= */
+
+.mob-slider__endcap {
+  width: 0;
+  height: 5px;                            /* XAML: Height="5" */
+  border-right: var(--border-width) solid var(--ForegroundPrimary);  /* XAML: BorderThickness="0,0,1,0" */
+  opacity: 0.5;                           /* XAML: Opacity="0.5" */
+  flex-shrink: 0;
+  pointer-events: none;
+}
+
+
+/* =============================================
+   THUMB VISUAL  (.mob-slider__thumb-visual)
+   XAML: Mobius_UI_Resources_Templates_SliderThumb —
+         Grid Margin="-2":
+           Shadow Ellipse — Stroke=ShadowElements,
+             StrokeThickness=3, Opacity=0.5
+           _outerVisualElement (Ellipse) — Margin=2,
+             Width/Height=28, Fill=BackgroundStrong,
+             Stroke=SelectionPrimary, StrokeThickness=1
+           _innerVisualElement > _slider (Rectangle) —
+             Width=2, Height=13, Fill=SelectionPrimary
+   ============================================= */
+
+.mob-slider__thumb-visual {
+  position: absolute;
+  width: 28px;                            /* XAML: Width="28" */
+  height: 28px;                           /* XAML: Height="28" */
+  border-radius: 50%;                     /* XAML: Ellipse */
+  border: var(--border-width) solid var(--SelectionPrimary);  /* XAML: Stroke=SelectionPrimary, StrokeThickness=1 */
+  box-shadow:
+    0 0 0 3px var(--ShadowElements);      /* XAML: Shadow Ellipse — StrokeThickness=3, Opacity 0.5 */
+  cursor: ew-resize;                      /* XAML: Cursor="SizeWE" */
+  pointer-events: none;
+  z-index: 1;
+
+  /* XAML: _outerVisualElement Fill=BackgroundStrong +
+     _slider Rectangle (2×13, centered, fill=SelectionPrimary).
+     Layered background: 2px-wide center tick on top of white fill. */
+  background:
+    linear-gradient(
+      to right,
+      transparent calc(50% - 1px),
+      var(--SelectionPrimary) calc(50% - 1px),
+      var(--SelectionPrimary) calc(50% + 1px),
+      transparent calc(50% + 1px)
+    ) no-repeat center / 2px 13px,
+    var(--BackgroundStrong);               /* XAML: Fill=BackgroundStrongBrush */
+
+  /* Position: centered vertically, left offset set by inline style */
+  top: 50%;
+  transform: translateY(-50%);
+
+  transition:
+    border-color var(--transition-mouse-out) ease,
+    box-shadow var(--transition-mouse-out) ease,
+    background var(--transition-mouse-out) ease;
+}
+
+
+/* =============================================
+   HOVER STATE
+   XAML: MouseOver — _outerVisualElement Stroke +
+         _innerVisualElement BorderBrush -> MouseOverPrimary,
+         duration = GeneralMouseOverDuration
+   ============================================= */
+
+.mob-slider__track:hover .mob-slider__thumb-visual,
+.mob-slider.is-hovered .mob-slider__thumb-visual {
+  border-color: var(--MouseOverPrimary);
+  background:
+    linear-gradient(
+      to right,
+      transparent calc(50% - 1px),
+      var(--MouseOverPrimary) calc(50% - 1px),
+      var(--MouseOverPrimary) calc(50% + 1px),
+      transparent calc(50% + 1px)
+    ) no-repeat center / 2px 13px,
+    var(--BackgroundStrong);
+  transition-duration: var(--transition-mouse-over);
+}
+
+
+/* =============================================
+   PRESSED STATE
+   XAML: Normal state reverts stroke to SelectionPrimary
+         (mouse-out duration). Active/pressed falls back
+         to TemplateBinding values.
+   ============================================= */
+
+.mob-slider__track:active .mob-slider__thumb-visual {
+  border-color: var(--SelectionPrimary);
+  background:
+    linear-gradient(
+      to right,
+      transparent calc(50% - 1px),
+      var(--SelectionPrimary) calc(50% - 1px),
+      var(--SelectionPrimary) calc(50% + 1px),
+      transparent calc(50% + 1px)
+    ) no-repeat center / 2px 13px,
+    var(--BackgroundStrong);
+  transition-duration: var(--transition-mouse-pressed);
+}
+
+
+/* =============================================
+   FOCUS STATE
+   XAML: FocusVisualStyle — Mobius_UI_Resources_Styles_FocusVisualStyle
+         (2px outline adorner around the thumb)
+   ============================================= */
+
+.mob-slider__input:focus-visible ~ .mob-slider__thumb-visual,
+.mob-slider.is-focused .mob-slider__thumb-visual {
+  border-color: var(--MouseOverPrimary);
+  outline: var(--border-width-focused) solid var(--MouseOverPrimary);
+  outline-offset: var(--focus-outline-offset);
+  background:
+    linear-gradient(
+      to right,
+      transparent calc(50% - 1px),
+      var(--MouseOverPrimary) calc(50% - 1px),
+      var(--MouseOverPrimary) calc(50% + 1px),
+      transparent calc(50% + 1px)
+    ) no-repeat center / 2px 13px,
+    var(--BackgroundStrong);
+  transition-duration: var(--transition-focus);
+}
+
+
+/* =============================================
+   DISABLED STATE
+   XAML: Disabled — templateRoot Opacity -> DisabledOpacity
+   ============================================= */
+
+.mob-slider.is-disabled,
+.mob-slider:has(.mob-slider__input:disabled) {
+  opacity: var(--opacity-disabled);        /* XAML: DisabledOpacity (0.35) */
+  cursor: default;
+}
+
+.mob-slider.is-disabled .mob-slider__track,
+.mob-slider:has(.mob-slider__input:disabled) .mob-slider__track {
+  cursor: default;
+}
+
+.mob-slider.is-disabled .mob-slider__thumb-visual,
+.mob-slider:has(.mob-slider__input:disabled) .mob-slider__thumb-visual {
+  cursor: default;
+}
+
+
+/* =============================================
+   LABEL  (.mob-slider__label)
+   XAML: ContentControl — VerticalAlignment=Center,
+         Foreground=ForegroundPrimary
+   ============================================= */
+
+.mob-slider__label {
+  color: var(--ForegroundPrimary);
+  font: var(--font-default);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+
+/* =============================================
+   VALUE DISPLAY  (.mob-slider__value)
+   Shows the current value. Monospace to prevent
+   layout shift as digits change.
+   ============================================= */
+
+.mob-slider__value {
+  color: var(--ForegroundStrong);
+  font: var(--font-default);
+  min-width: 3ch;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+
+/* =============================================
+   SLIDER IN FORM FIELD LAYOUT
+   Reuses .mob-field from text-input.css.
+   Label at 130px min-width, slider in body.
+   ============================================= */
+
+.mob-field__body .mob-slider {
+  width: 100%;
+}

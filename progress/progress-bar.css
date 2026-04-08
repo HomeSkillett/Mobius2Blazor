@@ -1,0 +1,137 @@
+/* =============================================
+   PROGRESS BAR
+   Source: DefaultControls.xaml — Mobius_UI_Resources_Templates_ProgressBar
+   C#:     PlaylistProgressBarControl.cs — Title, PercentComplete, TimeRemaining
+   Style:  Mobius_UI_Resources_Styles_ProgressBarBase
+
+   A horizontal bar that fills left-to-right to indicate
+   determinate progress (0–100%). Foreground = InformationPurple,
+   Background = InnerLines. Default height: 8px.
+
+   Usage:
+     <div class="mob-progress-bar" style="--progress: 65%;">
+       <div class="mob-progress-bar__fill"></div>
+     </div>
+
+   Set --progress via inline style or Blazor binding.
+   ============================================= */
+
+/* --- Track ---------------------------------------------------- */
+/* XAML: Grid x:Name="Background" — Rectangle Fill=Background (InnerLinesBrush) */
+.mob-progress-bar {
+  position: relative;
+  width: 100%;
+  height: 8px;
+  background: var(--InnerLines);
+  overflow: hidden;
+}
+
+/* --- Fill indicator ------------------------------------------- */
+/* XAML: Rectangle x:Name="PART_Indicator" — HorizontalAlignment=Left,
+         Fill=Foreground (InformationPurpleBrush) */
+.mob-progress-bar__fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: var(--progress, 0%);
+  background: var(--InformationPurple);
+  transition: width var(--transition-expand) ease-out;
+}
+
+
+/* --- Size variants -------------------------------------------- */
+
+/* Thin: 4px — compact inline contexts */
+.mob-progress-bar--thin {
+  height: 4px;
+}
+
+/* Tall: 15px — matches PlaylistProgressBarControl.xaml Height="15" */
+/* XAML: ProgressBar Width="260" Height="15" in PlaylistProgressBarControl */
+.mob-progress-bar--tall {
+  height: 15px;
+}
+
+
+/* --- With label overlay --------------------------------------- */
+/* XAML: PlaylistProgressBarControl — StackPanel centered over ProgressBar
+         TextBlock PercentCompleteText overlaid on the bar */
+.mob-progress-bar--labeled {
+  height: 15px;
+}
+
+/* XAML: StackPanel HorizontalAlignment="Center" over the ProgressBar Grid */
+.mob-progress-bar__label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font: var(--font-metaSm);
+  color: var(--ForegroundPrimary);
+  text-transform: uppercase;
+  pointer-events: none;
+  z-index: 1;
+}
+
+
+/* --- Playlist composite --------------------------------------- */
+/* XAML: PlaylistProgressBarControl.xaml — Grid with Title row,
+         ProgressBar row, and TimeRemaining row */
+.mob-progress-composite {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-label-to-control-sm);
+}
+
+/* XAML: TextBlock Grid.Row="0" — Title, MetaSm uppercase */
+.mob-progress-composite__title {
+  font: var(--font-metaSm);
+  color: var(--ForegroundPrimary);
+  text-transform: uppercase;
+}
+
+/* XAML: StackPanel Grid.Row="2" — "Estimated time remaining" + TimeRemaining */
+.mob-progress-composite__meta {
+  font: var(--font-metaSm);
+  color: var(--ForegroundPrimary);
+  text-transform: uppercase;
+}
+
+
+/* --- Indeterminate animation ---------------------------------- */
+/* No explicit XAML template for indeterminate, but standard WPF
+   ProgressBar supports IsIndeterminate. CSS shimmer approximation. */
+.mob-progress-bar--indeterminate .mob-progress-bar__fill {
+  width: 30%;
+  animation: progress-bar-indeterminate 1.5s ease-in-out infinite;
+}
+
+@keyframes progress-bar-indeterminate {
+  0%   { left: -30%; }
+  100% { left: 100%; }
+}
+
+
+/* --- Color variants ------------------------------------------- */
+
+/* OK / success — InformationGreen */
+.mob-progress-bar--ok .mob-progress-bar__fill {
+  background: var(--InformationGreen);
+}
+
+/* Warning — InformationOrange */
+.mob-progress-bar--warning .mob-progress-bar__fill {
+  background: var(--InformationOrange);
+}
+
+/* Critical — InformationRed */
+.mob-progress-bar--critical .mob-progress-bar__fill {
+  background: var(--InformationRed);
+}
+
+/* Info — InformationBlue */
+.mob-progress-bar--info .mob-progress-bar__fill {
+  background: var(--InformationBlue);
+}

@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mobius — ExpanderItem + IconLabelExpander</title>
+  <link id="mob-theme-link" rel="stylesheet" href="../styles/LightTheme.css" />
+  <link rel="stylesheet" href="../styles/base.css" />
+  <link rel="stylesheet" href="expander-item.css" />
+  <style>
+    body { margin: 0; }
+    h1 {
+      font: var(--font-hdrMd);
+      margin: 0 0 32px;
+      color: var(--ForegroundStrong);
+    }
+    h2 {
+      font: var(--font-hdrSm);
+      margin: 40px 0 16px;
+      color: var(--ForegroundStrong);
+    }
+    h2:first-of-type { margin-top: 0; }
+    .states-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-field);
+      max-width: 540px;
+    }
+    .section-divider {
+      border: none;
+      border-top: var(--line-size) solid var(--InnerLines);
+      margin: 32px 0 0;
+    }
+    .note {
+      font: var(--font-default);
+      color: var(--ForegroundPrimary);
+      margin: 0 0 var(--spacing-section-to-header) 0;
+      max-width: 540px;
+    }
+    .note code {
+      font-family: var(--font-monospace);
+      background: var(--BackgroundPrimary);
+      padding: 1px 4px;
+      border-radius: 3px;
+    }
+    .demo-content {
+      padding: var(--size-12) var(--size-24);
+      font: var(--font-default);
+      color: var(--ForegroundPrimary);
+    }
+    .demo-content-item {
+      min-height: var(--touch);
+      display: flex;
+      align-items: center;
+      padding: 0 var(--size-6);
+    }
+    .demo-sidebar {
+      display: flex;
+      flex-direction: column;
+      width: 240px;
+      background: var(--BackgroundStepOne);
+      border: var(--line-size) solid var(--InnerLines);
+      padding: var(--size-12) 0;
+    }
+    .demo-sidebar-wide {
+      width: 260px;
+    }
+    .demo-sidebar-narrow {
+      width: 72px;
+    }
+    .demo-sidebar-row {
+      display: flex;
+      gap: var(--size-24);
+      align-items: flex-start;
+    }
+  </style>
+</head>
+<body>
+
+<div class="mob-layout">
+
+  <!-- Sidebar Navigation -->
+  <nav class="mob-nav" id="mob-nav"></nav>
+
+  <!-- Main Content -->
+  <main class="mob-layout__content">
+
+<h1>ExpanderItem + IconLabelExpander</h1>
+
+
+<!-- =========================================================
+     SECTION 1: DEFAULT — EXPANDER WITH HEADER
+     Source: ExpanderItem.xaml — Mobius_UI_Common_Templates_ExpanderItemWithHeader
+     XAML: <common:ExpanderItem
+             Style="{StaticResource Mobius_UI_Resources_Styles_ExpanderItemWithHeader}"
+             Header="Section Title"
+             IsOpened="False">
+             <content />
+           </common:ExpanderItem>
+     ========================================================= -->
+
+<h2>Default — ExpanderItem with Header</h2>
+
+<p class="note">
+  The primary <code>ExpanderItem</code> variant. A chevron toggle (rotates -90° to 0°)
+  sits left of the header text. Content slides open/closed with a 500ms ease-out
+  transition. XAML header row: <code>[20px chevron | 8px gap | * header]</code>.
+  Source: <code>Mobius_UI_Common_Templates_ExpanderItemWithHeader</code>.
+</p>
+
+<div class="states-list">
+
+  <!-- XAML: ExpanderItem Style=ExpanderItemWithHeader, IsOpened=False (collapsed) -->
+  <div class="mob-expander" onclick="this.classList.toggle('is-open')">
+    <!-- XAML: PART_expanderHeaderGrid — Grid MinHeight=TouchSize -->
+    <div class="mob-expander__header">
+      <!-- XAML: PART_expanderToggle — ToggleButton, Path Data=Icon_Arrow_PointerDownSm -->
+      <span class="mob-expander__chevron"><svg viewBox="0 0 12 12"><path d="M12,4.5V3h-1.3L6,7.6L1.4,3H0v1.4l6,6l6-6V4.5z"/></svg></span>
+      <!-- XAML: PART_expanderHeader — ContentControl, Header="GPS Configuration" -->
+      <span class="mob-expander__label">GPS Configuration</span>
+    </div>
+    <!-- XAML: PART_expanderContent — TruncatableContentControl, ClipToBounds=True -->
+    <div class="mob-expander__content">
+      <div class="mob-expander__content-inner">
+        <div class="demo-content">
+          <div class="demo-content-item">Base Station: RTK Fixed</div>
+          <div class="demo-content-item">Correction Source: NTRIP</div>
+          <div class="demo-content-item">Update Rate: 10 Hz</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- XAML: ExpanderItem IsOpened=True (expanded by default) -->
+  <div class="mob-expander is-open" onclick="this.classList.toggle('is-open')">
+    <div class="mob-expander__header">
+      <span class="mob-expander__chevron"><svg viewBox="0 0 12 12"><path d="M12,4.5V3h-1.3L6,7.6L1.4,3H0v1.4l6,6l6-6V4.5z"/></svg></span>
+      <span class="mob-expander__label">Vehicle Sensors</span>
+    </div>
+    <div class="mob-expander__content">
+      <div class="mob-expander__content-inner">
+        <div class="demo-content">
+          <div class="demo-content-item">Front LiDAR — Active</div>
+          <div class="demo-content-item">Rear LiDAR — Active</div>
+          <div class="demo-content-item">Side Camera Left — Idle</div>
+          <div class="demo-content-item">Ultrasonic Array — Calibrating</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 2: LIST-ITEM VARIANT (with "No items" message)
+     Source: ExpanderItem.xaml — Mobius_UI_Common_Templates_ListItemExpanderItemWithHeader
+     XAML: <common:ExpanderItem
+             Style="{StaticResource Mobius_UI_Resources_Styles_ListItemExpanderItemWithHeader}"
+             Header="Empty Section"
+             NoItemsMessage="No vehicles assigned"
+             IsOpened="True">
+             <!-- empty content -->
+           </common:ExpanderItem>
+     ========================================================= -->
+
+<h2>List-Item Variant — Empty State</h2>
+
+<p class="note">
+  The list-item template adds a "no items" message row (row 3) that appears when
+  the content area is empty and the expander is open. The message sits between
+  two horizontal rules at <code>DisabledOpacity</code>.
+  Source: <code>Mobius_UI_Common_Templates_ListItemExpanderItemWithHeader</code>.
+</p>
+
+<div class="states-list">
+
+  <!-- XAML: ListItemExpanderItemWithHeader — expanded, empty content -->
+  <div class="mob-expander mob-expander--list is-open is-empty" onclick="this.classList.toggle('is-open')">
+    <div class="mob-expander__header">
+      <span class="mob-expander__chevron"><svg viewBox="0 0 12 12"><path d="M12,4.5V3h-1.3L6,7.6L1.4,3H0v1.4l6,6l6-6V4.5z"/></svg></span>
+      <span class="mob-expander__label">Assigned Vehicles</span>
+    </div>
+    <div class="mob-expander__content">
+      <div class="mob-expander__content-inner"></div>
+    </div>
+    <!-- XAML: _noContent Grid — Row 3, TextBlock + Rectangle dividers -->
+    <div class="mob-expander__no-items">
+      <span class="mob-expander__no-items-line"></span>
+      <span class="mob-expander__no-items-text">No vehicles assigned</span>
+      <span class="mob-expander__no-items-line"></span>
+    </div>
+  </div>
+
+  <!-- XAML: ListItemExpanderItemWithHeader — expanded, has content -->
+  <div class="mob-expander mob-expander--list is-open" onclick="this.classList.toggle('is-open')">
+    <div class="mob-expander__header">
+      <span class="mob-expander__chevron"><svg viewBox="0 0 12 12"><path d="M12,4.5V3h-1.3L6,7.6L1.4,3H0v1.4l6,6l6-6V4.5z"/></svg></span>
+      <span class="mob-expander__label">Assigned Vehicles</span>
+    </div>
+    <div class="mob-expander__content">
+      <div class="mob-expander__content-inner">
+        <div class="demo-content">
+          <div class="demo-content-item">Truck 01 — Haulage</div>
+          <div class="demo-content-item">Truck 02 — Haulage</div>
+        </div>
+      </div>
+    </div>
+    <div class="mob-expander__no-items">
+      <span class="mob-expander__no-items-line"></span>
+      <span class="mob-expander__no-items-text">No vehicles assigned</span>
+      <span class="mob-expander__no-items-line"></span>
+    </div>
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 3: DISABLED / COLLAPSE-DISABLED STATES
+     Source: ExpanderItem.cs — IsCollapseDisabled, Disabled VisualState
+     XAML: <common:ExpanderItem IsEnabled="False" ... />
+           <common:ExpanderItem IsCollapseDisabled="True" IsOpened="True" ... />
+     ========================================================= -->
+
+<h2>Disabled + Collapse-Disabled</h2>
+
+<p class="note">
+  <code>IsEnabled=False</code> dims the entire control to <code>DisabledOpacity (0.35)</code>
+  and blocks interaction. <code>IsCollapseDisabled=True</code> keeps the expander permanently
+  open — the chevron is hidden and the header is non-interactive. Used when content must
+  always be visible (e.g. required configuration sections).
+</p>
+
+<div class="states-list">
+
+  <!-- XAML: ExpanderItem IsEnabled="False" -->
+  <div class="mob-expander is-disabled">
+    <div class="mob-expander__header">
+      <span class="mob-expander__chevron"><svg viewBox="0 0 12 12"><path d="M12,4.5V3h-1.3L6,7.6L1.4,3H0v1.4l6,6l6-6V4.5z"/></svg></span>
+      <span class="mob-expander__label">Disabled Section</span>
+    </div>
+    <div class="mob-expander__content">
+      <div class="mob-expander__content-inner"></div>
+    </div>
+  </div>
+
+  <!-- XAML: ExpanderItem IsCollapseDisabled="True" IsOpened="True" -->
+  <div class="mob-expander is-open is-collapse-disabled">
+    <div class="mob-expander__header">
+      <span class="mob-expander__chevron"><svg viewBox="0 0 12 12"><path d="M12,4.5V3h-1.3L6,7.6L1.4,3H0v1.4l6,6l6-6V4.5z"/></svg></span>
+      <span class="mob-expander__label">Always-Open Section (collapse disabled)</span>
+    </div>
+    <div class="mob-expander__content">
+      <div class="mob-expander__content-inner">
+        <div class="demo-content">
+          <div class="demo-content-item">This content is always visible</div>
+          <div class="demo-content-item">The chevron is hidden and header non-interactive</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 4: NESTED EXPANDERS
+     Source: Common pattern — ExpanderItems nested inside ExpanderItem content
+     XAML: <common:ExpanderItem Header="Parent">
+             <StackPanel>
+               <common:ExpanderItem Header="Child A" />
+               <common:ExpanderItem Header="Child B" />
+             </StackPanel>
+           </common:ExpanderItem>
+     ========================================================= -->
+
+<h2>Nested Expanders</h2>
+
+<p class="note">
+  <code>ExpanderItem</code> content can contain other <code>ExpanderItem</code>s for
+  multi-level collapsible sections. Common in configuration panels like
+  <code>ModeConfigurationSetup.xaml</code> and <code>ModeDiagnostics.xaml</code>.
+</p>
+
+<div class="states-list">
+
+  <!-- XAML: ExpanderItem → StackPanel → child ExpanderItems -->
+  <div class="mob-expander is-open" onclick="event.stopPropagation(); if(event.target.closest('.mob-expander') === this) this.classList.toggle('is-open')">
+    <div class="mob-expander__header">
+      <span class="mob-expander__chevron"><svg viewBox="0 0 12 12"><path d="M12,4.5V3h-1.3L6,7.6L1.4,3H0v1.4l6,6l6-6V4.5z"/></svg></span>
+      <span class="mob-expander__label">Vehicle Setup</span>
+    </div>
+    <div class="mob-expander__content">
+      <div class="mob-expander__content-inner">
+
+        <!-- XAML: Child ExpanderItem "Steering" -->
+        <div class="mob-expander" onclick="event.stopPropagation(); this.classList.toggle('is-open')" style="padding-left: var(--size-20);">
+          <div class="mob-expander__header">
+            <span class="mob-expander__chevron"><svg viewBox="0 0 12 12"><path d="M12,4.5V3h-1.3L6,7.6L1.4,3H0v1.4l6,6l6-6V4.5z"/></svg></span>
+            <span class="mob-expander__label">Steering Configuration</span>
+          </div>
+          <div class="mob-expander__content">
+            <div class="mob-expander__content-inner">
+              <div class="demo-content">
+                <div class="demo-content-item">Type: Ackermann</div>
+                <div class="demo-content-item">Max Angle: 35°</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- XAML: Child ExpanderItem "Braking" -->
+        <div class="mob-expander is-open" onclick="event.stopPropagation(); this.classList.toggle('is-open')" style="padding-left: var(--size-20);">
+          <div class="mob-expander__header">
+            <span class="mob-expander__chevron"><svg viewBox="0 0 12 12"><path d="M12,4.5V3h-1.3L6,7.6L1.4,3H0v1.4l6,6l6-6V4.5z"/></svg></span>
+            <span class="mob-expander__label">Braking System</span>
+          </div>
+          <div class="mob-expander__content">
+            <div class="mob-expander__content-inner">
+              <div class="demo-content">
+                <div class="demo-content-item">Service Brake: Hydraulic</div>
+                <div class="demo-content-item">Park Brake: Spring-applied</div>
+                <div class="demo-content-item">Retarder: Electric</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 5: ICON-LABEL EXPANDER
+     Source: IconLabelExpander.xaml — Mobius_UI_CustomControls_Templates_IconLabelExpander
+     XAML: <custom:IconLabelExpander
+             Content="{icon}"
+             LabelString="Vehicles"
+             ShowLabel="True"
+             MinWidth="60"
+             OffsetMargin="20,0,0,0" />
+     ========================================================= -->
+
+<h2>IconLabelExpander</h2>
+
+<p class="note">
+  A sidebar navigation item with an icon and a horizontally collapsible label.
+  The label slides in/out using an <code>ExpanderItem</code> with
+  <code>ExpansionDirection=ExpandLeft</code>. <code>ShowLabel</code> toggles the
+  label visibility with a 700ms ease animation. Default label width: 150px.
+  Source: <code>Mobius_UI_CustomControls_Templates_IconLabelExpander</code>.
+</p>
+
+<div class="demo-sidebar-row">
+
+  <!-- Expanded sidebar (ShowLabel=True) -->
+  <div class="demo-sidebar demo-sidebar-wide">
+
+    <!-- XAML: IconLabelExpander ShowLabel=True, icon + label visible -->
+    <div class="mob-icon-label-expander is-open">
+      <!-- XAML: ContentControl Content="{TemplateBinding Content}" — icon -->
+      <span class="mob-icon-label-expander__icon">&#xE555;</span>
+      <!-- XAML: ExpanderItem ExpansionDirection="ExpandLeft" -->
+      <div class="mob-icon-label-expander__label">
+        <!-- XAML: TextBlock Text="{TemplateBinding LabelString}" -->
+        <span class="mob-icon-label-expander__label-inner">Vehicles</span>
+      </div>
+    </div>
+
+    <div class="mob-icon-label-expander is-open">
+      <span class="mob-icon-label-expander__icon">&#xE509;</span>
+      <div class="mob-icon-label-expander__label">
+        <span class="mob-icon-label-expander__label-inner">Map</span>
+      </div>
+    </div>
+
+    <div class="mob-icon-label-expander is-open">
+      <span class="mob-icon-label-expander__icon">&#xE50D;</span>
+      <div class="mob-icon-label-expander__label">
+        <span class="mob-icon-label-expander__label-inner">Settings</span>
+      </div>
+    </div>
+
+    <div class="mob-icon-label-expander is-open">
+      <span class="mob-icon-label-expander__icon">&#xE55D;</span>
+      <div class="mob-icon-label-expander__label">
+        <span class="mob-icon-label-expander__label-inner">Notifications</span>
+      </div>
+    </div>
+
+    <div class="mob-icon-label-expander is-open">
+      <span class="mob-icon-label-expander__icon">&#xE51E;</span>
+      <div class="mob-icon-label-expander__label">
+        <span class="mob-icon-label-expander__label-inner">Routes</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Collapsed sidebar (ShowLabel=False) -->
+  <div class="demo-sidebar demo-sidebar-narrow">
+
+    <!-- XAML: IconLabelExpander ShowLabel=False — icon only -->
+    <div class="mob-icon-label-expander">
+      <span class="mob-icon-label-expander__icon">&#xE555;</span>
+      <div class="mob-icon-label-expander__label">
+        <span class="mob-icon-label-expander__label-inner">Vehicles</span>
+      </div>
+    </div>
+
+    <div class="mob-icon-label-expander">
+      <span class="mob-icon-label-expander__icon">&#xE509;</span>
+      <div class="mob-icon-label-expander__label">
+        <span class="mob-icon-label-expander__label-inner">Map</span>
+      </div>
+    </div>
+
+    <div class="mob-icon-label-expander">
+      <span class="mob-icon-label-expander__icon">&#xE50D;</span>
+      <div class="mob-icon-label-expander__label">
+        <span class="mob-icon-label-expander__label-inner">Settings</span>
+      </div>
+    </div>
+
+    <div class="mob-icon-label-expander">
+      <span class="mob-icon-label-expander__icon">&#xE55D;</span>
+      <div class="mob-icon-label-expander__label">
+        <span class="mob-icon-label-expander__label-inner">Notifications</span>
+      </div>
+    </div>
+
+    <div class="mob-icon-label-expander">
+      <span class="mob-icon-label-expander__icon">&#xE51E;</span>
+      <div class="mob-icon-label-expander__label">
+        <span class="mob-icon-label-expander__label-inner">Routes</span>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 6: INTERACTIVE DEMO — TOGGLE ALL
+     Combined demo: click expanders to toggle, button to
+     toggle IconLabelExpander sidebar labels.
+     ========================================================= -->
+
+<h2>Interactive Demo</h2>
+
+<p class="note">
+  Click any expander header to toggle it open/closed. Use the button below
+  the sidebar to toggle <code>ShowLabel</code> on all <code>IconLabelExpander</code>
+  items simultaneously (mimics the sidebar collapse behavior).
+</p>
+
+<div class="demo-sidebar" id="demo-interactive-sidebar">
+
+  <div class="mob-icon-label-expander is-open" id="ile-demo-1">
+    <span class="mob-icon-label-expander__icon">&#xE555;</span>
+    <div class="mob-icon-label-expander__label">
+      <span class="mob-icon-label-expander__label-inner">Vehicles</span>
+    </div>
+  </div>
+
+  <div class="mob-icon-label-expander is-open" id="ile-demo-2">
+    <span class="mob-icon-label-expander__icon">&#xE509;</span>
+    <div class="mob-icon-label-expander__label">
+      <span class="mob-icon-label-expander__label-inner">Map</span>
+    </div>
+  </div>
+
+  <div class="mob-icon-label-expander is-open" id="ile-demo-3">
+    <span class="mob-icon-label-expander__icon">&#xE50D;</span>
+    <div class="mob-icon-label-expander__label">
+      <span class="mob-icon-label-expander__label-inner">Settings</span>
+    </div>
+  </div>
+
+</div>
+
+<button onclick="
+  var sidebar = document.getElementById('demo-interactive-sidebar');
+  var items = sidebar.querySelectorAll('.mob-icon-label-expander');
+  var isWide = sidebar.classList.contains('demo-sidebar-wide');
+  for (var i = 0; i < items.length; i++) { items[i].classList.toggle('is-open'); }
+  sidebar.classList.toggle('demo-sidebar-wide');
+  sidebar.classList.toggle('demo-sidebar-narrow');
+" style="
+  margin-top: var(--size-12);
+  min-height: var(--touch);
+  padding: var(--btn-padding);
+  font: var(--font-default);
+  color: var(--SelectionForeground);
+  background: var(--SelectionPrimary);
+  border: none;
+  cursor: pointer;
+">Toggle ShowLabel</button>
+
+
+  </main>
+
+</div>
+
+<script>
+  /* Initialize interactive sidebar default state */
+  var sidebar = document.getElementById('demo-interactive-sidebar');
+  if (sidebar) {
+    sidebar.classList.add('demo-sidebar-wide');
+  }
+</script>
+<script src="../styles/nav.js"></script>
+</body>
+</html>

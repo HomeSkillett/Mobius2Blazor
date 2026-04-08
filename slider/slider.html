@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mobius — Slider States</title>
+  <link id="mob-theme-link" rel="stylesheet" href="../styles/LightTheme.css" />
+  <link rel="stylesheet" href="../styles/base.css" />
+  <link rel="stylesheet" href="slider.css" />
+  <style>
+    body { margin: 0; }
+    h1 {
+      font: var(--font-hdrMd);
+      margin: 0 0 32px;
+      color: var(--ForegroundStrong);
+    }
+    h2 {
+      font: var(--font-hdrSm);
+      margin: 40px 0 16px;
+      color: var(--ForegroundStrong);
+    }
+    h2:first-of-type { margin-top: 0; }
+    .states-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-field);
+      max-width: 540px;
+    }
+    .section-divider {
+      border: none;
+      border-top: var(--line-size) solid var(--InnerLines);
+      margin: 32px 0 0;
+    }
+  </style>
+</head>
+<body>
+
+<div class="mob-layout">
+
+  <!-- Sidebar Navigation -->
+  <nav class="mob-nav" id="mob-nav"></nav>
+
+  <!-- Main Content -->
+  <main class="mob-layout__content">
+
+<h1>Slider</h1>
+
+
+<!-- =========================================================
+     SECTION 1: INTERACTION STATES
+     Source: DefaultControls.xaml — Controls.SliderTemplate (line 6029)
+             Mobius_UI_Resources_Styles_Slider (line 6198)
+             Mobius_UI_Resources_Templates_SliderThumb (line 5819)
+
+     Structure note: The WPF slider uses a split track —
+     thick filled bar left of thumb (DecreaseRepeatButton),
+     thin line right of thumb (IncreaseRepeatButton), and
+     a 28×28 circular thumb with a 2×13 center tick.
+     Native <input type="range"> can't replicate this split,
+     so the markup uses structural HTML with a hidden native
+     input for accessibility / keyboard / drag.
+     ========================================================= -->
+
+<h2>Interaction States</h2>
+
+<div class="states-list">
+
+  <!-- ===== Default ===== -->
+  <!-- XAML: Normal VisualState — Thumb Stroke=SelectionPrimary,
+       DecreaseRepeatButton=InformationBlueAlt 9px bar at 0.5 opacity,
+       IncreaseRepeatButton=ForegroundPrimary 1px line at 0.5 opacity -->
+  <div class="mob-slider">
+    <!-- XAML: PART_Track → DecreaseRepeatButton + Thumb + IncreaseRepeatButton -->
+    <div class="mob-slider__track">
+      <!-- XAML: DecreaseRepeatButton — InformationBlueAlt, MaxHeight=9,
+           CornerRadius="4.5,0,0,4.5", Opacity=0.5 -->
+      <div class="mob-slider__fill" style="width: 40%;"></div>
+      <!-- XAML: IncreaseRepeatButton — BorderThickness="0,1,0,0",
+           BorderBrush=ForegroundPrimary, Opacity=0.5, Height=2, Margin="1,0" -->
+      <div class="mob-slider__track-line"></div>
+      <!-- XAML: Border Width=1 Height=5 — right-edge tick,
+           BorderBrush=ForegroundPrimary, Opacity=0.5 -->
+      <div class="mob-slider__endcap"></div>
+      <!-- XAML: Thumb — Style=SliderThumb, 28×28 ellipse,
+           Background=BackgroundStrong, BorderBrush=SelectionPrimary -->
+      <div class="mob-slider__thumb-visual" style="left: calc(40% - 14px);"></div>
+      <input class="mob-slider__input" type="range" min="0" max="100" value="40" />
+    </div>
+    <span class="mob-slider__label">Default</span>
+  </div>
+
+  <!-- ===== Hover ===== -->
+  <!-- XAML: MouseOver — _outerVisualElement Stroke + _innerVisualElement
+       BorderBrush -> MouseOverPrimary, duration=GeneralMouseOverDuration.
+       _slider Rectangle fill also -> MouseOverPrimary -->
+  <div class="mob-slider is-hovered">
+    <div class="mob-slider__track">
+      <div class="mob-slider__fill" style="width: 60%;"></div>
+      <div class="mob-slider__track-line"></div>
+      <div class="mob-slider__endcap"></div>
+      <div class="mob-slider__thumb-visual" style="left: calc(60% - 14px);"></div>
+      <input class="mob-slider__input" type="range" min="0" max="100" value="60" />
+    </div>
+    <span class="mob-slider__label">Hover</span>
+  </div>
+
+  <!-- ===== Focused ===== -->
+  <!-- XAML: FocusVisualStyle — Mobius_UI_Resources_Styles_FocusVisualStyle
+       2px outline adorner + thumb stroke -> MouseOverPrimary -->
+  <div class="mob-slider is-focused">
+    <div class="mob-slider__track">
+      <div class="mob-slider__fill" style="width: 50%;"></div>
+      <div class="mob-slider__track-line"></div>
+      <div class="mob-slider__endcap"></div>
+      <div class="mob-slider__thumb-visual" style="left: calc(50% - 14px);"></div>
+      <input class="mob-slider__input" type="range" min="0" max="100" value="50" />
+    </div>
+    <span class="mob-slider__label">Focused</span>
+  </div>
+
+  <!-- ===== Disabled ===== -->
+  <!-- XAML: Disabled — templateRoot Opacity -> DisabledOpacity (0.35) -->
+  <div class="mob-slider is-disabled">
+    <div class="mob-slider__track">
+      <div class="mob-slider__fill" style="width: 30%;"></div>
+      <div class="mob-slider__track-line"></div>
+      <div class="mob-slider__endcap"></div>
+      <div class="mob-slider__thumb-visual" style="left: calc(30% - 14px);"></div>
+      <input class="mob-slider__input" type="range" min="0" max="100" value="30" disabled />
+    </div>
+    <span class="mob-slider__label">Disabled</span>
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 3: SLIDER WITH VALUE DISPLAY
+     Source: Common pattern — Slider + TextBlock showing value
+     ========================================================= -->
+
+<h2>Slider with Value Display</h2>
+
+<div class="states-list">
+
+  <!-- ===== Speed control ===== -->
+  <!-- XAML: Slider + TextBlock bound to Slider.Value -->
+  <div class="mob-slider">
+    <div class="mob-slider__track">
+      <div class="mob-slider__fill" style="width: 50%;"></div>
+      <div class="mob-slider__track-line"></div>
+      <div class="mob-slider__endcap"></div>
+      <div class="mob-slider__thumb-visual" style="left: calc(50% - 14px);"></div>
+      <input class="mob-slider__input" type="range" min="0" max="50" value="25" />
+    </div>
+    <span class="mob-slider__value">25</span>
+    <span class="mob-slider__label">km/h</span>
+  </div>
+
+  <!-- ===== Opacity control ===== -->
+  <!-- XAML: Slider Minimum=0 Maximum=100 + TextBlock with StringFormat -->
+  <div class="mob-slider">
+    <div class="mob-slider__track">
+      <div class="mob-slider__fill" style="width: 75%;"></div>
+      <div class="mob-slider__track-line"></div>
+      <div class="mob-slider__endcap"></div>
+      <div class="mob-slider__thumb-visual" style="left: calc(75% - 21px);"></div>
+      <input class="mob-slider__input" type="range" min="0" max="100" value="75" />
+    </div>
+    <span class="mob-slider__value">75</span>
+    <span class="mob-slider__label">%</span>
+  </div>
+
+  <!-- ===== Disabled with value ===== -->
+  <!-- XAML: IsEnabled=False — whole slider dims to DisabledOpacity -->
+  <div class="mob-slider is-disabled">
+    <div class="mob-slider__track">
+      <div class="mob-slider__fill" style="width: 40%;"></div>
+      <div class="mob-slider__track-line"></div>
+      <div class="mob-slider__endcap"></div>
+      <div class="mob-slider__thumb-visual" style="left: calc(40% - 14px);"></div>
+      <input class="mob-slider__input" type="range" min="0" max="100" value="40" disabled />
+    </div>
+    <span class="mob-slider__value">40</span>
+    <span class="mob-slider__label">%</span>
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 4: SLIDER IN FORM FIELD LAYOUT
+     Source: FieldInput pattern — label column (130px min) +
+             slider in body column, matching horizontal field
+             alignment from text-input / combobox.
+     ========================================================= -->
+
+<h2>Form Field Layout</h2>
+
+<div class="states-list">
+
+  <!-- ===== Standard form field with slider ===== -->
+  <!-- XAML: FieldInput-like layout — label left, slider right -->
+  <div class="mob-field">
+    <span class="mob-field__label">Speed:</span>
+    <div class="mob-field__body">
+      <div class="mob-slider">
+        <div class="mob-slider__track">
+          <div class="mob-slider__fill" style="width: 50%;"></div>
+          <div class="mob-slider__track-line"></div>
+          <div class="mob-slider__endcap"></div>
+          <div class="mob-slider__thumb-visual" style="left: calc(50% - 14px);"></div>
+          <input class="mob-slider__input" type="range" min="0" max="50" value="25" />
+        </div>
+        <span class="mob-slider__value">25</span>
+        <span class="mob-slider__label">km/h</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Another form field ===== -->
+  <!-- XAML: FieldInput with Slider for opacity/intensity settings -->
+  <div class="mob-field">
+    <span class="mob-field__label">Intensity:</span>
+    <div class="mob-field__body">
+      <div class="mob-slider">
+        <div class="mob-slider__track">
+          <div class="mob-slider__fill" style="width: 80%;"></div>
+          <div class="mob-slider__track-line"></div>
+          <div class="mob-slider__endcap"></div>
+          <div class="mob-slider__thumb-visual" style="left: calc(80% - 22px);"></div>
+          <input class="mob-slider__input" type="range" min="0" max="100" value="80" />
+        </div>
+        <span class="mob-slider__value">80</span>
+        <span class="mob-slider__label">%</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Disabled form field ===== -->
+  <!-- XAML: IsEnabled=False on parent — dims entire row -->
+  <div class="mob-field">
+    <span class="mob-field__label">Threshold:</span>
+    <div class="mob-field__body">
+      <div class="mob-slider is-disabled">
+        <div class="mob-slider__track">
+          <div class="mob-slider__fill" style="width: 60%;"></div>
+          <div class="mob-slider__track-line"></div>
+          <div class="mob-slider__endcap"></div>
+          <div class="mob-slider__thumb-visual" style="left: calc(60% - 17px);"></div>
+          <input class="mob-slider__input" type="range" min="0" max="100" value="60" disabled />
+        </div>
+        <span class="mob-slider__value">60</span>
+        <span class="mob-slider__label">%</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+  </main>
+
+</div>
+
+<script src="../styles/nav.js"></script>
+<script>
+  /*  Demo-only: sync native range inputs with structural visual elements.
+      In Blazor the component binding handles this; here we wire it up
+      so the documentation page is interactive. */
+  function syncSlider(input) {
+    var track = input.closest('.mob-slider__track');
+    if (!track) return;
+    var min   = parseFloat(input.min) || 0;
+    var max   = parseFloat(input.max) || 100;
+    var val   = parseFloat(input.value);
+    var pct   = ((val - min) / (max - min)) * 100;
+
+    var fill  = track.querySelector('.mob-slider__fill');
+    var thumb = track.querySelector('.mob-slider__thumb-visual');
+
+    if (fill)  fill.style.width = pct + '%';
+    /* Thumb offset: at 0% left=0, at 100% left = 100% - 28px (full thumb width).
+       Linear interpolation keeps the thumb center on the fill edge. */
+    if (thumb) thumb.style.left = 'calc(' + pct + '% - ' + (pct * 28 / 100) + 'px)';
+
+    /* Update optional value display */
+    var slider = input.closest('.mob-slider');
+    if (slider) {
+      var display = slider.querySelector('.mob-slider__value');
+      if (display) display.textContent = Math.round(val);
+    }
+  }
+
+  /* Bind every range input on the page */
+  document.querySelectorAll('.mob-slider__input').forEach(function(input) {
+    input.addEventListener('input', function() { syncSlider(this); });
+    /* Initial sync to replace inline styles */
+    syncSlider(input);
+  });
+</script>
+</body>
+</html>

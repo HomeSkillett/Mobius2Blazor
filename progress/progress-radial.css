@@ -1,0 +1,159 @@
+/* =============================================
+   PROGRESS RADIAL (Spinner)
+   Source: ProgressRadial.xaml — Mobius_UI_CustomControls_Templates_ProgressRadial
+   C#:     ProgressRadial.cs — IsAnimated, Icon, IconBrush
+   Style:  Foreground=InformationPurpleBrush, Background=Transparent
+
+   A circular spinner drawn with two arcs: a 270-degree
+   background arc and a 90-degree foreground arc. When
+   IsAnimated=true, the element rotates 720 deg in 1s
+   (SineEase InOut, forever).
+
+   The XAML uses two Path elements inside a 26x26 Canvas:
+     • Background arc (270 deg) — TemplateBinding Background
+     • Foreground arc ( 90 deg) — TemplateBinding Foreground
+
+   CSS converts these to a conic-gradient on a round element.
+
+   Usage:
+     <span class="mob-progress-radial is-spinning" aria-label="Loading"></span>
+
+   Optional center icon:
+     <span class="mob-progress-radial is-spinning" aria-label="Loading">
+       <span class="mob-progress-radial__icon" data-icon="&#xE555;"></span>
+     </span>
+   ============================================= */
+
+/* --- Base element --------------------------------------------- */
+/* XAML: Viewbox > Grid > Canvas 26×26
+   CSS:  Square box with conic-gradient arcs, rounded to a circle */
+.mob-progress-radial {
+  --radial-size: 26px;
+  --radial-fg: var(--InformationPurple);
+  --radial-bg: transparent;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--radial-size);
+  height: var(--radial-size);
+  border-radius: 50%;
+  position: relative;
+  flex-shrink: 0;
+}
+
+/* --- Arc ring ------------------------------------------------- */
+/* XAML: Two Path elements — background 270-deg arc, foreground 90-deg arc.
+         The gap between inner/outer radius creates the ring.
+         In CSS we use a conic-gradient + mask to punch the center hole. */
+.mob-progress-radial::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+
+  /* Foreground arc (90 deg) then background arc (270 deg) */
+  background: conic-gradient(
+    var(--radial-fg) 0deg 90deg,
+    var(--radial-bg) 90deg 360deg
+  );
+
+  /* Punch the center to make a ring — 3px stroke on a 26px circle
+     XAML: Canvas 26×26, inner radius starts at 3 (the Path gap) */
+  -webkit-mask: radial-gradient(
+    circle,
+    transparent calc(50% - 3px),
+    #000 calc(50% - 3px)
+  );
+  mask: radial-gradient(
+    circle,
+    transparent calc(50% - 3px),
+    #000 calc(50% - 3px)
+  );
+}
+
+
+/* --- Spin animation ------------------------------------------- */
+/* XAML: VisualState "Animating" — DoubleAnimation Angle 0→720,
+         Duration=1s, RepeatBehavior=Forever, SineEase InOut */
+.mob-progress-radial.is-spinning::before {
+  animation: progress-radial-spin 1s cubic-bezier(0.37, 0, 0.63, 1) infinite;
+}
+
+@keyframes progress-radial-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(720deg); }
+}
+
+/* --- Stop animation ------------------------------------------- */
+/* XAML: VisualState "NoAnimation" — DoubleAnimation Angle→720,
+         Duration=2s, SmoothEase EaseOut — decelerates to stop */
+.mob-progress-radial.is-stopping::before {
+  animation: progress-radial-stop 2s ease-out forwards;
+}
+
+@keyframes progress-radial-stop {
+  to { transform: rotate(720deg); }
+}
+
+
+/* --- Center icon ---------------------------------------------- */
+/* XAML: Path Data=TemplateBinding Icon, Fill=TemplateBinding IconBrush,
+         Stretch=Uniform, Width=12, Height=12 */
+.mob-progress-radial__icon {
+  position: relative;
+  z-index: 1;
+  font-family: var(--font-icon);
+  font-size: calc(var(--radial-size) * 0.46);  /* 12/26 ≈ 0.46 */
+  line-height: 1;
+  color: var(--ForegroundPrimary);
+  font-style: normal;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.mob-progress-radial__icon::before {
+  content: attr(data-icon);
+}
+
+
+/* --- Size variants -------------------------------------------- */
+
+/* Small: 20px — inline / compact contexts */
+.mob-progress-radial--sm {
+  --radial-size: var(--icon);
+}
+
+/* Medium: 26px (default — matches Canvas 26×26) */
+
+/* Large: 40px — matches ProgressRadialWithStatus Height/Width="40" */
+/* XAML: ProgressRadialWithStatus.xaml — ProgressRadial Height="40" Width="40" */
+.mob-progress-radial--lg {
+  --radial-size: 40px;
+}
+
+/* XL: 56px — hero / full-page loaders */
+.mob-progress-radial--xl {
+  --radial-size: var(--size-56);
+}
+
+
+/* --- With-status composite ------------------------------------ */
+/* XAML: ProgressRadialWithStatus.xaml — Border > StackPanel (horizontal)
+         with TextBlock + ProgressRadial, on BackgroundStrong w/ BoxShadow */
+.mob-progress-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 15px;
+  padding: 5px var(--spacing-label-to-control);
+  background: var(--BackgroundStrong);
+  box-shadow: 0 1px 3px var(--ShadowElements);
+}
+
+/* XAML: TextBlock Text=Binding Text, Foreground=Gray, FontSize=20 */
+.mob-progress-status__text {
+  font: var(--font-hdrSm);
+  color: var(--ForegroundDisabled);
+  text-align: center;
+}

@@ -1,0 +1,192 @@
+/*
+  icon-label-button.css — Mobius IconLabelButton component styles
+  Source: IconLabelButton.xaml — Mobius_UI_Common_IconLabelButton,
+          Mobius_UI_Common_IconLabelButtonReverse
+          IconLabelButton.xaml.cs — dependency properties
+          DefaultControls.xaml — Mobius_UI_Resources_Styles_SimpleIconButton,
+          Mobius_UI_Resources_Styles_PathIcon (20x20),
+          Mobius_UI_Resources_Styles_PathIconAdorner (8x8, top-right)
+
+  Component structure (XAML):
+    Border (Height=TouchSize, bg=Transparent)
+      Button (SimpleIconButton style — transparent, fg=ForegroundPrimary)
+        Grid [icon-col 22px | spacing 10px | text-col *]
+          Grid (icon container, margin=1)
+            Path (icon — 20x20, fill=foreground)
+            Path (adorner — 8x8, top-right, optional)
+          TextBlock (label text)
+
+  Variants:
+    .mob-icon-label-btn              Default (icon left, text right)
+    .mob-icon-label-btn.reverse      Reverse (text left, icon right)
+    .mob-icon-label-btn.is-selected  Selected state (triggers command)
+
+  The inner <button> uses the SimpleIconButton pattern:
+    - transparent bg, fg=ForegroundPrimary
+    - hover/press/focus → fg=MouseOverPrimary
+    - disabled → opacity=DisabledOpacity
+*/
+
+
+/* =============================================
+   WRAPPER
+   XAML: Border — Height=TouchSize, Background=Transparent
+   ============================================= */
+
+.mob-icon-label-btn {
+  display: inline-flex;
+  align-items: stretch;
+  min-height: var(--touch);
+  background-color: transparent;
+}
+
+
+/* =============================================
+   INNER BUTTON
+   XAML: Button — Style=SimpleIconButton
+         Margin=0, Padding=0, HorizontalAlignment=Left
+   ============================================= */
+
+.mob-icon-label-btn__button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-label-to-control);
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background-color: transparent;
+  color: var(--ForegroundPrimary);
+  font: var(--font-default);
+  cursor: pointer;
+  text-decoration: none;
+  text-align: left;
+  -webkit-user-select: none;
+  user-select: none;
+  transition:
+    color var(--transition-mouse-out) ease,
+    opacity var(--transition-mouse-out) ease;
+}
+
+
+/* =============================================
+   ICON CONTAINER
+   XAML: Grid column=0 — Width=22, Margin=1,
+         contains Path(icon) + Path(adorner)
+   ============================================= */
+
+.mob-icon-label-btn__icon {
+  position: relative;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  width: var(--btn-outline-icon-size);
+  margin: var(--size-1);
+}
+
+/* XAML: Path — Style=PathIcon (20x20), Fill=foreground inherited
+   Rendered via Mobius-System-Icons font glyph */
+.mob-icon-label-btn__icon::before {
+  content: attr(data-icon);
+  font: var(--font-icons);
+  color: inherit;
+}
+
+/* XAML: Path — Style=PathIconAdorner (8x8), top-right, optional
+   Fill=AdornerIconFill (typically InformationBlue)
+   Scaled up to 14px for legibility — XAML 8px is sub-pixel at 96dpi.
+   Usage: data-adorner="&#xEB17;" on the icon element */
+.mob-icon-label-btn__icon[data-adorner]::after {
+  content: attr(data-adorner);
+  position: absolute;
+  top: -3px;
+  right: -5px;
+  font: var(--size-default) / var(--size-default) var(--font-icon);
+  color: var(--InformationBlue);
+}
+
+
+/* =============================================
+   LABEL TEXT
+   XAML: TextBlock — Grid column=2,
+         Foreground inherited from ContentControl,
+         Style=TextBlockStyle (bindable)
+   ============================================= */
+
+.mob-icon-label-btn__text {
+  color: inherit;
+  font: inherit;
+  white-space: nowrap;
+}
+
+
+/* =============================================
+   REVERSE LAYOUT
+   XAML: IsReverseLayout=True → swaps to
+         Mobius_UI_Common_IconLabelButtonReverse template
+         Grid: [text-col * | spacing | icon-col 22px]
+   ============================================= */
+
+.mob-icon-label-btn.reverse .mob-icon-label-btn__button {
+  flex-direction: row-reverse;
+}
+
+
+/* =============================================
+   INTERACTION STATES
+   All inherited from SimpleIconButton style
+   (DefaultControls.xaml — VisualStateManager)
+   ============================================= */
+
+/* --- Hover --- */
+/* XAML: MouseOver — Foreground→MouseOverPrimary */
+.mob-icon-label-btn__button:hover:not(:disabled),
+.mob-icon-label-btn.is-hovered .mob-icon-label-btn__button {
+  color: var(--MouseOverPrimary);
+  transition-duration: var(--transition-mouse-over);
+}
+
+/* --- Pressed --- */
+/* XAML: Pressed — Foreground→MouseOverPrimary */
+.mob-icon-label-btn__button:active:not(:disabled),
+.mob-icon-label-btn.is-pressed .mob-icon-label-btn__button {
+  color: var(--MouseOverPrimary);
+  transition-duration: var(--transition-mouse-pressed);
+}
+
+/* --- Disabled --- */
+/* XAML: Disabled — opacity→DisabledOpacity, foreground stays */
+.mob-icon-label-btn__button:disabled {
+  opacity: var(--opacity-disabled);
+  cursor: default;
+  transition-duration: var(--transition-disable);
+}
+
+/* --- Focused --- */
+/* XAML: Focused — Foreground→MouseOverPrimary + FocusVisualStyle ring */
+.mob-icon-label-btn__button:focus-visible,
+.mob-icon-label-btn.is-focused .mob-icon-label-btn__button {
+  color: var(--MouseOverPrimary);
+  outline: var(--border-width-focused) solid var(--MouseOverPrimary);
+  outline-offset: var(--focus-outline-offset);
+}
+
+/* --- Selected --- */
+/* XAML: IsSelected=True → triggers Command execution,
+   visually same as default but logically "active" */
+.mob-icon-label-btn.is-selected .mob-icon-label-btn__button {
+  color: var(--SelectionPrimary);
+}
+
+
+/* =============================================
+   ADORNER COLOR OVERRIDES
+   XAML: AdornerIconFill can be any brush.
+   Common values from usage: InformationBlueBrush,
+   InformationRedBrush, InformationGreenBrush
+   ============================================= */
+
+.mob-icon-label-btn__icon.adorner-blue::after  { color: var(--InformationBlue); }
+.mob-icon-label-btn__icon.adorner-red::after   { color: var(--InformationRed); }
+.mob-icon-label-btn__icon.adorner-green::after { color: var(--InformationGreen); }

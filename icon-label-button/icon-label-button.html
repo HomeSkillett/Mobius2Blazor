@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mobius IconLabelButton — All States &amp; Variants</title>
+  <link id="mob-theme-link" rel="stylesheet" href="../styles/LightTheme.css" />
+  <link rel="stylesheet" href="../styles/base.css" />
+  <link rel="stylesheet" href="../styles/fontImport.css" />
+  <link rel="stylesheet" href="../styles/fontTokens.css" />
+  <link rel="stylesheet" href="../styles/spacingTokens.css" />
+  <link rel="stylesheet" href="icon-label-button.css" />
+  <style>
+    body { margin: 0; }
+    h1 {
+      font: var(--font-hdrMd);
+      margin: 0 0 var(--spacing-section-to-header);
+      color: var(--ForegroundStrong);
+    }
+    h2 {
+      font: var(--font-hdrSm);
+      margin: var(--spacing-section-to-section) 0 var(--spacing-section-to-header) 0;
+      color: var(--ForegroundStrong);
+    }
+    h2:first-of-type { margin-top: 0; }
+
+    /* Grid table — 7 columns: label + 5 states + notes */
+    .ilb-grid {
+      display: grid;
+      grid-template-columns: 160px repeat(5, 1fr) 220px;
+      gap: 0;
+      border-top: var(--line-size) solid var(--InnerLines);
+      border-left: var(--line-size) solid var(--InnerLines);
+    }
+    .ilb-grid__cell {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 72px;
+      padding: 12px 16px;
+      border-right: var(--line-size) solid var(--InnerLines);
+      border-bottom: var(--line-size) solid var(--InnerLines);
+    }
+    .ilb-grid__cell--label {
+      justify-content: flex-start;
+      background: var(--BackgroundStepOne);
+      font: var(--font-Sm);
+      font-weight: var(--font-bold);
+      color: var(--ForegroundStrong);
+    }
+    .ilb-grid__cell--header {
+      background: var(--BackgroundStrong);
+      font: var(--font-Sm);
+      font-weight: var(--font-bold);
+      color: var(--ForegroundStrong);
+      text-transform: uppercase;
+      min-height: 40px;
+    }
+    .ilb-grid__cell--corner {
+      background: var(--BackgroundStrong);
+      min-height: 40px;
+    }
+    .ilb-grid__cell--notes {
+      justify-content: flex-start;
+      font: var(--font-Sm);
+      color: var(--ForegroundPrimary);
+    }
+    .ilb-grid__cell--notes code {
+      font: var(--font-Sm);
+      font-family: var(--font-monospace);
+      color: var(--ForegroundStrong);
+    }
+
+    /* Anatomy diagram */
+    .anatomy {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-section-to-header);
+      margin-bottom: var(--spacing-section-to-section);
+    }
+    .anatomy__row {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-label-to-control-lg);
+    }
+    .anatomy__label {
+      min-width: 140px;
+      font: var(--font-Sm);
+      font-weight: var(--font-bold);
+      color: var(--ForegroundStrong);
+      text-align: right;
+    }
+    .anatomy__sample {
+      padding: var(--spacing-label-to-control);
+      border: var(--border-width) dashed var(--InnerLines);
+    }
+    .anatomy__note {
+      font: var(--font-Sm);
+      color: var(--ForegroundPrimary);
+    }
+  </style>
+</head>
+<body>
+
+<div class="mob-layout">
+
+  <!-- Sidebar Navigation -->
+  <nav class="mob-nav" id="mob-nav"></nav>
+
+  <!-- Main Content -->
+  <main class="mob-layout__content">
+
+<h1>Mobius IconLabelButton</h1>
+
+<!-- ===================================================================
+     SECTION: ANATOMY
+     Shows the structural parts of the component
+     =================================================================== -->
+
+<h2>Anatomy</h2>
+
+<div class="anatomy">
+
+  <!-- Default layout: icon left, text right -->
+  <!-- XAML: Mobius_UI_Common_IconLabelButton template -->
+  <div class="anatomy__row">
+    <span class="anatomy__label">Default Layout</span>
+    <div class="anatomy__sample">
+      <!-- XAML: Border > Button > Grid[icon 22px | spacing 10px | text *] -->
+      <div class="mob-icon-label-btn">
+        <button class="mob-icon-label-btn__button" type="button">
+          <!-- XAML: Grid col=0 — icon container (22px wide, margin=1) -->
+          <span class="mob-icon-label-btn__icon" data-icon="&#xE719;"></span>
+          <!-- XAML: TextBlock col=2 — label text -->
+          <span class="mob-icon-label-btn__text">Save Changes</span>
+        </button>
+      </div>
+    </div>
+    <span class="anatomy__note">Icon (20x20) + 10px gap + text</span>
+  </div>
+
+  <!-- Reverse layout: text left, icon right -->
+  <!-- XAML: Mobius_UI_Common_IconLabelButtonReverse template -->
+  <div class="anatomy__row">
+    <span class="anatomy__label">Reverse Layout</span>
+    <div class="anatomy__sample">
+      <!-- XAML: IsReverseLayout=True → grid flips to [text * | spacing | icon 22px] -->
+      <div class="mob-icon-label-btn reverse">
+        <button class="mob-icon-label-btn__button" type="button">
+          <span class="mob-icon-label-btn__icon" data-icon="&#xE719;"></span>
+          <span class="mob-icon-label-btn__text">Save Changes</span>
+        </button>
+      </div>
+    </div>
+    <span class="anatomy__note"><code>.reverse</code> — text first, icon second</span>
+  </div>
+
+  <!-- With adorner icon -->
+  <!-- XAML: AdornerIcon + AdornerIconFill properties -->
+  <div class="anatomy__row">
+    <span class="anatomy__label">With Adorner</span>
+    <div class="anatomy__sample">
+      <!-- XAML: AdornerIcon=Icon_Adorner_ArrowUpRight, AdornerIconFill=InformationBlueBrush -->
+      <div class="mob-icon-label-btn">
+        <button class="mob-icon-label-btn__button" type="button">
+          <span class="mob-icon-label-btn__icon adorner-blue" data-icon="&#xEC0F;" data-adorner="&#xEB17;"></span>
+          <span class="mob-icon-label-btn__text">Export to File</span>
+        </button>
+      </div>
+    </div>
+    <span class="anatomy__note">8x8 adorner badge at top-right of icon</span>
+  </div>
+
+</div>
+
+
+<!-- ===================================================================
+     SECTION: INTERACTION STATES GRID
+     5 states inherited from SimpleIconButton
+     =================================================================== -->
+
+<h2>Interaction States</h2>
+
+<div class="ilb-grid">
+
+  <!-- ===== HEADER ROW ===== -->
+  <div class="ilb-grid__cell ilb-grid__cell--corner"></div>
+  <div class="ilb-grid__cell ilb-grid__cell--header">Normal</div>
+  <div class="ilb-grid__cell ilb-grid__cell--header">Hover</div>
+  <div class="ilb-grid__cell ilb-grid__cell--header">Pressed</div>
+  <div class="ilb-grid__cell ilb-grid__cell--header">Disabled</div>
+  <div class="ilb-grid__cell ilb-grid__cell--header">Focused</div>
+  <div class="ilb-grid__cell ilb-grid__cell--header">Notes</div>
+
+
+  <!-- ===== ROW: Default IconLabelButton ===== -->
+  <!-- XAML: IconLabelButton with default style — SimpleIconButton inner button -->
+  <div class="ilb-grid__cell ilb-grid__cell--label">Default</div>
+
+  <!-- XAML: Normal — fg=ForegroundPrimary, bg=Transparent -->
+  <div class="ilb-grid__cell">
+    <div class="mob-icon-label-btn">
+      <button class="mob-icon-label-btn__button" type="button">
+        <span class="mob-icon-label-btn__icon" data-icon="&#xE719;"></span>
+        <span class="mob-icon-label-btn__text">Save Changes</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- XAML: MouseOver — Foreground→MouseOverPrimary -->
+  <div class="ilb-grid__cell">
+    <div class="mob-icon-label-btn is-hovered">
+      <button class="mob-icon-label-btn__button" type="button">
+        <span class="mob-icon-label-btn__icon" data-icon="&#xE719;"></span>
+        <span class="mob-icon-label-btn__text">Save Changes</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- XAML: Pressed — Foreground→MouseOverPrimary -->
+  <div class="ilb-grid__cell">
+    <div class="mob-icon-label-btn is-pressed">
+      <button class="mob-icon-label-btn__button" type="button">
+        <span class="mob-icon-label-btn__icon" data-icon="&#xE719;"></span>
+        <span class="mob-icon-label-btn__text">Save Changes</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- XAML: Disabled — opacity→DisabledOpacity -->
+  <div class="ilb-grid__cell">
+    <div class="mob-icon-label-btn">
+      <button class="mob-icon-label-btn__button" type="button" disabled>
+        <span class="mob-icon-label-btn__icon" data-icon="&#xE719;"></span>
+        <span class="mob-icon-label-btn__text">Save Changes</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- XAML: Focused — Foreground→MouseOverPrimary + outline ring -->
+  <div class="ilb-grid__cell">
+    <div class="mob-icon-label-btn is-focused">
+      <button class="mob-icon-label-btn__button" type="button">
+        <span class="mob-icon-label-btn__icon" data-icon="&#xE719;"></span>
+        <span class="mob-icon-label-btn__text">Save Changes</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="ilb-grid__cell ilb-grid__cell--notes"><code>.mob-icon-label-btn</code></div>
+
+
+  <!-- ===== ROW: With Adorner Icon ===== -->
+  <!-- XAML: IconLabelButton with AdornerIcon + AdornerIconFill=InformationBlueBrush -->
+  <div class="ilb-grid__cell ilb-grid__cell--label">With Adorner</div>
+
+  <div class="ilb-grid__cell">
+    <div class="mob-icon-label-btn">
+      <button class="mob-icon-label-btn__button" type="button">
+        <span class="mob-icon-label-btn__icon adorner-blue" data-icon="&#xEC0F;" data-adorner="&#xEB17;"></span>
+        <span class="mob-icon-label-btn__text">Export to File</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="ilb-grid__cell">
+    <div class="mob-icon-label-btn is-hovered">
+      <button class="mob-icon-label-btn__button" type="button">
+        <span class="mob-icon-label-btn__icon adorner-blue" data-icon="&#xEC0F;" data-adorner="&#xEB17;"></span>
+        <span class="mob-icon-label-btn__text">Export to File</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="ilb-grid__cell">
+    <div class="mob-icon-label-btn is-pressed">
+      <button class="mob-icon-label-btn__button" type="button">
+        <span class="mob-icon-label-btn__icon adorner-blue" data-icon="&#xEC0F;" data-adorner="&#xEB17;"></span>
+        <span class="mob-icon-label-btn__text">Export to File</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="ilb-grid__cell">
+    <div class="mob-icon-label-btn">
+      <button class="mob-icon-label-btn__button" type="button" disabled>
+        <span class="mob-icon-label-btn__icon adorner-blue" data-icon="&#xEC0F;" data-adorner="&#xEB17;"></span>
+        <span class="mob-icon-label-btn__text">Export to File</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="ilb-grid__cell">
+    <div class="mob-icon-label-btn is-focused">
+      <button class="mob-icon-label-btn__button" type="button">
+        <span class="mob-icon-label-btn__icon adorner-blue" data-icon="&#xEC0F;" data-adorner="&#xEB17;"></span>
+        <span class="mob-icon-label-btn__text">Export to File</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="ilb-grid__cell ilb-grid__cell--notes"><code>.adorner-blue</code> + <code>data-adorner</code></div>
+
+
+  <!-- ===== ROW: Reverse Layout ===== -->
+  <!-- XAML: IsReverseLayout=True → Mobius_UI_Common_IconLabelButtonReverse template -->
+  <div class="ilb-grid__cell ilb-grid__cell--label">Reverse Layout</div>
+
+  <div class="ilb-grid__cell">
+    <div class="mob-icon-label-btn reverse">
+      <button class="mob-icon-label-btn__button" type="button">
+        <span class="mob-icon-label-btn__icon" data-icon="&#xE555;"></span>
+        <span class="mob-icon-label-btn__text">Undo Changes</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="ilb-grid__cell">
+    <div class="mob-icon-label-btn reverse is-hovered">
+      <button class="mob-icon-label-btn__button" type="button">
+        <span class="mob-icon-label-btn__icon" data-icon="&#xE555;"></span>
+        <span class="mob-icon-label-btn__text">Undo Changes</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="ilb-grid__cell">
+    <div class="mob-icon-label-btn reverse is-pressed">
+      <button class="mob-icon-label-btn__button" type="button">
+        <span class="mob-icon-label-btn__icon" data-icon="&#xE555;"></span>
+        <span class="mob-icon-label-btn__text">Undo Changes</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="ilb-grid__cell">
+    <div class="mob-icon-label-btn reverse">
+      <button class="mob-icon-label-btn__button" type="button" disabled>
+        <span class="mob-icon-label-btn__icon" data-icon="&#xE555;"></span>
+        <span class="mob-icon-label-btn__text">Undo Changes</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="ilb-grid__cell">
+    <div class="mob-icon-label-btn reverse is-focused">
+      <button class="mob-icon-label-btn__button" type="button">
+        <span class="mob-icon-label-btn__icon" data-icon="&#xE555;"></span>
+        <span class="mob-icon-label-btn__text">Undo Changes</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="ilb-grid__cell ilb-grid__cell--notes"><code>.mob-icon-label-btn.reverse</code></div>
+
+
+  <!-- ===== ROW: Selected State ===== -->
+  <!-- XAML: IsSelected=True — triggers Command, visually highlighted -->
+  <div class="ilb-grid__cell ilb-grid__cell--label">Selected</div>
+
+  <div class="ilb-grid__cell">
+    <div class="mob-icon-label-btn is-selected">
+      <button class="mob-icon-label-btn__button" type="button">
+        <span class="mob-icon-label-btn__icon" data-icon="&#xE719;"></span>
+        <span class="mob-icon-label-btn__text">Active Item</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="ilb-grid__cell">
+    <div class="mob-icon-label-btn is-selected is-hovered">
+      <button class="mob-icon-label-btn__button" type="button">
+        <span class="mob-icon-label-btn__icon" data-icon="&#xE719;"></span>
+        <span class="mob-icon-label-btn__text">Active Item</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="ilb-grid__cell">
+    <div class="mob-icon-label-btn is-selected is-pressed">
+      <button class="mob-icon-label-btn__button" type="button">
+        <span class="mob-icon-label-btn__icon" data-icon="&#xE719;"></span>
+        <span class="mob-icon-label-btn__text">Active Item</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="ilb-grid__cell">
+    <div class="mob-icon-label-btn is-selected">
+      <button class="mob-icon-label-btn__button" type="button" disabled>
+        <span class="mob-icon-label-btn__icon" data-icon="&#xE719;"></span>
+        <span class="mob-icon-label-btn__text">Active Item</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="ilb-grid__cell">
+    <div class="mob-icon-label-btn is-selected is-focused">
+      <button class="mob-icon-label-btn__button" type="button">
+        <span class="mob-icon-label-btn__icon" data-icon="&#xE719;"></span>
+        <span class="mob-icon-label-btn__text">Active Item</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="ilb-grid__cell ilb-grid__cell--notes"><code>.mob-icon-label-btn.is-selected</code></div>
+
+</div><!-- /.ilb-grid -->
+
+
+<!-- ===================================================================
+     SECTION: REAL-WORLD USAGE EXAMPLES
+     Patterns pulled from actual XAML usages in the codebase
+     =================================================================== -->
+
+<h2>Usage Examples</h2>
+
+<div class="anatomy">
+
+  <!-- Toolbar row pattern — common in NodeConfigurationView.xaml -->
+  <!-- XAML: StackPanel Orientation="Horizontal" with multiple IconLabelButtons, Margin="0,0,30,0" -->
+  <div class="anatomy__row">
+    <span class="anatomy__label">Toolbar Row</span>
+    <div class="anatomy__sample" style="display: flex; gap: 30px;">
+      <!-- XAML: IconLabelButton Command=SaveConfigurationChangesCommand, Icon=Icon_Save -->
+      <div class="mob-icon-label-btn">
+        <button class="mob-icon-label-btn__button" type="button">
+          <span class="mob-icon-label-btn__icon" data-icon="&#xE719;"></span>
+          <span class="mob-icon-label-btn__text">Save Changes</span>
+        </button>
+      </div>
+      <!-- XAML: IconLabelButton Command=UndoUnsavedConfigurationChangesCommand, Icon=Icon_Action_Undo -->
+      <div class="mob-icon-label-btn">
+        <button class="mob-icon-label-btn__button" type="button">
+          <span class="mob-icon-label-btn__icon" data-icon="&#xE555;"></span>
+          <span class="mob-icon-label-btn__text">Undo Changes</span>
+        </button>
+      </div>
+      <!-- XAML: IconLabelButton with AdornerIcon, Command=ExportCsvCommand -->
+      <div class="mob-icon-label-btn">
+        <button class="mob-icon-label-btn__button" type="button">
+          <span class="mob-icon-label-btn__icon adorner-blue" data-icon="&#xEC0F;" data-adorner="&#xEB17;"></span>
+          <span class="mob-icon-label-btn__text">Export to File</span>
+        </button>
+      </div>
+    </div>
+    <span class="anatomy__note">Horizontal toolbar with 30px gap between items</span>
+  </div>
+
+  <!-- Delete action pattern — common in ExportedObjectiveManagerControl.xaml -->
+  <!-- XAML: IconLabelButton Foreground=InformationRedBrush, Icon=Icon_Close -->
+  <div class="anatomy__row">
+    <span class="anatomy__label">Destructive Action</span>
+    <div class="anatomy__sample">
+      <div class="mob-icon-label-btn">
+        <button class="mob-icon-label-btn__button" type="button" style="color: var(--InformationRed);">
+          <span class="mob-icon-label-btn__icon" data-icon="&#xE564;"></span>
+          <span class="mob-icon-label-btn__text">Delete</span>
+        </button>
+      </div>
+    </div>
+    <span class="anatomy__note">Custom foreground via inline Foreground binding</span>
+  </div>
+
+</div>
+
+
+<!-- ===================================================================
+     SECTION: XAML PROPERTY → HTML MAPPING
+     =================================================================== -->
+
+<h2>XAML Property Mapping</h2>
+
+<div class="ilb-grid" style="grid-template-columns: 200px 1fr 1fr;">
+
+  <div class="ilb-grid__cell ilb-grid__cell--header">XAML Property</div>
+  <div class="ilb-grid__cell ilb-grid__cell--header">HTML / CSS</div>
+  <div class="ilb-grid__cell ilb-grid__cell--header">Notes</div>
+
+  <div class="ilb-grid__cell ilb-grid__cell--label">Text</div>
+  <div class="ilb-grid__cell ilb-grid__cell--notes"><code>.mob-icon-label-btn__text</code> inner text</div>
+  <div class="ilb-grid__cell ilb-grid__cell--notes">Label string</div>
+
+  <div class="ilb-grid__cell ilb-grid__cell--label">Icon</div>
+  <div class="ilb-grid__cell ilb-grid__cell--notes"><code>data-icon</code> on <code>__icon</code> span</div>
+  <div class="ilb-grid__cell ilb-grid__cell--notes">Mobius-System-Icons glyph code</div>
+
+  <div class="ilb-grid__cell ilb-grid__cell--label">AdornerIcon</div>
+  <div class="ilb-grid__cell ilb-grid__cell--notes"><code>data-adorner</code> on <code>__icon</code> span</div>
+  <div class="ilb-grid__cell ilb-grid__cell--notes">8x8 badge via <code>::after</code></div>
+
+  <div class="ilb-grid__cell ilb-grid__cell--label">AdornerIconFill</div>
+  <div class="ilb-grid__cell ilb-grid__cell--notes"><code>.adorner-blue</code> / <code>.adorner-red</code> / <code>.adorner-green</code></div>
+  <div class="ilb-grid__cell ilb-grid__cell--notes">Color class on <code>__icon</code></div>
+
+  <div class="ilb-grid__cell ilb-grid__cell--label">IsReverseLayout</div>
+  <div class="ilb-grid__cell ilb-grid__cell--notes"><code>.reverse</code> on wrapper</div>
+  <div class="ilb-grid__cell ilb-grid__cell--notes">Flips via <code>flex-direction: row-reverse</code></div>
+
+  <div class="ilb-grid__cell ilb-grid__cell--label">IsSelected</div>
+  <div class="ilb-grid__cell ilb-grid__cell--notes"><code>.is-selected</code> on wrapper</div>
+  <div class="ilb-grid__cell ilb-grid__cell--notes">SelectionPrimary color</div>
+
+  <div class="ilb-grid__cell ilb-grid__cell--label">Spacing</div>
+  <div class="ilb-grid__cell ilb-grid__cell--notes"><code>gap</code> on <code>__button</code></div>
+  <div class="ilb-grid__cell ilb-grid__cell--notes">Default 10px = <code>--spacing-label-to-control</code></div>
+
+  <div class="ilb-grid__cell ilb-grid__cell--label">Command</div>
+  <div class="ilb-grid__cell ilb-grid__cell--notes">Blazor <code>@onclick</code></div>
+  <div class="ilb-grid__cell ilb-grid__cell--notes">Wired in Blazor component</div>
+
+  <div class="ilb-grid__cell ilb-grid__cell--label">IsEnabled=False</div>
+  <div class="ilb-grid__cell ilb-grid__cell--notes"><code>disabled</code> attribute on <code>&lt;button&gt;</code></div>
+  <div class="ilb-grid__cell ilb-grid__cell--notes">Applies <code>opacity: 0.35</code></div>
+
+</div>
+
+  </main>
+
+</div>
+
+<script src="../styles/nav.js"></script>
+</body>
+</html>

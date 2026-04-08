@@ -1,0 +1,178 @@
+/* items-control.css — ItemsControl (data-bound repeating items)
+   Source: DefaultControls.xaml — Style TargetType=ItemsControl (line 3909)
+   ====================================================================== */
+
+
+/* ==============================================
+   BASE CONTAINER
+   XAML: <ItemsControl> with default StackPanel
+   Maps to: Border + ItemsPresenter
+   ============================================== */
+.mob-items-control {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-item);
+  border: none;
+  padding: 0;
+  background: transparent;
+}
+
+
+/* ==============================================
+   ITEM (single repeated element)
+   XAML: <ItemsControl.ItemTemplate> → DataTemplate
+   ============================================== */
+.mob-items-control__item {
+  display: flex;
+  align-items: center;
+  min-height: var(--touch);
+  padding: 0 var(--size-18);
+  color: var(--ForegroundPrimary);
+  font: var(--font-default);
+}
+
+
+/* ==============================================
+   ITEM — MULTI-COLUMN (Grid inside DataTemplate)
+   XAML: DataTemplate containing Grid with ColumnDefinitions
+   ============================================== */
+.mob-items-control__item--grid {
+  display: grid;
+  grid-template-columns: var(--size-18) 1fr var(--size-18) auto var(--size-24);
+  align-items: center;
+  min-height: 40px;
+}
+
+.mob-items-control__item--grid .mob-items-control__cell {
+  color: var(--ForegroundPrimary);
+  font: var(--font-default);
+}
+
+
+/* ==============================================
+   WRAP PANEL VARIANT
+   XAML: <ItemsControl.ItemsPanel>
+           <ItemsPanelTemplate><WrapPanel/></ItemsPanelTemplate>
+         </ItemsControl.ItemsPanel>
+   ============================================== */
+.mob-items-control--wrap {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: var(--size-18);
+}
+
+.mob-items-control--wrap .mob-items-control__item {
+  flex-direction: column;
+  align-items: center;
+  width: 64px;
+  padding: 0;
+  gap: var(--spacing-label-to-control-sm);
+  text-align: center;
+}
+
+.mob-items-control--wrap .mob-items-control__icon {
+  width: var(--icon-lg);
+  height: var(--icon-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-icon);
+  font-size: var(--icon-lg);
+  color: var(--ForegroundPrimary);
+}
+
+.mob-items-control--wrap .mob-items-control__text {
+  font: var(--font-Sm);
+  color: var(--ForegroundPrimary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+
+/* ==============================================
+   CARD VARIANT
+   XAML: DataTemplate with Border + Grid
+   e.g. CameraConfigurationListViewer.xaml
+   ============================================== */
+.mob-items-control--cards {
+  gap: var(--size-6);
+}
+
+.mob-items-control--cards .mob-items-control__item {
+  background: var(--BackgroundStepOne);
+  padding: 0;
+  min-height: auto;
+  width: 200px;
+  max-width: 250px;
+}
+
+.mob-items-control--cards .mob-items-control__item-accent {
+  width: 8px;
+  align-self: stretch;
+  background: var(--SelectionPrimary);
+  flex-shrink: 0;
+}
+
+.mob-items-control--cards .mob-items-control__item-body {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-label-to-control);
+  padding: var(--size-12) var(--size-12);
+  min-height: var(--touch);
+  font: var(--font-default);
+  color: var(--ForegroundAction);
+}
+
+
+/* ==============================================
+   GROUPED VARIANT
+   XAML: <ItemsControl.GroupStyle>
+           <GroupStyle HeaderTemplate="{StaticResource CategoryTemplate}" />
+         </ItemsControl.GroupStyle>
+   ============================================== */
+.mob-items-control__group-header {
+  font: var(--font-hdrSm);
+  color: var(--ForegroundStrong);
+  padding: var(--size-12) var(--size-18);
+  border-bottom: var(--line-size) solid var(--InnerLines);
+}
+
+.mob-items-control__group + .mob-items-control__group {
+  margin-top: var(--spacing-section-to-header);
+}
+
+
+/* ==============================================
+   EMPTY STATE
+   XAML: <ItemsControl.Style>
+           <Trigger Property="HasItems" Value="False">
+             ... empty-state ControlTemplate ...
+           </Trigger>
+         </ItemsControl.Style>
+   ============================================== */
+.mob-items-control__empty {
+  font: var(--font-Sm);
+  color: var(--ForegroundDisabled);
+  padding: var(--size-12) var(--size-18);
+}
+
+
+/* ==============================================
+   VIRTUALIZING HINT
+   XAML: <ItemsPanelTemplate><VirtualizingStackPanel /></ItemsPanelTemplate>
+   No visual change — CSS note for Blazor devs:
+   Use Virtualize<T> in Blazor for large collections.
+   ============================================== */
+
+
+/* ==============================================
+   SCROLLABLE WRAPPER
+   XAML: <ScrollViewer> wrapping <ItemsControl>
+   Reuses mob-scroll-viewer from scroll-viewer.css
+   ============================================== */
+.mob-items-control--scrollable {
+  max-height: 300px;
+  overflow-y: auto;
+}

@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mobius — DataGrid</title>
+  <link id="mob-theme-link" rel="stylesheet" href="../styles/LightTheme.css" />
+  <link rel="stylesheet" href="../styles/base.css" />
+  <link rel="stylesheet" href="data-grid.css" />
+  <style>
+    body { margin: 0; }
+    h1 {
+      font: var(--font-hdrMd);
+      margin: 0 0 32px;
+      color: var(--ForegroundStrong);
+    }
+    h2 {
+      font: var(--font-hdrSm);
+      margin: 40px 0 16px;
+      color: var(--ForegroundStrong);
+    }
+    h2:first-of-type { margin-top: 0; }
+    .section-divider {
+      border: none;
+      border-top: var(--line-size) solid var(--InnerLines);
+      margin: 32px 0 0;
+    }
+    .note {
+      font: var(--font-default);
+      color: var(--ForegroundPrimary);
+      margin: 0 0 var(--spacing-section-to-header) 0;
+      max-width: 800px;
+    }
+    .note code {
+      font-family: var(--font-monospace);
+      background: var(--BackgroundPrimary);
+      padding: 1px 4px;
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="mob-layout">
+
+  <!-- Sidebar Navigation -->
+  <nav class="mob-nav" id="mob-nav"></nav>
+
+  <!-- Main Content -->
+  <main class="mob-layout__content">
+
+<h1>DataGrid</h1>
+
+
+<!-- =========================================================
+     SECTION 1: ERROR DESCRIPTOR TABLE (7 columns, sortable, action button)
+     Source: ErrorDescriptorTableView.xaml — Vehicle Setup
+     XAML: <SimpleSortListView InitialSortField="Title"
+                               ItemsSource="{Binding ErrorDescriptors}">
+             <ListView.View><GridView>
+               7x FixedWidthGridViewColumn
+             </GridView></ListView.View>
+           </SimpleSortListView>
+     ========================================================= -->
+
+<h2>Error Descriptor Table — Sortable with Action Button</h2>
+
+<p class="note">
+  A <code>SimpleSortListView</code> with <code>GridView</code> from
+  <code>ErrorDescriptorTableView.xaml</code>. Uses <code>FixedWidthGridViewColumn</code>
+  with pixel widths (60–280 px). Headers use <code>TextBlock_Meta</code> style.
+  The last column has an <code>IconLabelButton</code> that toggles between
+  Test (run) and X (cancel) icons via <code>DataTrigger</code> on
+  <code>IsTestErrorActive</code>. Sortable on most columns via
+  <code>SimpleSortListView.SortField</code>.
+</p>
+
+<!-- XAML: SimpleSortListView → GridView (ErrorDescriptorTableView) -->
+<table class="mob-datagrid mob-datagrid--listview">
+
+  <thead>
+    <tr class="mob-datagrid__header-row">
+      <!-- XAML: FixedWidthGridViewColumn Width="60" SortField="ErrorCode" -->
+      <th class="mob-datagrid__th" style="width: 60px;">Error</th>
+      <!-- XAML: FixedWidthGridViewColumn Width="120" SortField="Severity" -->
+      <th class="mob-datagrid__th" style="width: 120px;">Severity</th>
+      <!-- XAML: FixedWidthGridViewColumn Width="280" SortField="Title" -->
+      <th class="mob-datagrid__th" style="width: 280px;">Title</th>
+      <!-- XAML: FixedWidthGridViewColumn Width="140" SortField="Message" -->
+      <th class="mob-datagrid__th" style="width: 140px;">Message</th>
+      <!-- XAML: FixedWidthGridViewColumn Width="140" SortField="Support" -->
+      <th class="mob-datagrid__th" style="width: 140px;">Support</th>
+      <!-- XAML: FixedWidthGridViewColumn Width="140" SortField="Component" -->
+      <th class="mob-datagrid__th" style="width: 140px;">Component</th>
+      <!-- XAML: FixedWidthGridViewColumn Width="128" SortField="IsErrorSupported" -->
+      <th class="mob-datagrid__th" style="width: 128px;">Test</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr class="mob-datagrid__row">
+      <td class="mob-datagrid__td">1001</td>
+      <td class="mob-datagrid__td">Critical</td>
+      <td class="mob-datagrid__td">GPS Signal Lost</td>
+      <td class="mob-datagrid__td">No fix in 30 s</td>
+      <td class="mob-datagrid__td">Field Support</td>
+      <td class="mob-datagrid__td">Navigation</td>
+      <td class="mob-datagrid__td">
+        <!-- XAML: IconLabelButton Command=TestErrorCommand, Icon=Icon_RunTest -->
+        <button class="mob-datagrid__icon-action">
+          <span class="mob-datagrid__icon-action__icon">&#xE535;</span>
+          Test
+        </button>
+      </td>
+    </tr>
+    <tr class="mob-datagrid__row">
+      <td class="mob-datagrid__td">1042</td>
+      <td class="mob-datagrid__td">Warning</td>
+      <td class="mob-datagrid__td">LiDAR Partial Occlusion</td>
+      <td class="mob-datagrid__td">Sector 3 blocked</td>
+      <td class="mob-datagrid__td">Sensor Team</td>
+      <td class="mob-datagrid__td">Perception</td>
+      <td class="mob-datagrid__td">
+        <!-- XAML: IconLabelButton IsTestErrorActive=True → Icon=Icon_X -->
+        <button class="mob-datagrid__icon-action">
+          <span class="mob-datagrid__icon-action__icon">&#xE501;</span>
+          Cancel
+        </button>
+      </td>
+    </tr>
+    <tr class="mob-datagrid__row">
+      <td class="mob-datagrid__td">2010</td>
+      <td class="mob-datagrid__td">Info</td>
+      <td class="mob-datagrid__td">Calibration Drift Detected</td>
+      <td class="mob-datagrid__td">IMU offset > 0.5°</td>
+      <td class="mob-datagrid__td">Calibration</td>
+      <td class="mob-datagrid__td">IMU</td>
+      <td class="mob-datagrid__td">
+        <button class="mob-datagrid__icon-action">
+          <span class="mob-datagrid__icon-action__icon">&#xE535;</span>
+          Test
+        </button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 3: TELEMETRY ITEMS TABLE (9 columns, boolean icon indicators)
+     Source: TelemetryItemTableView.xaml — Vehicle Setup
+     XAML: <SimpleSortListView InitialSortField="Name"
+                               ItemsSource="{Binding TelemetryItems}">
+             <ListView.View><GridView>
+               9x FixedWidthGridViewColumn
+             </GridView></ListView.View>
+           </SimpleSortListView>
+     ========================================================= -->
+
+<h2>Telemetry Items — Boolean Icon Column</h2>
+
+<p class="note">
+  From <code>TelemetryItemTableView.xaml</code>. 9 columns with a boolean icon
+  pattern: the IsCommandable column shows a green checkmark (<code>Icon_Status_OkaySm</code>
+  + <code>InformationGreenBrush</code>) when true, hidden when false, via
+  <code>BooleanToVisibleOrCollapsedConverter</code>.
+</p>
+
+<!-- XAML: SimpleSortListView → GridView (TelemetryItemTableView) -->
+<table class="mob-datagrid mob-datagrid--listview">
+
+  <thead>
+    <tr class="mob-datagrid__header-row">
+      <!-- XAML: FixedWidthGridViewColumn Width="300" SortField="Name" -->
+      <th class="mob-datagrid__th" style="width: 300px;">Name</th>
+      <!-- XAML: FixedWidthGridViewColumn Width="260" SortField="Category" -->
+      <th class="mob-datagrid__th" style="width: 260px;">Category</th>
+      <!-- XAML: FixedWidthGridViewColumn Width="120" SortField="IsCommandable" -->
+      <th class="mob-datagrid__th" style="width: 120px;">Commandable</th>
+      <!-- XAML: FixedWidthGridViewColumn Width="120" SortField="Measure" -->
+      <th class="mob-datagrid__th" style="width: 120px;">Measure</th>
+      <!-- XAML: FixedWidthGridViewColumn Width="120" SortField="Units" -->
+      <th class="mob-datagrid__th" style="width: 120px;">Units</th>
+      <!-- XAML: FixedWidthGridViewColumn Width="120" (no sort) -->
+      <th class="mob-datagrid__th" style="width: 120px;">Min</th>
+      <!-- XAML: FixedWidthGridViewColumn Width="120" (no sort) -->
+      <th class="mob-datagrid__th" style="width: 120px;">Max</th>
+      <!-- XAML: FixedWidthGridViewColumn Width="120" (no sort) -->
+      <th class="mob-datagrid__th" style="width: 120px;">Enums</th>
+      <!-- XAML: FixedWidthGridViewColumn Width="140" SortField="SampleValue" -->
+      <th class="mob-datagrid__th" style="width: 140px;">Sample Value</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr class="mob-datagrid__row">
+      <td class="mob-datagrid__td">Vehicle.Speed</td>
+      <td class="mob-datagrid__td">Motion</td>
+      <td class="mob-datagrid__td">
+        <!-- XAML: Path Icon_Status_OkaySm, InformationGreenBrush, Visibility=Visible -->
+        <span class="mob-datagrid__bool-icon">&#xE502;</span>
+      </td>
+      <td class="mob-datagrid__td">Linear</td>
+      <td class="mob-datagrid__td">km/h</td>
+      <td class="mob-datagrid__td">0</td>
+      <td class="mob-datagrid__td">65</td>
+      <td class="mob-datagrid__td">—</td>
+      <td class="mob-datagrid__td">12.4</td>
+    </tr>
+    <tr class="mob-datagrid__row">
+      <td class="mob-datagrid__td">Engine.RPM</td>
+      <td class="mob-datagrid__td">Powertrain</td>
+      <td class="mob-datagrid__td">
+        <!-- XAML: Path Visibility=Collapsed (IsCommandable=False) -->
+      </td>
+      <td class="mob-datagrid__td">Angular</td>
+      <td class="mob-datagrid__td">rpm</td>
+      <td class="mob-datagrid__td">600</td>
+      <td class="mob-datagrid__td">2200</td>
+      <td class="mob-datagrid__td">—</td>
+      <td class="mob-datagrid__td">1480</td>
+    </tr>
+    <tr class="mob-datagrid__row">
+      <td class="mob-datagrid__td">Steering.Angle</td>
+      <td class="mob-datagrid__td">Motion</td>
+      <td class="mob-datagrid__td">
+        <span class="mob-datagrid__bool-icon">&#xE502;</span>
+      </td>
+      <td class="mob-datagrid__td">Angular</td>
+      <td class="mob-datagrid__td">deg</td>
+      <td class="mob-datagrid__td">-45</td>
+      <td class="mob-datagrid__td">45</td>
+      <td class="mob-datagrid__td">—</td>
+      <td class="mob-datagrid__td">-2.1</td>
+    </tr>
+    <tr class="mob-datagrid__row">
+      <td class="mob-datagrid__td">Payload.Weight</td>
+      <td class="mob-datagrid__td">Load</td>
+      <td class="mob-datagrid__td"></td>
+      <td class="mob-datagrid__td">Mass</td>
+      <td class="mob-datagrid__td">tonnes</td>
+      <td class="mob-datagrid__td">0</td>
+      <td class="mob-datagrid__td">250</td>
+      <td class="mob-datagrid__td">—</td>
+      <td class="mob-datagrid__td">187.3</td>
+    </tr>
+  </tbody>
+</table>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 4: GLOBAL TELEMETRY TABLE (14 columns, checkboxes + boolean icons)
+     Source: GlobalTelemetryTableView.xaml — Configuration Settings
+     XAML: <SimpleSortListView InitialSortField="Title"
+                               ItemsSource="{Binding TelemetryItems}">
+             <ListView.View><GridView>
+               14x FixedWidthGridViewColumn
+             </GridView></ListView.View>
+           </SimpleSortListView>
+     ========================================================= -->
+
+<h2>Global Telemetry — Checkbox + Multi-Boolean Columns</h2>
+
+<p class="note">
+  From <code>GlobalTelemetryTableView.xaml</code>. Wide table with 14 columns
+  including a <code>CheckBox</code> toggle (ShowInEditors) and four boolean icon
+  columns (IsCommandable, IsUsableForGauges, IsUsableForScripting, IsUsableForTriggers)
+  all using the same <code>Icon_Status_OkaySm</code> + <code>InformationGreenBrush</code>
+  pattern. Headers use <code>TextBlock_Meta</code> style: bold, uppercase.
+  <code>SimpleSortListView</code> has <code>AlternationCount="2"</code> for
+  alternating row backgrounds (<code>BackgroundPrimary</code> / <code>BackgroundStrong</code>).
+  Includes the "Showing X of Y total items" footer.
+</p>
+
+<!-- XAML: SimpleSortListView → GridView (GlobalTelemetryTableView) -->
+<div style="overflow-x: auto;">
+<table class="mob-datagrid mob-datagrid--listview">
+
+  <thead>
+    <tr class="mob-datagrid__header-row">
+      <!-- XAML: FixedWidthGridViewColumn Width="120" SortField="ShowInEditors" -->
+      <th class="mob-datagrid__th" style="width: 120px;">Show In Editors</th>
+      <!-- XAML: FixedWidthGridViewColumn Width="260" SortField="Title" -->
+      <th class="mob-datagrid__th" style="width: 260px;">Title</th>
+      <!-- XAML: FixedWidthGridViewColumn Width="260" SortField="Category" -->
+      <th class="mob-datagrid__th" style="width: 260px;">Category</th>
+      <!-- XAML: FixedWidthGridViewColumn Width="260" SortField="Description" -->
+      <th class="mob-datagrid__th" style="width: 260px;">Description</th>
+      <!-- XAML: FixedWidthGridViewColumn Width="90" SortField="IsCommandable" -->
+      <th class="mob-datagrid__th" style="width: 90px;">Commandable</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <!-- Row data matches prod screenshot -->
+    <tr class="mob-datagrid__row">
+      <td class="mob-datagrid__td">
+        <!-- XAML: CheckBox IsChecked="{Binding ShowInEditors}" -->
+        <input type="checkbox" checked />
+      </td>
+      <td class="mob-datagrid__td">360 Lights Feedback</td>
+      <td class="mob-datagrid__td">Other</td>
+      <td class="mob-datagrid__td">Whether 360 degree lighting is on</td>
+      <td class="mob-datagrid__td"></td>
+    </tr>
+    <tr class="mob-datagrid__row">
+      <td class="mob-datagrid__td"><input type="checkbox" checked /></td>
+      <td class="mob-datagrid__td">Abs_B_Falt</td>
+      <td class="mob-datagrid__td">Vehicle Control</td>
+      <td class="mob-datagrid__td">????</td>
+      <td class="mob-datagrid__td"></td>
+    </tr>
+    <tr class="mob-datagrid__row">
+      <td class="mob-datagrid__td"><input type="checkbox" checked /></td>
+      <td class="mob-datagrid__td">AbsActv_B_Actl</td>
+      <td class="mob-datagrid__td">Vehicle Control</td>
+      <td class="mob-datagrid__td">????</td>
+      <td class="mob-datagrid__td"></td>
+    </tr>
+    <tr class="mob-datagrid__row">
+      <td class="mob-datagrid__td"><input type="checkbox" /></td>
+      <td class="mob-datagrid__td">Accel Rate Override Enable</td>
+      <td class="mob-datagrid__td">Vehicle Control</td>
+      <td class="mob-datagrid__td">Overrides automatic speed control and set...</td>
+      <td class="mob-datagrid__td">
+        <!-- XAML: Path Icon_Status_OkaySm, InformationGreenBrush, Visibility=Visible -->
+        <span class="mob-datagrid__bool-icon">&#xE502;</span>
+      </td>
+    </tr>
+    <tr class="mob-datagrid__row">
+      <td class="mob-datagrid__td"><input type="checkbox" /></td>
+      <td class="mob-datagrid__td">Accel Rate Override Value</td>
+      <td class="mob-datagrid__td">Vehicle Control</td>
+      <td class="mob-datagrid__td">Sets the acceleration rate that will be used...</td>
+      <td class="mob-datagrid__td">
+        <span class="mob-datagrid__bool-icon">&#xE502;</span>
+      </td>
+    </tr>
+    <tr class="mob-datagrid__row">
+      <td class="mob-datagrid__td"><input type="checkbox" /></td>
+      <td class="mob-datagrid__td">Acceleration Source</td>
+      <td class="mob-datagrid__td">Payload</td>
+      <td class="mob-datagrid__td">????</td>
+      <td class="mob-datagrid__td"></td>
+    </tr>
+    <tr class="mob-datagrid__row">
+      <td class="mob-datagrid__td"><input type="checkbox" /></td>
+      <td class="mob-datagrid__td">Acceleration X</td>
+      <td class="mob-datagrid__td">Other</td>
+      <td class="mob-datagrid__td">Current forward acceleration of the vehicle...</td>
+      <td class="mob-datagrid__td"></td>
+    </tr>
+    <tr class="mob-datagrid__row">
+      <td class="mob-datagrid__td"><input type="checkbox" /></td>
+      <td class="mob-datagrid__td">Acceleration Y</td>
+      <td class="mob-datagrid__td">Other</td>
+      <td class="mob-datagrid__td">Current lateral acceleration of the vehicle p...</td>
+      <td class="mob-datagrid__td"></td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<!-- XAML: StackPanel Grid.Row="3" Margin="40,5,0,5" — item count footer -->
+<div class="mob-datagrid__footer">
+  <span>Showing</span>
+  <span>8</span>
+  <span>of</span>
+  <span>412</span>
+  <span>total items</span>
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 5: NODE CONFIGURATION TABLE (9 columns, pin, inline edit, boolean)
+     Source: NodeConfigurationView.xaml — Vehicle Setup
+     XAML: <SimpleSortListView x:Name="ConfigItemsListView"
+                               InitialSortField="Name"
+                               ItemsSource="{Binding ConfigurationDescriptorTable.ConfigurationItems}">
+             <ListView.View><GridView>
+               9x FixedWidthGridViewColumn
+             </GridView></ListView.View>
+           </SimpleSortListView>
+     ========================================================= -->
+
+<h2>Node Configuration — Pin, Inline Edit, Boolean Icons</h2>
+
+<p class="note">
+  From <code>NodeConfigurationView.xaml</code>. Combines three cell types:
+  a <strong>pin checkbox</strong> (38 px column, <code>Icon_Pin_Out</code> header icon),
+  an <strong>inline editable field</strong> (<code>FieldInput</code> with
+  <code>InlineFieldInput</code> style in the Value column), and
+  <strong>boolean indicators</strong> (<code>Icon_Status_Okay</code> at 0.5 opacity
+  for Persistable / RequiresReset columns). Also has a <code>ContextMenu</code>
+  on the ListView itself.
+</p>
+
+<!-- XAML: SimpleSortListView x:Name="ConfigItemsListView" → GridView -->
+<table class="mob-datagrid mob-datagrid--listview">
+
+  <thead>
+    <tr class="mob-datagrid__header-row">
+      <!-- XAML: FixedWidthGridViewColumn Width="38" Header=Path(Icon_Pin_Out) -->
+      <th class="mob-datagrid__th" style="width: 38px;">
+        <span class="mob-datagrid__pin-header">&#xE53A;</span>
+      </th>
+      <!-- XAML: FixedWidthGridViewColumn Width="260" SortField="Name" -->
+      <th class="mob-datagrid__th" style="width: 260px;">Name</th>
+      <!-- XAML: FixedWidthGridViewColumn Width="260" SortField="Description" -->
+      <th class="mob-datagrid__th" style="width: 260px;">Description</th>
+      <!-- XAML: FixedWidthGridViewColumn Width="100" SortField="Status" -->
+      <th class="mob-datagrid__th" style="width: 100px;">Status</th>
+      <!-- XAML: FixedWidthGridViewColumn Width="140" SortField="Value" -->
+      <th class="mob-datagrid__th" style="width: 140px;">Value</th>
+      <!-- XAML: FixedWidthGridViewColumn Width="120" SortField="Units" -->
+      <th class="mob-datagrid__th" style="width: 120px;">Units</th>
+      <!-- XAML: FixedWidthGridViewColumn Width="100" SortField="MetaType" -->
+      <th class="mob-datagrid__th" style="width: 100px;">Type</th>
+      <!-- XAML: FixedWidthGridViewColumn Width="60" SortField="IsPersistable" -->
+      <th class="mob-datagrid__th" style="width: 60px;">Persist</th>
+      <!-- XAML: FixedWidthGridViewColumn Width="80" SortField="RequiresReset" -->
+      <th class="mob-datagrid__th" style="width: 80px;">Reset</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr class="mob-datagrid__row">
+      <td class="mob-datagrid__td">
+        <!-- XAML: CheckBox IsChecked="{Binding Pinned}" -->
+        <input type="checkbox" checked />
+      </td>
+      <td class="mob-datagrid__td">MaxSpeed</td>
+      <td class="mob-datagrid__td">Maximum autonomous speed</td>
+      <td class="mob-datagrid__td">Active</td>
+      <td class="mob-datagrid__td">
+        <!-- XAML: FieldInput Style=InlineFieldInput Content="{Binding Value}" -->
+        <input class="mob-datagrid__inline-input" type="text" value="35.0" />
+      </td>
+      <td class="mob-datagrid__td">km/h</td>
+      <td class="mob-datagrid__td">Double</td>
+      <td class="mob-datagrid__td">
+        <!-- XAML: Path Icon_Status_Okay, Opacity=0.5, Visibility=IsPersistable -->
+        <span class="mob-datagrid__bool-icon" style="opacity: 0.5;">&#xE502;</span>
+      </td>
+      <td class="mob-datagrid__td">
+        <span class="mob-datagrid__bool-icon" style="opacity: 0.5;">&#xE502;</span>
+      </td>
+    </tr>
+    <tr class="mob-datagrid__row">
+      <td class="mob-datagrid__td"><input type="checkbox" /></td>
+      <td class="mob-datagrid__td">SteeringGain</td>
+      <td class="mob-datagrid__td">Steering proportional gain</td>
+      <td class="mob-datagrid__td">Active</td>
+      <td class="mob-datagrid__td">
+        <input class="mob-datagrid__inline-input" type="text" value="1.25" />
+      </td>
+      <td class="mob-datagrid__td">—</td>
+      <td class="mob-datagrid__td">Double</td>
+      <td class="mob-datagrid__td">
+        <span class="mob-datagrid__bool-icon" style="opacity: 0.5;">&#xE502;</span>
+      </td>
+      <td class="mob-datagrid__td"></td>
+    </tr>
+    <tr class="mob-datagrid__row">
+      <td class="mob-datagrid__td"><input type="checkbox" checked /></td>
+      <td class="mob-datagrid__td">EnableLiDAR</td>
+      <td class="mob-datagrid__td">Enable front LiDAR sensor</td>
+      <td class="mob-datagrid__td">Active</td>
+      <td class="mob-datagrid__td">
+        <input class="mob-datagrid__inline-input" type="text" value="True" />
+      </td>
+      <td class="mob-datagrid__td">—</td>
+      <td class="mob-datagrid__td">Boolean</td>
+      <td class="mob-datagrid__td"></td>
+      <td class="mob-datagrid__td">
+        <span class="mob-datagrid__bool-icon" style="opacity: 0.5;">&#xE502;</span>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+
+  </main>
+
+</div>
+
+<script src="../styles/nav.js"></script>
+</body>
+</html>

@@ -1,0 +1,233 @@
+/*
+  status-button.css — Mobius StatusButton component styles
+  Source: StatusButton.xaml + StatusButton.cs
+          Asi.CommonControls.Client.UI
+
+  Extends IconLabelButton (which extends Control).
+  Combines a 12px StatusIcon, an icon area, and a text label
+  into a single clickable button.
+
+  Two templates:
+    .mob-status-btn                  Standard (Mobius_UI_Common_StatusButton)
+    .mob-status-btn--list-item       Content list-item variant (Mobius_UI_Common_StatusButtonContentListItem)
+
+  Status states (via data-status attribute):
+    ok        InformationGreen — icon full opacity
+    warning   InformationOrange — icon full opacity
+    critical  InformationRed — icon full opacity
+    unknown   ForegroundPrimary — icon 35% opacity
+
+  Layout (5-column grid from XAML):
+    [12px status-icon] [6px gap] [20px icon] [6px gap] [* text]
+*/
+
+
+/* =============================================
+   BASE — .mob-status-btn
+   XAML: Mobius_UI_Common_StatusButton
+         Style: Mobius_UI_Common_Style_StatusButton
+   ============================================= */
+
+/* XAML: Border — Height=36, Background=Transparent
+         Button — Style=SimpleIconButton, Margin=0, Padding=0
+         HorizontalAlignment=Left, HorizontalContentAlignment=Stretch */
+.mob-status-btn {
+  display: inline-flex;
+  align-items: center;
+  height: var(--touch-sm);
+  padding: 0;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  font: var(--font-default);
+  color: var(--ForegroundPrimary);
+  text-decoration: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* XAML: Grid — 5 ColumnDefinitions:
+         12 | Spacing(6) | IconButtonSize(20) | Spacing(6) | * */
+.mob-status-btn__layout {
+  display: grid;
+  grid-template-columns: var(--icon-sm) var(--size-6) var(--icon-btn) var(--size-6) 1fr;
+  align-items: center;
+}
+
+
+/* =============================================
+   STATUS INDICATOR (column 1)
+   XAML: common:StatusIcon — Width=12, Height=12,
+         VerticalAlignment=Center
+   Reuses .mob-status-icon from status-icon.css
+   ============================================= */
+
+/* XAML: StatusIcon in col 0, forced to 12px */
+.mob-status-btn__status {
+  grid-column: 1;
+  --status-icon-size: var(--icon-sm);
+}
+
+
+/* =============================================
+   ICON AREA (column 3)
+   XAML: Grid x:Name="_contentElement" — col 2,
+         contains Path(Icon) + Path(AdornerIcon),
+         Stretch=Uniform
+   ============================================= */
+
+/* XAML: _contentElement Grid — Opacity=1.0 by default */
+.mob-status-btn__icon {
+  grid-column: 3;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-icon);
+  font-size: var(--icon-btn);
+  line-height: 1;
+  color: inherit;
+  transition: color var(--transition-fade) ease, opacity var(--transition-fade) ease;
+}
+
+
+/* =============================================
+   TEXT LABEL (column 5)
+   XAML: TextBlock — col 4, Text=TemplateBinding,
+         ToolTip=TemplateBinding Text
+   ============================================= */
+
+.mob-status-btn__text {
+  grid-column: 5;
+  font: var(--font-default);
+  color: inherit;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
+/* =============================================
+   STATUS VISUAL STATES
+   XAML: VisualStateGroup "StatusIndicatorStates"
+   Drives icon color + opacity based on data-status
+   ============================================= */
+
+/* --- Unknown (default) ---
+   XAML: ColorAnimation → Foreground (inherits),
+         DoubleAnimation _contentElement Opacity → 0.35 */
+.mob-status-btn[data-status="unknown"] .mob-status-btn__icon {
+  color: var(--ForegroundPrimary);
+  opacity: var(--opacity-disabled);
+}
+
+/* --- Critical ---
+   XAML: ColorAnimation _icon Fill → InformationRed,
+         DoubleAnimation _contentElement Opacity → 1.0 */
+.mob-status-btn[data-status="critical"] .mob-status-btn__icon {
+  color: var(--InformationRed);
+  opacity: 1;
+}
+
+/* --- Warning ---
+   XAML: ColorAnimation _icon Fill → InformationOrange,
+         DoubleAnimation _contentElement Opacity → 1.0 */
+.mob-status-btn[data-status="warning"] .mob-status-btn__icon {
+  color: var(--InformationOrange);
+  opacity: 1;
+}
+
+/* --- OK ---
+   XAML: ColorAnimation _icon Fill → InformationGreen,
+         DoubleAnimation _contentElement Opacity → 1.0 */
+.mob-status-btn[data-status="ok"] .mob-status-btn__icon {
+  color: var(--InformationGreen);
+  opacity: 1;
+}
+
+
+/* =============================================
+   BUTTON INTERACTION STATES
+   XAML: Button Style=SimpleIconButton
+   Inherits hover/press/disabled from .mob-btn-icon
+   ============================================= */
+
+/* --- Hover --- */
+/* XAML: SimpleIconButton MouseOver — fg → MouseOverPrimary */
+.mob-status-btn:hover:not(:disabled),
+.mob-status-btn.is-hovered {
+  color: var(--MouseOverPrimary);
+  transition: color var(--transition-mouse-over) ease;
+}
+
+/* --- Pressed --- */
+/* XAML: SimpleIconButton Pressed — fg → MouseOverPrimary */
+.mob-status-btn:active:not(:disabled),
+.mob-status-btn.is-pressed {
+  color: var(--MouseOverPrimary);
+  transition: color var(--transition-mouse-pressed) ease;
+}
+
+/* --- Disabled --- */
+/* XAML: SimpleIconButton Disabled — opacity → DisabledOpacity */
+.mob-status-btn:disabled {
+  opacity: var(--opacity-disabled);
+  cursor: default;
+}
+
+/* --- Focused --- */
+/* XAML: SimpleIconButton Focused — fg → MouseOverPrimary */
+.mob-status-btn:focus-visible,
+.mob-status-btn.is-focused {
+  outline: var(--border-width-focused) solid var(--MouseOverPrimary);
+  outline-offset: var(--focus-outline-offset);
+}
+
+
+/* =============================================
+   LIST-ITEM VARIANT — .mob-status-btn--list-item
+   XAML: Mobius_UI_Common_StatusButtonContentListItem
+         Style: Mobius_UI_Common_Style_StatusButtonContentListItem
+
+   Same layout. Key difference: _contentElement is a
+   ContentControl, and status state drives Foreground
+   color on _contentElement (not just icon Fill).
+   Both icon AND text inherit the status color.
+   ============================================= */
+
+/* XAML: StatusIcon Margin="-1" in list-item variant */
+.mob-status-btn--list-item .mob-status-btn__status {
+  margin: calc(var(--spacing-gap-sm) * -1);
+}
+
+/* --- Unknown: foreground color + 35% opacity on both icon and text --- */
+/* XAML: ColorAnimation _contentElement Foreground → inherited,
+         DoubleAnimation Opacity → 0.35 */
+.mob-status-btn--list-item[data-status="unknown"] .mob-status-btn__icon,
+.mob-status-btn--list-item[data-status="unknown"] .mob-status-btn__text {
+  color: var(--ForegroundPrimary);
+  opacity: var(--opacity-disabled);
+}
+
+/* --- Critical: red on both icon and text --- */
+/* XAML: ColorAnimation _contentElement Foreground → InformationRed */
+.mob-status-btn--list-item[data-status="critical"] .mob-status-btn__icon,
+.mob-status-btn--list-item[data-status="critical"] .mob-status-btn__text {
+  color: var(--InformationRed);
+  opacity: 1;
+}
+
+/* --- Warning: orange on both icon and text --- */
+/* XAML: ColorAnimation _contentElement Foreground → InformationOrange */
+.mob-status-btn--list-item[data-status="warning"] .mob-status-btn__icon,
+.mob-status-btn--list-item[data-status="warning"] .mob-status-btn__text {
+  color: var(--InformationOrange);
+  opacity: 1;
+}
+
+/* --- OK: green on both icon and text --- */
+/* XAML: ColorAnimation _contentElement Foreground → InformationGreen */
+.mob-status-btn--list-item[data-status="ok"] .mob-status-btn__icon,
+.mob-status-btn--list-item[data-status="ok"] .mob-status-btn__text {
+  color: var(--InformationGreen);
+  opacity: 1;
+}

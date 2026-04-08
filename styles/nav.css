@@ -95,6 +95,90 @@
 
 
 /* =============================================
+   SEARCH BAR
+   ============================================= */
+
+/* XAML: Matches .mob-input default → hover → focused states */
+.mob-nav__search {
+  display: flex;
+  align-items: center;
+  gap: var(--size-6);
+  margin: var(--size-12) var(--spacing-label-to-control-md);
+  height: 30px;
+  padding: 0 0 0 var(--size-12);
+  border: var(--border-width) solid var(--BackgroundInputOutline);
+  border-radius: var(--corner-radius);
+  background: var(--BackgroundInput);
+  transition:
+    border-color var(--transition-mouse-out) ease,
+    outline-color var(--transition-mouse-out) ease;
+}
+
+/* Hover — XAML: MouseOver → border MouseOverPrimary */
+.mob-nav__search:hover:not(:focus-within) {
+  border-color: var(--MouseOverPrimary);
+  transition-duration: var(--transition-mouse-over);
+}
+
+.mob-nav__search:hover:not(:focus-within) .mob-nav__search-icon {
+  color: var(--MouseOverPrimary);
+}
+
+/* Focused — XAML: border + outline → MouseOverPrimary */
+.mob-nav__search:focus-within {
+  border-color: var(--MouseOverPrimary);
+  outline: var(--border-width-focused) solid var(--MouseOverPrimary);
+  outline-offset: calc(var(--border-width) * -1);
+  transition-duration: var(--transition-focus);
+}
+
+.mob-nav__search:focus-within .mob-nav__search-icon {
+  color: var(--MouseOverPrimary);
+}
+
+.mob-nav__search-icon {
+  flex-shrink: 0;
+  font-family: var(--font-icon);
+  font-size: var(--icon-default);
+  line-height: 1;
+  color: var(--ForegroundWatermark);
+}
+
+.mob-nav__search-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  font: var(--font-default);
+  color: var(--ForegroundAction);
+  transition: color var(--transition-mouse-out) ease;
+}
+
+/* Hover/focus text color — matches .mob-input hover/focus foreground */
+.mob-nav__search:hover .mob-nav__search-input,
+.mob-nav__search:focus-within .mob-nav__search-input {
+  color: var(--MouseOverPrimary);
+}
+
+.mob-nav__search-input::placeholder {
+  color: var(--ForegroundWatermark);
+}
+
+.mob-nav__search-kbd {
+  flex-shrink: 0;
+  margin: 3px 3px 3px 0;
+  padding: 2px var(--size-6);
+  border: var(--line-size) solid var(--InnerLines);
+  border-radius: 3px;
+  background: var(--BackgroundStepOne);
+  font: var(--font-Sm);
+  color: var(--ForegroundWatermark);
+  line-height: 1.4;
+}
+
+
+/* =============================================
    NAVIGATION GROUPS
    ============================================= */
 
