@@ -95,7 +95,8 @@
         { label: "Text Input",    href: "text-input/text-input.html" },
         { label: "Switch Toggle", href: "switch-toggle/switch-toggle.html" },
         { label: "ComboBox",      href: "combobox/combobox.html" },
-        { label: "Radio Button",  href: "radio-button/radio-button.html" }
+        { label: "Radio Button",  href: "radio-button/radio-button.html" },
+        { label: "Checkbox",      href: "checkbox/checkbox.html" }
       ]
     }
   ];

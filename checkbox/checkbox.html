@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mobius — Checkbox States</title>
+  <link id="mob-theme-link" rel="stylesheet" href="../styles/LightTheme.css" />
+  <link rel="stylesheet" href="../styles/base.css" />
+  <link rel="stylesheet" href="checkbox.css" />
+  <style>
+    body { margin: 0; }
+    h1 {
+      font: var(--font-hdrMd);
+      margin: 0 0 32px;
+      color: var(--ForegroundStrong);
+    }
+    h2 {
+      font: var(--font-hdrSm);
+      margin: 40px 0 16px;
+      color: var(--ForegroundStrong);
+    }
+    h2:first-of-type { margin-top: 0; }
+    .states-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-field);
+      max-width: 540px;
+    }
+    .section-divider {
+      border: none;
+      border-top: var(--line-size) solid var(--InnerLines);
+      margin: 32px 0 0;
+    }
+  </style>
+</head>
+<body>
+
+<div class="mob-layout">
+
+  <!-- Sidebar Navigation -->
+  <nav class="mob-nav" id="mob-nav"></nav>
+
+  <!-- Main Content -->
+  <main class="mob-layout__content">
+
+<h1>Checkbox</h1>
+
+
+<!-- =========================================================
+     SECTION 1: INTERACTION STATES (standalone checkboxes)
+     Source: DefaultControls.xaml — Mobius_UI_Resources_Templates_CheckBox
+     ========================================================= -->
+
+<h2>Interaction States</h2>
+
+<div class="states-list">
+
+  <!-- ===== Default (unchecked) ===== -->
+  <!-- XAML: Normal VisualState — BackgroundInputOutline border, BackgroundInput bg -->
+  <label class="mob-checkbox">
+    <input class="mob-checkbox__input" type="checkbox" />
+    <!-- XAML: ContentControl — Foreground=ForegroundPrimary -->
+    <span class="mob-checkbox__label">Default</span>
+  </label>
+
+  <!-- ===== Checked ===== -->
+  <!-- XAML: Checked VisualState — CheckMark Opacity -> 1.0, duration 150ms -->
+  <label class="mob-checkbox">
+    <input class="mob-checkbox__input" type="checkbox" checked />
+    <span class="mob-checkbox__label">Checked</span>
+  </label>
+
+  <!-- ===== Indeterminate ===== -->
+  <!-- XAML: Indeterminate VisualState — IndeterminateMark (Rectangle Margin=4)
+       Opacity -> 0.75, CheckMark Opacity -> 0.0 -->
+  <label class="mob-checkbox">
+    <input class="mob-checkbox__input is-indeterminate" type="checkbox" />
+    <span class="mob-checkbox__label">Indeterminate</span>
+  </label>
+
+  <!-- ===== Hover (unchecked) ===== -->
+  <!-- XAML: MouseOver — border + CheckMark fill -> MouseOverPrimary -->
+  <label class="mob-checkbox">
+    <input class="mob-checkbox__input is-hovered" type="checkbox" />
+    <span class="mob-checkbox__label">Hover (unchecked)</span>
+  </label>
+
+  <!-- ===== Hover (checked) ===== -->
+  <!-- XAML: MouseOver + Checked — border -> MouseOverPrimary, checkmark -> MouseOverPrimary -->
+  <label class="mob-checkbox">
+    <input class="mob-checkbox__input is-hovered is-checked" type="checkbox" />
+    <span class="mob-checkbox__label">Hover (checked)</span>
+  </label>
+
+  <!-- ===== Focused ===== -->
+  <!-- XAML: Focused — border + CheckMark fill -> MouseOverPrimary,
+       FocusVisualStyle adorner = 2px outline -->
+  <label class="mob-checkbox">
+    <input class="mob-checkbox__input is-focused" type="checkbox" />
+    <span class="mob-checkbox__label">Focused</span>
+  </label>
+
+  <!-- ===== Focused + Checked ===== -->
+  <!-- XAML: Focused + Checked — outline ring + cyan checkmark -->
+  <label class="mob-checkbox">
+    <input class="mob-checkbox__input is-focused is-checked" type="checkbox" />
+    <span class="mob-checkbox__label">Focused (checked)</span>
+  </label>
+
+  <!-- ===== Disabled (unchecked) ===== -->
+  <!-- XAML: Disabled — inputBackground Opacity -> 0, templateRoot -> DisabledOpacity -->
+  <label class="mob-checkbox">
+    <input class="mob-checkbox__input" type="checkbox" disabled />
+    <span class="mob-checkbox__label">Disabled</span>
+  </label>
+
+  <!-- ===== Disabled (checked) ===== -->
+  <!-- XAML: Disabled + Checked — same dimming, checkmark still visible at reduced opacity -->
+  <label class="mob-checkbox">
+    <input class="mob-checkbox__input" type="checkbox" checked disabled />
+    <span class="mob-checkbox__label">Disabled (checked)</span>
+  </label>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 2: CHECKBOX GROUP (vertical)
+     Source: Typical usage — StackPanel Orientation=Vertical
+             containing multiple CheckBoxes.
+             e.g. configuration panels, feature toggles
+     ========================================================= -->
+
+<h2>Checkbox Group — Vertical</h2>
+
+<div class="states-list">
+
+  <!-- XAML: StackPanel with CheckBox children -->
+  <div class="mob-checkbox-group" role="group" aria-label="Sensor options">
+
+    <!-- XAML: CheckBox Content="LiDAR" -->
+    <label class="mob-checkbox">
+      <input class="mob-checkbox__input" type="checkbox" checked />
+      <span class="mob-checkbox__label">LiDAR</span>
+    </label>
+
+    <!-- XAML: CheckBox Content="Camera" -->
+    <label class="mob-checkbox">
+      <input class="mob-checkbox__input" type="checkbox" checked />
+      <span class="mob-checkbox__label">Camera</span>
+    </label>
+
+    <!-- XAML: CheckBox Content="Radar" -->
+    <label class="mob-checkbox">
+      <input class="mob-checkbox__input" type="checkbox" />
+      <span class="mob-checkbox__label">Radar</span>
+    </label>
+
+    <!-- XAML: CheckBox Content="Ultrasonic" -->
+    <label class="mob-checkbox">
+      <input class="mob-checkbox__input" type="checkbox" />
+      <span class="mob-checkbox__label">Ultrasonic</span>
+    </label>
+
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 3: CHECKBOX GROUP (horizontal)
+     Source: Side-by-side checkbox options in config views
+     ========================================================= -->
+
+<h2>Checkbox Group — Horizontal</h2>
+
+<div class="states-list">
+
+  <!-- XAML: StackPanel Orientation=Horizontal with CheckBoxes -->
+  <div class="mob-checkbox-group mob-checkbox-group--horizontal" role="group" aria-label="Log levels">
+
+    <label class="mob-checkbox">
+      <input class="mob-checkbox__input" type="checkbox" checked />
+      <span class="mob-checkbox__label">Error</span>
+    </label>
+
+    <label class="mob-checkbox">
+      <input class="mob-checkbox__input" type="checkbox" checked />
+      <span class="mob-checkbox__label">Warning</span>
+    </label>
+
+    <label class="mob-checkbox">
+      <input class="mob-checkbox__input" type="checkbox" />
+      <span class="mob-checkbox__label">Info</span>
+    </label>
+
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 4: CHECKBOX IN FORM FIELD LAYOUT
+     Source: FieldInput pattern — label column (130px min) +
+             checkbox group in body column, matching horizontal
+             field alignment from text-input / combobox.
+     ========================================================= -->
+
+<h2>Form Field Layout</h2>
+
+<div class="states-list">
+
+  <!-- ===== Standard form field with checkbox group ===== -->
+  <!-- XAML: FieldInput-like layout — label left, options right -->
+  <div class="mob-field">
+    <span class="mob-field__label">Sensors:</span>
+    <div class="mob-field__body">
+      <div class="mob-checkbox-group" role="group">
+        <label class="mob-checkbox">
+          <input class="mob-checkbox__input" type="checkbox" checked />
+          <span class="mob-checkbox__label">Front LiDAR</span>
+        </label>
+        <label class="mob-checkbox">
+          <input class="mob-checkbox__input" type="checkbox" checked />
+          <span class="mob-checkbox__label">Rear LiDAR</span>
+        </label>
+        <label class="mob-checkbox">
+          <input class="mob-checkbox__input" type="checkbox" />
+          <span class="mob-checkbox__label">Side cameras</span>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Disabled form field ===== -->
+  <!-- XAML: IsEnabled=False on parent — dims entire row -->
+  <div class="mob-field">
+    <span class="mob-field__label">Logging:</span>
+    <div class="mob-field__body">
+      <div class="mob-checkbox-group" role="group">
+        <label class="mob-checkbox">
+          <input class="mob-checkbox__input" type="checkbox" checked disabled />
+          <span class="mob-checkbox__label">Telemetry</span>
+        </label>
+        <label class="mob-checkbox">
+          <input class="mob-checkbox__input" type="checkbox" disabled />
+          <span class="mob-checkbox__label">Diagnostics</span>
+        </label>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 5: MIXED WITH OTHER CONTROLS
+     Source: Common pattern in calibration/config panels —
+             checkbox enables/disables associated input fields.
+     ========================================================= -->
+
+<h2>Mixed with Other Controls</h2>
+
+<div class="states-list">
+
+  <!-- ===== Checkbox enables an associated input ===== -->
+  <!-- XAML: CheckBox + FieldInput in same panel,
+       checkbox IsChecked enables/disables associated input -->
+  <div class="mob-checkbox-group" role="group" aria-label="Safety limits">
+
+    <div>
+      <label class="mob-checkbox">
+        <input class="mob-checkbox__input" type="checkbox" checked />
+        <span class="mob-checkbox__label">Enable speed limit</span>
+      </label>
+      <!-- XAML: Associated FieldInput — enabled when checkbox is checked -->
+      <div class="mob-field mob-field--checkbox-sub">
+        <label class="mob-field__label">Max speed:</label>
+        <div class="mob-field__body">
+          <input class="mob-input" type="text" value="25" />
+          <span class="mob-field__unit">km/h</span>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <label class="mob-checkbox">
+        <input class="mob-checkbox__input" type="checkbox" />
+        <span class="mob-checkbox__label">Enable geofence</span>
+      </label>
+      <!-- XAML: Associated FieldInput — disabled when checkbox is unchecked -->
+      <div class="mob-field mob-field--checkbox-sub">
+        <label class="mob-field__label">Radius:</label>
+        <div class="mob-field__body">
+          <input class="mob-input" type="text" value="100" disabled />
+          <span class="mob-field__unit">m</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+  </main>
+
+</div>
+
+<script src="../styles/nav.js"></script>
+</body>
+</html>
