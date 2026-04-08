@@ -1,0 +1,99 @@
+/* =============================================
+   STATUS ICON
+   Source: StatusIcon.xaml + StatusIcon.cs
+   Asi.CommonControls.Client.UI
+
+   A single-icon indicator that shows one of five
+   status states: OK, Caution, Warning, Critical, Unknown.
+   Uses Mobius-System-Icons font glyphs via ::before.
+
+   Glyph map (from mobius-system-icons.woff2):
+     OK       → U+E449  Status_OkaySm
+     Caution  → U+E43F  Status_CautionSm
+     Warning  → U+E450  Status_WarningSm
+     Critical → U+E441  Status_CriticalSm
+     Unknown  → U+E454  Status_XSm
+
+   Default size: --icon (20px).
+   Override with --status-icon-size on the element.
+   ============================================= */
+
+/* --- Base element --------------------------------------------- */
+/* XAML: Grid (root of ControlTemplate) — stacks all Path children.
+   HTML:  <span class="mob-status-icon" data-status="ok"></span> */
+.mob-status-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-family: var(--font-icon);
+  font-size: var(--status-icon-size, var(--icon));
+  line-height: 1;
+  font-style: normal;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* --- Glyph per state ------------------------------------------ */
+/* XAML: Path x:Name="IconOK" — Data=Icon_Status_OkaySm
+         Fill=InformationGreenBrush */
+.mob-status-icon[data-status="ok"]::before {
+  content: "\E449";
+  color: var(--InformationGreen);
+}
+
+/* XAML: Path x:Name="IconCaution" — Data=Icon_Status_CautionSm
+         Fill=InformationYellowBrush */
+.mob-status-icon[data-status="caution"]::before {
+  content: "\E43F";
+  color: var(--InformationYellow);
+}
+
+/* XAML: Path x:Name="IconWarning" — Data=Icon_Status_WarningSm
+         Fill=InformationOrangeBrush */
+.mob-status-icon[data-status="warning"]::before {
+  content: "\E450";
+  color: var(--InformationOrange);
+}
+
+/* XAML: Path x:Name="IconCritical" — Data=Icon_Status_CriticalSm
+         Fill=InformationRedBrush */
+.mob-status-icon[data-status="critical"]::before {
+  content: "\E441";
+  color: var(--InformationRed);
+}
+
+/* XAML: Path x:Name="IconUnknown" — Data=Icon_Status_XSm
+         Fill=ForegroundPrimaryBrush */
+.mob-status-icon[data-status="unknown"]::before {
+  content: "\E454";
+  color: var(--ForegroundPrimary);
+}
+
+/* --- Fade-in transition --------------------------------------- */
+/* XAML: DoubleAnimation Opacity 0→1, Duration=GeneralFadeDuration */
+.mob-status-icon::before {
+  animation: status-icon-fade-in var(--transition-fade) ease-out;
+}
+
+@keyframes status-icon-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* --- Size variants -------------------------------------------- */
+/* Small: --icon-sm (12px) — used in dense lists & table cells */
+.mob-status-icon--sm {
+  --status-icon-size: var(--icon-sm);
+}
+
+/* Large: --icon-lg (32px) — used in StatusIconLarge / detail views */
+.mob-status-icon--lg {
+  --status-icon-size: var(--icon-lg);
+}
+
+/* Adorner: --icon-adorner (8px) — badge/dot on composite controls */
+.mob-status-icon--adorner {
+  --status-icon-size: var(--icon-adorner);
+}

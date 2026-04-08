@@ -93,10 +93,24 @@
       title: "Forms",
       links: [
         { label: "Text Input",    href: "text-input/text-input.html" },
-        { label: "Switch Toggle", href: "switch-toggle/switch-toggle.html" },
         { label: "ComboBox",      href: "combobox/combobox.html" },
+        { label: "Switch Toggle", href: "switch-toggle/switch-toggle.html" },
         { label: "Radio Button",  href: "radio-button/radio-button.html" },
         { label: "Checkbox",      href: "checkbox/checkbox.html" }
+      ]
+    },
+    {
+      title: "Layout",
+      links: [
+        { label: "Borders",       href: "docs/border-conversion-reference.html" },
+        { label: "ScrollViewer",  href: "scroll-viewer/scroll-viewer.html" },
+        { label: "BoxShadow",     href: "box-shadow/box-shadow.html" }
+      ]
+    },
+    {
+      title: "Data & Status",
+      links: [
+        { label: "Status Icon",  href: "status-icon/status-icon.html" }
       ]
     }
   ];

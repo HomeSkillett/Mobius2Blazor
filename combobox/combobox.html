@@ -24,13 +24,13 @@
     .states-list {
       display: flex;
       flex-direction: column;
-      gap: var(--spacing-section-to-section);
+      gap: var(--spacing-field);
       max-width: 540px;
     }
     .section-divider {
       border: none;
       border-top: var(--line-size) solid var(--InnerLines);
-      margin: 0;
+      margin: 32px 0 0;
     }
   </style>
 </head>
@@ -46,89 +46,233 @@
 
 <h1>Mobius ComboBox</h1>
 
+
+<!-- =========================================================
+     XAML source:  DatabaseExportControl.xaml > ComboBox (line 57)
+     Style:        Mobius_UI_Resources_Styles_ComboBox
+     Template:     Mobius_UI_Resources_Templates_ComboBox
+
+     Uses appearance: base-select (Chrome 134+) for pixel-perfect
+     dropdown styling. Falls back to appearance: none with a styled
+     trigger on older browsers.
+
+     Blazor usage:
+     ┌─────────────────────────────────────────────────────────┐
+     │  <div class="combobox-wrap">                            │
+     │    <InputSelect class="combobox"                        │
+     │                 @bind-Value="Model.OutputFormat">       │
+     │      <option value="RawData">Raw data</option>          │
+     │      <option value="DesignatedIntervals">               │
+     │        Designated intervals</option>                    │
+     │      <option value="GroupedByVehicle">                  │
+     │        Grouped by vehicle</option>                      │
+     │      <option value="EventsAndRoutes">                   │
+     │        Events and Routes</option>                       │
+     │    </InputSelect>                                       │
+     │  </div>                                                 │
+     │                                                         │
+     │  Note: The <selectedcontent> element is HTML-only;      │
+     │  Blazor's <InputSelect> does not support it yet.        │
+     │  The CSS handles both cases via @supports.              │
+     └─────────────────────────────────────────────────────────┘
+
+     Browser support:
+       Chrome/Edge 134+  — full dropdown + option styling
+       Firefox/Safari     — styled trigger, native dropdown
+     ========================================================= -->
+
+
+<!-- =========================================================
+     SECTION 1: INTERACTION STATES
+     Source: DefaultControls.xaml — Mobius_UI_Resources_Templates_ComboBox
+     ========================================================= -->
+
+<h2>Interaction States</h2>
+
 <div class="states-list">
 
-  <!-- =============================================
-       XAML source:  DatabaseExportControl.xaml > ComboBox (line 57)
-       Style:        Mobius_UI_Resources_Styles_ComboBox
-       Template:     Mobius_UI_Resources_Templates_ComboBox
-
-       Uses appearance: base-select (Chrome 134+) for pixel-perfect
-       dropdown styling. Falls back to appearance: none with a styled
-       trigger on older browsers.
-
-       Blazor usage:
-       ┌─────────────────────────────────────────────────────────┐
-       │  <div class="combobox-wrap">                            │
-       │    <InputSelect class="combobox"                        │
-       │                 @bind-Value="Model.OutputFormat">       │
-       │      <option value="RawData">Raw data</option>          │
-       │      <option value="DesignatedIntervals">               │
-       │        Designated intervals</option>                    │
-       │      <option value="GroupedByVehicle">                  │
-       │        Grouped by vehicle</option>                      │
-       │      <option value="EventsAndRoutes">                   │
-       │        Events and Routes</option>                       │
-       │    </InputSelect>                                       │
-       │  </div>                                                 │
-       │                                                         │
-       │  Note: The <selectedcontent> element is HTML-only;      │
-       │  Blazor's <InputSelect> does not support it yet.        │
-       │  The CSS handles both cases via @supports.              │
-       └─────────────────────────────────────────────────────────┘
-
-       Browser support:
-         Chrome/Edge 134+  — full dropdown + option styling
-         Firefox/Safari     — styled trigger, native dropdown
-       ============================================= -->
-
-
-  <!-- STATE 1 — Default -->
-  <h2>Default</h2>
-
-  <!-- XAML: ComboBox > Grid (templateRoot) -->
-  <div class="combobox-wrap">
-    <!-- XAML: ComboBox — native <select> with appearance: base-select -->
-    <!-- XAML: Arrow = Path (_toggleArrow) Icon_Arrow_PointerDownSm — via ::picker-icon -->
-    <!-- XAML: ContentPresenter (ContentSite) — via <selectedcontent> -->
-    <!-- XAML: PART_Popup > SubmenuBorder — via ::picker(select) -->
-    <!-- XAML: ComboBoxItem — via <option> with :checked / :hover states -->
-    <select class="combobox">
-      <option value="RawData" selected>Raw data</option>
-      <option value="DesignatedIntervals">Designated intervals</option>
-      <option value="GroupedByVehicle">Grouped by vehicle</option>
-      <option value="EventsAndRoutes">Events and Routes</option>
-    </select>
+  <!-- ===== Default ===== -->
+  <!-- XAML: Normal VisualState — BackgroundInputOutline border, ForegroundAction text -->
+  <div class="mob-field">
+    <label class="mob-field__label">Label:</label>
+    <div class="mob-field__body">
+      <div class="combobox-wrap">
+        <select class="combobox">
+          <option value="RawData" selected>Raw data</option>
+          <option value="DesignatedIntervals">Designated intervals</option>
+          <option value="GroupedByVehicle">Grouped by vehicle</option>
+          <option value="EventsAndRoutes">Events and Routes</option>
+        </select>
+      </div>
+    </div>
   </div>
 
-  <hr class="section-divider">
-
-
-  <!-- STATE 2 — Disabled -->
-  <h2>Disabled</h2>
-
-  <!-- XAML: ComboBox IsEnabled="False" (HasItems trigger) -->
-  <div class="combobox-wrap">
-    <select class="combobox" disabled>
-      <option value="RawData" selected>Raw data</option>
-      <option value="DesignatedIntervals">Designated intervals</option>
-      <option value="GroupedByVehicle">Grouped by vehicle</option>
-      <option value="EventsAndRoutes">Events and Routes</option>
-    </select>
+  <!-- ===== Hover ===== -->
+  <!-- XAML: MouseOver VisualState — border + arrow -> MouseOverPrimary -->
+  <div class="mob-field">
+    <label class="mob-field__label">Label:</label>
+    <div class="mob-field__body">
+      <div class="combobox-wrap is-hovered">
+        <select class="combobox is-hovered">
+          <option value="RawData" selected>Raw data</option>
+          <option value="DesignatedIntervals">Designated intervals</option>
+          <option value="GroupedByVehicle">Grouped by vehicle</option>
+          <option value="EventsAndRoutes">Events and Routes</option>
+        </select>
+      </div>
+    </div>
   </div>
 
+  <!-- ===== Focused ===== -->
+  <!-- XAML: Focused VisualState — 2px MouseOverPrimary border -->
+  <div class="mob-field">
+    <label class="mob-field__label">Label:</label>
+    <div class="mob-field__body">
+      <div class="combobox-wrap">
+        <select class="combobox is-focused">
+          <option value="RawData" selected>Raw data</option>
+          <option value="DesignatedIntervals">Designated intervals</option>
+          <option value="GroupedByVehicle">Grouped by vehicle</option>
+          <option value="EventsAndRoutes">Events and Routes</option>
+        </select>
+      </div>
+    </div>
+  </div>
 
-  <hr class="section-divider">
+  <!-- ===== Disabled ===== -->
+  <!-- XAML: Disabled VisualState — opacity -> DisabledOpacity, background transparent -->
+  <div class="mob-field">
+    <label class="mob-field__label">Label:</label>
+    <div class="mob-field__body">
+      <div class="combobox-wrap">
+        <select class="combobox" disabled>
+          <option value="RawData" selected>Raw data</option>
+          <option value="DesignatedIntervals">Designated intervals</option>
+          <option value="GroupedByVehicle">Grouped by vehicle</option>
+          <option value="EventsAndRoutes">Events and Routes</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+</div>
 
 
-  <!-- STATE 3 — Horizontal Label (Left) -->
-  <h2>With Label (Left)</h2>
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 2: VALIDATION / STATUS STATES
+     Source: FieldInput.xaml — VisualStateGroup "ShowStates"
+             DefaultControls.xaml — VisualStateGroup "ValidationStates"
+     ========================================================= -->
+
+<h2>Validation &amp; Status States</h2>
+
+<div class="states-list">
+
+  <!-- ===== Error / Invalid ===== -->
+  <!-- XAML: _validationElement — InformationRedBrush border, 2px
+       Triggered by ValidationStates → InvalidFocused / InvalidUnfocused -->
+  <div class="mob-field">
+    <label class="mob-field__label">Error:</label>
+    <div class="mob-field__body">
+      <div class="combobox-wrap">
+        <select class="combobox is-invalid">
+          <option value="RawData" selected>Raw data</option>
+          <option value="DesignatedIntervals">Designated intervals</option>
+          <option value="GroupedByVehicle">Grouped by vehicle</option>
+          <option value="EventsAndRoutes">Events and Routes</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Warning (with icon) ===== -->
+  <!-- XAML: ShowWarning — _validationVisualElement border -> InformationOrange, 2px
+       WarningSymbol Path: Icon_Status_WarningSm, Fill=InformationOrangeBrush -->
+  <div class="mob-field">
+    <label class="mob-field__label">Warning:</label>
+    <span class="mob-field__icon mob-field__icon--warning">
+      <svg viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M5,0L0,9.2L1.8,12h8.3L12,9.2L7,0H5z M7,10H5V8h2V10z M7,7H5V3h2V7z" />
+      </svg>
+    </span>
+    <div class="mob-field__body">
+      <div class="combobox-wrap">
+        <select class="combobox is-warning">
+          <option value="RawData" selected>Raw data</option>
+          <option value="DesignatedIntervals">Designated intervals</option>
+          <option value="GroupedByVehicle">Grouped by vehicle</option>
+          <option value="EventsAndRoutes">Events and Routes</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Info (with icon) ===== -->
+  <!-- XAML: ShowInfo (SuggestionTextBox only) — border -> InformationYellow, 2px
+       InfoSymbol Path: Icon_Status_CautionSm, Fill=InformationYellowBrush -->
+  <div class="mob-field">
+    <label class="mob-field__label">Info:</label>
+    <span class="mob-field__icon mob-field__icon--info">
+      <svg viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M5,0L0,5v2l5,5h2l5-5V5L7,0H5z M7,10H5V8h2V10z M7,7H5V2h2V7z" />
+      </svg>
+    </span>
+    <div class="mob-field__body">
+      <div class="combobox-wrap">
+        <select class="combobox is-info">
+          <option value="RawData" selected>Raw data</option>
+          <option value="DesignatedIntervals">Designated intervals</option>
+          <option value="GroupedByVehicle">Grouped by vehicle</option>
+          <option value="EventsAndRoutes">Events and Routes</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Working / OK (with icon) ===== -->
+  <!-- XAML: ShowWorking — _validationVisualElement border -> InformationGreen, 2px
+       WorkingSymbol Path: Icon_Status_OkaySm, Fill=InformationGreenBrush -->
+  <div class="mob-field">
+    <label class="mob-field__label">Working:</label>
+    <span class="mob-field__icon mob-field__icon--working">
+      <svg viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M12,6c0,3.3-2.7,6-6,6S0,9.3,0,6s2.7-6,6-6S12,2.7,12,6z M2,5v1.4L4.6,9h0.8L10,4.4V3H8.6L5,6.6L3.4,5H2z" />
+      </svg>
+    </span>
+    <div class="mob-field__body">
+      <div class="combobox-wrap">
+        <select class="combobox is-working">
+          <option value="RawData" selected>Raw data</option>
+          <option value="DesignatedIntervals">Designated intervals</option>
+          <option value="GroupedByVehicle">Grouped by vehicle</option>
+          <option value="EventsAndRoutes">Events and Routes</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 3: HORIZONTAL LABEL (LEFT)
+     Source: DatabaseExportControl.xaml — FieldLabel + ComboBox
+             in horizontal StackPanel
+     ========================================================= -->
+
+<h2>With Label (Left)</h2>
+
+<div class="states-list">
 
   <!-- XAML: DatabaseExportControl.xaml — FieldLabel + ComboBox in horizontal StackPanel -->
   <div class="mob-field">
-    <!-- XAML: TextBlock (field label) -->
     <label class="mob-field__label">Database output format:</label>
-    <!-- XAML: ComboBox wrapped in field body -->
     <div class="mob-field__body">
       <div class="combobox-wrap">
         <select class="combobox">
@@ -141,17 +285,25 @@
     </div>
   </div>
 
-  <hr class="section-divider">
+</div>
 
 
-  <!-- STATE 4 — Vertical Label (Top) -->
-  <h2>With Label (Top)</h2>
+<hr class="section-divider" />
 
-  <!-- XAML: FieldLabel + ComboBox in vertical StackPanel -->
+
+<!-- =========================================================
+     SECTION 4: VERTICAL LAYOUT
+     Source: FieldInput.xaml — Mobius_UI_Common_Templates_FieldInputVertical
+     ========================================================= -->
+
+<h2>Vertical Layout</h2>
+
+<div class="states-list">
+
+  <!-- ===== Vertical — default ===== -->
+  <!-- XAML: FieldInputVertical — label row Height=TouchSize, input in row 1 -->
   <div class="mob-field mob-field--vertical">
-    <!-- XAML: TextBlock (field label) -->
     <label class="mob-field__label">Database output format:</label>
-    <!-- XAML: ComboBox wrapped in field body -->
     <div class="mob-field__body">
       <div class="combobox-wrap">
         <select class="combobox">
@@ -164,6 +316,52 @@
     </div>
   </div>
 
+  <!-- ===== Vertical — with warning icon ===== -->
+  <!-- XAML: FieldInputVertical — icon expander sits left of label in row 0 -->
+  <div class="mob-field mob-field--vertical mob-field--warning">
+    <label class="mob-field__label">Output format:</label>
+    <div class="mob-field__body">
+      <div class="combobox-wrap">
+        <select class="combobox is-warning">
+          <option value="RawData" selected>Raw data</option>
+          <option value="DesignatedIntervals">Designated intervals</option>
+          <option value="GroupedByVehicle">Grouped by vehicle</option>
+          <option value="EventsAndRoutes">Events and Routes</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Vertical — with working icon ===== -->
+  <!-- XAML: FieldInputVertical — icon expander sits left of label in row 0 -->
+  <div class="mob-field mob-field--vertical mob-field--working">
+    <label class="mob-field__label">Output format:</label>
+    <div class="mob-field__body">
+      <div class="combobox-wrap">
+        <select class="combobox is-working">
+          <option value="RawData" selected>Raw data</option>
+          <option value="DesignatedIntervals">Designated intervals</option>
+          <option value="GroupedByVehicle">Grouped by vehicle</option>
+          <option value="EventsAndRoutes">Events and Routes</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Vertical — disabled ===== -->
+  <div class="mob-field mob-field--vertical">
+    <label class="mob-field__label">Output format:</label>
+    <div class="mob-field__body">
+      <div class="combobox-wrap">
+        <select class="combobox" disabled>
+          <option value="RawData" selected>Raw data</option>
+          <option value="DesignatedIntervals">Designated intervals</option>
+          <option value="GroupedByVehicle">Grouped by vehicle</option>
+          <option value="EventsAndRoutes">Events and Routes</option>
+        </select>
+      </div>
+    </div>
+  </div>
 
 </div><!-- /.states-list -->
 

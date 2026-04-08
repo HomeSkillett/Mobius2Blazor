@@ -89,6 +89,14 @@ body {
   white-space: normal;
 }
 
+/* XAML: Used below text inputs for guidance text (e.g. GeneralConfiguration, ModeConfigurationSetup).
+   Matches .mob-field__helper in text-input.css — Roboto Condensed 11px, Normal weight */
+.Helper {
+  font: var(--font-Sm);
+  font-weight: var(--font-normal);
+  color: var(--ForegroundPrimary);
+}
+
 /* XAML: Mobius_UI_Resources_Styles_TextBlock_Label
    Inherits DefaultFonts: Roboto Condensed, 14px, Regular weight */
 .Label {

@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mobius — Status Icon</title>
+  <link id="mob-theme-link" rel="stylesheet" href="../styles/LightTheme.css" />
+  <link rel="stylesheet" href="../styles/base.css" />
+  <link rel="stylesheet" href="status-icon.css" />
+  <style>
+    body { margin: 0; }
+    h1 {
+      font: var(--font-hdrMd);
+      margin: 0 0 32px;
+      color: var(--ForegroundStrong);
+    }
+    h2 {
+      font: var(--font-hdrSm);
+      margin: 40px 0 16px;
+      color: var(--ForegroundStrong);
+    }
+    h2:first-of-type { margin-top: 0; }
+    .states-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-field);
+      max-width: 540px;
+    }
+    .section-divider {
+      border: none;
+      border-top: var(--line-size) solid var(--InnerLines);
+      margin: 32px 0 0;
+    }
+    /* Demo row — icon + label side by side */
+    .demo-row {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-label-to-control);
+    }
+    .demo-row__label {
+      font: var(--font-bodyMd);
+      color: var(--ForegroundPrimary);
+    }
+    /* Size comparison row */
+    .size-row {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-section-to-header);
+    }
+    .size-row__item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--spacing-label-to-control-sm);
+    }
+    .size-row__caption {
+      font: var(--font-bodySm);
+      color: var(--ForegroundDisabled);
+    }
+  </style>
+</head>
+<body>
+
+<div class="mob-layout">
+
+  <!-- Sidebar Navigation -->
+  <nav class="mob-nav" id="mob-nav"></nav>
+
+  <!-- Main Content -->
+  <main class="mob-layout__content">
+
+<h1>Status Icon</h1>
+
+
+<!-- =========================================================
+     SECTION 1: STATUS STATES
+     Source: StatusIcon.xaml — Mobius_UI_Common_Templates_StatusIcon
+     C#:     StatusIcon.cs — StatusIndicator enum drives visual state
+     Enum:   IHasStatusIndicator.cs — Critical, Warning, Caution, OK, Unknown
+
+     Each state maps to a Mobius-System-Icons glyph via ::before.
+     The data-status attribute selects glyph + color in CSS.
+     ========================================================= -->
+
+<h2>Status States</h2>
+
+<div class="states-list">
+
+  <!-- ===== OK ===== -->
+  <!-- XAML: VisualState "OK" — IconOK Visibility=Visible, Opacity 0→1
+       Path Data=Icon_Status_OkaySm, Fill=InformationGreenBrush
+       Font glyph: U+E449 Status_OkaySm -->
+  <div class="demo-row">
+    <span class="mob-status-icon" data-status="ok" aria-label="OK"></span>
+    <span class="demo-row__label">OK</span>
+  </div>
+
+  <!-- ===== Caution ===== -->
+  <!-- XAML: VisualState "Caution" — IconCaution Visibility=Visible, Opacity 0→1
+       Path Data=Icon_Status_CautionSm (same shape as Warning), Fill=InformationYellowBrush
+       Font glyph: U+E43F Status_CautionSm -->
+  <div class="demo-row">
+    <span class="mob-status-icon" data-status="caution" aria-label="Caution"></span>
+    <span class="demo-row__label">Caution</span>
+  </div>
+
+  <!-- ===== Warning ===== -->
+  <!-- XAML: VisualState "Warning" — IconWarning Visibility=Visible, Opacity 0→1
+       Path Data=Icon_Status_WarningSm, Fill=InformationOrangeBrush
+       Font glyph: U+E450 Status_WarningSm -->
+  <div class="demo-row">
+    <span class="mob-status-icon" data-status="warning" aria-label="Warning"></span>
+    <span class="demo-row__label">Warning</span>
+  </div>
+
+  <!-- ===== Critical ===== -->
+  <!-- XAML: VisualState "Critical" — IconCritical Visibility=Visible, Opacity 0→1
+       Path Data=Icon_Status_CriticalSm, Fill=InformationRedBrush
+       Font glyph: U+E441 Status_CriticalSm -->
+  <div class="demo-row">
+    <span class="mob-status-icon" data-status="critical" aria-label="Critical"></span>
+    <span class="demo-row__label">Critical</span>
+  </div>
+
+  <!-- ===== Unknown ===== -->
+  <!-- XAML: VisualState "Unknown" (default) — IconUnknown Visibility=Visible, Opacity 0→1
+       Path Data=Icon_Status_XSm, Fill=ForegroundPrimaryBrush
+       Font glyph: U+E454 Status_XSm -->
+  <div class="demo-row">
+    <span class="mob-status-icon" data-status="unknown" aria-label="Unknown"></span>
+    <span class="demo-row__label">Unknown (default)</span>
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 2: SIZE VARIANTS
+     Source: spacingTokens.css — icon size scale
+     StatusIcon inherits size from parent in XAML;
+     CSS uses modifier classes mapped to icon tokens.
+     ========================================================= -->
+
+<h2>Size Variants</h2>
+
+<div class="states-list">
+
+  <div class="size-row">
+
+    <!-- Adorner: 8px — badge dot on composite controls -->
+    <div class="size-row__item">
+      <span class="mob-status-icon mob-status-icon--adorner" data-status="critical" aria-label="Critical"></span>
+      <span class="size-row__caption">Adorner (8px)</span>
+    </div>
+
+    <!-- Small: 12px — dense lists, table cells -->
+    <div class="size-row__item">
+      <span class="mob-status-icon mob-status-icon--sm" data-status="ok" aria-label="OK"></span>
+      <span class="size-row__caption">Small (12px)</span>
+    </div>
+
+    <!-- Standard: 20px (default) -->
+    <div class="size-row__item">
+      <span class="mob-status-icon" data-status="warning" aria-label="Warning"></span>
+      <span class="size-row__caption">Standard (20px)</span>
+    </div>
+
+    <!-- Large: 32px — detail views, StatusIconLarge -->
+    <div class="size-row__item">
+      <span class="mob-status-icon mob-status-icon--lg" data-status="caution" aria-label="Caution"></span>
+      <span class="size-row__caption">Large (32px)</span>
+    </div>
+
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 3: INLINE USAGE CONTEXT
+     Source: Common pattern — StatusIcon appears inline with
+     text labels across gauges, diagnostics, field inputs,
+     calibration checklists, and plugin cards.
+     ========================================================= -->
+
+<h2>Inline with Text</h2>
+
+<div class="states-list">
+
+  <div class="demo-row">
+    <span class="mob-status-icon" data-status="ok" aria-label="OK"></span>
+    <span class="demo-row__label">LiDAR — Connected</span>
+  </div>
+
+  <div class="demo-row">
+    <span class="mob-status-icon" data-status="warning" aria-label="Warning"></span>
+    <span class="demo-row__label">GPS — Signal Weak</span>
+  </div>
+
+  <div class="demo-row">
+    <span class="mob-status-icon" data-status="critical" aria-label="Critical"></span>
+    <span class="demo-row__label">E-Stop — Triggered</span>
+  </div>
+
+  <div class="demo-row">
+    <span class="mob-status-icon" data-status="unknown" aria-label="Unknown"></span>
+    <span class="demo-row__label">Radar — No Data</span>
+  </div>
+
+</div>
+
+
+  </main>
+
+</div>
+
+<script src="../styles/nav.js"></script>
+</body>
+</html>

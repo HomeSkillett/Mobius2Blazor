@@ -1,0 +1,201 @@
+/*
+  scroll-viewer.css
+  ==================
+  Mobius ScrollViewer + ScrollBar conversion from WPF/XAML.
+
+  Source: DefaultControls.xaml
+    - Mobius_UI_Resources_Templates_ScrollBarThumb      (line 5561)
+    - Mobius_UI_Resources_Styles_ScrollBarThumb          (line 5588)
+    - Mobius_UI_Resources_Templates_ScrollBarVertical    (line 5603)
+    - Mobius_UI_Resources_Templates_ScrollBarHorizontal  (line 5667)
+    - Mobius_UI_Resources_Templates_ScrollViewer          (line 5731)
+    - Default ScrollBar Style                             (line 5790)
+    - Default ScrollViewer Style                          (line 5804)
+
+  XAML behavior summary:
+    ScrollViewer uses a 2×2 grid: content spans full area (row 0–1, col 0–1),
+    vertical scrollbar in col 1 row 0, horizontal scrollbar in row 1 col 0.
+    Scrollbars are overlaid on content (content spans beneath them).
+    ScrollBar tracks start at opacity 0, slide in from the edge on hover,
+    and fade from 0 → 0.5 (resting) → 1.0 (hover).
+    Thumb color: ScrollBarPrimary → MouseOverPrimary on hover.
+    Easing: QuinticEase / SmoothEase (EaseOut).
+
+  CSS approach:
+    We use native overflow + custom scrollbar pseudo-elements to replicate
+    the Mobius overlay scrollbar behavior. The slide-in effect is approximated
+    with a width/height transition on the scrollbar track.
+*/
+
+
+/* =============================================================
+   XAML: ScrollViewer (default style)
+   - Background: Transparent
+   - VerticalScrollBarVisibility: Auto
+   - CanContentScroll: True
+   - PanningMode: VerticalFirst
+   ============================================================= */
+.mob-scroll-viewer {
+  overflow: auto;
+  background: transparent;
+
+  /* Touch scrolling (maps to PanningMode="VerticalFirst") */
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Vertical-only variant (most common usage in Mobius) */
+.mob-scroll-viewer--vertical {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+/* Horizontal-only variant */
+.mob-scroll-viewer--horizontal {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+
+/* =============================================================
+   XAML: ScrollBar — Vertical Track
+   Mobius_UI_Resources_Templates_ScrollBarVertical
+   - Track starts at opacity 0, translateX(10) (off-screen right)
+   - On MouseOver: opacity → 1.0, translateX → 4.0 (slides in)
+   - Resting (Normal): opacity 0.5, translateX → 10.0 (slides out)
+   - Easing: QuinticEase EaseOut
+   - Duration: GeneralMouseOverDuration (160ms) / GeneralMouseOutDuration (500ms)
+
+   XAML: ScrollBar — Horizontal Track
+   Mobius_UI_Resources_Templates_ScrollBarHorizontal
+   - Same pattern but Y-axis: translateY(10) → translateY(4)
+
+   CSS: We use ::-webkit-scrollbar pseudo-elements for Chromium/Safari,
+   and scrollbar-width/scrollbar-color for Firefox.
+   ============================================================= */
+
+
+/* --- Firefox: thin overlay scrollbar with Mobius colors --- */
+/* XAML: ScrollBarPrimary thumb, Transparent track */
+@supports (scrollbar-color: auto) {
+  .mob-scroll-viewer {
+    scrollbar-width: thin;
+    scrollbar-color: var(--ScrollBarPrimary) transparent;
+  }
+}
+
+
+/* --- Chromium / Safari: custom scrollbar pseudo-elements --- */
+
+/* XAML: ScrollBarElement Grid — Background="Transparent", ClipToBounds="True" */
+.mob-scroll-viewer::-webkit-scrollbar {
+  width: var(--spacing-scrollbar-width, 6px);
+  height: var(--spacing-scrollbar-width, 6px);
+  background: transparent;
+}
+
+/* XAML: Track background — Transparent */
+.mob-scroll-viewer::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* XAML: ScrollBarThumb — _gripElement Rectangle
+   - Fill: ScrollBarPrimaryBrush
+   - Normal state opacity (from Track): 0.5
+   - Approximated with reduced alpha since pseudo-elements
+     don't support opacity transitions independently */
+.mob-scroll-viewer::-webkit-scrollbar-thumb {
+  background: var(--ScrollBarPrimary);
+  opacity: 0.5;
+  border-radius: var(--border-radius-sm, 3px);
+
+  /* Inset the thumb from the track edge to mimic the
+     XAML translateX(4) "slid in" position */
+  border: 1px solid transparent;
+  background-clip: padding-box;
+}
+
+/* XAML: MouseOver VisualState on ScrollBarThumb
+   - Color → MouseOverPrimary
+   - Track opacity → 1.0 */
+.mob-scroll-viewer::-webkit-scrollbar-thumb:hover {
+  background: var(--MouseOverPrimary);
+  border: 1px solid transparent;
+  background-clip: padding-box;
+}
+
+/* XAML: ScrollViewer IsMouseOver trigger
+   - PART_VerticalScrollBar Opacity → 1.0
+   - PART_HorizontalScrollBar Opacity → 1.0 */
+.mob-scroll-viewer::-webkit-scrollbar-thumb:active {
+  background: var(--MouseOverPrimary);
+}
+
+/* Corner where both scrollbars meet */
+/* XAML: Grid cell [1,1] — empty, transparent */
+.mob-scroll-viewer::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+
+/* =============================================================
+   SIZE VARIANTS
+   Map to common Mobius usage contexts where scroll areas
+   have constrained dimensions.
+   ============================================================= */
+
+/* Fixed-height scrollable region (set --scroll-height on the element) */
+.mob-scroll-viewer--constrained {
+  max-height: var(--scroll-height, 300px);
+}
+
+/* Full-viewport scroll area (used for main content panels) */
+.mob-scroll-viewer--fill {
+  height: 100%;
+}
+
+
+/* =============================================================
+   DEMO / SHOWCASE STYLES
+   Used only by scroll-viewer.html — not part of the component.
+   ============================================================= */
+.scroll-demo-box {
+  border: var(--line-size) solid var(--InnerLines);
+  border-radius: var(--border-radius-md, 4px);
+  background: var(--BackgroundInput);
+  padding: var(--spacing-sm);
+}
+
+.scroll-demo-box--tall {
+  max-height: 200px;
+}
+
+.scroll-demo-box--wide {
+  max-width: 300px;
+  white-space: nowrap;
+}
+
+.scroll-demo-box--both {
+  max-height: 200px;
+  max-width: 400px;
+}
+
+.scroll-demo-content {
+  font: var(--font-body);
+  color: var(--Foreground);
+  line-height: var(--line-height-body, 1.5);
+}
+
+.scroll-demo-content p {
+  margin: 0 0 var(--spacing-sm);
+}
+
+.scroll-demo-content p:last-child {
+  margin-bottom: 0;
+}
+
+.scroll-demo-wide-content {
+  font: var(--font-body);
+  color: var(--Foreground);
+  width: 800px;
+}

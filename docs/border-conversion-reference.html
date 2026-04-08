@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mobius Borders — WPF → HTML/CSS Conversion Reference</title>
+  <link id="mob-theme-link" rel="stylesheet" href="../styles/LightTheme.css" />
+  <link rel="stylesheet" href="../styles/base.css" />
+  <style>
+    /* === Page layout === */
+    body { margin: 0; }
+    :root {
+      --page-bg: #f5f5f5;
+      --card-bg: #fff;
+      --code-bg: #1e1e2e;
+      --code-fg: #cdd6f4;
+      --accent: #007eae;
+      --accent-light: #e0f4fc;
+      --muted: #666;
+      --border: #ddd;
+      --xaml-tag: #89b4fa;
+      --xaml-attr: #f9e2af;
+      --xaml-val: #a6e3a1;
+      --css-prop: #89b4fa;
+      --css-val: #a6e3a1;
+      --css-var: #f9e2af;
+      --css-comment: #6c7086;
+      --html-tag: #89b4fa;
+      --html-attr: #f9e2af;
+      --html-val: #a6e3a1;
+      --html-comment: #6c7086;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    .border-ref {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: #222;
+      line-height: 1.6;
+      max-width: 1100px;
+    }
+
+    h1 {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .subtitle {
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 40px;
+    }
+
+    h2 {
+      font-size: 20px;
+      font-weight: 600;
+      margin: 48px 0 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    h2 .badge {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      background: var(--accent-light);
+      color: var(--accent);
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    h3 {
+      font-size: 15px;
+      font-weight: 600;
+      margin: 24px 0 8px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    p { margin-bottom: 12px; }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 24px;
+      margin: 16px 0;
+    }
+
+    .source-file {
+      font-size: 12px;
+      color: var(--muted);
+      font-family: "SF Mono", "Fira Code", monospace;
+      margin-bottom: 16px;
+    }
+
+    /* Side-by-side code panels */
+    .code-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin: 12px 0;
+    }
+    @media (max-width: 760px) {
+      .code-grid { grid-template-columns: 1fr; }
+    }
+
+    .code-panel {
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .code-panel-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 6px 14px;
+      background: #2a2a3e;
+      color: #888;
+    }
+    .code-panel pre {
+      background: var(--code-bg);
+      color: var(--code-fg);
+      padding: 14px;
+      font-size: 13px;
+      line-height: 1.55;
+      overflow-x: auto;
+      font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace;
+      margin: 0;
+    }
+
+    /* Syntax highlighting helpers */
+    .xt { color: var(--xaml-tag); }     /* XAML tag */
+    .xa { color: var(--xaml-attr); }    /* XAML attribute */
+    .xv { color: var(--xaml-val); }     /* XAML value */
+    .ht { color: var(--html-tag); }     /* HTML tag */
+    .ha { color: var(--html-attr); }    /* HTML attribute */
+    .hv { color: var(--html-val); }     /* HTML value */
+    .hc { color: var(--html-comment); } /* HTML comment */
+    .cp { color: var(--css-prop); }     /* CSS property */
+    .cv { color: var(--css-val); }      /* CSS value */
+    .cr { color: var(--css-var); }      /* CSS variable */
+    .cc { color: var(--css-comment); }  /* CSS comment */
+
+    /* Conversion notes */
+    .notes {
+      font-size: 13px;
+      color: #444;
+      background: #fafafa;
+      border-left: 3px solid var(--accent);
+      padding: 12px 16px;
+      margin: 12px 0;
+      border-radius: 0 4px 4px 0;
+    }
+    .notes strong { color: var(--accent); }
+
+    /* Property mapping table */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+      margin: 12px 0;
+    }
+    th {
+      text-align: left;
+      padding: 10px 12px;
+      background: var(--accent-light);
+      color: var(--accent);
+      font-weight: 600;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    td {
+      padding: 10px 12px;
+      border-bottom: 1px solid #eee;
+      vertical-align: top;
+    }
+    td code {
+      font-family: "SF Mono", "Fira Code", monospace;
+      font-size: 13px;
+      background: #f0f0f0;
+      padding: 1px 5px;
+      border-radius: 3px;
+    }
+
+    .gotcha {
+      font-size: 13px;
+      background: #fff8e1;
+      border-left: 3px solid #f9a825;
+      padding: 10px 14px;
+      margin: 12px 0;
+      border-radius: 0 4px 4px 0;
+    }
+    .gotcha strong { color: #e65100; }
+
+    hr {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 40px 0;
+    }
+
+    .toc {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 32px;
+    }
+    .toc li {
+      margin-bottom: 4px;
+    }
+    .toc a {
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 14px;
+    }
+    .toc a:hover { text-decoration: underline; }
+    .toc .num {
+      display: inline-block;
+      width: 24px;
+      font-weight: 600;
+      color: var(--muted);
+    }
+
+    /* =============================================
+       VISUAL PREVIEW — live rendered demos
+       ============================================= */
+
+    /* Mobius LightTheme tokens (subset for previews) */
+    .preview-area {
+      --BackgroundPrimary: rgba(245, 245, 245, 1);
+      --BackgroundInvertPrimary: rgba(253, 253, 251, 1);
+      --BackgroundInvertStrong: rgba(243, 243, 243, 1);
+      --BackgroundInvertOutline: rgba(199, 199, 199, 1);
+      --InnerLines: rgba(224, 230, 230, 1);
+      --ForegroundInvertPrimary: rgba(85, 85, 85, 1);
+      --ForegroundPrimary: rgba(56, 56, 56, 1);
+      --MouseOverPrimary: rgba(12, 208, 255, 1);
+      --MapBackground: rgba(245, 245, 245, 1);
+      --InformationBlue: rgba(0, 126, 174, 1);
+      --InformationGreen: rgba(0, 163, 96, 1);
+      --WarningYellow: rgba(255, 191, 0, 1);
+      --FailureRed: rgba(214, 48, 49, 1);
+      --border-width: 1px;
+      --border-width-focused: 2px;
+      --border-width-selected: 4px;
+      --line-size: 1px;
+      --btn-outline-radius: 12px;
+      --size-6: 6px;
+      --size-12: 12px;
+      --size-20: 20px;
+      --padding-all-sm: 5px;
+      --padding-tb-md: 10px 0;
+      --transition-mouse-over: 0.15s ease;
+    }
+
+    .preview-area {
+      background: #e8e8e8;
+      border: 1px dashed #bbb;
+      border-radius: 6px;
+      padding: 32px;
+      margin: 16px 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      position: relative;
+    }
+    .preview-area::before {
+      content: "LIVE PREVIEW";
+      position: absolute;
+      top: 8px;
+      left: 12px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #999;
+    }
+
+    /* --- Pattern 1: Card --- */
+    .demo-popup {
+      margin: var(--size-20);
+    }
+    .demo-popup__card {
+      max-width: 320px;
+      background-color: var(--BackgroundInvertPrimary);
+      border: var(--border-width) solid var(--BackgroundInvertOutline);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+    .demo-popup__message {
+      padding: var(--size-6);
+      color: var(--ForegroundInvertPrimary);
+      font-size: 13px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    /* --- Pattern 2: Circle --- */
+    .demo-circle-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .demo-circle {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: var(--border-width) solid currentColor;
+      position: relative;
+      flex-shrink: 0;
+    }
+    .demo-circle::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: currentColor;
+      opacity: 0.5;
+    }
+    .demo-circle--blue { color: var(--InformationBlue); }
+    .demo-circle--green { color: var(--InformationGreen); }
+    .demo-circle--yellow { color: var(--WarningYellow); }
+    .demo-circle--red { color: var(--FailureRed); }
+    .demo-circle--sm { width: 20px; height: 20px; }
+    .demo-circle--lg { width: 48px; height: 48px; }
+    .demo-circle-label {
+      font-size: 11px;
+      color: #777;
+      text-align: center;
+      margin-top: 6px;
+    }
+    .demo-circle-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* --- Pattern 3: Divider --- */
+    .demo-divider-stack {
+      width: 100%;
+      max-width: 400px;
+    }
+    .demo-divider-section {
+      padding: 10px 0;
+      border-top: var(--line-size) solid var(--InnerLines);
+      font-size: 13px;
+      color: var(--ForegroundPrimary);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      display: flex;
+      justify-content: space-between;
+    }
+    .demo-divider-section:first-child {
+      border-top: none;
+    }
+    .demo-divider-value {
+      color: #999;
+    }
+
+    /* --- Pattern 4: Spacer --- */
+    .demo-spacer-container {
+      display: flex;
+      gap: 0;
+      align-items: stretch;
+      background: var(--BackgroundInvertPrimary);
+      border: var(--border-width) solid var(--BackgroundInvertOutline);
+      width: 100%;
+      max-width: 400px;
+      font-size: 13px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    .demo-spacer-label {
+      padding: 10px 12px;
+      color: var(--ForegroundPrimary);
+      flex: 1;
+    }
+    .demo-spacer-command {
+      margin: 0 5px 0 -5px;
+      padding: 10px 12px;
+      color: var(--InformationBlue);
+      display: flex;
+      align-items: center;
+      position: relative;
+    }
+    .demo-spacer-command::before {
+      content: "";
+      position: absolute;
+      left: -6px;
+      top: 4px;
+      bottom: 4px;
+      width: 1px;
+      background: var(--InnerLines);
+    }
+    .demo-spacer-anno {
+      position: absolute;
+      bottom: -22px;
+      left: 50%;
+      transform: translateX(-50%);
+      white-space: nowrap;
+      font-size: 10px;
+      color: #e65100;
+      font-weight: 600;
+    }
+
+    /* --- Pattern 5: State swap --- */
+    .demo-notification-list {
+      width: 100%;
+      max-width: 400px;
+      display: flex;
+      flex-direction: column;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    .demo-notification {
+      background-color: transparent;
+      transition: background-color 0.15s ease;
+      padding: 10px 14px;
+      cursor: pointer;
+      border-bottom: var(--line-size) solid var(--InnerLines);
+    }
+    .demo-notification:hover {
+      background-color: rgba(12, 208, 255, 0.12);
+    }
+    .demo-notification.is-selected {
+      background-color: var(--BackgroundPrimary);
+    }
+    .demo-notification.is-toast {
+      background-color: var(--BackgroundInvertStrong);
+    }
+    .demo-notification__title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ForegroundPrimary);
+      margin-bottom: 2px;
+    }
+    .demo-notification__subtitle {
+      font-size: 12px;
+      color: #999;
+    }
+    .demo-state-label {
+      font-size: 10px;
+      font-weight: 600;
+      color: #999;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 2px 8px;
+      position: absolute;
+      right: 12px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="mob-layout">
+
+  <!-- Sidebar Navigation -->
+  <nav class="mob-nav" id="mob-nav"></nav>
+
+  <!-- Main Content -->
+  <main class="mob-layout__content">
+  <div class="border-ref">
+
+  <h1>WPF Border &rarr; HTML/CSS</h1>
+  <p class="subtitle">Conversion reference for UX designers &middot; Mobius Autonomous Fleet &middot; All CSS values use design tokens</p>
+
+  <!-- ===== TABLE OF CONTENTS ===== -->
+  <div class="card">
+    <h3 style="margin-top:0">On this page</h3>
+    <ul class="toc">
+      <li><a href="#prop-map"><span class="num">1.</span> Property mapping table</a></li>
+      <li><a href="#gotchas"><span class="num">2.</span> Gotchas &amp; ordering rules</a></li>
+      <li><a href="#pattern-card"><span class="num">3.</span> Pattern: Card container</a></li>
+      <li><a href="#pattern-circle"><span class="num">4.</span> Pattern: Circle indicator</a></li>
+      <li><a href="#pattern-divider"><span class="num">5.</span> Pattern: Divider border (per-side)</a></li>
+      <li><a href="#pattern-spacer"><span class="num">6.</span> Pattern: Spacer (invisible border)</a></li>
+      <li><a href="#pattern-state"><span class="num">7.</span> Pattern: State-swap overlays</a></li>
+      <li><a href="#quick-ref"><span class="num">8.</span> Quick-reference cheat sheet</a></li>
+    </ul>
+  </div>
+
+  <!-- ===== 1. PROPERTY MAP ===== -->
+  <h2 id="prop-map"><span class="badge">Reference</span> Property mapping table</h2>
+  <p>Every WPF <code>Border</code> property has a direct CSS equivalent. Use the token column to find the right variable.</p>
+
+  <div class="card" style="padding:0; overflow:hidden;">
+    <table>
+      <thead>
+        <tr>
+          <th>XAML property</th>
+          <th>CSS property</th>
+          <th>Mobius token</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>BorderBrush</code></td>
+          <td><code>border-color</code></td>
+          <td><code>var(--InnerLines)</code>, <code>var(--BackgroundInvertOutline)</code>, etc.</td>
+        </tr>
+        <tr>
+          <td><code>BorderThickness</code></td>
+          <td><code>border-width</code> + <code>border-style: solid</code></td>
+          <td><code>var(--border-width)</code> (1px), <code>var(--border-width-focused)</code> (2px), <code>var(--border-width-selected)</code> (4px)</td>
+        </tr>
+        <tr>
+          <td><code>CornerRadius</code></td>
+          <td><code>border-radius</code></td>
+          <td><code>var(--btn-outline-radius)</code> (12px) &mdash; or <code>50%</code> for circles</td>
+        </tr>
+        <tr>
+          <td><code>Background</code></td>
+          <td><code>background-color</code></td>
+          <td><code>var(--BackgroundPrimary)</code>, <code>var(--BackgroundInvertPrimary)</code>, etc.</td>
+        </tr>
+        <tr>
+          <td><code>Padding</code></td>
+          <td><code>padding</code></td>
+          <td><code>var(--padding-all-sm)</code>, <code>var(--padding-tb-md)</code>, etc.</td>
+        </tr>
+        <tr>
+          <td><code>Margin</code></td>
+          <td><code>margin</code></td>
+          <td><code>var(--size-6)</code>, <code>var(--size-20)</code>, or named margin tokens</td>
+        </tr>
+        <tr>
+          <td><code>Opacity</code></td>
+          <td><code>opacity</code></td>
+          <td><code>var(--opacity-disabled)</code>, <code>var(--opacity-readonly)</code>, or literal</td>
+        </tr>
+        <tr>
+          <td><code>SnapsToDevicePixels</code></td>
+          <td colspan="2"><em>No CSS equivalent needed &mdash; browsers handle subpixel rendering.</em></td>
+        </tr>
+        <tr>
+          <td><code>UseLayoutRounding</code></td>
+          <td colspan="2"><em>No CSS equivalent needed.</em></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ===== 2. GOTCHAS ===== -->
+  <h2 id="gotchas"><span class="badge">Watch out</span> Gotchas &amp; ordering rules</h2>
+
+  <div class="gotcha">
+    <strong>BorderThickness order is reversed.</strong><br>
+    XAML: <code>Left, Top, Right, Bottom</code><br>
+    CSS: <code>Top, Right, Bottom, Left</code> (clockwise)<br>
+    So XAML <code>"0,1,0,0"</code> (left=0, top=1, right=0, bottom=0) &rarr; CSS <code>1px 0 0 0</code>
+  </div>
+
+  <div class="gotcha">
+    <strong>CornerRadius order matches.</strong><br>
+    Both XAML and CSS use: <code>TopLeft, TopRight, BottomRight, BottomLeft</code>. No reordering needed.
+  </div>
+
+  <div class="gotcha">
+    <strong>Margin.All vs Padding.</strong><br>
+    Mobius XAML uses <code>common:Margin.All="6"</code> on child elements as an attached property. When the child is <em>inside</em> a container, this usually converts to <code>padding</code> on the container in CSS, not margin on the child.
+  </div>
+
+  <div class="gotcha">
+    <strong>Always use the closest spacing token.</strong><br>
+    Never hardcode <code>px</code> values when a token is within reach. Check <code>spacingTokens.css</code> for the nearest match.
+  </div>
+
+  <hr>
+
+  <!-- ===== 3. CARD CONTAINER ===== -->
+  <h2 id="pattern-card"><span class="badge">Pattern 1</span> Card container</h2>
+  <p>The most common Border pattern. A visible container with background, border, and optional shadow.</p>
+
+  <div class="card">
+    <p class="source-file">Source: Common/Asi.CommonControls.Client.UI/DetailsPopUp.xaml</p>
+
+    <div class="code-grid">
+      <div class="code-panel">
+        <div class="code-panel-label">XAML (source)</div>
+        <pre><span class="xt">&lt;Border</span> <span class="xa">Margin</span>=<span class="xv">"20"</span><span class="xt">&gt;</span>
+  <span class="xt">&lt;Grid</span> <span class="xa">MaxWidth</span>=<span class="xv">"320"</span><span class="xt">&gt;</span>
+    <span class="xt">&lt;common:BoxShadow</span>
+        <span class="xa">Margin</span>=<span class="xv">"2"</span>
+        <span class="xa">Opacity</span>=<span class="xv">"{...ShadowOpacity}"</span> <span class="xt">/&gt;</span>
+    <span class="xt">&lt;Border</span>
+        <span class="xa">Background</span>=<span class="xv">"{...BackgroundInvertPrimaryBrush}"</span>
+        <span class="xa">BorderBrush</span>=<span class="xv">"{...BackgroundInvertOutlineBrush}"</span>
+        <span class="xa">BorderThickness</span>=<span class="xv">"1"</span><span class="xt">&gt;</span>
+      <span class="xt">&lt;TextBlock</span>
+          <span class="xa">common:Margin.All</span>=<span class="xv">"6"</span>
+          <span class="xa">Foreground</span>=<span class="xv">"{...ForegroundInvertPrimaryBrush}"</span>
+          <span class="xa">TextWrapping</span>=<span class="xv">"Wrap"</span> <span class="xt">/&gt;</span>
+    <span class="xt">&lt;/Border&gt;</span>
+  <span class="xt">&lt;/Grid&gt;</span>
+<span class="xt">&lt;/Border&gt;</span></pre>
+      </div>
+      <div class="code-panel">
+        <div class="code-panel-label">HTML + CSS (output)</div>
+        <pre><span class="hc">&lt;!-- XAML: DetailsPopUp.Border --&gt;</span>
+<span class="ht">&lt;div</span> <span class="ha">class</span>=<span class="hv">"popup"</span><span class="ht">&gt;</span>
+  <span class="hc">&lt;!-- XAML: DetailsPopUp.Border "Border" --&gt;</span>
+  <span class="ht">&lt;div</span> <span class="ha">class</span>=<span class="hv">"popup__card"</span><span class="ht">&gt;</span>
+    <span class="ht">&lt;p</span> <span class="ha">class</span>=<span class="hv">"popup__message"</span><span class="ht">&gt;</span>...<span class="ht">&lt;/p&gt;</span>
+  <span class="ht">&lt;/div&gt;</span>
+<span class="ht">&lt;/div&gt;</span>
+
+<span class="cc">/* --- popup.css --- */</span>
+.<span class="cp">popup</span> {
+  <span class="cp">margin</span>: <span class="cr">var(--size-20)</span>;
+}
+.<span class="cp">popup__card</span> {
+  <span class="cp">max-width</span>: <span class="cv">320px</span>;
+  <span class="cp">background-color</span>: <span class="cr">var(--BackgroundInvertPrimary)</span>;
+  <span class="cp">border</span>: <span class="cr">var(--border-width)</span> <span class="cv">solid</span>
+          <span class="cr">var(--BackgroundInvertOutline)</span>;
+  <span class="cp">box-shadow</span>: <span class="cv">0 2px 8px rgba(0,0,0,0.15)</span>;
+}
+.<span class="cp">popup__message</span> {
+  <span class="cp">padding</span>: <span class="cr">var(--size-6)</span>;
+  <span class="cp">color</span>: <span class="cr">var(--ForegroundInvertPrimary)</span>;
+}</pre>
+      </div>
+    </div>
+
+    <div class="notes">
+      <strong>What changed:</strong> Outer Border (margin-only) became a wrapper div. The separate <code>BoxShadow</code> element collapsed into <code>box-shadow</code> on the card. Inner Border became the card div. <code>SnapsToDevicePixels</code> and <code>UseLayoutRounding</code> dropped &mdash; no CSS equivalent needed.
+    </div>
+
+    <div class="preview-area">
+      <div class="demo-popup">
+        <div class="demo-popup__card">
+          <p class="demo-popup__message">Vehicle AGV-04 has completed its route and is now idle at Station B-12. Tap to view details or reassign.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 4. CIRCLE ===== -->
+  <h2 id="pattern-circle"><span class="badge">Pattern 2</span> Circle indicator</h2>
+  <p>Status dots, avatars, activity indicators. Any Border with a very large <code>CornerRadius</code>.</p>
+
+  <div class="card">
+    <p class="source-file">Source: Common/Asi.CommonControls.Client.UI/ActivityStateCircle.xaml</p>
+
+    <div class="code-grid">
+      <div class="code-panel">
+        <div class="code-panel-label">XAML (source)</div>
+        <pre><span class="xt">&lt;Border</span>
+    <span class="xa">x:Name</span>=<span class="xv">"_activityStateBorder"</span>
+    <span class="xa">CornerRadius</span>=<span class="xv">"100000"</span>
+    <span class="xa">Background</span>=<span class="xv">"{...MapBackgroundBrush}"</span><span class="xt">&gt;</span>
+  <span class="xt">&lt;Grid&gt;</span>
+    <span class="xt">&lt;Border</span>
+        <span class="xa">Background</span>=<span class="xv">"{Binding Foreground...}"</span>
+        <span class="xa">CornerRadius</span>=<span class="xv">"{TemplateBinding...}"</span>
+        <span class="xa">Opacity</span>=<span class="xv">"0.5"</span> <span class="xt">/&gt;</span>
+    <span class="xt">&lt;Border</span>
+        <span class="xa">BorderBrush</span>=<span class="xv">"{Binding Foreground...}"</span>
+        <span class="xa">BorderThickness</span>=<span class="xv">"{TemplateBinding...}"</span>
+        <span class="xa">CornerRadius</span>=<span class="xv">"{TemplateBinding...}"</span> <span class="xt">/&gt;</span>
+  <span class="xt">&lt;/Grid&gt;</span>
+<span class="xt">&lt;/Border&gt;</span></pre>
+      </div>
+      <div class="code-panel">
+        <div class="code-panel-label">HTML + CSS (output)</div>
+        <pre><span class="hc">&lt;!-- XAML: ActivityStateCircle._activityStateBorder --&gt;</span>
+<span class="ht">&lt;div</span> <span class="ha">class</span>=<span class="hv">"activity-circle"</span><span class="ht">&gt;&lt;/div&gt;</span>
+
+<span class="cc">/* --- activity-circle.css --- */</span>
+.<span class="cp">activity-circle</span> {
+  <span class="cp">border-radius</span>: <span class="cv">50%</span>;
+  <span class="cp">background-color</span>: <span class="cr">var(--MapBackground)</span>;
+  <span class="cp">border</span>: <span class="cr">var(--border-width)</span> <span class="cv">solid</span>
+          <span class="cv">currentColor</span>;
+  <span class="cp">position</span>: <span class="cv">relative</span>;
+}
+
+<span class="cc">/* Fill overlay at 50% opacity */</span>
+.<span class="cp">activity-circle::before</span> {
+  <span class="cp">content</span>: <span class="cv">""</span>;
+  <span class="cp">position</span>: <span class="cv">absolute</span>;
+  <span class="cp">inset</span>: <span class="cv">0</span>;
+  <span class="cp">border-radius</span>: <span class="cv">inherit</span>;
+  <span class="cp">background</span>: <span class="cv">currentColor</span>;
+  <span class="cp">opacity</span>: <span class="cv">0.5</span>;
+}</pre>
+      </div>
+    </div>
+
+    <div class="notes">
+      <strong>Key move:</strong> <code>CornerRadius="100000"</code> always becomes <code>border-radius: 50%</code>. The two inner Borders (fill + outline) collapse into one element + a <code>::before</code> pseudo-element. No extra divs needed.
+    </div>
+
+    <div class="preview-area">
+      <div class="demo-circle-group">
+        <div class="demo-circle demo-circle--sm demo-circle--blue"></div>
+        <div class="demo-circle-label">Small</div>
+      </div>
+      <div class="demo-circle-group">
+        <div class="demo-circle demo-circle--blue"></div>
+        <div class="demo-circle-label">Active</div>
+      </div>
+      <div class="demo-circle-group">
+        <div class="demo-circle demo-circle--green"></div>
+        <div class="demo-circle-label">Ready</div>
+      </div>
+      <div class="demo-circle-group">
+        <div class="demo-circle demo-circle--yellow"></div>
+        <div class="demo-circle-label">Warning</div>
+      </div>
+      <div class="demo-circle-group">
+        <div class="demo-circle demo-circle--red"></div>
+        <div class="demo-circle-label">Fault</div>
+      </div>
+      <div class="demo-circle-group">
+        <div class="demo-circle demo-circle--lg demo-circle--blue"></div>
+        <div class="demo-circle-label">Large</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 5. DIVIDER ===== -->
+  <h2 id="pattern-divider"><span class="badge">Pattern 3</span> Divider border (per-side)</h2>
+  <p>A border on only one side, acting as a section separator or divider line.</p>
+
+  <div class="card">
+    <p class="source-file">Source: Common/Asi.Miscellaneous.Client.UI/ModeControls/AboutProduct.xaml</p>
+
+    <div class="code-grid">
+      <div class="code-panel">
+        <div class="code-panel-label">XAML (source)</div>
+        <pre><span class="xt">&lt;Border</span>
+    <span class="xa">Padding</span>=<span class="xv">"{...PaddingTopBottomMedium}"</span>
+    <span class="xa">BorderBrush</span>=<span class="xv">"{...InnerLinesBrush}"</span>
+    <span class="xa">BorderThickness</span>=<span class="xv">"0,1,0,0"</span><span class="xt">&gt;</span>
+  <span class="xt">&lt;Grid&gt;</span>
+    <span class="xt">&lt;Grid.ColumnDefinitions&gt;</span>
+      <span class="xt">&lt;ColumnDefinition</span> <span class="xa">Width</span>=<span class="xv">"Auto"</span> <span class="xt">/&gt;</span>
+      <span class="xt">&lt;ColumnDefinition</span> <span class="xa">Width</span>=<span class="xv">"*"</span> <span class="xt">/&gt;</span>
+      <span class="xt">&lt;ColumnDefinition</span> <span class="xa">Width</span>=<span class="xv">"Auto"</span> <span class="xt">/&gt;</span>
+    <span class="xt">&lt;/Grid.ColumnDefinitions&gt;</span>
+    <span class="cc">&lt;!-- content --&gt;</span>
+  <span class="xt">&lt;/Grid&gt;</span>
+<span class="xt">&lt;/Border&gt;</span></pre>
+      </div>
+      <div class="code-panel">
+        <div class="code-panel-label">HTML + CSS (output)</div>
+        <pre><span class="hc">&lt;!-- XAML: AboutProduct.Border (top divider) --&gt;</span>
+<span class="ht">&lt;section</span> <span class="ha">class</span>=<span class="hv">"about-section"</span><span class="ht">&gt;</span>
+  <span class="hc">&lt;!-- content --&gt;</span>
+<span class="ht">&lt;/section&gt;</span>
+
+<span class="cc">/* --- about-product.css --- */</span>
+.<span class="cp">about-section</span> {
+  <span class="cp">padding</span>: <span class="cr">var(--padding-tb-md)</span>;
+  <span class="cp">border-top</span>: <span class="cr">var(--line-size)</span> <span class="cv">solid</span>
+              <span class="cr">var(--InnerLines)</span>;
+}
+
+
+
+
+<span class="cc">/* XAML → CSS ordering reminder:
+   XAML  "0,1,0,0" = L:0  T:1  R:0  B:0
+   CSS   border-top: 1px
+   (Reorder from L,T,R,B → T,R,B,L) */</span></pre>
+      </div>
+    </div>
+
+    <div class="notes">
+      <strong>Key move:</strong> When only one side has thickness, skip <code>border-width</code> shorthand entirely. Use the specific side: <code>border-top</code>. Cleaner, more readable, and avoids the ordering trap. Use <code>var(--line-size)</code> for dividers, <code>var(--border-width)</code> for container outlines.
+    </div>
+
+    <div class="preview-area">
+      <div class="demo-divider-stack">
+        <div class="demo-divider-section">
+          <span>Product</span>
+          <span class="demo-divider-value">Mobius 4.2.1</span>
+        </div>
+        <div class="demo-divider-section">
+          <span>Build</span>
+          <span class="demo-divider-value">2026.04.08-rc1</span>
+        </div>
+        <div class="demo-divider-section">
+          <span>License</span>
+          <span class="demo-divider-value">Enterprise</span>
+        </div>
+        <div class="demo-divider-section">
+          <span>Fleet size</span>
+          <span class="demo-divider-value">24 vehicles</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 6. SPACER ===== -->
+  <h2 id="pattern-spacer"><span class="badge">Pattern 4</span> Spacer (invisible border)</h2>
+  <p>A Border with no visible border or background &mdash; just spacing. Flatten it out.</p>
+
+  <div class="card">
+    <p class="source-file">Source: Common/Asi.CustomControls.Client.UI/SimpleListItemContentControl.xaml</p>
+
+    <div class="code-grid">
+      <div class="code-panel">
+        <div class="code-panel-label">XAML (source)</div>
+        <pre><span class="xt">&lt;Border</span>
+    <span class="xa">x:Name</span>=<span class="xv">"_commandContent"</span>
+    <span class="xa">Grid.Column</span>=<span class="xv">"2"</span><span class="xt">&gt;</span>
+  <span class="xt">&lt;Border</span> <span class="xa">Margin</span>=<span class="xv">"-5,0,5,0"</span><span class="xt">&gt;</span>
+    <span class="xt">&lt;ContentControl</span>
+        <span class="xa">x:Name</span>=<span class="xv">"_commandContentElement"</span>
+        <span class="xa">Content</span>=<span class="xv">"{TemplateBinding...}"</span> <span class="xt">/&gt;</span>
+  <span class="xt">&lt;/Border&gt;</span>
+<span class="xt">&lt;/Border&gt;</span></pre>
+      </div>
+      <div class="code-panel">
+        <div class="code-panel-label">HTML + CSS (output)</div>
+        <pre><span class="hc">&lt;!-- XAML: SimpleListItem._commandContent --&gt;</span>
+<span class="hc">&lt;!-- Both invisible Borders eliminated --&gt;</span>
+<span class="ht">&lt;div</span> <span class="ha">class</span>=<span class="hv">"list-item__command"</span><span class="ht">&gt;</span>
+  <span class="hc">&lt;!-- command content --&gt;</span>
+<span class="ht">&lt;/div&gt;</span>
+
+<span class="cc">/* --- list-item.css --- */</span>
+.<span class="cp">list-item__command</span> {
+  <span class="cc">/* Margin "-5,0,5,0" → XAML L,T,R,B
+     CSS: top right bottom left
+     = 0 5px 0 -5px */</span>
+  <span class="cp">margin</span>: <span class="cv">0</span> <span class="cr">var(--padding-all-sm)</span>
+         <span class="cv">0</span> <span class="cv">-5px</span>;
+}
+
+<span class="cc">/* Two nested invisible Borders
+   collapsed into margin on the
+   child element. No wrappers. */</span></pre>
+      </div>
+    </div>
+
+    <div class="notes">
+      <strong>Rule:</strong> If a Border has no <code>BorderBrush</code>, <code>BorderThickness</code>, or <code>Background</code>, it's just a spacer. Don't create a div for it. Move its <code>Margin</code>/<code>Padding</code> onto the child element. Every element must have a purpose.
+    </div>
+
+    <div class="preview-area" style="padding-bottom: 44px;">
+      <div class="demo-spacer-container">
+        <div class="demo-spacer-label">AGV-04 &mdash; Station B-12</div>
+        <div class="demo-spacer-command" style="position:relative;">
+          Reassign
+          <span class="demo-spacer-anno">margin: 0 5px 0 -5px (from Border)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 7. STATE SWAP ===== -->
+  <h2 id="pattern-state"><span class="badge">Pattern 5</span> State-swap overlays</h2>
+  <p>Multiple overlapping Borders toggled by opacity for hover, selection, and toast states.</p>
+
+  <div class="card">
+    <p class="source-file">Source: Common/Asi.CustomControls.Client.UI/NotificationItem.xaml</p>
+
+    <div class="code-grid">
+      <div class="code-panel">
+        <div class="code-panel-label">XAML (source)</div>
+        <pre><span class="xt">&lt;Border</span>
+    <span class="xa">x:Name</span>=<span class="xv">"ToastElement"</span>
+    <span class="xa">Background</span>=<span class="xv">"{...BackgroundInvertStrongBrush}"</span>
+    <span class="xa">Visibility</span>=<span class="xv">"Collapsed"</span> <span class="xt">/&gt;</span>
+<span class="xt">&lt;Border</span>
+    <span class="xa">x:Name</span>=<span class="xv">"MouseOverElement"</span>
+    <span class="xa">Background</span>=<span class="xv">"{...MouseOverPrimaryBrush}"</span>
+    <span class="xa">Opacity</span>=<span class="xv">"0.0"</span> <span class="xt">/&gt;</span>
+<span class="xt">&lt;Border</span>
+    <span class="xa">x:Name</span>=<span class="xv">"SelectionElement"</span>
+    <span class="xa">Background</span>=<span class="xv">"{...BackgroundPrimaryBrush}"</span>
+    <span class="xa">Opacity</span>=<span class="xv">"0.0"</span> <span class="xt">/&gt;</span></pre>
+      </div>
+      <div class="code-panel">
+        <div class="code-panel-label">HTML + CSS (output)</div>
+        <pre><span class="hc">&lt;!-- XAML: NotificationItem state overlays --&gt;</span>
+<span class="hc">&lt;!-- Three Borders → one div + CSS states --&gt;</span>
+<span class="ht">&lt;div</span> <span class="ha">class</span>=<span class="hv">"notification"</span><span class="ht">&gt;</span>
+  <span class="hc">&lt;!-- notification content --&gt;</span>
+<span class="ht">&lt;/div&gt;</span>
+
+<span class="cc">/* --- notification.css --- */</span>
+.<span class="cp">notification</span> {
+  <span class="cp">background-color</span>: <span class="cv">transparent</span>;
+  <span class="cp">transition</span>: <span class="cv">background-color</span>
+    <span class="cr">var(--transition-mouse-over)</span>;
+}
+
+.<span class="cp">notification:hover</span> {
+  <span class="cp">background-color</span>: <span class="cr">var(--MouseOverPrimary)</span>;
+}
+
+.<span class="cp">notification.is-selected</span> {
+  <span class="cp">background-color</span>: <span class="cr">var(--BackgroundPrimary)</span>;
+}
+
+.<span class="cp">notification.is-toast</span> {
+  <span class="cp">background-color</span>: <span class="cr">var(--BackgroundInvertStrong)</span>;
+}</pre>
+      </div>
+    </div>
+
+    <div class="notes">
+      <strong>Key move:</strong> WPF stacks separate elements and toggles opacity. In CSS, use one element with state classes (<code>:hover</code>, <code>.is-selected</code>, <code>.is-toast</code>) that swap <code>background-color</code>. Three overlapping Borders become zero extra divs.
+    </div>
+
+    <div class="preview-area" style="flex-direction: column; align-items: stretch;">
+      <div class="demo-notification-list">
+        <div class="demo-notification" style="position:relative;">
+          <span class="demo-state-label" style="color:#999;">Default &mdash; hover me</span>
+          <div class="demo-notification__title">Route completed</div>
+          <div class="demo-notification__subtitle">AGV-04 arrived at Station B-12</div>
+        </div>
+        <div class="demo-notification is-selected" style="position:relative;">
+          <span class="demo-state-label" style="color:var(--InformationBlue);">.is-selected</span>
+          <div class="demo-notification__title">Battery low</div>
+          <div class="demo-notification__subtitle">AGV-11 at 12% &mdash; rerouting to charger</div>
+        </div>
+        <div class="demo-notification is-toast" style="position:relative;">
+          <span class="demo-state-label" style="color:#e65100;">.is-toast</span>
+          <div class="demo-notification__title">Obstacle detected</div>
+          <div class="demo-notification__subtitle">AGV-07 paused on Aisle 3</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- ===== 8. QUICK REFERENCE ===== -->
+  <h2 id="quick-ref"><span class="badge">Cheat sheet</span> Quick-reference lookup</h2>
+  <p>When you encounter a Border in XAML, find the matching row and follow the conversion.</p>
+
+  <div class="card" style="padding:0; overflow:hidden;">
+    <table>
+      <thead>
+        <tr>
+          <th>When you see&hellip;</th>
+          <th>Convert to&hellip;</th>
+          <th>Token to use</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>CornerRadius="100000"</code></td>
+          <td><code>border-radius: 50%</code></td>
+          <td>Literal <code>50%</code></td>
+        </tr>
+        <tr>
+          <td><code>CornerRadius="12"</code></td>
+          <td><code>border-radius: var(--btn-outline-radius)</code></td>
+          <td><code>var(--btn-outline-radius)</code></td>
+        </tr>
+        <tr>
+          <td><code>BorderThickness="1"</code></td>
+          <td><code>border: var(--border-width) solid &hellip;</code></td>
+          <td><code>var(--border-width)</code></td>
+        </tr>
+        <tr>
+          <td><code>BorderThickness="0,1,0,0"</code></td>
+          <td><code>border-top: var(--line-size) solid &hellip;</code></td>
+          <td><code>var(--line-size)</code></td>
+        </tr>
+        <tr>
+          <td>Border with no brush/bg</td>
+          <td>No div. Apply margin/padding to child.</td>
+          <td>Nearest <code>--size-*</code> or <code>--padding-*</code> token</td>
+        </tr>
+        <tr>
+          <td>Multiple stacked Borders (opacity toggle)</td>
+          <td>One div + CSS class/state swap</td>
+          <td><code>var(--transition-*)</code> for smooth transitions</td>
+        </tr>
+        <tr>
+          <td><code>common:BoxShadow</code> element</td>
+          <td><code>box-shadow</code> on the container div</td>
+          <td>Literal shadow value (no token yet)</td>
+        </tr>
+        <tr>
+          <td><code>common:Margin.All="N"</code></td>
+          <td><code>padding</code> on parent or <code>margin</code> on self</td>
+          <td>Nearest <code>--size-*</code> or <code>--padding-*</code> token</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div style="margin-top:40px; font-size:12px; color:#999; text-align:center;">
+    Mobius Autonomous Fleet &middot; WPF &rarr; Blazor Conversion Reference &middot; Generated April 2026
+  </div>
+
+  </div><!-- /.border-ref -->
+  </main>
+
+</div><!-- /.mob-layout -->
+
+<script src="../styles/nav.js"></script>
+</body>
+</html>

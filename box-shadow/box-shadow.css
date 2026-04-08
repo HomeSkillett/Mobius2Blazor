@@ -1,0 +1,119 @@
+/*
+  box-shadow.css — Elevation / depth tokens for Mobius Blazor components.
+
+  Source: WPF DropShadowEffect across 68 usages in mobius-master/.
+  All values derived from:
+    - Mobius_UI_Resources_Colors_ShadowElements  → --ShadowElements: rgba(0,0,0,0.133)
+    - Mobius_UI_Resources_Sizes_Doubles_ShadowOpacity → 0.1
+    - Mobius_UI_Resources_Sizes_Doubles_VehicleShadowOpacity → 0.5
+    - BlurRadius values: 1, 10, 20
+    - ShadowDepth: always 0 (no offset)
+
+  WPF DropShadowEffect → CSS box-shadow mapping:
+    ShadowDepth=0   → 0 0 (no x/y offset)
+    BlurRadius       → blur-radius (direct 1:1 px)
+    Color            → --ShadowElements
+    Opacity          → multiplied into rgba alpha channel
+
+  Tiers:
+    --shadow-none     No shadow (reset)
+    --shadow-sm       BlurRadius="1"   — subtle edge definition
+    --shadow-md       BlurRadius="10"  — dropdowns, popovers, cards
+    --shadow-lg       BlurRadius="20"  — modals, dialogs, floating panels
+    --shadow-heavy    BlurRadius="20"  — vehicle/map overlays (higher opacity)
+*/
+
+
+/* =============================================
+   SHADOW TOKENS (custom properties)
+   ============================================= */
+
+:root {
+  --shadow-none:    none;
+  --shadow-sm:      0 0 1px var(--ShadowElements);
+  --shadow-md:      0 0 10px var(--ShadowElements);
+  --shadow-lg:      0 0 20px var(--ShadowElements);
+  --shadow-heavy:   0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+
+/* =============================================
+   UTILITY CLASSES
+   Apply directly to any Blazor element.
+   ============================================= */
+
+.mob-shadow-none  { box-shadow: var(--shadow-none); }
+.mob-shadow-sm    { box-shadow: var(--shadow-sm); }
+.mob-shadow-md    { box-shadow: var(--shadow-md); }
+.mob-shadow-lg    { box-shadow: var(--shadow-lg); }
+.mob-shadow-heavy { box-shadow: var(--shadow-heavy); }
+
+
+/* =============================================
+   DEMO PAGE STYLES
+   Only used on the box-shadow.html reference page.
+   ============================================= */
+
+.shadow-demo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: var(--spacing-section-to-section);
+}
+
+.shadow-demo-card {
+  background: var(--BackgroundStrong);
+  border-radius: var(--size-6);
+  padding: var(--spacing-section-to-section);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-label-to-control);
+  transition: box-shadow var(--transition-mouse-over) ease;
+}
+
+.shadow-demo-card__label {
+  font: var(--font-default);
+  font-weight: var(--font-bold);
+  color: var(--ForegroundStrong);
+}
+
+.shadow-demo-card__token {
+  font: var(--font-captionSm);
+  color: var(--ForegroundPrimary);
+  word-break: break-all;
+  text-align: center;
+}
+
+.shadow-demo-card__value {
+  font: var(--font-captionSm);
+  color: var(--ForegroundWatermark);
+  text-align: center;
+}
+
+/* Contextual demos */
+.shadow-context-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-section-to-section);
+  align-items: flex-start;
+}
+
+.shadow-context-example {
+  background: var(--BackgroundStrong);
+  border-radius: var(--size-6);
+  padding: var(--spacing-label-to-control-md);
+  width: 260px;
+}
+
+.shadow-context-example__heading {
+  font: var(--font-default);
+  font-weight: var(--font-bold);
+  color: var(--ForegroundStrong);
+  margin: 0 0 var(--spacing-label-to-control-sm);
+}
+
+.shadow-context-example__body {
+  font: var(--font-captionSm);
+  color: var(--ForegroundPrimary);
+  margin: 0;
+}

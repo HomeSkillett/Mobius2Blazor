@@ -10,6 +10,23 @@
      Template:  Mobius_UI_Resources_Templates_ComboBox
      Style:     Mobius_UI_Resources_Styles_ComboBox
      Item:      Mobius_UI_Resources_Templates_ComboBoxItem
+
+   Interaction classes:
+     .combobox                  Default state
+     .combobox.is-hovered       Simulated hover (border -> MouseOverPrimary)
+     .combobox.is-focused       Simulated focus (2px outline -> MouseOverPrimary)
+     .combobox[disabled]        Disabled state
+
+   Validation classes:
+     .combobox.is-invalid       Error — red outline (InformationRed)
+     .combobox.is-warning       Warning — orange outline (InformationOrange)
+     .combobox.is-info          Info — yellow outline (InformationYellow)
+     .combobox.is-working       Working/OK — green outline (InformationGreen)
+
+   Field layout:
+     .mob-field + .combobox-wrap          Horizontal label (left)
+     .mob-field--vertical + .combobox-wrap  Vertical label (top)
+     .mob-field--warning / --info / --working  Status icon variants
    ============================================= */
 
 
@@ -63,28 +80,77 @@
 
 
 /* Hover */
-.combobox-wrap:hover .combobox {
+.combobox-wrap:hover .combobox:not(:disabled),
+.combobox-wrap.is-hovered .combobox {
   border-color: var(--MouseOverPrimary);
   transition: border-color var(--transition-mouse-over);
 }
 
-.combobox-wrap:hover::after {
+.combobox-wrap:hover:not(:has(.combobox:disabled))::after,
+.combobox-wrap.is-hovered::after {
   color: var(--MouseOverPrimary);
   transition: color var(--transition-mouse-over);
+}
+
+/* Simulated hover class on combobox itself */
+.combobox.is-hovered {
+  border-color: var(--MouseOverPrimary);
+  transition: border-color var(--transition-mouse-over);
 }
 
 
 /* Focus */
 .combobox:focus,
-.combobox:focus-visible {
-  outline: none;
+.combobox:focus-visible,
+.combobox.is-focused {
+  outline: var(--border-width-focused) solid var(--MouseOverPrimary);
+  outline-offset: calc(var(--border-width) * -1);
   border-color: var(--MouseOverPrimary);
   transition: border-color var(--transition-focus);
 }
 
-.combobox-wrap:focus-within::after {
+.combobox-wrap:focus-within::after,
+.combobox-wrap:has(.combobox.is-focused)::after {
   color: var(--MouseOverPrimary);
   transition: color var(--transition-focus);
+}
+
+
+/* =============================================
+   VALIDATION / STATUS STATES
+   XAML: _validationElement border overlay (DefaultControls.xaml)
+         VisualStateGroup "ShowStates" (FieldInput.xaml)
+
+   All status states use a 2px colored outline.
+   Mirrors text-input validation pattern exactly.
+   ============================================= */
+
+/* --- Error / Invalid --- */
+/* XAML: _validationElement — InformationRedBrush, 2px overlay */
+.combobox.is-invalid {
+  outline: var(--border-width-focused) solid var(--InformationRed);
+  outline-offset: calc(var(--border-width) * -1);
+}
+
+/* --- Warning --- */
+/* XAML: ShowWarning — _validationVisualElement -> InformationOrange, 2px */
+.combobox.is-warning {
+  outline: var(--border-width-focused) solid var(--InformationOrange);
+  outline-offset: calc(var(--border-width) * -1);
+}
+
+/* --- Info --- */
+/* XAML: ShowInfo — _validationVisualElement -> InformationYellow, 2px */
+.combobox.is-info {
+  outline: var(--border-width-focused) solid var(--InformationYellow);
+  outline-offset: calc(var(--border-width) * -1);
+}
+
+/* --- Working / OK --- */
+/* XAML: ShowWorking — _validationVisualElement -> InformationGreen, 2px */
+.combobox.is-working {
+  outline: var(--border-width-focused) solid var(--InformationGreen);
+  outline-offset: calc(var(--border-width) * -1);
 }
 
 
@@ -188,28 +254,54 @@
   }
 
   /* --- Hover on trigger --- */
-  .combobox:hover {
+  .combobox:hover:not(:disabled),
+  .combobox.is-hovered {
     border-color: var(--MouseOverPrimary);
     transition: border-color var(--transition-mouse-over);
   }
 
-  .combobox:hover::picker-icon {
+  .combobox:hover:not(:disabled)::picker-icon,
+  .combobox.is-hovered::picker-icon {
     color: var(--MouseOverPrimary);
     transition: color var(--transition-mouse-over);
   }
 
   /* --- Focus on trigger --- */
   .combobox:focus,
-  .combobox:focus-visible {
-    outline: none;
+  .combobox:focus-visible,
+  .combobox.is-focused {
+    outline: var(--border-width-focused) solid var(--MouseOverPrimary);
+    outline-offset: calc(var(--border-width) * -1);
     border-color: var(--MouseOverPrimary);
     transition: border-color var(--transition-focus);
   }
 
   .combobox:focus::picker-icon,
-  .combobox:focus-visible::picker-icon {
+  .combobox:focus-visible::picker-icon,
+  .combobox.is-focused::picker-icon {
     color: var(--MouseOverPrimary);
     transition: color var(--transition-focus);
+  }
+
+  /* --- Validation / Status states (base-select) --- */
+  .combobox.is-invalid {
+    outline: var(--border-width-focused) solid var(--InformationRed);
+    outline-offset: calc(var(--border-width) * -1);
+  }
+
+  .combobox.is-warning {
+    outline: var(--border-width-focused) solid var(--InformationOrange);
+    outline-offset: calc(var(--border-width) * -1);
+  }
+
+  .combobox.is-info {
+    outline: var(--border-width-focused) solid var(--InformationYellow);
+    outline-offset: calc(var(--border-width) * -1);
+  }
+
+  .combobox.is-working {
+    outline: var(--border-width-focused) solid var(--InformationGreen);
+    outline-offset: calc(var(--border-width) * -1);
   }
 
   /* --- Dropdown panel --- */
@@ -290,4 +382,25 @@
   .combobox:disabled::picker-icon {
     color: var(--ForegroundDisabled);
   }
+}
+
+
+/* =============================================
+   DISABLED — WHOLE FIELD
+   XAML: Grid IsEnabled="{TemplateBinding IsEnabled}"
+         dims the entire FieldInput including label
+   ============================================= */
+
+.mob-field:has(.combobox:disabled) .mob-field__label {
+  opacity: var(--opacity-disabled);
+}
+
+
+/* =============================================
+   VERTICAL LAYOUT — combobox fills full width
+   XAML: Mobius_UI_Common_Templates_FieldInputVertical
+   ============================================= */
+
+.mob-field--vertical .mob-field__body .combobox {
+  width: 100%;
 }

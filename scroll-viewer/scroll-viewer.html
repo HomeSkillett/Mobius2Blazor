@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mobius — ScrollViewer</title>
+  <link id="mob-theme-link" rel="stylesheet" href="../styles/LightTheme.css" />
+  <link rel="stylesheet" href="../styles/base.css" />
+  <link rel="stylesheet" href="scroll-viewer.css" />
+  <style>
+    body { margin: 0; }
+    h1 {
+      font: var(--font-hdrMd);
+      margin: 0 0 32px;
+      color: var(--ForegroundStrong);
+    }
+    h2 {
+      font: var(--font-hdrSm);
+      margin: 40px 0 16px;
+      color: var(--ForegroundStrong);
+    }
+    h2:first-of-type { margin-top: 0; }
+    .demo-row {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-field);
+      max-width: 600px;
+    }
+    .demo-label {
+      font: var(--font-captionSm);
+      color: var(--ForegroundSubtle);
+      margin-bottom: var(--spacing-xs);
+    }
+    .section-divider {
+      border: none;
+      border-top: var(--line-size) solid var(--InnerLines);
+      margin: 32px 0 0;
+    }
+  </style>
+</head>
+<body>
+
+<div class="mob-layout">
+
+  <!-- Sidebar Navigation -->
+  <nav class="mob-nav" id="mob-nav"></nav>
+
+  <!-- Main Content -->
+  <main class="mob-layout__content">
+
+<h1>ScrollViewer</h1>
+
+
+<!-- =========================================================
+     SECTION 1: VERTICAL SCROLL
+     Source: DefaultControls.xaml
+       — Mobius_UI_Resources_Templates_ScrollViewer (line 5731)
+       — Mobius_UI_Resources_Templates_ScrollBarVertical (line 5603)
+     ========================================================= -->
+
+<h2>Vertical Scroll</h2>
+
+<div class="demo-row">
+
+  <!-- XAML: ScrollViewer with VerticalScrollBarVisibility="Auto",
+             HorizontalScrollBarVisibility="Disabled" -->
+  <p class="demo-label">Constrained height — vertical scrollbar appears on overflow</p>
+  <div class="scroll-demo-box scroll-demo-box--tall mob-scroll-viewer mob-scroll-viewer--vertical">
+    <!-- XAML: ScrollContentPresenter — PART_ScrollContentPresenter -->
+    <div class="scroll-demo-content">
+      <p>This content area demonstrates the Mobius ScrollViewer with vertical scrolling. The scrollbar uses the ScrollBarPrimary color token and transitions to MouseOverPrimary on hover.</p>
+      <p>In WPF, the vertical ScrollBar track starts at opacity 0 with a translateX(10) offset, then slides in to translateX(4) at full opacity on mouse over. The easing is QuinticEase with EaseOut mode.</p>
+      <p>The ScrollViewer template uses a 2×2 grid where content spans all cells (row 0–1, col 0–1) and scrollbars overlay on top. The vertical scrollbar sits in column 1, row 0.</p>
+      <p>Default resting state shows the scrollbar at 0.5 opacity. When the ScrollViewer receives IsMouseOver, both scrollbars transition to 1.0 opacity.</p>
+      <p>The ScrollBarThumb style sets Background to ScrollBarPrimaryBrush. The thumb template contains a Rectangle (_gripElement) that animates its Fill color between the primary brush and MouseOverPrimary.</p>
+      <p>This is additional content to ensure the container overflows and the scrollbar becomes visible. The CanContentScroll property is set to True by default, and PanningMode is VerticalFirst for touch devices.</p>
+    </div>
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 2: HORIZONTAL SCROLL
+     Source: DefaultControls.xaml
+       — Mobius_UI_Resources_Templates_ScrollBarHorizontal (line 5667)
+     ========================================================= -->
+
+<h2>Horizontal Scroll</h2>
+
+<div class="demo-row">
+
+  <!-- XAML: ScrollViewer with HorizontalScrollBarVisibility="Auto",
+             VerticalScrollBarVisibility="Disabled" -->
+  <p class="demo-label">Constrained width — horizontal scrollbar appears on overflow</p>
+  <div class="scroll-demo-box scroll-demo-box--wide mob-scroll-viewer mob-scroll-viewer--horizontal">
+    <!-- XAML: ScrollContentPresenter — PART_ScrollContentPresenter -->
+    <div class="scroll-demo-wide-content">
+      This is a single line of wide content that forces horizontal scrolling. The horizontal ScrollBar uses the same thumb styling as the vertical bar — ScrollBarPrimary color with MouseOverPrimary on hover. In WPF, the horizontal track slides in from the bottom edge using translateY(10) → translateY(4) with SmoothEase easing.
+    </div>
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 3: BOTH SCROLLBARS
+     Source: DefaultControls.xaml
+       — Mobius_UI_Resources_Templates_ScrollViewer (line 5731)
+       — Grid layout: content [0-1, 0-1], vbar [0, 1], hbar [1, 0]
+       — ScrollViewer.IsMouseOver trigger (line 5783)
+     ========================================================= -->
+
+<h2>Both Scrollbars</h2>
+
+<div class="demo-row">
+
+  <!-- XAML: ScrollViewer with both VerticalScrollBarVisibility="Auto"
+             and HorizontalScrollBarVisibility="Auto" (default) -->
+  <p class="demo-label">Constrained height and width — both scrollbars visible</p>
+  <div class="scroll-demo-box scroll-demo-box--both mob-scroll-viewer">
+    <!-- XAML: ScrollContentPresenter — PART_ScrollContentPresenter -->
+    <div class="scroll-demo-content" style="width: 800px;">
+      <p>This demo shows both vertical and horizontal scrollbars active simultaneously. In the XAML template, the ScrollViewer corner cell (Grid row 1, col 1) is empty and transparent — mapped to ::-webkit-scrollbar-corner { background: transparent }.</p>
+      <p>The ScrollViewer default style sets VerticalScrollBarVisibility and HorizontalScrollBarVisibility to Auto, meaning scrollbars only appear when content exceeds the viewport. This maps directly to CSS overflow: auto.</p>
+      <p>Both scrollbars share the same IsMouseOver trigger on the parent ScrollViewer, which bumps their opacity from 0.5 to 1.0 simultaneously. In CSS, this is handled by the :hover state on the container affecting the scrollbar pseudo-elements.</p>
+      <p>The Track component in each ScrollBar template contains DecreaseRepeatButton and IncreaseRepeatButton (page up/down and page left/right commands), but these are styled as transparent buttons — the user drags the thumb or clicks the track to scroll. No arrow buttons are rendered.</p>
+      <p>Additional overflow content for vertical scrolling. The thumb Border has no explicit CornerRadius in the XAML, but the Rectangle fill creates a rectangular grip. We add a small border-radius in CSS for modern appearance while staying faithful to the intent.</p>
+      <p>Final paragraph to push content well past the constrained box dimensions and demonstrate the scrollbar intersection corner behavior.</p>
+    </div>
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 4: USAGE IN BLAZOR
+     ========================================================= -->
+
+<h2>Blazor Usage</h2>
+
+<div class="demo-row">
+  <div class="scroll-demo-content">
+    <p><strong>Base class:</strong> <code>mob-scroll-viewer</code></p>
+    <p><strong>Modifiers:</strong></p>
+    <p><code>mob-scroll-viewer--vertical</code> — vertical only (overflow-x hidden)</p>
+    <p><code>mob-scroll-viewer--horizontal</code> — horizontal only (overflow-y hidden)</p>
+    <p><code>mob-scroll-viewer--constrained</code> — applies max-height via <code>--scroll-height</code> custom property</p>
+    <p><code>mob-scroll-viewer--fill</code> — fills parent height (100%)</p>
+  </div>
+</div>
+
+
+  </main>
+</div>
+
+<script src="../styles/nav.js"></script>
+</body>
+</html>

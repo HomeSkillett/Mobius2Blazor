@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mobius — BoxShadow</title>
+  <link id="mob-theme-link" rel="stylesheet" href="../styles/LightTheme.css" />
+  <link rel="stylesheet" href="../styles/base.css" />
+  <link rel="stylesheet" href="box-shadow.css" />
+  <style>
+    body { margin: 0; }
+    h1 {
+      font: var(--font-hdrMd);
+      margin: 0 0 32px;
+      color: var(--ForegroundStrong);
+    }
+    h2 {
+      font: var(--font-hdrSm);
+      margin: 40px 0 16px;
+      color: var(--ForegroundStrong);
+    }
+    h2:first-of-type { margin-top: 0; }
+    .demo-label {
+      font: var(--font-captionSm);
+      color: var(--ForegroundPrimary);
+      margin-bottom: var(--spacing-label-to-control-sm);
+    }
+    .section-divider {
+      border: none;
+      border-top: var(--line-size) solid var(--InnerLines);
+      margin: 32px 0 0;
+    }
+    code {
+      font-family: "Roboto Mono", monospace;
+      font-size: 12px;
+      background: var(--BackgroundStepOne);
+      padding: 2px 6px;
+      border-radius: 3px;
+    }
+    .xaml-note {
+      font: var(--font-captionSm);
+      color: var(--ForegroundWatermark);
+      margin-top: var(--spacing-label-to-control-sm);
+    }
+  </style>
+</head>
+<body>
+
+<div class="mob-layout">
+
+  <!-- Sidebar Navigation -->
+  <nav class="mob-nav" id="mob-nav"></nav>
+
+  <!-- Main Content -->
+  <main class="mob-layout__content">
+
+<h1>BoxShadow</h1>
+<p class="demo-label">Elevation and depth tokens derived from 68 WPF <code>DropShadowEffect</code> usages across mobius-master. All use <code>ShadowDepth="0"</code> (no offset) with varying <code>BlurRadius</code> and opacity.</p>
+
+
+<!-- =========================================================
+     SECTION 1: SHADOW TOKEN TIERS
+     Source: DropShadowEffect across mobius-master/
+       — BlurRadius="1"  → --shadow-sm   (ReactivePlanObjectiveOnObjectUI.xaml:191)
+       — BlurRadius="10" → --shadow-md   (ErrorReport.xaml:469)
+       — BlurRadius="20" → --shadow-lg   (DefaultControls.xaml:3742, VideoPlayer.xaml:42)
+       — BlurRadius="20" + VehicleShadowOpacity → --shadow-heavy
+     Color token: Mobius_UI_Resources_Colors_ShadowElements → --ShadowElements
+     Opacity token: Mobius_UI_Resources_Sizes_Doubles_ShadowOpacity → 0.1
+     ========================================================= -->
+
+<h2>Shadow Tiers</h2>
+
+<!-- XAML: DropShadowEffect — all tiers use ShadowDepth="0" -->
+<div class="shadow-demo-grid">
+
+  <!-- XAML: no DropShadowEffect — flat element, no elevation -->
+  <div class="shadow-demo-card mob-shadow-none">
+    <span class="shadow-demo-card__label">None</span>
+    <span class="shadow-demo-card__token"><code>--shadow-none</code></span>
+    <span class="shadow-demo-card__value">none</span>
+    <span class="xaml-note">No DropShadowEffect</span>
+  </div>
+
+  <!-- XAML: DropShadowEffect BlurRadius="1" Opacity="0.1" ShadowDepth="0"
+       Source: ReactivePlanObjectiveOnObjectUI.xaml:191 -->
+  <div class="shadow-demo-card mob-shadow-sm">
+    <span class="shadow-demo-card__label">Small</span>
+    <span class="shadow-demo-card__token"><code>--shadow-sm</code></span>
+    <span class="shadow-demo-card__value">0 0 1px var(--ShadowElements)</span>
+    <span class="xaml-note">XAML: BlurRadius="1"</span>
+  </div>
+
+  <!-- XAML: DropShadowEffect BlurRadius="10" ShadowDepth="0"
+            Color="{Mobius_UI_Resources_Colors_ShadowElements}"
+       Source: ErrorReport.xaml:469 -->
+  <div class="shadow-demo-card mob-shadow-md">
+    <span class="shadow-demo-card__label">Medium</span>
+    <span class="shadow-demo-card__token"><code>--shadow-md</code></span>
+    <span class="shadow-demo-card__value">0 0 10px var(--ShadowElements)</span>
+    <span class="xaml-note">XAML: BlurRadius="10"</span>
+  </div>
+
+  <!-- XAML: DropShadowEffect BlurRadius="20" Opacity="0.1" ShadowDepth="0"
+       Source: DefaultControls.xaml:3742, VideoPlayer.xaml:42, MainWindow.xaml:41 -->
+  <div class="shadow-demo-card mob-shadow-lg">
+    <span class="shadow-demo-card__label">Large</span>
+    <span class="shadow-demo-card__token"><code>--shadow-lg</code></span>
+    <span class="shadow-demo-card__value">0 0 20px var(--ShadowElements)</span>
+    <span class="xaml-note">XAML: BlurRadius="20"</span>
+  </div>
+
+  <!-- XAML: DropShadowEffect BlurRadius="20" Opacity="0.5" ShadowDepth="0"
+            Mobius_UI_Resources_Sizes_Doubles_VehicleShadowOpacity
+       Source: Vehicle/map overlay elements -->
+  <div class="shadow-demo-card mob-shadow-heavy">
+    <span class="shadow-demo-card__label">Heavy</span>
+    <span class="shadow-demo-card__token"><code>--shadow-heavy</code></span>
+    <span class="shadow-demo-card__value">0 0 20px rgba(0,0,0,0.5)</span>
+    <span class="xaml-note">XAML: BlurRadius="20" VehicleShadowOpacity</span>
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 2: CONTEXTUAL EXAMPLES
+     Shows which shadow tier maps to which WPF component pattern.
+     ========================================================= -->
+
+<h2>Contextual Usage</h2>
+
+<p class="demo-label">How each tier maps to real component patterns in the Mobius app.</p>
+
+<div class="shadow-context-row">
+
+  <!-- XAML: Inline object UI — BlurRadius="1" on Border -->
+  <div class="shadow-context-example mob-shadow-sm">
+    <p class="shadow-context-example__heading">Inline Object UI</p>
+    <p class="shadow-context-example__body">Subtle edge definition for on-object panels and inline overlays. Just enough depth to separate from the canvas.</p>
+    <p class="xaml-note">Class: <code>.mob-shadow-sm</code></p>
+  </div>
+
+  <!-- XAML: Popup / dropdown — BlurRadius="10" on Popup Border -->
+  <div class="shadow-context-example mob-shadow-md">
+    <p class="shadow-context-example__heading">Dropdown / Popover</p>
+    <p class="shadow-context-example__body">Used for dropdown menus, error report popups, combo-box lists, and tooltip containers.</p>
+    <p class="xaml-note">Class: <code>.mob-shadow-md</code></p>
+  </div>
+
+  <!-- XAML: Modal / dialog — BlurRadius="20" on Window/Dialog -->
+  <div class="shadow-context-example mob-shadow-lg">
+    <p class="shadow-context-example__heading">Modal / Dialog</p>
+    <p class="shadow-context-example__body">Floating panels, modal dialogs, video player overlays, and installer windows. Maximum separation from background.</p>
+    <p class="xaml-note">Class: <code>.mob-shadow-lg</code></p>
+  </div>
+
+  <!-- XAML: Vehicle map — BlurRadius="20" + VehicleShadowOpacity -->
+  <div class="shadow-context-example mob-shadow-heavy">
+    <p class="shadow-context-example__heading">Vehicle / Map Overlay</p>
+    <p class="shadow-context-example__body">High-contrast shadow for vehicle icons and map assets that must stand out against varied map backgrounds.</p>
+    <p class="xaml-note">Class: <code>.mob-shadow-heavy</code></p>
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 3: BLAZOR USAGE
+     ========================================================= -->
+
+<h2>Blazor Usage</h2>
+
+<div class="shadow-context-row">
+  <div class="shadow-context-example" style="width: 100%; max-width: 600px; box-shadow: none;">
+    <p class="shadow-context-example__heading">CSS Custom Properties (preferred)</p>
+    <p class="shadow-context-example__body">
+      Apply via the token directly in your component CSS:
+      <code>box-shadow: var(--shadow-md);</code>
+    </p>
+
+    <p class="shadow-context-example__heading" style="margin-top: var(--spacing-label-to-control-md);">Utility Classes</p>
+    <p class="shadow-context-example__body">
+      Or apply as a class on any element:
+      <code>.mob-shadow-none</code>,
+      <code>.mob-shadow-sm</code>,
+      <code>.mob-shadow-md</code>,
+      <code>.mob-shadow-lg</code>,
+      <code>.mob-shadow-heavy</code>
+    </p>
+
+    <p class="shadow-context-example__heading" style="margin-top: var(--spacing-label-to-control-md);">XAML → CSS Quick Reference</p>
+    <p class="shadow-context-example__body">
+      <code>BlurRadius="1"</code> → <code>var(--shadow-sm)</code><br/>
+      <code>BlurRadius="10"</code> → <code>var(--shadow-md)</code><br/>
+      <code>BlurRadius="20"</code> → <code>var(--shadow-lg)</code><br/>
+      <code>BlurRadius="20" + VehicleShadowOpacity</code> → <code>var(--shadow-heavy)</code>
+    </p>
+  </div>
+</div>
+
+
+  </main>
+</div>
+
+<script src="../styles/nav.js"></script>
+</body>
+</html>
