@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mobius — Popup: Confirmation Bar</title>
+  <link id="mob-theme-link" rel="stylesheet" href="../styles/LightTheme.css" />
+  <link rel="stylesheet" href="../styles/base.css" />
+  <link rel="stylesheet" href="popup.css" />
+  <style>
+    body { margin: 0; }
+    h1 {
+      font: var(--font-hdrMd);
+      margin: 0 0 32px;
+      color: var(--ForegroundStrong);
+    }
+    h2 {
+      font: var(--font-hdrSm);
+      margin: 40px 0 16px;
+      color: var(--ForegroundStrong);
+    }
+    h2:first-of-type { margin-top: 0; }
+    .demo-label {
+      font: var(--font-captionSm);
+      color: var(--ForegroundPrimary);
+      margin-bottom: var(--spacing-label-to-control-sm);
+    }
+    .section-divider {
+      border: none;
+      border-top: var(--line-size) solid var(--InnerLines);
+      margin: 32px 0 0;
+    }
+    code {
+      font-family: "Roboto Mono", monospace;
+      font-size: 12px;
+      background: var(--BackgroundStepOne);
+      padding: 2px 6px;
+      border-radius: 3px;
+    }
+    .xaml-note {
+      font: var(--font-captionSm);
+      color: var(--ForegroundWatermark);
+      margin-top: var(--spacing-label-to-control-sm);
+    }
+    .demo-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--spacing-section-to-section);
+      align-items: flex-start;
+      margin-top: var(--spacing-label-to-control-md);
+    }
+    .demo-block {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-label-to-control-sm);
+    }
+    .demo-block__label {
+      font: var(--font-captionSm);
+      font-weight: var(--font-bold);
+      color: var(--ForegroundStrong);
+    }
+    .demo-arena--right {
+      padding: 20px 320px 20px 40px;
+    }
+    .demo-hint {
+      display: inline-block;
+      font: var(--font-captionSm);
+      color: var(--SelectionSecondary);
+      background: color-mix(in srgb, var(--SelectionPrimary) 8%, transparent);
+      border: var(--border-width) solid color-mix(in srgb, var(--SelectionPrimary) 20%, transparent);
+      border-radius: var(--size-3);
+      padding: 2px 8px;
+      margin-bottom: var(--spacing-label-to-control-sm);
+    }
+  </style>
+</head>
+<body>
+
+<div class="mob-layout">
+
+  <!-- Sidebar Navigation -->
+  <nav class="mob-nav" id="mob-nav"></nav>
+
+  <!-- Main Content -->
+  <main class="mob-layout__content">
+
+<h1>Confirmation Bar</h1>
+<p class="demo-label">
+  Inline confirmation popup with close / prompt / confirm pattern.
+  Used by <code>ConfirmInteraction</code>. Placement is center-right of the trigger.
+  Buttons are <code>TouchSize</code> (44px) squares. Click the trigger to open; &#10005; or &#10003; dismisses.
+</p>
+
+
+<!-- =========================================================
+     XAML SOURCE
+     Source: ConfirmInteraction.xaml — ConfirmInteraction
+       <Popup x:Name="_confirmationPopup" Placement="Center"
+              AllowsTransparency="True" PopupAnimation="Fade">
+         <Grid Margin="20">
+           <common:BoxShadow Margin="2" Opacity="ShadowOpacity" />
+           <Border BorderBrush="MapLabelOutlineBrush" BorderThickness="1">
+             <StackPanel Background="BackgroundStrongBrush" Orientation="Horizontal">
+               <Button _closeButton Style="OOUICloseIconButton"
+                       Width="TouchSize" Height="TouchSize" />
+               <TextBlock Margin="12,0" Foreground="ForegroundPrimaryBrush"
+                          Text="{TemplateBinding PromptText}" />
+               <Button _confirmButton Style="WindowControlIconButton"
+                       Width="TouchSize" Height="TouchSize"
+                       Background="BackgroundPrimaryBrush" />
+             </StackPanel>
+           </Border>
+         </Grid>
+       </Popup>
+     ========================================================= -->
+
+
+<h2>Interactive Demos</h2>
+
+<div class="demo-row">
+
+  <!-- Assign vehicle -->
+  <div class="demo-block">
+    <span class="demo-hint">Click the button</span>
+    <div class="demo-arena--right">
+      <!-- XAML: ConfirmInteraction > ContentPresenter _interactiveControl -->
+      <div class="mob-popup-anchor">
+        <!-- XAML: _interactiveControl — the action that needs confirmation -->
+        <button data-popup="click-trigger" style="min-height:var(--touch);padding:0 var(--size-12);border:var(--border-width) solid var(--BackgroundInputOutline);background:var(--BackgroundInput);color:var(--ForegroundPrimary);font:var(--font-default);cursor:pointer;">Assign Vehicle</button>
+        <!-- XAML: _confirmationPopup Placement="Center" -->
+        <div class="mob-popup mob-popup--confirm" data-popup="panel">
+          <!-- XAML: StackPanel Orientation="Horizontal" -->
+          <div class="mob-popup__bar">
+            <!-- XAML: Button _closeButton Style="OOUICloseIconButton" -->
+            <button class="mob-popup__btn" data-popup="dismiss">&#10005;</button>
+            <!-- XAML: TextBlock Margin="12,0" Text="PromptText" -->
+            <span class="mob-popup__text">Confirm assignment?</span>
+            <!-- XAML: Button _confirmButton Background="BackgroundPrimaryBrush" -->
+            <button class="mob-popup__btn mob-popup__btn--action" data-popup="dismiss">&#10003;</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <span class="xaml-note">XAML: ConfirmInteraction — <code>PromptText="Confirm assignment?"</code></span>
+  </div>
+
+  <!-- Delete path -->
+  <div class="demo-block">
+    <span class="demo-hint">Click the button</span>
+    <div class="demo-arena--right">
+      <div class="mob-popup-anchor">
+        <button data-popup="click-trigger" style="min-height:var(--touch);padding:0 var(--size-12);border:var(--border-width) solid var(--BackgroundInputOutline);background:var(--BackgroundInput);color:var(--ForegroundPrimary);font:var(--font-default);cursor:pointer;">Delete Path</button>
+        <div class="mob-popup mob-popup--confirm" data-popup="panel">
+          <div class="mob-popup__bar">
+            <button class="mob-popup__btn" data-popup="dismiss">&#10005;</button>
+            <span class="mob-popup__text">Delete this path?</span>
+            <button class="mob-popup__btn mob-popup__btn--action" data-popup="dismiss">&#10003;</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <span class="xaml-note">XAML: ConfirmInteraction — <code>PromptText="Delete this path?"</code></span>
+  </div>
+
+  <!-- Remove obstacle -->
+  <div class="demo-block">
+    <span class="demo-hint">Click the button</span>
+    <div class="demo-arena--right">
+      <div class="mob-popup-anchor">
+        <button data-popup="click-trigger" style="min-height:var(--touch);padding:0 var(--size-12);border:var(--border-width) solid var(--BackgroundInputOutline);background:var(--BackgroundInput);color:var(--ForegroundPrimary);font:var(--font-default);cursor:pointer;">Remove Obstacle</button>
+        <div class="mob-popup mob-popup--confirm" data-popup="panel">
+          <div class="mob-popup__bar">
+            <button class="mob-popup__btn" data-popup="dismiss">&#10005;</button>
+            <span class="mob-popup__text">Remove this obstacle?</span>
+            <button class="mob-popup__btn mob-popup__btn--action" data-popup="dismiss">&#10003;</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <span class="xaml-note">XAML: ConfirmInteraction — <code>PromptText="Remove this obstacle?"</code></span>
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<h2>Anatomy</h2>
+
+<div class="demo-row">
+  <div class="demo-block" style="max-width:680px;">
+    <span class="demo-block__label">CSS Classes</span>
+    <p class="demo-label">
+      <code>.mob-popup-anchor</code> — wrapper for relative positioning<br/>
+      <code>.mob-popup</code> — base popup container<br/>
+      <code>.mob-popup--confirm</code> — confirmation bar variant<br/>
+      <code>.mob-popup__bar</code> — horizontal flex container<br/>
+      <code>.mob-popup__btn</code> — close/confirm button (44px square)<br/>
+      <code>.mob-popup__btn--action</code> — confirm button with BackgroundPrimary<br/>
+      <code>.mob-popup__text</code> — prompt text<br/>
+      <code>.is-open</code> — show the bar
+    </p>
+
+    <span class="demo-block__label" style="margin-top:var(--spacing-label-to-control-md);">XAML → CSS Mapping</span>
+    <p class="demo-label">
+      <code>Placement="Center"</code> → <code>left: 100%; top: 50%; transform: translateY(-50%)</code><br/>
+      <code>BorderBrush="MapLabelOutlineBrush"</code> → <code>border-color: var(--MapLabelOutline)</code><br/>
+      <code>Background="BackgroundStrongBrush"</code> → <code>background: var(--BackgroundStrong)</code><br/>
+      <code>Width/Height="TouchSize"</code> → <code>width/height: var(--touch)</code> (44px)<br/>
+      <code>Margin="12,0"</code> → <code>padding: 0 var(--size-12)</code><br/>
+      <code>Background="BackgroundPrimaryBrush"</code> → <code>background: var(--BackgroundPrimary)</code>
+    </p>
+
+    <span class="demo-block__label" style="margin-top:var(--spacing-label-to-control-md);">HTML Structure</span>
+    <p class="demo-label">
+      <code>&lt;div class="mob-popup-anchor"&gt;</code><br/>
+      &nbsp;&nbsp;<code>&lt;button&gt;</code> trigger <code>&lt;/button&gt;</code><br/>
+      &nbsp;&nbsp;<code>&lt;div class="mob-popup mob-popup--confirm"&gt;</code><br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;<code>&lt;div class="mob-popup__bar"&gt;</code><br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>&lt;button class="mob-popup__btn"&gt;</code> &#10005; <code>&lt;/button&gt;</code><br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>&lt;span class="mob-popup__text"&gt;</code> Prompt <code>&lt;/span&gt;</code><br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>&lt;button class="mob-popup__btn mob-popup__btn--action"&gt;</code> &#10003; <code>&lt;/button&gt;</code><br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;<code>&lt;/div&gt;</code><br/>
+      &nbsp;&nbsp;<code>&lt;/div&gt;</code><br/>
+      <code>&lt;/div&gt;</code>
+    </p>
+  </div>
+</div>
+
+
+  </main>
+</div>
+
+<script src="../styles/nav.js"></script>
+<script>
+(function () {
+  document.querySelectorAll('.mob-popup--confirm').forEach(function (popup) {
+    var anchor = popup.closest('.mob-popup-anchor');
+    var trigger = anchor.querySelector('[data-popup="click-trigger"]');
+    trigger.addEventListener('click', function () { popup.classList.toggle('is-open'); });
+    popup.querySelectorAll('[data-popup="dismiss"]').forEach(function (btn) {
+      btn.addEventListener('click', function () { popup.classList.remove('is-open'); });
+    });
+  });
+})();
+</script>
+
+</body>
+</html>

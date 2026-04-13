@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mobius — Popup</title>
+  <link id="mob-theme-link" rel="stylesheet" href="../styles/LightTheme.css" />
+  <link rel="stylesheet" href="../styles/base.css" />
+  <link rel="stylesheet" href="popup.css" />
+  <style>
+    body { margin: 0; }
+    h1 {
+      font: var(--font-hdrMd);
+      margin: 0 0 32px;
+      color: var(--ForegroundStrong);
+    }
+    h2 {
+      font: var(--font-hdrSm);
+      margin: 40px 0 16px;
+      color: var(--ForegroundStrong);
+    }
+    h2:first-of-type { margin-top: 0; }
+    .demo-label {
+      font: var(--font-captionSm);
+      color: var(--ForegroundPrimary);
+      margin-bottom: var(--spacing-label-to-control-sm);
+    }
+    .section-divider {
+      border: none;
+      border-top: var(--line-size) solid var(--InnerLines);
+      margin: 32px 0 0;
+    }
+    code {
+      font-family: "Roboto Mono", monospace;
+      font-size: 12px;
+      background: var(--BackgroundStepOne);
+      padding: 2px 6px;
+      border-radius: 3px;
+    }
+    .xaml-note {
+      font: var(--font-captionSm);
+      color: var(--ForegroundWatermark);
+      margin-top: var(--spacing-label-to-control-sm);
+    }
+    /* Demo layout */
+    .demo-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--spacing-section-to-section);
+      align-items: flex-start;
+      margin-top: var(--spacing-label-to-control-md);
+    }
+    .demo-block {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-label-to-control-sm);
+    }
+    .demo-block__label {
+      font: var(--font-captionSm);
+      font-weight: var(--font-bold);
+      color: var(--ForegroundStrong);
+    }
+    /* Interactive demo areas need breathing room for popups */
+    .demo-arena {
+      padding: 60px 40px 40px 200px;
+      min-height: 80px;
+    }
+    .demo-arena--bottom {
+      padding: 20px 40px 220px 40px;
+    }
+    .demo-arena--right {
+      padding: 20px 320px 20px 40px;
+    }
+    /* Toggle switch for editor demos */
+    .demo-switch { position: relative; width: 40px; height: 20px; background: var(--BackgroundInputOutline); border-radius: 10px; cursor: pointer; transition: background 0.2s; }
+    .demo-switch.is-on { background: var(--SelectionPrimary); }
+    .demo-switch::after { content: ""; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; background: var(--BackgroundStrong); border-radius: 50%; transition: transform 0.2s; }
+    .demo-switch.is-on::after { transform: translateX(20px); }
+    /* Interaction hint badge */
+    .demo-hint {
+      display: inline-block;
+      font: var(--font-captionSm);
+      color: var(--SelectionSecondary);
+      background: color-mix(in srgb, var(--SelectionPrimary) 8%, transparent);
+      border: var(--border-width) solid color-mix(in srgb, var(--SelectionPrimary) 20%, transparent);
+      border-radius: var(--size-3);
+      padding: 2px 8px;
+      margin-bottom: var(--spacing-label-to-control-sm);
+    }
+  </style>
+</head>
+<body>
+
+<div class="mob-layout">
+
+  <!-- Sidebar Navigation -->
+  <nav class="mob-nav" id="mob-nav"></nav>
+
+  <!-- Main Content -->
+  <main class="mob-layout__content">
+
+<h1>Popup</h1>
+<p class="demo-label">
+  Interactive overlay containers for tooltips, confirmation bars, suggestion lists, picker panels,
+  inline editors, settings panels, and grouped lists. Derived from WPF <code>&lt;Popup&gt;</code>
+  elements across Common Controls, PathBuilder, Haulage, and Vehicle Lockout plugins using
+  <code>AllowsTransparency="True"</code>, <code>PopupAnimation="Fade"</code>, and <code>BoxShadow</code>.
+  Dropdown overlays (IconLabelDropDownButton, ComboBoxWithButton) are covered under Forms &gt; ComboBox.
+</p>
+
+
+<!-- =========================================================
+     SECTION 1: TOOLTIP / DETAILS POPUP
+     Source: DetailsPopUp.xaml — Mobius_UI_Common_DetailsPopUp
+       <Popup Placement="Left" PopupAnimation="Fade">
+         <Border Background="BackgroundInvertPrimaryBrush"
+                 BorderBrush="BackgroundInvertOutlineBrush"
+                 BorderThickness="1">
+           <TextBlock Margin.All="6" Foreground="ForegroundInvertPrimaryBrush"
+                      TextWrapping="Wrap" />
+         </Border>
+       </Popup>
+     Style: HorizontalOffset="11" VerticalOffset="-44" PopUpWidth="NaN" MaxWidth="320"
+     ========================================================= -->
+
+<h2>Tooltip / Details Popup</h2>
+<p class="demo-label">
+  Inverted-color tooltip placed to the left of the trigger. Used by <code>DetailsPopUp</code> controls
+  (e.g., warning/info symbols on <code>SuggestionTextBox</code>). Max width 320px, text wraps.
+</p>
+
+<div class="demo-row">
+
+  <!-- Interactive: hover to show -->
+  <div class="demo-block">
+    <span class="demo-hint">Hover the icon</span>
+    <div class="demo-arena">
+      <!-- XAML: DetailsPopUp.Grid — trigger element -->
+      <div class="mob-popup-anchor" data-popup="hover">
+        <!-- XAML: WarningSymbol icon — trigger -->
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:var(--icon-lg);height:var(--icon-lg);color:var(--InformationOrange);font-size:20px;cursor:help;">&#9888;</span>
+        <!-- XAML: DetailsPopUp.Popup — Placement="Left", PopupAnimation="Fade" -->
+        <div class="mob-popup mob-popup--tooltip">
+          <!-- XAML: DetailsPopUp.Border > TextBlock Message="{TemplateBinding Message}" -->
+          This field has a warning. The value entered may conflict with existing path assignments.
+        </div>
+      </div>
+    </div>
+    <span class="xaml-note">XAML: DetailsPopUp — hover toggles <code>OpenPopUp</code></span>
+  </div>
+
+  <!-- Interactive: second tooltip with different content -->
+  <div class="demo-block">
+    <span class="demo-hint">Hover the icon</span>
+    <div class="demo-arena">
+      <div class="mob-popup-anchor" data-popup="hover">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:var(--icon-lg);height:var(--icon-lg);color:var(--InformationYellow);font-size:20px;cursor:help;">&#9432;</span>
+        <div class="mob-popup mob-popup--tooltip">
+          <!-- XAML: DetailsPopUp with InfoSymbol instead of WarningSymbol -->
+          Shape name already exists. 3 shapes share this name across the current map.
+        </div>
+      </div>
+    </div>
+    <span class="xaml-note">XAML: DetailsPopUp — info variant (<code>InformationYellow</code>)</span>
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 2: CONFIRMATION BAR POPUP
+     Source: ConfirmInteraction.xaml — ConfirmInteraction
+       <Popup Placement="Center" PopupAnimation="Fade">
+         <Border BorderBrush="MapLabelOutlineBrush" BorderThickness="1">
+           <StackPanel Background="BackgroundStrongBrush" Orientation="Horizontal">
+             <Button _closeButton Style="OOUICloseIconButton"
+                     Width="TouchSize" Height="TouchSize" />
+             <TextBlock Margin="12,0" Foreground="ForegroundPrimaryBrush"
+                        Text="PromptText" />
+             <Button _confirmButton Style="WindowControlIconButton"
+                     Width="TouchSize" Height="TouchSize"
+                     Background="BackgroundPrimaryBrush" />
+           </StackPanel>
+         </Border>
+       </Popup>
+     ========================================================= -->
+
+<h2>Confirmation Bar</h2>
+<p class="demo-label">
+  Inline confirmation popup with close / prompt / confirm pattern.
+  Used by <code>ConfirmInteraction</code>. Placement is center-right of trigger.
+  Buttons are <code>TouchSize</code> (44px) squares. Click the trigger to open; close or confirm dismisses.
+</p>
+
+<div class="demo-row">
+
+  <!-- Interactive: click trigger to toggle, close/confirm dismiss -->
+  <div class="demo-block">
+    <span class="demo-hint">Click the button</span>
+    <div class="demo-arena--right">
+      <!-- XAML: ConfirmInteraction > StackPanel > ContentPresenter _interactiveControl -->
+      <div class="mob-popup-anchor">
+        <!-- XAML: _interactiveControl — the action that needs confirmation -->
+        <button data-popup="click-trigger" style="min-height:var(--touch);padding:0 var(--size-12);border:var(--border-width) solid var(--BackgroundInputOutline);background:var(--BackgroundInput);color:var(--ForegroundPrimary);font:var(--font-default);cursor:pointer;">Assign Vehicle</button>
+        <!-- XAML: _confirmationPopup Placement="Center" PopupAnimation="Fade" -->
+        <div class="mob-popup mob-popup--confirm" data-popup="panel">
+          <!-- XAML: StackPanel Orientation="Horizontal" -->
+          <div class="mob-popup__bar">
+            <!-- XAML: Button _closeButton Style="OOUICloseIconButton" Width/Height="TouchSize" -->
+            <button class="mob-popup__btn" data-popup="dismiss">&#10005;</button>
+            <!-- XAML: TextBlock Margin="12,0" Foreground="ForegroundPrimaryBrush" Text="PromptText" -->
+            <span class="mob-popup__text">Confirm assignment?</span>
+            <!-- XAML: Button _confirmButton Background="BackgroundPrimaryBrush" Width/Height="TouchSize" -->
+            <button class="mob-popup__btn mob-popup__btn--action" data-popup="dismiss">&#10003;</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <span class="xaml-note">XAML: ConfirmInteraction — click opens, <code>&#10005;</code> / <code>&#10003;</code> dismiss</span>
+  </div>
+
+  <!-- Second confirm: different text -->
+  <div class="demo-block">
+    <span class="demo-hint">Click the button</span>
+    <div class="demo-arena--right">
+      <div class="mob-popup-anchor">
+        <button data-popup="click-trigger" style="min-height:var(--touch);padding:0 var(--size-12);border:var(--border-width) solid var(--BackgroundInputOutline);background:var(--BackgroundInput);color:var(--ForegroundPrimary);font:var(--font-default);cursor:pointer;">Delete Path</button>
+        <div class="mob-popup mob-popup--confirm" data-popup="panel">
+          <div class="mob-popup__bar">
+            <button class="mob-popup__btn" data-popup="dismiss">&#10005;</button>
+            <span class="mob-popup__text">Delete this path?</span>
+            <button class="mob-popup__btn mob-popup__btn--action" data-popup="dismiss">&#10003;</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <span class="xaml-note">XAML: ConfirmInteraction — different <code>PromptText</code></span>
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 3: SUGGESTION LIST POPUP
+     Source: SuggestionTextBox.xaml — PART_SuggestionsPopup
+       <Popup StaysOpen="False" Width="{ActualWidth}">
+         <ListBox MaxHeight="MaximumPopupHeight"
+                  ItemContainerStyle="SuggestionListBoxItemStyle">
+     SuggestionListBoxItemStyle:
+       _mouseOverElement: MouseOverPrimary opacity 0 → 0.3
+       _selectionElement: SelectionPrimary opacity 0 → 1.0
+       Disabled: DisabledOpacity
+     ========================================================= -->
+
+<h2>Suggestion List</h2>
+<p class="demo-label">
+  Autocomplete suggestion list anchored below a text input. Used by <code>SuggestionTextBox</code>.
+  Width matches parent input. Type to filter, click or arrow-key to select.
+  Mouse-over uses <code>MouseOverPrimary</code> at 30% opacity. Selection uses <code>SelectionPrimary</code>.
+</p>
+
+<div class="demo-row">
+
+  <!-- Interactive: type to filter, click to select, blur to close -->
+  <div class="demo-block">
+    <span class="demo-hint">Focus the input and type</span>
+    <div class="demo-arena--bottom">
+      <!-- XAML: SuggestionTextBox > PART_MainGrid -->
+      <div class="mob-popup-anchor" style="display:flex;flex-direction:column;width:300px;" data-popup="suggest">
+        <!-- XAML: PART_TextBox — text input with OnDemandTextBox style -->
+        <input type="text" placeholder="Type a road name..." data-suggest-input
+          style="height:var(--field-height);border:var(--border-width) solid var(--BackgroundInputOutline);background:var(--BackgroundInput);padding:0 var(--size-12);font:var(--font-default);color:var(--ForegroundPrimary);box-sizing:border-box;width:100%;" />
+        <!-- XAML: PART_SuggestionsPopup — StaysOpen="False", Width="{ActualWidth}" -->
+        <div class="mob-popup mob-popup--suggest" data-popup="panel" style="position:relative;top:0;width:100%;">
+          <!-- items injected by JS -->
+        </div>
+      </div>
+    </div>
+    <span class="xaml-note">XAML: SuggestionTextBox — focus opens, typing filters, click selects, blur closes</span>
+  </div>
+
+  <!-- Second suggestion box with different data -->
+  <div class="demo-block">
+    <span class="demo-hint">Focus the input and type</span>
+    <div class="demo-arena--bottom">
+      <div class="mob-popup-anchor" style="display:flex;flex-direction:column;width:300px;" data-popup="suggest" data-suggest-set="vehicles">
+        <input type="text" placeholder="Type a vehicle name..." data-suggest-input
+          style="height:var(--field-height);border:var(--border-width) solid var(--BackgroundInputOutline);background:var(--BackgroundInput);padding:0 var(--size-12);font:var(--font-default);color:var(--ForegroundPrimary);box-sizing:border-box;width:100%;" />
+        <div class="mob-popup mob-popup--suggest" data-popup="panel" style="position:relative;top:0;width:100%;">
+        </div>
+      </div>
+    </div>
+    <span class="xaml-note">XAML: SuggestionTextBox — vehicle name dataset</span>
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 4: TIME / DURATION PICKER POPUP
+     Source: ClockBasedTimePicker.xaml — Popup
+       <Popup StaysOpen="False" PopupAnimation="Fade"
+              PlacementTarget="PickerBorder" Placement="Bottom"
+              AllowsTransparency="True" FocusManager.IsFocusScope="true">
+         <Border Background="BackgroundStrongBrush" Margin="10">
+           <DropShadowEffect ShadowDepth="0" BlurRadius="10"
+                             Color="ShadowElements" />
+     Also: ClockBasedDurationPicker — same popup structure
+     ========================================================= -->
+
+<h2>Time / Duration Picker</h2>
+<p class="demo-label">
+  Panel popup anchored below a picker input field. Used by <code>ClockBasedTimePicker</code>
+  and <code>ClockBasedDurationPicker</code>. Click the field to toggle. Has a title bar with
+  <code>BackgroundPrimary</code> and a content area for clock controls.
+</p>
+
+<div class="demo-row">
+
+  <!-- Interactive: click field to toggle picker popup -->
+  <div class="demo-block">
+    <span class="demo-hint">Click the field</span>
+    <div class="demo-arena--bottom">
+      <!-- XAML: ClockBasedTimePicker > Grid -->
+      <div class="mob-popup-anchor" style="display:flex;flex-direction:column;width:220px;" data-popup="picker">
+        <!-- XAML: TextBlock Label style — floating label -->
+        <span style="font:var(--font-captionSm);color:var(--ForegroundPrimary);background:var(--BackgroundPrimary);padding:0 0 0 14px;font-size:12px;">Start Time</span>
+        <!-- XAML: Border PickerBorder — click target -->
+        <div data-popup="click-trigger" style="border:var(--border-width) solid var(--BackgroundInputOutline);background:var(--BackgroundInput);height:53px;padding:16px 15px 16px 21px;display:flex;align-items:center;gap:var(--spacing-label-to-control-sm);box-sizing:border-box;cursor:pointer;">
+          <!-- XAML: Button with Icon_Clock path -->
+          <span style="color:var(--ForegroundPrimary);font-size:16px;">&#128339;</span>
+          <!-- XAML: TextBlock Text="{Time, StringFormat=t}" -->
+          <span style="font-size:18px;color:var(--ForegroundAction);" data-picker-display>2:30 PM</span>
+        </div>
+        <!-- XAML: Popup StaysOpen="False" Placement="Bottom" -->
+        <div class="mob-popup mob-popup--picker" data-popup="panel" style="position:relative;top:0;width:100%;">
+          <!-- XAML: TextBlock Style="PopupTitle" Padding="24,12" FontSize="18" -->
+          <div class="mob-popup__title">Start Time</div>
+          <!-- XAML: ClockBasedTimePickerInput Margin="24,0" -->
+          <div class="mob-popup__body" data-picker-body>
+            <!-- Simplified time input for demo -->
+            <div style="display:flex;align-items:center;gap:var(--size-6);margin-top:var(--size-12);">
+              <input type="number" min="1" max="12" value="2" data-picker-hour
+                style="width:64px;height:56px;text-align:center;font-size:32px;border:none;border-radius:8px;background:var(--BackgroundPrimary);color:var(--ForegroundStrong);" />
+              <span style="font-size:32px;color:var(--ForegroundStrong);">:</span>
+              <input type="number" min="0" max="59" value="30" data-picker-minute
+                style="width:64px;height:56px;text-align:center;font-size:32px;border:none;border-radius:8px;background:var(--BackgroundPrimary);color:var(--ForegroundStrong);" />
+            </div>
+            <!-- XAML: AM/PM RadioButton toggle -->
+            <div style="display:flex;margin-top:var(--spacing-label-to-control-md);">
+              <button data-picker-ampm="AM" style="height:38px;width:80px;border:var(--border-width) solid var(--BackgroundInputOutline);border-radius:8px 0 0 8px;background:var(--BackgroundPrimary);color:var(--ForegroundDisabled);font-size:16px;cursor:pointer;">AM</button>
+              <button data-picker-ampm="PM" class="is-active" style="height:38px;width:80px;border:var(--border-width) solid var(--BackgroundInputOutline);border-left:none;border-radius:0 8px 8px 0;background:var(--SelectionSecondary);color:var(--SelectionForeground);font-size:16px;cursor:pointer;">PM</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <span class="xaml-note">XAML: ClockBasedTimePicker — click opens, change updates display</span>
+  </div>
+
+  <!-- Second picker: duration variant -->
+  <div class="demo-block">
+    <span class="demo-hint">Click the field</span>
+    <div class="demo-arena--bottom">
+      <div class="mob-popup-anchor" style="display:flex;flex-direction:column;width:220px;" data-popup="picker">
+        <span style="font:var(--font-captionSm);color:var(--ForegroundPrimary);background:var(--BackgroundPrimary);padding:0 0 0 14px;font-size:12px;">Duration</span>
+        <div data-popup="click-trigger" style="border:var(--border-width) solid var(--BackgroundInputOutline);background:var(--BackgroundInput);height:53px;padding:16px 15px 16px 21px;display:flex;align-items:center;gap:var(--spacing-label-to-control-sm);box-sizing:border-box;cursor:pointer;">
+          <span style="color:var(--ForegroundPrimary);font-size:16px;">&#128339;</span>
+          <span style="font-size:18px;color:var(--ForegroundAction);" data-picker-display>1:00:00</span>
+        </div>
+        <div class="mob-popup mob-popup--picker" data-popup="panel" style="position:relative;top:0;width:100%;">
+          <div class="mob-popup__title">Duration</div>
+          <div class="mob-popup__body" data-picker-body>
+            <div style="display:flex;align-items:center;gap:var(--size-6);margin-top:var(--size-12);">
+              <input type="number" min="0" max="23" value="1" data-picker-hour
+                style="width:64px;height:56px;text-align:center;font-size:32px;border:none;border-radius:8px;background:var(--BackgroundPrimary);color:var(--ForegroundStrong);" />
+              <span style="font-size:32px;color:var(--ForegroundStrong);">:</span>
+              <input type="number" min="0" max="59" value="0" data-picker-minute
+                style="width:64px;height:56px;text-align:center;font-size:32px;border:none;border-radius:8px;background:var(--BackgroundPrimary);color:var(--ForegroundStrong);" />
+            </div>
+            <p style="font:var(--font-captionSm);color:var(--ForegroundWatermark);margin:var(--spacing-label-to-control-sm) 0 0;">
+              Hours : Minutes
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <span class="xaml-note">XAML: ClockBasedDurationPicker — duration variant, same popup structure</span>
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 5: INLINE EDITOR POPUP (PathBuilder)
+     Source: AccelerationOverrideElementEditorTemplate.xaml,
+             DecelerationOverrideElementEditorTemplate.xaml,
+             VelocityChangeElementEditorTemplate.xaml,
+             OffPathErrorElementEditorTemplate.xaml,
+             ActionsElementEditorTemplate.xaml,
+             EditPathNameAndTurnRadius.xaml,
+             PathDurationLineItem.xaml,
+             PathSelectorControl.xaml,
+             PathTagsManagerControl.xaml
+       <Popup AllowsTransparency="True" PopupAnimation="Fade" StaysOpen="False">
+         <Grid Margin="20"><BoxShadow /><Border><StackPanel>
+           <SwitchToggle /> <FieldInput /> <FieldInput />
+         </StackPanel></Border></Grid></Popup>
+     ========================================================= -->
+
+<h2>Inline Editor (PathBuilder)</h2>
+<p class="demo-label">
+  Click-to-edit popup panels from PathBuilder. A <code>PopupToggleButton</code> opens a form popup
+  with <code>FieldInput</code> controls. 9 XAML files share this pattern. Width varies: 260–325px.
+</p>
+
+<div class="demo-row">
+
+  <!-- Velocity / Speed Limit editor -->
+  <div class="demo-block">
+    <span class="demo-hint">Click the trigger</span>
+    <div class="demo-arena--bottom">
+      <!-- XAML: VelocityChangeElementEditorTemplate — PopupToggleButton + Popup -->
+      <div class="mob-popup-anchor" style="display:flex;flex-direction:column;" data-popup="editor">
+        <!-- XAML: PopupToggleButton — icon + speed + "@" + distance -->
+        <button class="mob-popup__trigger" data-popup="click-trigger">
+          <span class="mob-popup__trigger-icon" style="color:var(--InformationRed);">&#9679;</span>
+          25.0 km/h
+          <span class="mob-popup__trigger-separator">@</span>
+          0.0 m
+        </button>
+        <!-- XAML: Popup Placement="MenuAlignment" PopupAnimation="Fade" StaysOpen="False" -->
+        <div class="mob-popup mob-popup--editor" data-popup="panel" style="position:relative;top:0;">
+          <!-- XAML: FieldInput SpeedLimit PhysicalType="Velocity" -->
+          <div class="mob-popup__field">
+            <label class="mob-popup__field-label">Speed Limit</label>
+            <div class="mob-popup__field-row">
+              <input class="mob-popup__field-input" type="text" value="25.0" />
+              <span class="mob-popup__field-unit">km/h</span>
+            </div>
+          </div>
+          <!-- XAML: FieldInput StartDistance PhysicalType="Distance" -->
+          <div class="mob-popup__field">
+            <label class="mob-popup__field-label">Start Distance</label>
+            <div class="mob-popup__field-row">
+              <input class="mob-popup__field-input" type="text" value="0.0" />
+              <span class="mob-popup__field-unit">m</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <span class="xaml-note">XAML: VelocityChangeElementEditorTemplate — <code>SpeedLimit</code> + <code>StartDistance</code></span>
+  </div>
+
+  <!-- Acceleration Override editor -->
+  <div class="demo-block">
+    <span class="demo-hint">Click the trigger</span>
+    <div class="demo-arena--bottom">
+      <!-- XAML: AccelerationOverrideElementEditorTemplate -->
+      <div class="mob-popup-anchor" style="display:flex;flex-direction:column;" data-popup="editor">
+        <button class="mob-popup__trigger" data-popup="click-trigger">
+          <span class="mob-popup__trigger-icon">&#9650;</span>
+          1.5 m/s&sup2;
+          <span class="mob-popup__trigger-separator">@</span>
+          12.0 m
+        </button>
+        <div class="mob-popup mob-popup--editor" data-popup="panel" style="position:relative;top:0;">
+          <!-- XAML: SwitchToggle UseAccelerationOverride -->
+          <div class="mob-popup__switch">
+            <span class="mob-popup__switch-label">Custom</span>
+            <div class="demo-switch is-on"></div>
+          </div>
+          <!-- XAML: FieldInput AccelerationOverride -->
+          <div class="mob-popup__field">
+            <label class="mob-popup__field-label">Acceleration</label>
+            <div class="mob-popup__field-row">
+              <input class="mob-popup__field-input" type="text" value="1.5" />
+              <span class="mob-popup__field-unit">m/s&sup2;</span>
+            </div>
+          </div>
+          <!-- XAML: FieldInput StartDistance -->
+          <div class="mob-popup__field">
+            <label class="mob-popup__field-label">Start Distance</label>
+            <div class="mob-popup__field-row">
+              <input class="mob-popup__field-input" type="text" value="12.0" />
+              <span class="mob-popup__field-unit">m</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <span class="xaml-note">XAML: AccelerationOverrideElementEditorTemplate — <code>SwitchToggle</code> + <code>FieldInput</code></span>
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 6: SETTINGS PANEL POPUP (Haulage / Mining)
+     Source: HaulageTemplates.xaml (×4), LoaderPreferencesTemplate.xaml
+       <Popup Placement="Center" StaysOpen="True|False">
+         <Border Background="BackgroundStrongBrush">
+           <TextBlock Style="HeadingMd" />
+           <StackPanel Orientation="Horizontal">
+             <ToggleButton Style="IconToggleButton" /> ×N
+           </StackPanel>
+         </Border></Popup>
+     ========================================================= -->
+
+<h2>Settings Panel (Haulage)</h2>
+<p class="demo-label">
+  Icon-and-label toggle button panels from the Haulage/Mining plugin. A trigger opens a popup
+  with a heading and a row of selectable icon options. Single-select (radio-style).
+  5 popups across <code>HaulageTemplates.xaml</code> and <code>LoaderPreferencesTemplate.xaml</code>.
+</p>
+
+<div class="demo-row">
+
+  <!-- Spot Point Distance -->
+  <div class="demo-block">
+    <span class="demo-hint">Click the button</span>
+    <div class="demo-arena--right">
+      <!-- XAML: HaulageTemplates — SelectSpotPointDistanceButton -->
+      <div class="mob-popup-anchor" data-popup="settings">
+        <button class="mob-popup__trigger" data-popup="click-trigger">Spot Distance</button>
+        <!-- XAML: Popup Placement="Center" StaysOpen="True" -->
+        <div class="mob-popup mob-popup--settings" data-popup="panel">
+          <div class="mob-popup__heading">Spot Point Distance</div>
+          <div class="mob-popup__options">
+            <button class="mob-popup__option">
+              <span class="mob-popup__option-icon">&#8676;</span>
+              <span class="mob-popup__option-label">Near</span>
+            </button>
+            <button class="mob-popup__option is-selected">
+              <span class="mob-popup__option-icon">&#8596;</span>
+              <span class="mob-popup__option-label">Medium</span>
+            </button>
+            <button class="mob-popup__option">
+              <span class="mob-popup__option-icon">&#8677;</span>
+              <span class="mob-popup__option-label">Far</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <span class="xaml-note">XAML: HaulageTemplates — <code>SelectSpotPointDistanceButton</code></span>
+  </div>
+
+  <!-- Bench Loading Type -->
+  <div class="demo-block">
+    <span class="demo-hint">Click the button</span>
+    <div class="demo-arena--right">
+      <!-- XAML: HaulageTemplates — SelectBenchLoadingTypeButton -->
+      <div class="mob-popup-anchor" data-popup="settings">
+        <button class="mob-popup__trigger" data-popup="click-trigger">Loading Type</button>
+        <div class="mob-popup mob-popup--settings" data-popup="panel">
+          <div class="mob-popup__heading">Bench Loading Type</div>
+          <div class="mob-popup__options">
+            <button class="mob-popup__option">
+              <span class="mob-popup__option-icon">&#9744;</span>
+              <span class="mob-popup__option-label">None</span>
+            </button>
+            <button class="mob-popup__option is-selected">
+              <span class="mob-popup__option-icon">&#9650;</span>
+              <span class="mob-popup__option-label">Top</span>
+            </button>
+            <button class="mob-popup__option">
+              <span class="mob-popup__option-icon">&#9654;</span>
+              <span class="mob-popup__option-label">Face</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <span class="xaml-note">XAML: HaulageTemplates — <code>SelectBenchLoadingTypeButton</code></span>
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 7: LOCK LIST POPUP (Vehicle Lockout)
+     Source: VehicleLockTemplates.xaml — VehicleLockDetailVM
+       <Popup IsOpen="True" AllowsTransparency="True" StaysOpen="False">
+         <SortableGroupListView MaxHeight="(53 × 8.5)">
+           <DataTemplate: VehicleLockItem />
+         </SortableGroupListView></Popup>
+     ========================================================= -->
+
+<h2>Lock List (Vehicle Lockout)</h2>
+<p class="demo-label">
+  Grouped, scrollable list popup from the Vehicle Lockout plugin. Items are 53px rows grouped
+  under sticky headers. Max 8.5 visible rows (451px). Used by <code>VehicleLockTemplates.xaml</code>.
+</p>
+
+<div class="demo-row">
+
+  <!-- Lock list with groups -->
+  <div class="demo-block">
+    <span class="demo-hint">Click the button</span>
+    <div class="demo-arena--bottom">
+      <!-- XAML: VehicleLockTemplates — SortableGroupListView -->
+      <div class="mob-popup-anchor" style="display:flex;flex-direction:column;" data-popup="lock">
+        <button class="mob-popup__trigger" data-popup="click-trigger">Vehicle Locks (5)</button>
+        <div class="mob-popup mob-popup--list" data-popup="panel" style="position:relative;top:0;">
+          <!-- XAML: GroupStyle ContainerStyle — group header -->
+          <div class="mob-popup__group-header">Zone A — North Pit</div>
+          <!-- XAML: VehicleLockItem — 53px rows -->
+          <div class="mob-popup__list-item is-selected">
+            <span class="mob-popup__list-item-icon">&#128274;</span>
+            <span class="mob-popup__list-item-text">Loader HD-201</span>
+            <span class="mob-popup__list-item-meta">2 hrs ago</span>
+          </div>
+          <div class="mob-popup__list-item">
+            <span class="mob-popup__list-item-icon">&#128274;</span>
+            <span class="mob-popup__list-item-text">Hauler TR-455</span>
+            <span class="mob-popup__list-item-meta">45 min ago</span>
+          </div>
+          <div class="mob-popup__list-item">
+            <span class="mob-popup__list-item-icon">&#128274;</span>
+            <span class="mob-popup__list-item-text">Dozer DZ-110</span>
+            <span class="mob-popup__list-item-meta">3 hrs ago</span>
+          </div>
+          <div class="mob-popup__group-header">Zone B — South Pit</div>
+          <div class="mob-popup__list-item">
+            <span class="mob-popup__list-item-icon">&#128274;</span>
+            <span class="mob-popup__list-item-text">Hauler TR-290</span>
+            <span class="mob-popup__list-item-meta">15 min ago</span>
+          </div>
+          <div class="mob-popup__list-item">
+            <span class="mob-popup__list-item-icon">&#128274;</span>
+            <span class="mob-popup__list-item-text">Excavator EX-500</span>
+            <span class="mob-popup__list-item-meta">30 min ago</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <span class="xaml-note">XAML: VehicleLockTemplates — <code>SortableGroupListView</code>, <code>VehicleLockItemHeight=53</code></span>
+  </div>
+
+  <!-- Empty lock list -->
+  <div class="demo-block">
+    <span class="demo-hint">Click the button</span>
+    <div class="demo-arena--bottom">
+      <div class="mob-popup-anchor" style="display:flex;flex-direction:column;" data-popup="lock">
+        <button class="mob-popup__trigger" data-popup="click-trigger">Vehicle Locks (0)</button>
+        <div class="mob-popup mob-popup--list" data-popup="panel" style="position:relative;top:0;">
+          <p style="text-align:center;padding:var(--size-24);color:var(--ForegroundWatermark);font:var(--font-default);margin:0;">No active locks</p>
+        </div>
+      </div>
+    </div>
+    <span class="xaml-note">XAML: VehicleLockTemplates — empty state</span>
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 8: BLAZOR USAGE REFERENCE
+     ========================================================= -->
+
+<h2>Blazor Usage</h2>
+
+<div class="demo-row">
+  <div class="demo-block" style="max-width:680px;">
+    <span class="demo-block__label">Structure</span>
+    <p class="demo-label">
+      Wrap trigger + popup in a <code>.mob-popup-anchor</code> for relative positioning.
+      Toggle <code>.is-open</code> on the popup element to show/hide.
+    </p>
+
+    <span class="demo-block__label" style="margin-top:var(--spacing-label-to-control-md);">CSS Classes</span>
+    <p class="demo-label">
+      <code>.mob-popup</code> — base (required on all popups)<br/>
+      <code>.mob-popup--tooltip</code> — left-placed inverted tooltip<br/>
+      <code>.mob-popup--confirm</code> — inline confirmation bar<br/>
+      <code>.mob-popup--suggest</code> — suggestion/autocomplete list<br/>
+      <code>.mob-popup--picker</code> — time/duration picker panel<br/>
+      <code>.mob-popup--editor</code> — inline editor (PathBuilder)<br/>
+      <code>.mob-popup--settings</code> — settings panel (Haulage)<br/>
+      <code>.mob-popup--list</code> — grouped list (Vehicle Lockout)<br/>
+      Dropdown overlays → see Forms &gt; ComboBox
+    </p>
+
+    <span class="demo-block__label" style="margin-top:var(--spacing-label-to-control-md);">State Classes</span>
+    <p class="demo-label">
+      <code>.is-open</code> — show popup (opacity 1, pointer-events auto)<br/>
+      <code>.is-hovered</code> — item hover state<br/>
+      <code>.is-selected</code> — item selected state<br/>
+      <code>.is-pressed</code> — item pressed state<br/>
+      <code>.is-disabled</code> — item disabled state
+    </p>
+
+    <span class="demo-block__label" style="margin-top:var(--spacing-label-to-control-md);">XAML → CSS Token Quick Reference</span>
+    <p class="demo-label">
+      <code>BoxShadow / DropShadowEffect BlurRadius="10"</code> → <code>var(--shadow-md)</code><br/>
+      <code>BackgroundInvertPrimaryBrush</code> → <code>var(--BackgroundInvertPrimary)</code><br/>
+      <code>BackgroundInvertOutlineBrush</code> → <code>var(--BackgroundInvertOutline)</code><br/>
+      <code>ForegroundInvertPrimaryBrush</code> → <code>var(--ForegroundInvertPrimary)</code><br/>
+      <code>MouseOverPrimaryBrush</code> → <code>var(--MouseOverPrimary)</code><br/>
+      <code>SelectionPrimaryBrush</code> → <code>var(--SelectionPrimary)</code><br/>
+      <code>SelectionForeground</code> → <code>var(--SelectionForeground)</code><br/>
+      <code>MapLabelOutlineBrush</code> → <code>var(--MapLabelOutline)</code><br/>
+      <code>PopupAnimation="Fade"</code> → <code>transition: opacity var(--transition-fade)</code>
+    </p>
+  </div>
+</div>
+
+
+  </main>
+</div>
+
+<script src="../styles/nav.js"></script>
+
+<!-- =========================================================
+     INTERACTIVE DEMO SCRIPT
+     Demo-page-only JS. Not part of the component CSS/HTML output.
+     Simulates WPF popup behaviors:
+       - DetailsPopUp: hover trigger → open popup
+       - ConfirmInteraction: click trigger → open, close/confirm → dismiss
+       - SuggestionTextBox: focus + type → filter list, click → select, blur → close
+       - ClockBasedTimePicker: click field → toggle panel, input changes update display
+     ========================================================= -->
+<script>
+(function () {
+
+  /* ----- 1. TOOLTIP: hover trigger → show/hide ----- */
+  document.querySelectorAll('[data-popup="hover"]').forEach(function (anchor) {
+    var popup = anchor.querySelector('.mob-popup');
+    anchor.addEventListener('mouseenter', function () { popup.classList.add('is-open'); });
+    anchor.addEventListener('mouseleave', function () { popup.classList.remove('is-open'); });
+  });
+
+
+  /* ----- 2. CONFIRMATION BAR: click trigger → toggle, dismiss buttons close ----- */
+  document.querySelectorAll('.mob-popup--confirm').forEach(function (popup) {
+    var anchor = popup.closest('.mob-popup-anchor');
+    var trigger = anchor.querySelector('[data-popup="click-trigger"]');
+
+    trigger.addEventListener('click', function () {
+      popup.classList.toggle('is-open');
+    });
+
+    popup.querySelectorAll('[data-popup="dismiss"]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        popup.classList.remove('is-open');
+      });
+    });
+  });
+
+
+  /* ----- 3. SUGGESTION LIST: focus/type → filter, click → select, outside click → close ----- */
+  var SUGGEST_DATA = {
+    roads: [
+      { text: 'Main Road North',    count: 3 },
+      { text: 'Main Road South',    count: 1 },
+      { text: 'Main Ramp Access',   count: 0 },
+      { text: 'Haul Road East',     count: 2 },
+      { text: 'Haul Road West',     count: 5 },
+      { text: 'Pit Access Road',    count: 0 },
+      { text: 'Dump Road 1',        count: 4 },
+      { text: 'Dump Road 2',        count: 1 }
+    ],
+    vehicles: [
+      { text: 'CAT 797F-01',  count: 0 },
+      { text: 'CAT 797F-02',  count: 0 },
+      { text: 'CAT 793D-01',  count: 0 },
+      { text: 'Komatsu 930E', count: 0 },
+      { text: 'Komatsu 830E', count: 0 },
+      { text: 'Volvo A60H',   count: 0 }
+    ]
+  };
+
+  document.querySelectorAll('[data-popup="suggest"]').forEach(function (anchor) {
+    var input   = anchor.querySelector('[data-suggest-input]');
+    var panel   = anchor.querySelector('[data-popup="panel"]');
+    var setName = anchor.getAttribute('data-suggest-set') || 'roads';
+    var data    = SUGGEST_DATA[setName] || SUGGEST_DATA.roads;
+    var selectedIndex = -1;
+
+    function buildItems(filter) {
+      var html = '';
+      var f = (filter || '').toLowerCase();
+      data.forEach(function (item) {
+        if (f && item.text.toLowerCase().indexOf(f) === -1) return;
+        html += '<div class="mob-popup__suggestion" data-suggest-value="' + item.text + '">';
+        html += '<span class="mob-popup__suggestion-text">' + item.text + '</span>';
+        if (item.count > 0) {
+          html += '<span class="mob-popup__suggestion-count">' + item.count + '</span>';
+        }
+        html += '</div>';
+      });
+      panel.innerHTML = html;
+      selectedIndex = -1;
+      /* wire click handlers on new items */
+      panel.querySelectorAll('.mob-popup__suggestion').forEach(function (row) {
+        row.addEventListener('mousedown', function (e) {
+          e.preventDefault();                        /* prevent blur */
+          input.value = row.getAttribute('data-suggest-value');
+          panel.classList.remove('is-open');
+          clearSelected();
+          row.classList.add('is-selected');
+        });
+      });
+    }
+
+    function clearSelected() {
+      panel.querySelectorAll('.is-selected').forEach(function (el) { el.classList.remove('is-selected'); });
+    }
+
+    function highlightIndex() {
+      var rows = panel.querySelectorAll('.mob-popup__suggestion');
+      rows.forEach(function (r, i) {
+        r.classList.toggle('is-selected', i === selectedIndex);
+      });
+    }
+
+    input.addEventListener('focus', function () {
+      buildItems(input.value);
+      panel.classList.add('is-open');
+    });
+
+    input.addEventListener('input', function () {
+      buildItems(input.value);
+      if (panel.querySelectorAll('.mob-popup__suggestion').length) {
+        panel.classList.add('is-open');
+      } else {
+        panel.classList.remove('is-open');
+      }
+    });
+
+    input.addEventListener('blur', function () {
+      panel.classList.remove('is-open');
+    });
+
+    /* keyboard nav: up/down arrows + enter */
+    input.addEventListener('keydown', function (e) {
+      var rows = panel.querySelectorAll('.mob-popup__suggestion');
+      if (!rows.length) return;
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        selectedIndex = Math.min(selectedIndex + 1, rows.length - 1);
+        highlightIndex();
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        selectedIndex = Math.max(selectedIndex - 1, 0);
+        highlightIndex();
+      } else if (e.key === 'Enter' && selectedIndex >= 0) {
+        e.preventDefault();
+        input.value = rows[selectedIndex].getAttribute('data-suggest-value');
+        panel.classList.remove('is-open');
+      }
+    });
+  });
+
+
+  /* ----- 4. TIME / DURATION PICKER: click field → toggle, input changes update display ----- */
+  document.querySelectorAll('[data-popup="picker"]').forEach(function (anchor) {
+    var trigger = anchor.querySelector('[data-popup="click-trigger"]');
+    var panel   = anchor.querySelector('[data-popup="panel"]');
+    var display = anchor.querySelector('[data-picker-display]');
+    var hourIn  = panel ? panel.querySelector('[data-picker-hour]') : null;
+    var minIn   = panel ? panel.querySelector('[data-picker-minute]') : null;
+    var ampmBtns = panel ? panel.querySelectorAll('[data-picker-ampm]') : [];
+    var isDuration = !ampmBtns.length;
+
+    trigger.addEventListener('click', function () {
+      panel.classList.toggle('is-open');
+    });
+
+    function pad(n) { return n < 10 ? '0' + n : '' + n; }
+
+    function updateDisplay() {
+      var h = parseInt(hourIn.value, 10) || 0;
+      var m = parseInt(minIn.value, 10) || 0;
+      if (isDuration) {
+        display.textContent = h + ':' + pad(m) + ':00';
+      } else {
+        var ampm = 'AM';
+        ampmBtns.forEach(function (b) { if (b.classList.contains('is-active')) ampm = b.getAttribute('data-picker-ampm'); });
+        display.textContent = h + ':' + pad(m) + ' ' + ampm;
+      }
+    }
+
+    if (hourIn) hourIn.addEventListener('input', updateDisplay);
+    if (minIn) minIn.addEventListener('input', updateDisplay);
+
+    ampmBtns.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        ampmBtns.forEach(function (b) {
+          b.classList.remove('is-active');
+          b.style.background = 'var(--BackgroundPrimary)';
+          b.style.color = 'var(--ForegroundDisabled)';
+        });
+        btn.classList.add('is-active');
+        btn.style.background = 'var(--SelectionSecondary)';
+        btn.style.color = 'var(--SelectionForeground)';
+        updateDisplay();
+      });
+    });
+
+    /* close on outside click */
+    document.addEventListener('click', function (e) {
+      if (!anchor.contains(e.target)) {
+        panel.classList.remove('is-open');
+      }
+    });
+  });
+
+
+  /* ----- 5. INLINE EDITOR: click trigger → toggle popup ----- */
+  document.querySelectorAll('[data-popup="editor"]').forEach(function (anchor) {
+    var trigger = anchor.querySelector('[data-popup="click-trigger"]');
+    var panel   = anchor.querySelector('[data-popup="panel"]');
+
+    trigger.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var isOpen = panel.classList.contains('is-open');
+      closeAllEditors();
+      if (!isOpen) {
+        panel.classList.add('is-open');
+        trigger.classList.add('is-open');
+      }
+    });
+  });
+
+  /* Toggle switches in editors */
+  document.querySelectorAll('.demo-switch').forEach(function (sw) {
+    sw.addEventListener('click', function () { sw.classList.toggle('is-on'); });
+  });
+
+  function closeAllEditors() {
+    document.querySelectorAll('[data-popup="editor"] [data-popup="panel"]').forEach(function (p) { p.classList.remove('is-open'); });
+    document.querySelectorAll('[data-popup="editor"] [data-popup="click-trigger"]').forEach(function (t) { t.classList.remove('is-open'); });
+  }
+
+
+  /* ----- 6. SETTINGS PANEL: click trigger → toggle, single-select options ----- */
+  document.querySelectorAll('[data-popup="settings"]').forEach(function (anchor) {
+    var trigger = anchor.querySelector('[data-popup="click-trigger"]');
+    var panel   = anchor.querySelector('[data-popup="panel"]');
+
+    trigger.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var isOpen = panel.classList.contains('is-open');
+      closeAllSettings();
+      if (!isOpen) {
+        panel.classList.add('is-open');
+        trigger.classList.add('is-open');
+      }
+    });
+
+    /* single-select within options */
+    panel.querySelectorAll('.mob-popup__option').forEach(function (opt) {
+      opt.addEventListener('click', function (e) {
+        e.stopPropagation();
+        panel.querySelectorAll('.mob-popup__option').forEach(function (o) { o.classList.remove('is-selected'); });
+        opt.classList.add('is-selected');
+      });
+    });
+  });
+
+  function closeAllSettings() {
+    document.querySelectorAll('[data-popup="settings"] [data-popup="panel"]').forEach(function (p) { p.classList.remove('is-open'); });
+    document.querySelectorAll('[data-popup="settings"] [data-popup="click-trigger"]').forEach(function (t) { t.classList.remove('is-open'); });
+  }
+
+
+  /* ----- 7. LOCK LIST: click trigger → toggle, single-select items ----- */
+  document.querySelectorAll('[data-popup="lock"]').forEach(function (anchor) {
+    var trigger = anchor.querySelector('[data-popup="click-trigger"]');
+    var panel   = anchor.querySelector('[data-popup="panel"]');
+
+    trigger.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var isOpen = panel.classList.contains('is-open');
+      closeAllLocks();
+      if (!isOpen) {
+        panel.classList.add('is-open');
+        trigger.classList.add('is-open');
+      }
+    });
+
+    /* single-select items */
+    panel.querySelectorAll('.mob-popup__list-item').forEach(function (item) {
+      item.addEventListener('click', function (e) {
+        e.stopPropagation();
+        panel.querySelectorAll('.mob-popup__list-item').forEach(function (i) { i.classList.remove('is-selected'); });
+        item.classList.add('is-selected');
+      });
+    });
+  });
+
+  function closeAllLocks() {
+    document.querySelectorAll('[data-popup="lock"] [data-popup="panel"]').forEach(function (p) { p.classList.remove('is-open'); });
+    document.querySelectorAll('[data-popup="lock"] [data-popup="click-trigger"]').forEach(function (t) { t.classList.remove('is-open'); });
+  }
+
+
+  /* ----- Global: close editors/settings/locks on outside click ----- */
+  document.addEventListener('click', function (e) {
+    if (!e.target.closest('[data-popup="editor"]')) closeAllEditors();
+    if (!e.target.closest('[data-popup="settings"]')) closeAllSettings();
+    if (!e.target.closest('[data-popup="lock"]')) closeAllLocks();
+  });
+
+})();
+</script>
+
+</body>
+</html>

@@ -118,6 +118,19 @@
       ]
     },
     {
+      title: "Popup",
+      links: [
+        { label: "All",              href: "popup/popup.html" },
+        { label: "Tooltip",          href: "popup/popup-tooltip.html" },
+        { label: "Confirmation Bar", href: "popup/popup-confirm.html" },
+        { label: "Suggestion List",  href: "popup/popup-suggest.html" },
+        { label: "Picker",           href: "popup/popup-picker.html" },
+        { label: "Inline Editor (PathBuilder)",    href: "popup/popup-editor.html" },
+        { label: "Settings Panel (Haulage)",    href: "popup/popup-settings.html" },
+        { label: "Lock List (Vehicle Lockout)", href: "popup/popup-lock.html" }
+      ]
+    },
+    {
       title: "List & Collection Patterns",
       links: [
         { label: "ItemsControl",                href: "items-control/items-control.html" },

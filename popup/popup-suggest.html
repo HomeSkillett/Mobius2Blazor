@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mobius — Popup: Suggestion List</title>
+  <link id="mob-theme-link" rel="stylesheet" href="../styles/LightTheme.css" />
+  <link rel="stylesheet" href="../styles/base.css" />
+  <link rel="stylesheet" href="popup.css" />
+  <style>
+    body { margin: 0; }
+    h1 {
+      font: var(--font-hdrMd);
+      margin: 0 0 32px;
+      color: var(--ForegroundStrong);
+    }
+    h2 {
+      font: var(--font-hdrSm);
+      margin: 40px 0 16px;
+      color: var(--ForegroundStrong);
+    }
+    h2:first-of-type { margin-top: 0; }
+    .demo-label {
+      font: var(--font-captionSm);
+      color: var(--ForegroundPrimary);
+      margin-bottom: var(--spacing-label-to-control-sm);
+    }
+    .section-divider {
+      border: none;
+      border-top: var(--line-size) solid var(--InnerLines);
+      margin: 32px 0 0;
+    }
+    code {
+      font-family: "Roboto Mono", monospace;
+      font-size: 12px;
+      background: var(--BackgroundStepOne);
+      padding: 2px 6px;
+      border-radius: 3px;
+    }
+    .xaml-note {
+      font: var(--font-captionSm);
+      color: var(--ForegroundWatermark);
+      margin-top: var(--spacing-label-to-control-sm);
+    }
+    .demo-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--spacing-section-to-section);
+      align-items: flex-start;
+      margin-top: var(--spacing-label-to-control-md);
+    }
+    .demo-block {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-label-to-control-sm);
+    }
+    .demo-block__label {
+      font: var(--font-captionSm);
+      font-weight: var(--font-bold);
+      color: var(--ForegroundStrong);
+    }
+    .demo-arena--bottom {
+      padding: 20px 40px 220px 40px;
+    }
+    .demo-hint {
+      display: inline-block;
+      font: var(--font-captionSm);
+      color: var(--SelectionSecondary);
+      background: color-mix(in srgb, var(--SelectionPrimary) 8%, transparent);
+      border: var(--border-width) solid color-mix(in srgb, var(--SelectionPrimary) 20%, transparent);
+      border-radius: var(--size-3);
+      padding: 2px 8px;
+      margin-bottom: var(--spacing-label-to-control-sm);
+    }
+  </style>
+</head>
+<body>
+
+<div class="mob-layout">
+
+  <!-- Sidebar Navigation -->
+  <nav class="mob-nav" id="mob-nav"></nav>
+
+  <!-- Main Content -->
+  <main class="mob-layout__content">
+
+<h1>Suggestion List</h1>
+<p class="demo-label">
+  Autocomplete suggestion list anchored below a text input. Used by <code>SuggestionTextBox</code>.
+  Width matches parent input. Type to filter, click or use arrow keys + Enter to select.
+  Mouse-over uses <code>MouseOverPrimary</code> at 30% opacity. Selection uses <code>SelectionPrimary</code>.
+</p>
+
+
+<!-- =========================================================
+     XAML SOURCE
+     Source: SuggestionTextBox.xaml — Mobius_UI_Common_Templates_SuggestionTextBox
+       <Popup x:Name="PART_SuggestionsPopup" StaysOpen="False"
+              Width="{Binding ElementName=PART_MainGrid, Path=ActualWidth}">
+         <ListBox x:Name="PART_SuggestionsListBox"
+                  MaxHeight="{TemplateBinding MaximumPopupHeight}"
+                  ItemContainerStyle="SuggestionListBoxItemStyle">
+           <DataTemplate DataType="UniqueStringWithCount">
+             <Grid ToolTip="{Binding Text}">
+               <TextBlock Text="{Binding Text}" Margin="4,0,0,0"
+                          TextTrimming="CharacterEllipsis" />
+               <TextBlock Opacity=".6" Text="{Binding Count}" />
+             </Grid>
+           </DataTemplate>
+         </ListBox>
+       </Popup>
+     SuggestionListBoxItemStyle:
+       _mouseOverElement: MouseOverPrimary at opacity 0 → 0.3
+       _selectionElement: SelectionPrimary at opacity 0 → 1.0
+       Disabled state: DisabledOpacity
+     ========================================================= -->
+
+
+<h2>Interactive Demos</h2>
+
+<div class="demo-row">
+
+  <!-- Roads dataset -->
+  <div class="demo-block">
+    <span class="demo-hint">Focus the input and type</span>
+    <div class="demo-arena--bottom">
+      <!-- XAML: SuggestionTextBox > PART_MainGrid -->
+      <div class="mob-popup-anchor" style="display:flex;flex-direction:column;width:300px;" data-popup="suggest">
+        <!-- XAML: PART_TextBox — OnDemandTextBox style -->
+        <input type="text" placeholder="Type a road name..." data-suggest-input
+          style="height:var(--field-height);border:var(--border-width) solid var(--BackgroundInputOutline);background:var(--BackgroundInput);padding:0 var(--size-12);font:var(--font-default);color:var(--ForegroundPrimary);box-sizing:border-box;width:100%;" />
+        <!-- XAML: PART_SuggestionsPopup -->
+        <div class="mob-popup mob-popup--suggest" data-popup="panel" style="position:relative;top:0;width:100%;"></div>
+      </div>
+    </div>
+    <span class="xaml-note">XAML: SuggestionTextBox — road names with duplicate counts</span>
+  </div>
+
+  <!-- Vehicles dataset -->
+  <div class="demo-block">
+    <span class="demo-hint">Focus the input and type</span>
+    <div class="demo-arena--bottom">
+      <div class="mob-popup-anchor" style="display:flex;flex-direction:column;width:300px;" data-popup="suggest" data-suggest-set="vehicles">
+        <input type="text" placeholder="Type a vehicle name..." data-suggest-input
+          style="height:var(--field-height);border:var(--border-width) solid var(--BackgroundInputOutline);background:var(--BackgroundInput);padding:0 var(--size-12);font:var(--font-default);color:var(--ForegroundPrimary);box-sizing:border-box;width:100%;" />
+        <div class="mob-popup mob-popup--suggest" data-popup="panel" style="position:relative;top:0;width:100%;"></div>
+      </div>
+    </div>
+    <span class="xaml-note">XAML: SuggestionTextBox — vehicle names (no counts)</span>
+  </div>
+
+  <!-- Shapes dataset -->
+  <div class="demo-block">
+    <span class="demo-hint">Focus the input and type</span>
+    <div class="demo-arena--bottom">
+      <div class="mob-popup-anchor" style="display:flex;flex-direction:column;width:300px;" data-popup="suggest" data-suggest-set="shapes">
+        <input type="text" placeholder="Type a shape name..." data-suggest-input
+          style="height:var(--field-height);border:var(--border-width) solid var(--BackgroundInputOutline);background:var(--BackgroundInput);padding:0 var(--size-12);font:var(--font-default);color:var(--ForegroundPrimary);box-sizing:border-box;width:100%;" />
+        <div class="mob-popup mob-popup--suggest" data-popup="panel" style="position:relative;top:0;width:100%;"></div>
+      </div>
+    </div>
+    <span class="xaml-note">XAML: SuggestionTextBox — map shape names with counts</span>
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<h2>Anatomy</h2>
+
+<div class="demo-row">
+  <div class="demo-block" style="max-width:680px;">
+    <span class="demo-block__label">CSS Classes</span>
+    <p class="demo-label">
+      <code>.mob-popup-anchor</code> — wrapper for relative positioning<br/>
+      <code>.mob-popup</code> — base popup container<br/>
+      <code>.mob-popup--suggest</code> — suggestion list variant<br/>
+      <code>.mob-popup__suggestion</code> — individual suggestion row<br/>
+      <code>.mob-popup__suggestion-text</code> — text label (ellipsis on overflow)<br/>
+      <code>.mob-popup__suggestion-count</code> — count badge (opacity 0.6)<br/>
+      <code>.is-open</code> — show the list<br/>
+      <code>.is-hovered</code> — MouseOverPrimary at 30% overlay<br/>
+      <code>.is-selected</code> — SelectionPrimary background
+    </p>
+
+    <span class="demo-block__label" style="margin-top:var(--spacing-label-to-control-md);">XAML → CSS Mapping</span>
+    <p class="demo-label">
+      <code>StaysOpen="False"</code> → close on blur / outside click<br/>
+      <code>Width="{ActualWidth}"</code> → <code>width: 100%</code> of parent<br/>
+      <code>MaximumPopupHeight</code> → <code>max-height: 220px; overflow-y: auto</code><br/>
+      <code>_mouseOverElement opacity 0.3</code> → <code>::before</code> pseudo with <code>MouseOverPrimary</code><br/>
+      <code>_selectionElement SelectionPrimary</code> → <code>background: var(--SelectionPrimary)</code><br/>
+      <code>TextTrimming="CharacterEllipsis"</code> → <code>text-overflow: ellipsis</code><br/>
+      <code>Opacity=".6"</code> → <code>opacity: 0.6</code> on count element
+    </p>
+
+    <span class="demo-block__label" style="margin-top:var(--spacing-label-to-control-md);">Keyboard Navigation</span>
+    <p class="demo-label">
+      <code>&#8593;</code> / <code>&#8595;</code> arrow keys — move selection<br/>
+      <code>Enter</code> — accept selected item<br/>
+      Click — accept clicked item<br/>
+      Blur — close list
+    </p>
+  </div>
+</div>
+
+
+  </main>
+</div>
+
+<script src="../styles/nav.js"></script>
+<script>
+(function () {
+  var SUGGEST_DATA = {
+    roads: [
+      { text: 'Main Road North',    count: 3 },
+      { text: 'Main Road South',    count: 1 },
+      { text: 'Main Ramp Access',   count: 0 },
+      { text: 'Haul Road East',     count: 2 },
+      { text: 'Haul Road West',     count: 5 },
+      { text: 'Pit Access Road',    count: 0 },
+      { text: 'Dump Road 1',        count: 4 },
+      { text: 'Dump Road 2',        count: 1 }
+    ],
+    vehicles: [
+      { text: 'CAT 797F-01',  count: 0 },
+      { text: 'CAT 797F-02',  count: 0 },
+      { text: 'CAT 793D-01',  count: 0 },
+      { text: 'Komatsu 930E', count: 0 },
+      { text: 'Komatsu 830E', count: 0 },
+      { text: 'Volvo A60H',   count: 0 }
+    ],
+    shapes: [
+      { text: 'Pit Boundary',       count: 1 },
+      { text: 'Pit Ramp North',     count: 2 },
+      { text: 'Pit Ramp South',     count: 2 },
+      { text: 'Dump Zone A',        count: 0 },
+      { text: 'Dump Zone B',        count: 0 },
+      { text: 'Load Zone 1',        count: 3 },
+      { text: 'Load Zone 2',        count: 1 },
+      { text: 'Intersection Alpha', count: 0 }
+    ]
+  };
+
+  document.querySelectorAll('[data-popup="suggest"]').forEach(function (anchor) {
+    var input   = anchor.querySelector('[data-suggest-input]');
+    var panel   = anchor.querySelector('[data-popup="panel"]');
+    var setName = anchor.getAttribute('data-suggest-set') || 'roads';
+    var data    = SUGGEST_DATA[setName] || SUGGEST_DATA.roads;
+    var selectedIndex = -1;
+
+    function buildItems(filter) {
+      var html = '';
+      var f = (filter || '').toLowerCase();
+      data.forEach(function (item) {
+        if (f && item.text.toLowerCase().indexOf(f) === -1) return;
+        html += '<div class="mob-popup__suggestion" data-suggest-value="' + item.text + '">';
+        html += '<span class="mob-popup__suggestion-text">' + item.text + '</span>';
+        if (item.count > 0) {
+          html += '<span class="mob-popup__suggestion-count">' + item.count + '</span>';
+        }
+        html += '</div>';
+      });
+      panel.innerHTML = html;
+      selectedIndex = -1;
+      panel.querySelectorAll('.mob-popup__suggestion').forEach(function (row) {
+        row.addEventListener('mousedown', function (e) {
+          e.preventDefault();
+          input.value = row.getAttribute('data-suggest-value');
+          panel.classList.remove('is-open');
+        });
+      });
+    }
+
+    function highlightIndex() {
+      var rows = panel.querySelectorAll('.mob-popup__suggestion');
+      rows.forEach(function (r, i) {
+        r.classList.toggle('is-selected', i === selectedIndex);
+      });
+    }
+
+    input.addEventListener('focus', function () {
+      buildItems(input.value);
+      panel.classList.add('is-open');
+    });
+
+    input.addEventListener('input', function () {
+      buildItems(input.value);
+      panel.classList.toggle('is-open', !!panel.querySelectorAll('.mob-popup__suggestion').length);
+    });
+
+    input.addEventListener('blur', function () {
+      panel.classList.remove('is-open');
+    });
+
+    input.addEventListener('keydown', function (e) {
+      var rows = panel.querySelectorAll('.mob-popup__suggestion');
+      if (!rows.length) return;
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        selectedIndex = Math.min(selectedIndex + 1, rows.length - 1);
+        highlightIndex();
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        selectedIndex = Math.max(selectedIndex - 1, 0);
+        highlightIndex();
+      } else if (e.key === 'Enter' && selectedIndex >= 0) {
+        e.preventDefault();
+        input.value = rows[selectedIndex].getAttribute('data-suggest-value');
+        panel.classList.remove('is-open');
+      }
+    });
+  });
+})();
+</script>
+
+</body>
+</html>

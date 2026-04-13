@@ -1,0 +1,675 @@
+/*
+  popup.css — Popup overlay component styles for Mobius Blazor components.
+
+  Source XAML files (Common Controls):
+    - DetailsPopUp.xaml           → Mobius_UI_Common_DetailsPopUp (tooltip / details popup)
+    - ConfirmInteraction.xaml     → ConfirmInteraction (confirmation bar popup)
+    - SuggestionTextBox.xaml      → Mobius_UI_Common_Templates_SuggestionTextBox (suggestion list)
+    - ClockBasedTimePicker.xaml   → ClockBasedTimePicker / ClockBasedDurationPicker (time picker popup)
+
+  Source XAML files (PathBuilder Plugin):
+    - AccelerationOverrideElementEditorTemplate.xaml   → inline editor popup
+    - DecelerationOverrideElementEditorTemplate.xaml   → inline editor popup
+    - VelocityChangeElementEditorTemplate.xaml         → inline editor popup
+    - OffPathErrorElementEditorTemplate.xaml            → inline editor popup
+    - ActionsElementEditorTemplate.xaml                 → inline editor popup
+    - EditPathNameAndTurnRadius.xaml                    → inline editor popup
+    - PathDurationLineItem.xaml                         → inline editor popup
+    - PathSelectorControl.xaml                          → path selector popup
+    - PathTagsManagerControl.xaml                       → tag manager popup
+
+  Source XAML files (Haulage / Mining Plugin):
+    - LoaderPreferencesTemplate.xaml      → settings panel popup
+    - HaulageTemplates.xaml               → settings panel popups (×4)
+
+  Source XAML files (Vehicle Lockout Plugin):
+    - VehicleLockTemplates.xaml           → lock list popup
+
+  Note: Dropdown overlays (IconLabelDropDownButton, ComboBoxWithButton) are covered
+  by the ComboBox component — see Forms > ComboBox.
+
+  Popup types:
+    .mob-popup                — base overlay container (shared)
+    .mob-popup--tooltip       — details/tooltip overlay (left-placed, inverted colors)
+    .mob-popup--confirm       — confirmation bar overlay (center-placed, inline actions)
+    .mob-popup--suggest       — suggestion list overlay (bottom-placed, selectable items)
+    .mob-popup--picker        — time/duration picker overlay (bottom-placed, panel)
+    .mob-popup--editor        — inline editor overlay (PathBuilder field inputs)
+    .mob-popup--settings      — settings panel overlay (icon toggle button groups)
+    .mob-popup--list          — list overlay (grouped scrollable item list)
+*/
+
+
+/* =============================================
+   BASE POPUP CONTAINER
+   XAML: <Popup AllowsTransparency="True" PopupAnimation="Fade">
+   All popups share: box-shadow, border, background, fade animation.
+   ============================================= */
+
+.mob-popup {
+  position: absolute;
+  z-index: 1000;
+  /* XAML: BoxShadow / DropShadowEffect BlurRadius="10" ShadowDepth="0" → --shadow-md */
+  box-shadow: 0 0 10px var(--ShadowElements);
+  border: var(--border-width) solid var(--BackgroundInputOutline);
+  background: var(--BackgroundStrong);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition-fade) ease;
+}
+
+.mob-popup.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+
+/* =============================================
+   POPUP ANCHOR (wrapper for relative positioning)
+   Wraps the trigger + popup pair so the popup
+   can position itself relative to the trigger.
+   ============================================= */
+
+.mob-popup-anchor {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+
+/* =============================================
+   1. TOOLTIP / DETAILS POPUP
+   XAML: DetailsPopUp.xaml — Mobius_UI_Common_DetailsPopUp
+     <Popup Placement="Left" PopupAnimation="Fade">
+       <Border Background="BackgroundInvertPrimaryBrush"
+               BorderBrush="BackgroundInvertOutlineBrush">
+         <TextBlock Foreground="ForegroundInvertPrimaryBrush"
+                    Margin.All="6" TextWrapping="Wrap" />
+       </Border>
+     </Popup>
+   Style defaults: HorizontalOffset="11", VerticalOffset="-44", MaxWidth="320"
+   ============================================= */
+
+.mob-popup--tooltip {
+  /* XAML: Placement="Left" — appears to the left of trigger */
+  right: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-right: var(--spacing-label-to-control);           /* ~11px HorizontalOffset */
+
+  /* XAML: MaxWidth="320", padding Margin.All="6" */
+  max-width: 320px;
+  padding: var(--size-6);
+
+  /* XAML: inverted color scheme */
+  background: var(--BackgroundInvertPrimary);
+  border-color: var(--BackgroundInvertOutline);
+  color: var(--ForegroundInvertPrimary);
+
+  /* XAML: TextWrapping="Wrap" */
+  word-wrap: break-word;
+}
+
+
+/* =============================================
+   2. CONFIRMATION BAR POPUP
+   XAML: ConfirmInteraction.xaml — ConfirmInteraction
+     <Popup Placement="Center" PopupAnimation="Fade">
+       <Grid Margin="20">
+         <common:BoxShadow Opacity="ShadowOpacity" />
+         <Border BorderBrush="MapLabelOutlineBrush" BorderThickness="1">
+           <StackPanel Background="BackgroundStrongBrush" Orientation="Horizontal">
+             <Button Style="OOUICloseIconButton"
+                     Width="TouchSize" Height="TouchSize" />
+             <TextBlock Margin="12,0" Foreground="ForegroundPrimaryBrush" />
+             <Button Style="WindowControlIconButton"
+                     Width="TouchSize" Height="TouchSize"
+                     Background="BackgroundPrimaryBrush" />
+           </StackPanel>
+         </Border>
+       </Grid>
+     </Popup>
+   ============================================= */
+
+.mob-popup--confirm {
+  /* XAML: Placement="Center" — positioned inline-end of trigger */
+  top: 50%;
+  left: 100%;
+  transform: translateY(-50%);
+  margin-left: var(--size-6);
+
+  border-color: var(--MapLabelOutline);
+  background: var(--BackgroundStrong);
+  white-space: nowrap;
+}
+
+.mob-popup--confirm .mob-popup__bar {
+  /* XAML: StackPanel Orientation="Horizontal" */
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.mob-popup--confirm .mob-popup__text {
+  /* XAML: TextBlock Margin="12,0" */
+  padding: 0 var(--size-12);
+  color: var(--ForegroundPrimary);
+  font: var(--font-default);
+}
+
+.mob-popup--confirm .mob-popup__btn {
+  /* XAML: Button Width/Height="TouchSize" */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--touch);
+  height: var(--touch);
+  border: none;
+  background: transparent;
+  color: var(--ForegroundPrimary);
+  cursor: pointer;
+  transition: background-color var(--transition-mouse-out) ease;
+}
+
+.mob-popup--confirm .mob-popup__btn:hover,
+.mob-popup--confirm .mob-popup__btn.is-hovered {
+  background-color: var(--MouseOverBackground);
+  transition-duration: var(--transition-mouse-over);
+}
+
+.mob-popup--confirm .mob-popup__btn--action {
+  /* XAML: Background="BackgroundPrimaryBrush" on confirm button */
+  background: var(--BackgroundPrimary);
+}
+
+.mob-popup--confirm .mob-popup__btn--action:hover,
+.mob-popup--confirm .mob-popup__btn--action.is-hovered {
+  background-color: var(--MouseOverBackground);
+}
+
+
+/* =============================================
+   3. SUGGESTION LIST POPUP
+   XAML: SuggestionTextBox.xaml — PART_SuggestionsPopup
+     <Popup StaysOpen="False"
+            Width="{Binding ActualWidth}">
+       <ListBox MaxHeight="MaximumPopupHeight"
+                ItemContainerStyle="SuggestionListBoxItemStyle">
+         <DataTemplate>
+           <Grid ToolTip="{Text}">
+             <TextBlock Text="{Text}" />
+             <TextBlock Opacity=".6" Text="{Count}" />
+           </Grid>
+         </DataTemplate>
+       </ListBox>
+     </Popup>
+   ListBoxItem states: Normal, MouseOver (opacity 0.3), Selected, Disabled
+   ============================================= */
+
+.mob-popup--suggest {
+  /* XAML: Placement below text input, width matches parent */
+  top: 100%;
+  left: 0;
+  width: 100%;
+  max-height: 220px;
+  overflow-y: auto;
+  padding: 0;
+}
+
+.mob-popup--suggest .mob-popup__suggestion {
+  /* XAML: SuggestionListBoxItemStyle — Grid row with columns */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: var(--field-height);
+  padding: 0 var(--spacing-label-to-control-sm);
+  color: var(--ForegroundPrimary);
+  font: var(--font-default);
+  cursor: pointer;
+  position: relative;
+  transition: background-color var(--transition-mouse-out) ease;
+}
+
+.mob-popup--suggest .mob-popup__suggestion::before {
+  /* XAML: _mouseOverElement — MouseOverPrimary overlay at opacity 0 → 0.3 */
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--MouseOverPrimary);
+  opacity: 0;
+  transition: opacity var(--transition-mouse-out) ease;
+  pointer-events: none;
+}
+
+.mob-popup--suggest .mob-popup__suggestion:hover::before,
+.mob-popup--suggest .mob-popup__suggestion.is-hovered::before {
+  opacity: 0.3;
+  transition-duration: var(--transition-mouse-over);
+}
+
+.mob-popup--suggest .mob-popup__suggestion.is-selected {
+  /* XAML: _selectionElement — SelectionPrimary background */
+  background: var(--SelectionPrimary);
+  color: var(--SelectionForeground);
+}
+
+.mob-popup--suggest .mob-popup__suggestion.is-disabled {
+  opacity: var(--opacity-disabled);
+  pointer-events: none;
+}
+
+.mob-popup--suggest .mob-popup__suggestion-text {
+  /* XAML: TextBlock Text="{Text}" with CharacterEllipsis */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+
+.mob-popup--suggest .mob-popup__suggestion-count {
+  /* XAML: TextBlock Opacity=".6" — count badge */
+  opacity: 0.6;
+  margin-left: var(--size-12);
+  flex-shrink: 0;
+}
+
+
+/* =============================================
+   4. TIME / DURATION PICKER POPUP
+   XAML: ClockBasedTimePicker.xaml — Popup
+     <Popup StaysOpen="False" PopupAnimation="Fade"
+            Placement="Bottom" AllowsTransparency="True">
+       <Border Background="BackgroundStrongBrush" Margin="10">
+         <DropShadowEffect BlurRadius="10" ShadowDepth="0"
+                           Color="ShadowElements" />
+         <Grid>
+           <TextBlock Style="PopupTitle"
+                      Padding="24,12" FontSize="18"
+                      Background="BackgroundPrimaryBrush"
+                      Foreground="ForegroundPrimaryBrush" />
+           <ClockBasedTimePickerInput Margin="24,0" />
+         </Grid>
+       </Border>
+     </Popup>
+   ============================================= */
+
+.mob-popup--picker {
+  /* XAML: Placement="Bottom" */
+  top: 100%;
+  left: 0;
+  padding: 0;
+}
+
+.mob-popup--picker .mob-popup__title {
+  /* XAML: TextBlock Style="PopupTitle" Padding="24,12" FontSize="18" */
+  padding: var(--size-12) var(--size-24);
+  font-size: 18px;
+  font-family: var(--font-regular);
+  background: var(--BackgroundPrimary);
+  color: var(--ForegroundPrimary);
+}
+
+.mob-popup--picker .mob-popup__body {
+  /* XAML: ClockBasedTimePickerInput Margin="24,0" */
+  padding: 0 var(--size-24) var(--size-24);
+}
+
+
+/* =============================================
+   5. INLINE EDITOR POPUP (PathBuilder)
+   XAML: *ElementEditorTemplate.xaml, EditPathNameAndTurnRadius.xaml,
+         PathDurationLineItem.xaml, PathSelectorControl.xaml, PathTagsManagerControl.xaml
+     Common pattern:
+       <Popup AllowsTransparency="True" PopupAnimation="Fade" StaysOpen="False">
+         <Grid Margin="20">
+           <common:BoxShadow />
+           <Border Background="BackgroundStrongBrush">
+             <StackPanel Width="260–325" Margin="20,13">
+               <SwitchToggle />         (optional Custom/Default)
+               <FieldInput />           (value + unit)
+               <FieldInput />           (start distance)
+             </StackPanel>
+           </Border>
+         </Grid>
+       </Popup>
+   Trigger: PopupToggleButton with VSM (Normal, MouseOver, Pressed, Disabled)
+   ============================================= */
+
+.mob-popup--editor {
+  /* XAML: Placement via MenuAlignmentInverter — default below trigger */
+  /* XAML: StackPanel Width="325" + Margin="20,13" → 325 content + 40 padding = 365 total */
+  top: 100%;
+  left: 0;
+  width: 365px;
+  padding: var(--size-12) var(--size-20);
+  box-sizing: border-box;
+}
+
+.mob-popup--editor.mob-popup--editor-narrow {
+  /* XAML: StackPanel Width="260" + Margin="20,13" → 300 total */
+  width: 300px;
+}
+
+.mob-popup--editor.mob-popup--editor-md {
+  /* XAML: StackPanel Width="300" + Margin="20,13" → 340 total */
+  width: 340px;
+}
+
+.mob-popup--editor .mob-popup__field {
+  /* XAML: FieldInput — single form field row */
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-label-to-control-sm);
+  margin-bottom: var(--spacing-label-to-control-md);
+}
+
+.mob-popup--editor .mob-popup__field:last-child {
+  margin-bottom: 0;
+}
+
+.mob-popup--editor .mob-popup__field-label {
+  /* XAML: FieldInput header label */
+  font: var(--font-captionSm);
+  color: var(--ForegroundPrimary);
+}
+
+.mob-popup--editor .mob-popup__field-input {
+  /* XAML: FieldInput TextBox */
+  height: var(--field-height);
+  padding: 0 var(--size-12);
+  border: var(--border-width) solid var(--BackgroundInputOutline);
+  border-radius: 0;
+  background: var(--BackgroundInput);
+  color: var(--ForegroundStrong);
+  font: var(--font-default);
+  box-sizing: border-box;
+  min-width: 0;
+  flex: 1;
+}
+
+.mob-popup--editor .mob-popup__field-input:focus {
+  outline: none;
+  border-color: var(--SelectionPrimary);
+}
+
+.mob-popup--editor .mob-popup__field-input.is-disabled,
+.mob-popup--editor .mob-popup__field-input:disabled {
+  opacity: var(--opacity-disabled);
+  pointer-events: none;
+}
+
+.mob-popup--editor .mob-popup__field-row {
+  /* XAML: FieldInput with unit suffix — horizontal layout */
+  display: flex;
+  align-items: center;
+  gap: var(--size-6);
+}
+
+.mob-popup--editor .mob-popup__field-unit {
+  /* XAML: unit suffix label (m, m/s², km/h) */
+  font: var(--font-captionSm);
+  color: var(--ForegroundWatermark);
+  flex-shrink: 0;
+}
+
+.mob-popup--editor .mob-popup__switch {
+  /* XAML: SwitchToggle — Custom/Default toggle row */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-label-to-control-md);
+}
+
+.mob-popup--editor .mob-popup__switch-label {
+  font: var(--font-default);
+  color: var(--ForegroundPrimary);
+}
+
+/* PopupToggleButton trigger — the clickable element that opens the popup */
+.mob-popup__trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--size-6);
+  height: var(--field-height);
+  padding: 0 var(--size-12);
+  border: var(--border-width) solid transparent;
+  background: transparent;
+  color: var(--ForegroundPrimary);
+  font: var(--font-default);
+  cursor: pointer;
+  transition: background-color var(--transition-mouse-out) ease,
+              border-color var(--transition-mouse-out) ease;
+}
+
+.mob-popup__trigger:hover,
+.mob-popup__trigger.is-hovered {
+  background-color: var(--MouseOverBackground);
+  transition-duration: var(--transition-mouse-over);
+}
+
+.mob-popup__trigger.is-pressed,
+.mob-popup__trigger.is-open {
+  border-color: var(--SelectionPrimary);
+  background-color: var(--SelectionPrimary);
+  color: var(--SelectionForeground);
+}
+
+.mob-popup__trigger.is-disabled {
+  opacity: var(--opacity-disabled);
+  pointer-events: none;
+}
+
+.mob-popup__trigger-icon {
+  /* XAML: Path icon inside PopupToggleButton */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--icon-lg);
+  height: var(--icon-lg);
+  flex-shrink: 0;
+}
+
+.mob-popup__trigger-separator {
+  /* XAML: "@" TextBlock between value and distance */
+  color: var(--ForegroundWatermark);
+  margin: 0 var(--size-3);
+}
+
+
+/* =============================================
+   6. SETTINGS PANEL POPUP (Haulage / Mining)
+   XAML: HaulageTemplates.xaml, LoaderPreferencesTemplate.xaml
+     Common pattern:
+       <Popup Placement="Center" StaysOpen="True|False">
+         <StackPanel>
+           <Grid Margin="20">
+             <common:BoxShadow />
+             <Border Background="BackgroundStrongBrush">
+               <TextBlock Style="HeadingMd" />
+               <StackPanel Orientation="Horizontal">
+                 <ToggleButton Style="IconToggleButton" />  ×N
+               </StackPanel>
+             </Border>
+           </Grid>
+         </StackPanel>
+       </Popup>
+   Toggle buttons: 50×50 or 75×80 icon + label, single-select
+   ============================================= */
+
+.mob-popup--settings {
+  /* XAML: Placement="Center" — appears beside trigger */
+  top: 50%;
+  left: 100%;
+  transform: translateY(-50%);
+  margin-left: var(--size-6);
+  padding: 0;
+}
+
+.mob-popup--settings .mob-popup__heading {
+  /* XAML: TextBlock Style="HeadingMd" */
+  padding: var(--size-12) var(--size-20);
+  font: var(--font-hdrSm);
+  color: var(--ForegroundStrong);
+  border-bottom: var(--line-size) solid var(--InnerLines);
+}
+
+.mob-popup--settings .mob-popup__options {
+  /* XAML: StackPanel Orientation="Horizontal" of ToggleButtons */
+  display: flex;
+  gap: 0;
+  padding: var(--size-12) var(--size-20);
+}
+
+.mob-popup--settings .mob-popup__option {
+  /* XAML: ToggleButton Style="IconToggleButton" or "VerticalIconToggleButton" */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--size-6);
+  padding: var(--size-6) var(--size-12);
+  border: var(--border-width) solid transparent;
+  background: transparent;
+  color: var(--ForegroundPrimary);
+  font: var(--font-captionSm);
+  cursor: pointer;
+  min-width: 75px;
+  transition: background-color var(--transition-mouse-out) ease,
+              border-color var(--transition-mouse-out) ease;
+}
+
+.mob-popup--settings .mob-popup__option:hover,
+.mob-popup--settings .mob-popup__option.is-hovered {
+  background-color: var(--MouseOverBackground);
+  transition-duration: var(--transition-mouse-over);
+}
+
+.mob-popup--settings .mob-popup__option.is-selected {
+  border-color: var(--SelectionPrimary);
+  background-color: color-mix(in srgb, var(--SelectionPrimary) 10%, transparent);
+}
+
+.mob-popup--settings .mob-popup__option.is-disabled {
+  opacity: var(--opacity-disabled);
+  pointer-events: none;
+}
+
+.mob-popup--settings .mob-popup__option-icon {
+  /* XAML: Border 50×50 with Path icon */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  border: var(--border-width) solid var(--BackgroundInputOutline);
+  background: var(--BackgroundPrimary);
+  color: var(--ForegroundPrimary);
+  font-size: 24px;
+}
+
+.mob-popup--settings .mob-popup__option-label {
+  /* XAML: TextBlock label below icon */
+  font: var(--font-captionSm);
+  color: var(--ForegroundPrimary);
+  text-align: center;
+}
+
+
+/* =============================================
+   7. LOCK LIST POPUP (Vehicle Lockout)
+   XAML: VehicleLockTemplates.xaml — VehicleLockDetailVM
+     <Popup IsOpen="True" AllowsTransparency="True" StaysOpen="False">
+       <Grid Margin="20">
+         <common:BoxShadow />
+         <Border Background="BackgroundStrongBrush">
+           <SortableGroupListView MaxHeight="(53 × 8.5)">
+             <DataTemplate: VehicleLockItem />
+           </SortableGroupListView>
+         </Border>
+       </Grid>
+     </Popup>
+   Items: 53px row height, grouped with headers, virtualized
+   ============================================= */
+
+.mob-popup--list {
+  /* XAML: Positioned via Canvas transforms — using bottom placement */
+  top: 100%;
+  left: 0;
+  width: 320px;
+  max-height: 451px;  /* XAML: 53 × 8.5 = 450.5 */
+  overflow-y: auto;
+  padding: 0;
+}
+
+.mob-popup--list .mob-popup__group-header {
+  /* XAML: GroupStyle ContainerStyle — group heading */
+  padding: var(--size-6) var(--size-12);
+  font: var(--font-captionSm);
+  font-weight: var(--font-bold);
+  color: var(--ForegroundWatermark);
+  background: var(--BackgroundStepTwo);
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.mob-popup--list .mob-popup__list-item {
+  /* XAML: VehicleLockItem — 53px row height */
+  display: flex;
+  align-items: center;
+  height: 53px;
+  padding: 0 var(--size-12);
+  gap: var(--size-12);
+  border-bottom: var(--line-size) solid var(--InnerLines);
+  color: var(--ForegroundPrimary);
+  font: var(--font-default);
+  cursor: pointer;
+  position: relative;
+  transition: background-color var(--transition-mouse-out) ease;
+}
+
+.mob-popup--list .mob-popup__list-item::before {
+  /* XAML: MouseOverPrimary overlay */
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--MouseOverPrimary);
+  opacity: 0;
+  transition: opacity var(--transition-mouse-out) ease;
+  pointer-events: none;
+}
+
+.mob-popup--list .mob-popup__list-item:hover::before,
+.mob-popup--list .mob-popup__list-item.is-hovered::before {
+  opacity: 0.3;
+  transition-duration: var(--transition-mouse-over);
+}
+
+.mob-popup--list .mob-popup__list-item.is-selected {
+  background: var(--SelectionPrimary);
+  color: var(--SelectionForeground);
+}
+
+.mob-popup--list .mob-popup__list-item-icon {
+  /* XAML: icon/status indicator in list item */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--icon-lg);
+  height: var(--icon-lg);
+  flex-shrink: 0;
+}
+
+.mob-popup--list .mob-popup__list-item-text {
+  /* XAML: TextBlock — primary text */
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mob-popup--list .mob-popup__list-item-meta {
+  /* XAML: secondary text (date, status) */
+  font: var(--font-captionSm);
+  color: var(--ForegroundWatermark);
+  flex-shrink: 0;
+}

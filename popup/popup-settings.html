@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mobius — Popup: Settings Panel (Haulage)</title>
+  <link id="mob-theme-link" rel="stylesheet" href="../styles/LightTheme.css" />
+  <link rel="stylesheet" href="../styles/base.css" />
+  <link rel="stylesheet" href="popup.css" />
+  <style>
+    body { margin: 0; }
+    h1 { font: var(--font-hdrMd); margin: 0 0 32px; color: var(--ForegroundStrong); }
+    h2 { font: var(--font-hdrSm); margin: 40px 0 16px; color: var(--ForegroundStrong); }
+    h2:first-of-type { margin-top: 0; }
+    .demo-label { font: var(--font-captionSm); color: var(--ForegroundPrimary); margin-bottom: var(--spacing-label-to-control-sm); }
+    .section-divider { border: none; border-top: var(--line-size) solid var(--InnerLines); margin: 32px 0 0; }
+    code { font-family: "Roboto Mono", monospace; font-size: 12px; background: var(--BackgroundStepOne); padding: 2px 6px; border-radius: 3px; }
+    .xaml-note { font: var(--font-captionSm); color: var(--ForegroundWatermark); margin-top: var(--spacing-label-to-control-sm); }
+    .demo-row { display: flex; flex-wrap: wrap; gap: var(--spacing-section-to-section); align-items: flex-start; margin-top: var(--spacing-label-to-control-md); }
+    .demo-block { display: flex; flex-direction: column; gap: var(--spacing-label-to-control-sm); }
+    .demo-block__label { font: var(--font-captionSm); font-weight: var(--font-bold); color: var(--ForegroundStrong); }
+    .demo-arena { padding: 40px; min-height: 80px; }
+    .demo-hint { display: inline-block; font: var(--font-captionSm); color: var(--SelectionSecondary); background: color-mix(in srgb, var(--SelectionPrimary) 8%, transparent); border: var(--border-width) solid color-mix(in srgb, var(--SelectionPrimary) 20%, transparent); border-radius: var(--size-3); padding: 2px 8px; margin-bottom: var(--spacing-label-to-control-sm); }
+  </style>
+</head>
+<body>
+<div class="mob-layout">
+  <nav class="mob-nav" id="mob-nav"></nav>
+  <main class="mob-layout__content">
+    <h1>Settings Panel Popup (Haulage)</h1>
+    <p>Icon-and-label toggle button panels used in the Haulage/Mining plugin. A trigger button opens a popup containing a heading and a row of selectable icon options. Selection is single-choice (radio-style). Used for operational settings like spot point distance, loading type, and cusping direction.</p>
+
+    <h2>Interactive Demos</h2>
+    <div class="demo-row">
+      <!-- Demo 1: Spot Point Distance -->
+      <div class="demo-block">
+        <span class="demo-block__label">Spot Point Distance</span>
+        <span class="demo-hint">HaulageTemplates.xaml</span>
+        <div class="demo-arena">
+          <div class="mob-popup-anchor" data-popup="click">
+            <button class="mob-popup__trigger">Spot Distance</button>
+            <div class="mob-popup mob-popup--settings">
+              <div class="mob-popup__heading">Spot Point Distance</div>
+              <div class="mob-popup__options">
+                <button class="mob-popup__option">
+                  <span class="mob-popup__option-icon">&#8676;</span>
+                  <span class="mob-popup__option-label">Near</span>
+                </button>
+                <button class="mob-popup__option is-selected">
+                  <span class="mob-popup__option-icon">&#8596;</span>
+                  <span class="mob-popup__option-label">Medium</span>
+                </button>
+                <button class="mob-popup__option">
+                  <span class="mob-popup__option-icon">&#8677;</span>
+                  <span class="mob-popup__option-label">Far</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <span class="xaml-note">SelectSpotPointDistanceButton, StaysOpen="True"</span>
+      </div>
+
+      <!-- Demo 2: Load Queue Settings -->
+      <div class="demo-block">
+        <span class="demo-block__label">Load Queue Settings</span>
+        <span class="demo-hint">HaulageTemplates.xaml</span>
+        <div class="demo-arena">
+          <div class="mob-popup-anchor" data-popup="click">
+            <button class="mob-popup__trigger">Queue Settings</button>
+            <div class="mob-popup mob-popup--settings">
+              <div class="mob-popup__heading">Advanced Cusping</div>
+              <div class="mob-popup__options">
+                <button class="mob-popup__option">
+                  <span class="mob-popup__option-icon">&#10003;</span>
+                  <span class="mob-popup__option-label">Enable</span>
+                </button>
+                <button class="mob-popup__option is-selected">
+                  <span class="mob-popup__option-icon">&#10007;</span>
+                  <span class="mob-popup__option-label">Disable</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <span class="xaml-note">LoadQueueSettingsButton, StaysOpen="True"</span>
+      </div>
+
+      <!-- Demo 3: Bench Loading Type -->
+      <div class="demo-block">
+        <span class="demo-block__label">Bench Loading Type</span>
+        <span class="demo-hint">HaulageTemplates.xaml</span>
+        <div class="demo-arena">
+          <div class="mob-popup-anchor" data-popup="click">
+            <button class="mob-popup__trigger">Loading Type</button>
+            <div class="mob-popup mob-popup--settings">
+              <div class="mob-popup__heading">Bench Loading Type</div>
+              <div class="mob-popup__options">
+                <button class="mob-popup__option">
+                  <span class="mob-popup__option-icon">&#9744;</span>
+                  <span class="mob-popup__option-label">None</span>
+                </button>
+                <button class="mob-popup__option is-selected">
+                  <span class="mob-popup__option-icon">&#9650;</span>
+                  <span class="mob-popup__option-label">Top</span>
+                </button>
+                <button class="mob-popup__option">
+                  <span class="mob-popup__option-icon">&#9654;</span>
+                  <span class="mob-popup__option-label">Face</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <span class="xaml-note">SelectBenchLoadingTypeButton, StaysOpen="True"</span>
+      </div>
+
+      <!-- Demo 4: Auto Cusping Type -->
+      <div class="demo-block">
+        <span class="demo-block__label">Auto Cusping Type</span>
+        <span class="demo-hint">HaulageTemplates.xaml</span>
+        <div class="demo-arena">
+          <div class="mob-popup-anchor" data-popup="click">
+            <button class="mob-popup__trigger">Cusping Type</button>
+            <div class="mob-popup mob-popup--settings">
+              <div class="mob-popup__heading">Auto Cusping Type</div>
+              <div class="mob-popup__options">
+                <button class="mob-popup__option">
+                  <span class="mob-popup__option-icon">&#9995;</span>
+                  <span class="mob-popup__option-label">Manual</span>
+                </button>
+                <button class="mob-popup__option">
+                  <span class="mob-popup__option-icon">&#8592;</span>
+                  <span class="mob-popup__option-label">Left</span>
+                </button>
+                <button class="mob-popup__option is-selected">
+                  <span class="mob-popup__option-icon">&#8593;</span>
+                  <span class="mob-popup__option-label">Straight</span>
+                </button>
+                <button class="mob-popup__option">
+                  <span class="mob-popup__option-icon">&#8594;</span>
+                  <span class="mob-popup__option-label">Right</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <span class="xaml-note">SelectAutoCuspingTypeButton, StaysOpen="False"</span>
+      </div>
+
+      <!-- Demo 5: Loader Preferences -->
+      <div class="demo-block">
+        <span class="demo-block__label">Loader Preferences</span>
+        <span class="demo-hint">LoaderPreferencesTemplate.xaml</span>
+        <div class="demo-arena">
+          <div class="mob-popup-anchor" data-popup="click">
+            <button class="mob-popup__trigger">Loader Prefs</button>
+            <div class="mob-popup mob-popup--settings">
+              <div class="mob-popup__heading">Loader Preferences</div>
+              <div class="mob-popup__options">
+                <button class="mob-popup__option">
+                  <span class="mob-popup__option-icon">&#9733;</span>
+                  <span class="mob-popup__option-label">Priority</span>
+                </button>
+                <button class="mob-popup__option is-selected">
+                  <span class="mob-popup__option-icon">&#9878;</span>
+                  <span class="mob-popup__option-label">Balanced</span>
+                </button>
+                <button class="mob-popup__option">
+                  <span class="mob-popup__option-icon">&#9881;</span>
+                  <span class="mob-popup__option-label">Economy</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <span class="xaml-note">LoaderPreferencesButton, StaysOpen="False"</span>
+      </div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>Anatomy</h2>
+    <p><strong>CSS Classes:</strong></p>
+    <ul>
+      <li><code>.mob-popup-anchor</code> — wrapper for relative positioning</li>
+      <li><code>.mob-popup</code> — base popup container</li>
+      <li><code>.mob-popup--settings</code> — settings panel variant</li>
+      <li><code>.mob-popup__trigger</code> — trigger button</li>
+      <li><code>.mob-popup__heading</code> — panel heading text</li>
+      <li><code>.mob-popup__options</code> — horizontal row of toggle buttons</li>
+      <li><code>.mob-popup__option</code> — individual toggle button</li>
+      <li><code>.mob-popup__option-icon</code> — 50×50 icon box</li>
+      <li><code>.mob-popup__option-label</code> — label below icon</li>
+      <li><code>.is-open</code> — show the popup</li>
+      <li><code>.is-selected</code> — active option</li>
+    </ul>
+
+    <p><strong>XAML → CSS Mapping:</strong></p>
+    <ul>
+      <li><code>Placement="Center"</code> → <code>top: 50%; left: 100%; transform: translateY(-50%)</code></li>
+      <li><code>ToggleButton Style="IconToggleButton"</code> → <code>.mob-popup__option</code></li>
+      <li><code>Border 50×50</code> → <code>.mob-popup__option-icon</code></li>
+      <li><code>TextBlock Style="HeadingMd"</code> → <code>.mob-popup__heading</code></li>
+      <li><code>StaysOpen="True"</code> → popup stays open (demo JS handles this)</li>
+    </ul>
+
+    <p><strong>HTML Structure:</strong></p>
+    <pre><code>&lt;div class="mob-popup-anchor"&gt;
+  &lt;button class="mob-popup__trigger"&gt;Trigger Label&lt;/button&gt;
+  &lt;div class="mob-popup mob-popup--settings"&gt;
+    &lt;div class="mob-popup__heading"&gt;Panel Title&lt;/div&gt;
+    &lt;div class="mob-popup__options"&gt;
+      &lt;button class="mob-popup__option is-selected"&gt;
+        &lt;span class="mob-popup__option-icon"&gt;icon&lt;/span&gt;
+        &lt;span class="mob-popup__option-label"&gt;Label&lt;/span&gt;
+      &lt;/button&gt;
+      ...more options...
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+
+    <p><strong>XAML Source Files:</strong></p>
+    <ul>
+      <li>HaulageTemplates.xaml (SpotPointDistance, LoadQueueSettings, BenchLoadingType, AutoCuspingType)</li>
+      <li>LoaderPreferencesTemplate.xaml</li>
+    </ul>
+
+  </main>
+</div>
+
+<script src="../styles/nav.js"></script>
+<script>
+(function () {
+  // Click-to-toggle popups
+  document.querySelectorAll('[data-popup="click"]').forEach(function (anchor) {
+    var trigger = anchor.querySelector('.mob-popup__trigger');
+    var popup = anchor.querySelector('.mob-popup');
+    trigger.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var isOpen = popup.classList.contains('is-open');
+      document.querySelectorAll('.mob-popup.is-open').forEach(function (p) { p.classList.remove('is-open'); });
+      document.querySelectorAll('.mob-popup__trigger.is-open').forEach(function (t) { t.classList.remove('is-open'); });
+      if (!isOpen) {
+        popup.classList.add('is-open');
+        trigger.classList.add('is-open');
+      }
+    });
+  });
+  // Single-select within each options group
+  document.querySelectorAll('.mob-popup__options').forEach(function (group) {
+    group.querySelectorAll('.mob-popup__option').forEach(function (opt) {
+      opt.addEventListener('click', function (e) {
+        e.stopPropagation();
+        group.querySelectorAll('.mob-popup__option').forEach(function (o) { o.classList.remove('is-selected'); });
+        opt.classList.add('is-selected');
+      });
+    });
+  });
+  // Close on outside click
+  document.addEventListener('click', function () {
+    document.querySelectorAll('.mob-popup.is-open').forEach(function (p) { p.classList.remove('is-open'); });
+    document.querySelectorAll('.mob-popup__trigger.is-open').forEach(function (t) { t.classList.remove('is-open'); });
+  });
+})();
+</script>
+</body>
+</html>

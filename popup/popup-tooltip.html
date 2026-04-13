@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mobius — Popup: Tooltip</title>
+  <link id="mob-theme-link" rel="stylesheet" href="../styles/LightTheme.css" />
+  <link rel="stylesheet" href="../styles/base.css" />
+  <link rel="stylesheet" href="popup.css" />
+  <style>
+    body { margin: 0; }
+    h1 {
+      font: var(--font-hdrMd);
+      margin: 0 0 32px;
+      color: var(--ForegroundStrong);
+    }
+    h2 {
+      font: var(--font-hdrSm);
+      margin: 40px 0 16px;
+      color: var(--ForegroundStrong);
+    }
+    h2:first-of-type { margin-top: 0; }
+    .demo-label {
+      font: var(--font-captionSm);
+      color: var(--ForegroundPrimary);
+      margin-bottom: var(--spacing-label-to-control-sm);
+    }
+    .section-divider {
+      border: none;
+      border-top: var(--line-size) solid var(--InnerLines);
+      margin: 32px 0 0;
+    }
+    code {
+      font-family: "Roboto Mono", monospace;
+      font-size: 12px;
+      background: var(--BackgroundStepOne);
+      padding: 2px 6px;
+      border-radius: 3px;
+    }
+    .xaml-note {
+      font: var(--font-captionSm);
+      color: var(--ForegroundWatermark);
+      margin-top: var(--spacing-label-to-control-sm);
+    }
+    .demo-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--spacing-section-to-section);
+      align-items: flex-start;
+      margin-top: var(--spacing-label-to-control-md);
+    }
+    .demo-block {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-label-to-control-sm);
+    }
+    .demo-block__label {
+      font: var(--font-captionSm);
+      font-weight: var(--font-bold);
+      color: var(--ForegroundStrong);
+    }
+    .demo-arena {
+      padding: 60px 40px 40px 200px;
+      min-height: 80px;
+    }
+    .demo-hint {
+      display: inline-block;
+      font: var(--font-captionSm);
+      color: var(--SelectionSecondary);
+      background: color-mix(in srgb, var(--SelectionPrimary) 8%, transparent);
+      border: var(--border-width) solid color-mix(in srgb, var(--SelectionPrimary) 20%, transparent);
+      border-radius: var(--size-3);
+      padding: 2px 8px;
+      margin-bottom: var(--spacing-label-to-control-sm);
+    }
+  </style>
+</head>
+<body>
+
+<div class="mob-layout">
+
+  <!-- Sidebar Navigation -->
+  <nav class="mob-nav" id="mob-nav"></nav>
+
+  <!-- Main Content -->
+  <main class="mob-layout__content">
+
+<h1>Tooltip / Details Popup</h1>
+<p class="demo-label">
+  Inverted-color tooltip placed to the left of the trigger. Used by <code>DetailsPopUp</code> controls
+  (e.g., warning/info symbols on <code>SuggestionTextBox</code>). Max width 320px, text wraps.
+</p>
+
+
+<!-- =========================================================
+     XAML SOURCE
+     Source: DetailsPopUp.xaml — Mobius_UI_Common_DetailsPopUp
+       <Popup Placement="Left" PopupAnimation="Fade" AllowsTransparency="True">
+         <Border Background="BackgroundInvertPrimaryBrush"
+                 BorderBrush="BackgroundInvertOutlineBrush"
+                 BorderThickness="1">
+           <TextBlock Margin.All="6" Foreground="ForegroundInvertPrimaryBrush"
+                      TextWrapping="Wrap" />
+         </Border>
+       </Popup>
+     Style defaults:
+       HorizontalOffset="11"
+       VerticalOffset="-44"
+       PopUpWidth="NaN"
+       MaxWidth="320"
+     ========================================================= -->
+
+
+<h2>Interactive Demos</h2>
+
+<div class="demo-row">
+
+  <!-- Warning tooltip -->
+  <div class="demo-block">
+    <span class="demo-hint">Hover the icon</span>
+    <div class="demo-arena">
+      <!-- XAML: DetailsPopUp.Grid — trigger element -->
+      <div class="mob-popup-anchor" data-popup="hover">
+        <!-- XAML: WarningSymbol — Icon_Status_WarningSm, Fill=InformationOrangeBrush -->
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:var(--icon-lg);height:var(--icon-lg);color:var(--InformationOrange);font-size:20px;cursor:help;">&#9888;</span>
+        <!-- XAML: DetailsPopUp.Popup — Placement="Left", PopupAnimation="Fade" -->
+        <div class="mob-popup mob-popup--tooltip">
+          <!-- XAML: DetailsPopUp.Border > TextBlock Message="{TemplateBinding Message}" -->
+          This field has a warning. The value entered may conflict with existing path assignments.
+        </div>
+      </div>
+    </div>
+    <span class="xaml-note">XAML: DetailsPopUp — <code>WarningSymbol</code> + <code>InformationOrange</code></span>
+  </div>
+
+  <!-- Info tooltip -->
+  <div class="demo-block">
+    <span class="demo-hint">Hover the icon</span>
+    <div class="demo-arena">
+      <!-- XAML: DetailsPopUp.Grid — info variant -->
+      <div class="mob-popup-anchor" data-popup="hover">
+        <!-- XAML: InfoSymbol — Icon_Status_CautionSm, Fill=InformationYellowBrush -->
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:var(--icon-lg);height:var(--icon-lg);color:var(--InformationYellow);font-size:20px;cursor:help;">&#9432;</span>
+        <div class="mob-popup mob-popup--tooltip">
+          Shape name already exists. 3 shapes share this name across the current map.
+        </div>
+      </div>
+    </div>
+    <span class="xaml-note">XAML: DetailsPopUp — <code>InfoSymbol</code> + <code>InformationYellow</code></span>
+  </div>
+
+  <!-- Working/OK tooltip -->
+  <div class="demo-block">
+    <span class="demo-hint">Hover the icon</span>
+    <div class="demo-arena">
+      <!-- XAML: DetailsPopUp.Grid — working/ok variant -->
+      <div class="mob-popup-anchor" data-popup="hover">
+        <!-- XAML: WorkingSymbol — Icon_Status_OkaySm, Fill=InformationGreenBrush -->
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:var(--icon-lg);height:var(--icon-lg);color:var(--InformationGreen);font-size:20px;cursor:help;">&#10003;</span>
+        <div class="mob-popup mob-popup--tooltip">
+          Value accepted. Path assignment validated successfully.
+        </div>
+      </div>
+    </div>
+    <span class="xaml-note">XAML: DetailsPopUp — <code>WorkingSymbol</code> + <code>InformationGreen</code></span>
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<h2>Anatomy</h2>
+
+<div class="demo-row">
+  <div class="demo-block" style="max-width:680px;">
+    <span class="demo-block__label">CSS Classes</span>
+    <p class="demo-label">
+      <code>.mob-popup-anchor</code> — wrapper for relative positioning<br/>
+      <code>.mob-popup</code> — base popup container<br/>
+      <code>.mob-popup--tooltip</code> — tooltip variant (left-placed, inverted colors)<br/>
+      <code>.is-open</code> — show the tooltip
+    </p>
+
+    <span class="demo-block__label" style="margin-top:var(--spacing-label-to-control-md);">XAML → CSS Mapping</span>
+    <p class="demo-label">
+      <code>Placement="Left"</code> → <code>right: 100%; transform: translateY(-50%)</code><br/>
+      <code>HorizontalOffset="11"</code> → <code>margin-right: var(--spacing-label-to-control)</code><br/>
+      <code>MaxWidth="320"</code> → <code>max-width: 320px</code><br/>
+      <code>Margin.All="6"</code> → <code>padding: var(--size-6)</code><br/>
+      <code>BackgroundInvertPrimaryBrush</code> → <code>var(--BackgroundInvertPrimary)</code><br/>
+      <code>BackgroundInvertOutlineBrush</code> → <code>var(--BackgroundInvertOutline)</code><br/>
+      <code>ForegroundInvertPrimaryBrush</code> → <code>var(--ForegroundInvertPrimary)</code><br/>
+      <code>PopupAnimation="Fade"</code> → <code>transition: opacity var(--transition-fade)</code>
+    </p>
+
+    <span class="demo-block__label" style="margin-top:var(--spacing-label-to-control-md);">HTML Structure</span>
+    <p class="demo-label">
+      <code>&lt;div class="mob-popup-anchor"&gt;</code><br/>
+      &nbsp;&nbsp;<code>&lt;span&gt;</code> trigger icon <code>&lt;/span&gt;</code><br/>
+      &nbsp;&nbsp;<code>&lt;div class="mob-popup mob-popup--tooltip"&gt;</code><br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;Tooltip message text<br/>
+      &nbsp;&nbsp;<code>&lt;/div&gt;</code><br/>
+      <code>&lt;/div&gt;</code>
+    </p>
+  </div>
+</div>
+
+
+  </main>
+</div>
+
+<script src="../styles/nav.js"></script>
+<script>
+(function () {
+  document.querySelectorAll('[data-popup="hover"]').forEach(function (anchor) {
+    var popup = anchor.querySelector('.mob-popup');
+    anchor.addEventListener('mouseenter', function () { popup.classList.add('is-open'); });
+    anchor.addEventListener('mouseleave', function () { popup.classList.remove('is-open'); });
+  });
+})();
+</script>
+
+</body>
+</html>
