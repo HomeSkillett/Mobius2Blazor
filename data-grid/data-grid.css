@@ -1,16 +1,17 @@
-/* data-grid.css — WPF DataGrid + SimpleSortListView tables
-   Sources: YmsMoveContainer.xaml, ErrorDescriptorTableView.xaml,
-            TelemetryItemTableView.xaml, GlobalTelemetryTableView.xaml,
-            NodeConfigurationView.xaml, DefaultControls.xaml, Typography.xaml
+/* data-grid.css — SimpleSortListView / GridView tables
+   Sources: DefaultControls.xaml (GridViewColumnHeader template,
+            SimpleSortListView style, GridViewListViewItem style),
+            Typography.xaml (TextBlock_Meta: Bold + Uppercase)
+   Views:   ErrorDescriptorTableView.xaml, TelemetryItemTableView.xaml,
+            GlobalTelemetryTableView.xaml, NodeConfigurationView.xaml,
+            PlaybackManagerControl.xaml, NotificationSettingsManagerControl.xaml,
+            InternalNotificationPanel.xaml
    ====================================================================== */
 
 
 /* ==============================================
    TABLE CONTAINER
-   XAML: <DataGrid AutoGenerateColumns="False"
-                   IsReadOnly="True"
-                   GridLinesVisibility="Horizontal"
-                   HeadersVisibility="Column">
+   XAML: <SimpleSortListView> wrapping a <GridView>
    ============================================== */
 .mob-datagrid {
   width: 100%;
@@ -22,219 +23,71 @@
 
 /* ==============================================
    COLUMN HEADER ROW
-   XAML: Style x:Key="HeaderColumnStyle"
-         TargetType="DataGridColumnHeader"
-         Background=BackgroundStrongBrush
-         Foreground=ForegroundPrimaryBrush
-         FontWeight=Bold  FontSize=18
-         Padding="0,8,8,8"
-         BorderThickness="0,0,0,2"
-         BorderBrush=Black
-         SeparatorVisibility=Hidden
+   XAML: GridViewColumnHeader (DefaultControls.xaml)
+         Background=BackgroundStepOneBrush
+         Height=TouchSize (44px)
+         Foreground=ForegroundStrongBrush
+         ContentControl Margin="39,0,-27,0"
+         + TextBlock_Meta style (Typography.xaml):
+           "Small, Bold, and All Caps"
+           FontWeight=Bold, Uppercase=True
    ============================================== */
 .mob-datagrid__header-row {
-  background: var(--BackgroundStrong);
+  background: var(--BackgroundStepOne);
 }
 
 .mob-datagrid__th {
-  font: var(--font-hdrSm);
+  font: var(--font-meta);
   font-weight: var(--font-bold);
-  color: var(--ForegroundPrimary);
+  text-transform: uppercase;
+  color: var(--ForegroundStrong);
+  background: var(--BackgroundStepOne);
   text-align: left;
-  padding: 8px 8px 8px 0;
-  border-bottom: 2px solid var(--InformationForeground);
+  height: var(--touch);
+  padding: 0 8px 0 var(--spacing-section-to-section);
   white-space: nowrap;
   vertical-align: middle;
 }
 
-/* First column header gets extra left padding
-   XAML: BasedOn HeaderColumnStyle override Padding="16,8,8,8" */
-.mob-datagrid__th:first-child {
-  padding-left: var(--size-18);
-}
-
-/* Action column header — no text, just the bottom border
-   XAML: DataGridTemplateColumn Width="50", custom HeaderStyle */
-.mob-datagrid__th--action {
-  width: 50px;
-  padding: 0;
-}
-
 
 /* ==============================================
-   BODY ROW
-   XAML: DataGridRow (implicit)
-         GridLinesVisibility="Horizontal"
+   BODY ROW — alternating & hover
+   XAML: SimpleSortListView AlternationCount="2"
+         GridViewListViewItem style:
+           MinHeight=TouchSize
+           AlternationIndex 0 → BackgroundPrimaryBrush  Opacity=0.4
+           AlternationIndex 1 → BackgroundStrongBrush   Opacity=0.4
+           MouseOver → MouseOverPrimaryBrush            Opacity=0.3
    ============================================== */
 .mob-datagrid__row {
   border-bottom: var(--line-size) solid var(--InnerLines);
 }
 
+.mob-datagrid__row:nth-child(odd) {
+  background: color-mix(in srgb, var(--BackgroundPrimary) 40%, transparent);
+}
+
+.mob-datagrid__row:nth-child(even) {
+  background: color-mix(in srgb, var(--BackgroundStrong) 40%, transparent);
+}
+
+.mob-datagrid__row:hover {
+  background: color-mix(in srgb, var(--MouseOverPrimary) 30%, transparent);
+}
+
 
 /* ==============================================
    BODY CELL
-   XAML: Style x:Key="CellStyle"
-         TargetType="DataGridCell"
-         BorderBrush=Transparent
-         BorderThickness=0
-         Foreground=Black
-         Height=50
+   XAML: GridViewListViewItem template
+         GridViewRowPresenter Margin="33,0,0,0"
+         MinHeight=TouchSize (44px)
    ============================================== */
 .mob-datagrid__td {
-  height: 50px;
-  padding: 0 8px 0 0;
-  font-size: 16px;
-  color: var(--InformationForeground);
-  vertical-align: middle;
-}
-
-.mob-datagrid__td:first-child {
-  padding-left: var(--size-18);
-}
-
-
-/* ==============================================
-   STATUS-BASED ROW COLORS
-   XAML: MultiDataTrigger on CellStyle
-         Sets Background per Status value
-         Unselected = #1A{color}, Selected = #40{color}
-   ============================================== */
-
-/* Not Started / Created — green */
-.mob-datagrid__row--not-started {
-  background: rgba(51, 160, 51, 0.10);
-}
-
-/* Driving To Pick-up / In Progress — blue */
-.mob-datagrid__row--in-progress {
-  background: rgba(135, 206, 235, 0.10);
-}
-
-/* Driving To Drop-off — purple */
-.mob-datagrid__row--drop-off {
-  background: rgba(128, 0, 128, 0.10);
-}
-
-/* Failed — red */
-.mob-datagrid__row--failed {
-  background: rgba(255, 0, 0, 0.10);
-}
-
-/* Completed — gray */
-.mob-datagrid__row--completed {
-  background: rgba(160, 160, 160, 0.10);
-}
-
-/* Rejected — orange */
-.mob-datagrid__row--rejected {
-  background: rgba(255, 165, 0, 0.10);
-}
-
-/* Reset / Cancelled — yellow-green */
-.mob-datagrid__row--reset {
-  background: rgba(255, 255, 51, 0.10);
-}
-
-/* Selected variants (hover stand-in for CSS-only) */
-.mob-datagrid__row--not-started:hover  { background: rgba(51, 160, 51, 0.25); }
-.mob-datagrid__row--in-progress:hover  { background: rgba(135, 206, 235, 0.25); }
-.mob-datagrid__row--drop-off:hover     { background: rgba(128, 0, 128, 0.25); }
-.mob-datagrid__row--failed:hover       { background: rgba(255, 0, 0, 0.25); }
-.mob-datagrid__row--completed:hover    { background: rgba(160, 160, 160, 0.25); }
-.mob-datagrid__row--rejected:hover     { background: rgba(255, 165, 0, 0.25); }
-.mob-datagrid__row--reset:hover        { background: rgba(255, 255, 51, 0.25); }
-
-
-/* ==============================================
-   STATUS INDICATOR BAR (left edge of ID cell)
-   XAML: Border BorderThickness="5"
-         CornerRadius="0" Margin="0,0,16,0"
-         BorderBrush set by DataTrigger per Status
-   ============================================== */
-.mob-datagrid__status-bar {
-  display: inline-block;
-  width: 5px;
-  height: 100%;
-  min-height: 34px;
-  margin-right: var(--size-18);
-  flex-shrink: 0;
-}
-
-.mob-datagrid__status-bar--green  { background: var(--InformationGreen); }
-.mob-datagrid__status-bar--blue   { background: var(--InformationBlue); }
-.mob-datagrid__status-bar--purple { background: var(--InformationPurple); }
-.mob-datagrid__status-bar--red    { background: var(--InformationRed); }
-.mob-datagrid__status-bar--gray   { background: var(--InformationGray); }
-.mob-datagrid__status-bar--orange { background: var(--InformationOrange); }
-.mob-datagrid__status-bar--yellow { background: var(--InformationYellow); }
-
-
-/* ==============================================
-   ID CELL LAYOUT (bar + text)
-   XAML: StackPanel Orientation="Horizontal"
-         Border + TextBlock
-   ============================================== */
-.mob-datagrid__id-cell {
-  display: flex;
-  align-items: center;
-}
-
-
-/* ==============================================
-   STATUS CELL (icon + text)
-   XAML: StackPanel Orientation="Horizontal"
-         Path Width="20" Height="20" Margin="16,0,16,0"
-         + TextBlock
-   ============================================== */
-.mob-datagrid__status-cell {
-  display: flex;
-  align-items: center;
-  gap: var(--size-18);
-}
-
-.mob-datagrid__status-icon {
-  font-family: var(--font-icon);
-  font-size: var(--icon);
-  width: var(--icon);
-  height: var(--icon);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.mob-datagrid__status-icon--green  { color: var(--InformationGreen); }
-.mob-datagrid__status-icon--blue   { color: var(--InformationBlue); }
-.mob-datagrid__status-icon--purple { color: var(--InformationPurple); }
-.mob-datagrid__status-icon--red    { color: var(--InformationRed); }
-.mob-datagrid__status-icon--gray   { color: var(--InformationGray); }
-.mob-datagrid__status-icon--orange { color: var(--InformationOrange); }
-.mob-datagrid__status-icon--yellow { color: var(--InformationYellow); }
-
-
-/* ==============================================
-   KABOB / ACTION BUTTON
-   XAML: Button Content="⋮"
-         Width="50" VerticalAlignment="Center"
-         HorizontalAlignment="Center"
-         + ContextMenu with VisualStateMenuItems
-   ============================================== */
-.mob-datagrid__action-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 50px;
-  height: 100%;
-  border: none;
-  background: transparent;
-  font-size: 20px;
+  font: var(--font-default);
   color: var(--ForegroundPrimary);
-  cursor: pointer;
-  line-height: 1;
-}
-
-.mob-datagrid__action-btn:hover {
-  background: var(--MouseOverBackground);
+  height: var(--touch);
+  padding: 0 8px 0 var(--size-36);
+  vertical-align: middle;
 }
 
 
@@ -252,89 +105,6 @@
   padding: 5px 0 5px var(--spacing-section-to-section);
   font: var(--font-default);
   color: var(--ForegroundPrimary);
-}
-
-
-/* ==============================================
-   BUMP-MOVE CHECK ICON
-   XAML: Path Icon_Status_OkaySm
-         Visibility toggled by IsBumpMove DataTrigger
-   ============================================== */
-.mob-datagrid__check-icon {
-  font-family: var(--font-icon);
-  font-size: var(--icon);
-  color: var(--InformationGray);
-}
-
-
-/* ======================================================================
-   LISTVIEW / GRIDVIEW TABLE VARIANT
-   XAML: <SimpleSortListView> + <GridView> + <FixedWidthGridViewColumn>
-   Sources: DefaultControls.xaml (GridViewColumnHeader template,
-            SimpleSortListView style, GridViewListViewItem style)
-            Typography.xaml (TextBlock_Meta: Bold + Uppercase)
-   Used across: ErrorDescriptorTableView, TelemetryItemTableView,
-                GlobalTelemetryTableView, NodeConfigurationView, etc.
-   Fixed-width columns, bold uppercase headers on BackgroundStepOne,
-   alternating row backgrounds (BackgroundPrimary / BackgroundStrong).
-   ====================================================================== */
-
-
-/* ==============================================
-   LISTVIEW HEADER
-   XAML: GridViewColumnHeader (DefaultControls.xaml)
-         Background=BackgroundStepOneBrush
-         Foreground=ForegroundStrongBrush
-         + TextBlock_Meta style (Typography.xaml):
-           "Small, Bold, and All Caps"
-           FontWeight=Bold, Uppercase=True
-   ============================================== */
-.mob-datagrid--listview .mob-datagrid__header-row {
-  background: var(--BackgroundStepOne);
-}
-
-.mob-datagrid--listview .mob-datagrid__th {
-  font: var(--font-meta);
-  font-weight: var(--font-bold);
-  text-transform: uppercase;
-  color: var(--ForegroundStrong);
-  background: var(--BackgroundStepOne);
-  border-bottom: var(--line-size) solid var(--InnerLines);
-  padding: 8px 8px 8px 0;
-}
-
-
-/* ==============================================
-   LISTVIEW CELL
-   XAML: DataTemplate → TextBlock (default font)
-   FixedWidthGridViewColumn sets pixel widths
-   directly — no star sizing.
-   ============================================== */
-.mob-datagrid--listview .mob-datagrid__td {
-  font: var(--font-default);
-  color: var(--ForegroundPrimary);
-  height: var(--touch);
-  padding: 0 8px 0 0;
-}
-
-
-/* ==============================================
-   LISTVIEW ROW — alternating & hover
-   XAML: SimpleSortListView AlternationCount="2"
-         GridViewListViewItem style:
-           AlternationIndex 0 → BackgroundPrimaryBrush
-           AlternationIndex 1 → BackgroundStrongBrush
-   ============================================== */
-.mob-datagrid--listview .mob-datagrid__row:nth-child(odd) {
-  background: var(--BackgroundPrimary);
-}
-
-.mob-datagrid--listview .mob-datagrid__row:nth-child(even) {
-  background: var(--BackgroundStrong);
-}
-
-.mob-datagrid--listview .mob-datagrid__row:hover {
-  background: var(--MouseOverBackground);
 }
 
 
@@ -409,4 +179,102 @@
 .mob-datagrid__icon-action__icon {
   font-family: var(--font-icon);
   font-size: var(--icon);
+}
+
+
+/* ==============================================
+   SEVERITY LEVEL CELL (icon + colored text)
+   XAML: NotificationSettingsManagerControl.xaml
+         StackPanel Orientation="Horizontal"
+         Path (PathIconSm) + TextBlock (TextBlock_Meta)
+         DataTriggers on Level set icon + color:
+           Critical → Icon_Status_CriticalSm + InformationRedBrush
+           Warning  → Icon_Status_WarningSm  + InformationOrangeBrush
+           Information → Icon_Status_InfoSm  + ForegroundPrimaryBrush
+           None     → Collapsed
+   ============================================== */
+.mob-datagrid__severity {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-label-to-control-sm);
+}
+
+.mob-datagrid__severity__icon {
+  font-family: var(--font-icon);
+  font-size: var(--icon-sm);
+}
+
+.mob-datagrid__severity__label {
+  font: var(--font-meta);
+  font-weight: var(--font-bold);
+  text-transform: uppercase;
+}
+
+.mob-datagrid__severity--critical .mob-datagrid__severity__icon,
+.mob-datagrid__severity--critical .mob-datagrid__severity__label {
+  color: var(--InformationRed);
+}
+
+.mob-datagrid__severity--warning .mob-datagrid__severity__icon,
+.mob-datagrid__severity--warning .mob-datagrid__severity__label {
+  color: var(--InformationOrange);
+}
+
+.mob-datagrid__severity--info .mob-datagrid__severity__icon,
+.mob-datagrid__severity--info .mob-datagrid__severity__label {
+  color: var(--ForegroundPrimary);
+}
+
+
+/* ==============================================
+   NOTIFICATION STATUS BAR (left-edge color strip)
+   XAML: InternalNotificationPanel.xaml
+         Rectangle Width="4" Margin="-36,0,0,0"
+         Fill from NotificationLevelToBrushConverter
+           (Level + IsDismissed)
+         Critical  → InformationRed
+         Warning   → InformationOrange
+         Info      → ForegroundPrimary
+         Dismissed → InformationGray
+   ============================================== */
+.mob-datagrid__notif-bar {
+  display: inline-block;
+  width: 4px;
+  height: 100%;
+  min-height: var(--size-36);
+}
+
+.mob-datagrid__notif-bar--critical { background: var(--InformationRed); }
+.mob-datagrid__notif-bar--warning  { background: var(--InformationOrange); }
+.mob-datagrid__notif-bar--info     { background: var(--ForegroundPrimary); }
+.mob-datagrid__notif-bar--dismissed { background: var(--InformationGray); }
+
+
+/* ==============================================
+   NOTIFICATION ROW ACTION BUTTONS
+   XAML: InternalNotificationPanel.xaml
+         SimpleIconButton (Go To Vehicle, Go To Point,
+         Error Report) — 24×24 / 20×20 icon buttons
+   ============================================== */
+.mob-datagrid__notif-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-label-to-control-sm);
+}
+
+.mob-datagrid__notif-action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-family: var(--font-icon);
+  font-size: var(--icon);
+  color: var(--ForegroundPrimary);
+}
+
+.mob-datagrid__notif-action-btn:hover {
+  color: var(--MouseOverPrimary);
 }

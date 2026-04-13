@@ -76,7 +76,7 @@
 </p>
 
 <!-- XAML: SimpleSortListView → GridView (ErrorDescriptorTableView) -->
-<table class="mob-datagrid mob-datagrid--listview">
+<table class="mob-datagrid">
 
   <thead>
     <tr class="mob-datagrid__header-row">
@@ -170,7 +170,7 @@
 </p>
 
 <!-- XAML: SimpleSortListView → GridView (TelemetryItemTableView) -->
-<table class="mob-datagrid mob-datagrid--listview">
+<table class="mob-datagrid">
 
   <thead>
     <tr class="mob-datagrid__header-row">
@@ -280,7 +280,7 @@
 
 <!-- XAML: SimpleSortListView → GridView (GlobalTelemetryTableView) -->
 <div style="overflow-x: auto;">
-<table class="mob-datagrid mob-datagrid--listview">
+<table class="mob-datagrid">
 
   <thead>
     <tr class="mob-datagrid__header-row">
@@ -405,7 +405,7 @@
 </p>
 
 <!-- XAML: SimpleSortListView x:Name="ConfigItemsListView" → GridView -->
-<table class="mob-datagrid mob-datagrid--listview">
+<table class="mob-datagrid">
 
   <thead>
     <tr class="mob-datagrid__header-row">
@@ -487,6 +487,362 @@
     </tr>
   </tbody>
 </table>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 5: PLAYBACK MANAGER TABLE (4 columns, checkbox + datetime)
+     Source: PlaybackManagerControl.xaml — Playback Plugin
+     XAML: <SimpleSortListView InitialSortField="AssetName"
+                               ItemsSource="{Binding AvailableAssets}">
+             <ListView.View><GridView>
+               4x FixedWidthGridViewColumn
+             </GridView></ListView.View>
+           </SimpleSortListView>
+     ========================================================= -->
+
+<h2>Playback Manager — Checkbox Selection + DateTime Columns</h2>
+
+<p class="note">
+  From <code>PlaybackManagerControl.xaml</code>. Simple 4-column
+  <code>SimpleSortListView</code> for selecting assets to replay.
+  First column is a fixed 32 px <code>CheckBox</code> (IsSelected);
+  remaining columns are text-only with <code>TextBlock_Meta</code> headers.
+  All columns sortable. Uses <code>FixedVirtualizingStackPanel</code>
+  with recycling virtualisation.
+</p>
+
+<!-- XAML: SimpleSortListView InitialSortField="AssetName" → GridView -->
+<table class="mob-datagrid">
+
+  <thead>
+    <tr class="mob-datagrid__header-row">
+      <!-- XAML: FixedWidthGridViewColumn Width="32" SortField="IsSelected" -->
+      <th class="mob-datagrid__th" style="width: 32px;">X</th>
+      <!-- XAML: FixedWidthGridViewColumn Width="200" SortField="AssetName" -->
+      <th class="mob-datagrid__th" style="width: 200px;">Name</th>
+      <!-- XAML: FixedWidthGridViewColumn Width="200" SortField="StartDateTime" -->
+      <th class="mob-datagrid__th" style="width: 200px;">Start</th>
+      <!-- XAML: FixedWidthGridViewColumn Width="280" SortField="StopDateTime" -->
+      <th class="mob-datagrid__th" style="width: 280px;">Stop</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr class="mob-datagrid__row">
+      <td class="mob-datagrid__td">
+        <!-- XAML: CheckBox IsChecked="{Binding IsSelected}" -->
+        <input type="checkbox" checked />
+      </td>
+      <td class="mob-datagrid__td">Truck-417</td>
+      <td class="mob-datagrid__td">2026-04-12 08:14:32</td>
+      <td class="mob-datagrid__td">2026-04-12 09:47:11</td>
+    </tr>
+    <tr class="mob-datagrid__row">
+      <td class="mob-datagrid__td"><input type="checkbox" checked /></td>
+      <td class="mob-datagrid__td">Loader-203</td>
+      <td class="mob-datagrid__td">2026-04-12 06:00:00</td>
+      <td class="mob-datagrid__td">2026-04-12 14:30:55</td>
+    </tr>
+    <tr class="mob-datagrid__row">
+      <td class="mob-datagrid__td"><input type="checkbox" /></td>
+      <td class="mob-datagrid__td">Hauler-089</td>
+      <td class="mob-datagrid__td">2026-04-11 22:15:07</td>
+      <td class="mob-datagrid__td">2026-04-12 06:00:00</td>
+    </tr>
+    <tr class="mob-datagrid__row">
+      <td class="mob-datagrid__td"><input type="checkbox" /></td>
+      <td class="mob-datagrid__td">Truck-522</td>
+      <td class="mob-datagrid__td">2026-04-12 10:00:00</td>
+      <td class="mob-datagrid__td">2026-04-12 11:22:43</td>
+    </tr>
+  </tbody>
+</table>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 6: NOTIFICATION SETTINGS TABLE (4 columns, severity icons)
+     Source: NotificationSettingsManagerControl.xaml — Configuration
+     XAML: <SimpleSortListView InitialSortField="Title"
+                               ItemsSource="{Binding ListChoiceProvider.KnownNotifications}"
+                               SelectionMode="Single">
+             <ListView.View><GridView>
+               4x FixedWidthGridViewColumn
+             </GridView></ListView.View>
+           </SimpleSortListView>
+     ========================================================= -->
+
+<h2>Notification Settings — Severity Icon + Colored Text</h2>
+
+<p class="note">
+  From <code>NotificationSettingsManagerControl.xaml</code>. 4-column
+  <code>SimpleSortListView</code> for selecting known notifications.
+  The Level column uses <code>DataTrigger</code> to set both a
+  <code>PathIconSm</code> and <code>TextBlock_Meta</code> color per severity:
+  Critical = <code>InformationRedBrush</code>,
+  Warning = <code>InformationOrangeBrush</code>,
+  Information = <code>ForegroundPrimaryBrush</code>,
+  None = collapsed. Has a <code>FilterBarControl</code> above and an
+  item-count footer below.
+</p>
+
+<!-- XAML: SimpleSortListView InitialSortField="Title" → GridView -->
+<table class="mob-datagrid">
+
+  <thead>
+    <tr class="mob-datagrid__header-row">
+      <!-- XAML: FixedWidthGridViewColumn Width="80" SortField="CodeText" -->
+      <th class="mob-datagrid__th" style="width: 80px;">Code</th>
+      <!-- XAML: FixedWidthGridViewColumn Width="300" SortField="Title" -->
+      <th class="mob-datagrid__th" style="width: 300px;">Title</th>
+      <!-- XAML: FixedWidthGridViewColumn Width="110" SortField="Level" -->
+      <th class="mob-datagrid__th" style="width: 110px;">Level</th>
+      <!-- XAML: FixedWidthGridViewColumn Width="1000" SortField="Description" -->
+      <th class="mob-datagrid__th" style="width: 1000px;">Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr class="mob-datagrid__row">
+      <td class="mob-datagrid__td">1001</td>
+      <td class="mob-datagrid__td">GPS Signal Lost</td>
+      <td class="mob-datagrid__td">
+        <!-- XAML: Path Icon_Status_CriticalSm + InformationRedBrush, TextBlock "Critical" -->
+        <span class="mob-datagrid__severity mob-datagrid__severity--critical">
+          <span class="mob-datagrid__severity__icon">&#xE504;</span>
+          <span class="mob-datagrid__severity__label">Critical</span>
+        </span>
+      </td>
+      <td class="mob-datagrid__td">Vehicle has lost GPS fix for more than 30 seconds</td>
+    </tr>
+    <tr class="mob-datagrid__row">
+      <td class="mob-datagrid__td">1042</td>
+      <td class="mob-datagrid__td">LiDAR Partial Occlusion</td>
+      <td class="mob-datagrid__td">
+        <!-- XAML: Path Icon_Status_WarningSm + InformationOrangeBrush, TextBlock "Warning" -->
+        <span class="mob-datagrid__severity mob-datagrid__severity--warning">
+          <span class="mob-datagrid__severity__icon">&#xE503;</span>
+          <span class="mob-datagrid__severity__label">Warning</span>
+        </span>
+      </td>
+      <td class="mob-datagrid__td">LiDAR sensor sector 3 is partially blocked by debris</td>
+    </tr>
+    <tr class="mob-datagrid__row">
+      <td class="mob-datagrid__td">2010</td>
+      <td class="mob-datagrid__td">Calibration Drift Detected</td>
+      <td class="mob-datagrid__td">
+        <!-- XAML: Path Icon_Status_InfoSm + ForegroundPrimaryBrush, TextBlock "Information" -->
+        <span class="mob-datagrid__severity mob-datagrid__severity--info">
+          <span class="mob-datagrid__severity__icon">&#xE505;</span>
+          <span class="mob-datagrid__severity__label">Information</span>
+        </span>
+      </td>
+      <td class="mob-datagrid__td">IMU calibration offset exceeds 0.5 degrees — recalibration recommended</td>
+    </tr>
+    <tr class="mob-datagrid__row">
+      <td class="mob-datagrid__td">3005</td>
+      <td class="mob-datagrid__td">Brake Pressure Low</td>
+      <td class="mob-datagrid__td">
+        <span class="mob-datagrid__severity mob-datagrid__severity--warning">
+          <span class="mob-datagrid__severity__icon">&#xE503;</span>
+          <span class="mob-datagrid__severity__label">Warning</span>
+        </span>
+      </td>
+      <td class="mob-datagrid__td">Hydraulic brake pressure below safe operating threshold</td>
+    </tr>
+    <tr class="mob-datagrid__row">
+      <td class="mob-datagrid__td">4001</td>
+      <td class="mob-datagrid__td">Payload Weight Updated</td>
+      <td class="mob-datagrid__td">
+        <span class="mob-datagrid__severity mob-datagrid__severity--info">
+          <span class="mob-datagrid__severity__icon">&#xE505;</span>
+          <span class="mob-datagrid__severity__label">Information</span>
+        </span>
+      </td>
+      <td class="mob-datagrid__td">Onboard scale reports new payload mass reading</td>
+    </tr>
+    <tr class="mob-datagrid__row">
+      <td class="mob-datagrid__td">5010</td>
+      <td class="mob-datagrid__td">Engine Over-Temperature</td>
+      <td class="mob-datagrid__td">
+        <span class="mob-datagrid__severity mob-datagrid__severity--critical">
+          <span class="mob-datagrid__severity__icon">&#xE504;</span>
+          <span class="mob-datagrid__severity__label">Critical</span>
+        </span>
+      </td>
+      <td class="mob-datagrid__td">Coolant temperature has exceeded maximum safe limit</td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- XAML: StackPanel Grid.Row="3" Margin="40,5,0,5" — item count footer -->
+<div class="mob-datagrid__footer">
+  <span>Showing</span>
+  <span>6</span>
+  <span>of</span>
+  <span>184</span>
+  <span>total items</span>
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 7: NOTIFICATION HISTORY TABLE (9 columns, status bar + action buttons)
+     Source: InternalNotificationPanel.xaml — Notifications
+     XAML: <SimpleSortListView x:Name="HistoryNotificationsListView"
+                               ItemsSource="{Binding HistoryNotifications}">
+             <ListView.View><GridView>
+               9x FixedWidthGridViewColumn
+             </GridView></ListView.View>
+           </SimpleSortListView>
+     ========================================================= -->
+
+<h2>Notification History — Status Bar + Action Buttons</h2>
+
+<p class="note">
+  From <code>InternalNotificationPanel.xaml</code>. 9-column
+  <code>SimpleSortListView</code> for notification history.
+  First column is a 4 px <code>Rectangle</code> whose fill comes from
+  <code>NotificationLevelToBrushConverter</code> (binds Level + IsDismissed):
+  Critical = <code>InformationRed</code>,
+  Warning = <code>InformationOrange</code>,
+  Info = <code>ForegroundPrimary</code>,
+  Dismissed = <code>InformationGray</code>.
+  Last column has <code>SimpleIconButton</code> actions (Go To Vehicle,
+  Go To Point, Error Report). Custom header style pushes headers left
+  with <code>Margin="-18,0,10,0"</code>.
+</p>
+
+<!-- XAML: SimpleSortListView x:Name="HistoryNotificationsListView" → GridView -->
+<div style="overflow-x: auto;">
+<table class="mob-datagrid">
+
+  <thead>
+    <tr class="mob-datagrid__header-row">
+      <!-- XAML: FixedWidthGridViewColumn Width="4" — status bar, no header -->
+      <th class="mob-datagrid__th" style="width: 4px; padding: 0;"></th>
+      <!-- XAML: FixedWidthGridViewColumn Width="85" Header="Time" -->
+      <th class="mob-datagrid__th" style="width: 85px;">Time</th>
+      <!-- XAML: FixedWidthGridViewColumn Width="100" Header="Affected" -->
+      <th class="mob-datagrid__th" style="width: 100px;">Affected</th>
+      <!-- XAML: FixedWidthGridViewColumn Width="280" Header="Title" -->
+      <th class="mob-datagrid__th" style="width: 280px;">Title</th>
+      <!-- XAML: FixedWidthGridViewColumn Width="140" Header="Message" -->
+      <th class="mob-datagrid__th" style="width: 140px;">Message</th>
+      <!-- XAML: FixedWidthGridViewColumn Width="140" Header="Troubleshooting" -->
+      <th class="mob-datagrid__th" style="width: 140px;">Troubleshooting</th>
+      <!-- XAML: FixedWidthGridViewColumn Width="140" Header="Component" -->
+      <th class="mob-datagrid__th" style="width: 140px;">Component</th>
+      <!-- XAML: FixedWidthGridViewColumn Width="70" Header="Error" -->
+      <th class="mob-datagrid__th" style="width: 70px;">Error</th>
+      <!-- XAML: FixedWidthGridViewColumn Width="130" Header="Actions" -->
+      <th class="mob-datagrid__th" style="width: 130px;">Actions</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <!-- Row 1: Critical (active) -->
+    <tr class="mob-datagrid__row">
+      <td class="mob-datagrid__td" style="width: 4px; padding: 0;">
+        <!-- XAML: Rectangle Width=4, NotificationLevelToBrushConverter Level=Critical, IsDismissed=False -->
+        <span class="mob-datagrid__notif-bar mob-datagrid__notif-bar--critical"></span>
+      </td>
+      <td class="mob-datagrid__td">14:32:07</td>
+      <td class="mob-datagrid__td">Truck-417</td>
+      <td class="mob-datagrid__td">GPS Signal Lost</td>
+      <td class="mob-datagrid__td">No fix in 30 s</td>
+      <td class="mob-datagrid__td">Check antenna cable</td>
+      <td class="mob-datagrid__td">Navigation</td>
+      <td class="mob-datagrid__td">1001</td>
+      <td class="mob-datagrid__td">
+        <!-- XAML: SimpleIconButton GoToVehicle + GoToPoint + ErrorReport -->
+        <span class="mob-datagrid__notif-actions">
+          <button class="mob-datagrid__notif-action-btn" title="Go to vehicle">&#xE540;</button>
+          <button class="mob-datagrid__notif-action-btn" title="Go to point">&#xE541;</button>
+          <button class="mob-datagrid__notif-action-btn" title="Report an issue">&#xE542;</button>
+        </span>
+      </td>
+    </tr>
+    <!-- Row 2: Warning (active) -->
+    <tr class="mob-datagrid__row">
+      <td class="mob-datagrid__td" style="width: 4px; padding: 0;">
+        <span class="mob-datagrid__notif-bar mob-datagrid__notif-bar--warning"></span>
+      </td>
+      <td class="mob-datagrid__td">14:28:44</td>
+      <td class="mob-datagrid__td">Loader-203</td>
+      <td class="mob-datagrid__td">LiDAR Partial Occlusion</td>
+      <td class="mob-datagrid__td">Sector 3 blocked</td>
+      <td class="mob-datagrid__td">Clean sensor housing</td>
+      <td class="mob-datagrid__td">Perception</td>
+      <td class="mob-datagrid__td">1042</td>
+      <td class="mob-datagrid__td">
+        <span class="mob-datagrid__notif-actions">
+          <button class="mob-datagrid__notif-action-btn" title="Go to vehicle">&#xE540;</button>
+          <button class="mob-datagrid__notif-action-btn" title="Go to point">&#xE541;</button>
+        </span>
+      </td>
+    </tr>
+    <!-- Row 3: Information (active) -->
+    <tr class="mob-datagrid__row">
+      <td class="mob-datagrid__td" style="width: 4px; padding: 0;">
+        <span class="mob-datagrid__notif-bar mob-datagrid__notif-bar--info"></span>
+      </td>
+      <td class="mob-datagrid__td">14:15:22</td>
+      <td class="mob-datagrid__td">Hauler-089</td>
+      <td class="mob-datagrid__td">Calibration Drift Detected</td>
+      <td class="mob-datagrid__td">IMU offset > 0.5°</td>
+      <td class="mob-datagrid__td">Schedule recalibration</td>
+      <td class="mob-datagrid__td">IMU</td>
+      <td class="mob-datagrid__td">2010</td>
+      <td class="mob-datagrid__td">
+        <span class="mob-datagrid__notif-actions">
+          <button class="mob-datagrid__notif-action-btn" title="Go to vehicle">&#xE540;</button>
+        </span>
+      </td>
+    </tr>
+    <!-- Row 4: Critical (dismissed) -->
+    <tr class="mob-datagrid__row">
+      <td class="mob-datagrid__td" style="width: 4px; padding: 0;">
+        <!-- XAML: IsDismissed=True → InformationGray -->
+        <span class="mob-datagrid__notif-bar mob-datagrid__notif-bar--dismissed"></span>
+      </td>
+      <td class="mob-datagrid__td">13:58:10</td>
+      <td class="mob-datagrid__td">Truck-522</td>
+      <td class="mob-datagrid__td">Engine Over-Temperature</td>
+      <td class="mob-datagrid__td">Coolant > limit</td>
+      <td class="mob-datagrid__td">Check coolant level</td>
+      <td class="mob-datagrid__td">Powertrain</td>
+      <td class="mob-datagrid__td">5010</td>
+      <td class="mob-datagrid__td">
+        <span class="mob-datagrid__notif-actions">
+          <button class="mob-datagrid__notif-action-btn" title="Report an issue">&#xE542;</button>
+        </span>
+      </td>
+    </tr>
+    <!-- Row 5: Warning (dismissed) -->
+    <tr class="mob-datagrid__row">
+      <td class="mob-datagrid__td" style="width: 4px; padding: 0;">
+        <span class="mob-datagrid__notif-bar mob-datagrid__notif-bar--dismissed"></span>
+      </td>
+      <td class="mob-datagrid__td">13:42:55</td>
+      <td class="mob-datagrid__td">Loader-203</td>
+      <td class="mob-datagrid__td">Brake Pressure Low</td>
+      <td class="mob-datagrid__td">Below threshold</td>
+      <td class="mob-datagrid__td">Inspect brake lines</td>
+      <td class="mob-datagrid__td">Braking</td>
+      <td class="mob-datagrid__td">3005</td>
+      <td class="mob-datagrid__td"></td>
+    </tr>
+  </tbody>
+</table>
+</div>
 
 
   </main>
