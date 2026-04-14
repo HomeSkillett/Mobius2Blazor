@@ -1,0 +1,635 @@
+/* =============================================================
+   alerts.css — Mobius Notification / Alert / Toast / Dialog
+   Source: NotificationItem.xaml, NotificationToggleButton.xaml,
+           ActiveAlertUI.xaml, OkCancelDialog.xaml,
+           InternalNotificationPanel.xaml
+   ============================================================= */
+
+
+/* =============================================================
+   1. TOAST (NotificationItem with IsToast=True)
+   Source: NotificationItem.xaml — Trigger IsToast=True
+   Transient slide-in message, appears top-right.
+   Levels: Info, Success, Warning, Critical
+   ============================================================= */
+
+.mob-toast {
+  position: relative;
+  display: grid;
+  grid-template-columns: 14px 1fr 20px;
+  grid-template-rows: auto auto auto auto;
+  background: var(--BackgroundInvertStrong);
+  min-width: 320px;
+  max-width: 420px;
+  overflow: hidden;
+}
+
+/* XAML: LevelIndicator — Rectangle Width=14 (toast mode) */
+.mob-toast__level {
+  grid-column: 1;
+  grid-row: 1 / -1;
+  width: 14px;
+}
+.mob-toast__level[data-level="info"]     { background: var(--MessageDeliveryIconInfo); }
+.mob-toast__level[data-level="success"]  { background: var(--MessageDeliveryIconOk); }
+.mob-toast__level[data-level="warning"]  { background: var(--MessageDeliveryIconWarning); }
+.mob-toast__level[data-level="critical"] { background: var(--MessageDeliveryIconCritical); }
+
+/* XAML: Row 0 — LevelText + ErrorCode + DismissButton */
+.mob-toast__header {
+  grid-column: 2;
+  grid-row: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--size-6) var(--size-6) 0 var(--size-6);
+}
+
+.mob-toast__level-label {
+  font: var(--font-meta);
+  text-transform: uppercase;
+}
+.mob-toast__level-label[data-level="info"]     { color: var(--MessageDeliveryIconInfo); }
+.mob-toast__level-label[data-level="success"]  { color: var(--MessageDeliveryIconOk); }
+.mob-toast__level-label[data-level="warning"]  { color: var(--MessageDeliveryIconWarning); }
+.mob-toast__level-label[data-level="critical"] { color: var(--MessageDeliveryIconCritical); }
+
+.mob-toast__dismiss {
+  font-family: 'mobius-system-icons';
+  font-size: var(--size-20);
+  color: var(--ForegroundInvertPrimary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  opacity: 0.5;
+}
+.mob-toast__dismiss:hover { opacity: 1; }
+
+/* XAML: Row 1 — NotificationTitle */
+.mob-toast__title {
+  grid-column: 2;
+  grid-row: 2;
+  font: var(--font-hdrSm);
+  color: var(--ForegroundInvertStrong);
+  padding: 0 var(--size-6) var(--size-12) var(--size-6);
+}
+
+/* XAML: Row 2 — MessageString (inside ExpanderItem, collapsed in toast) */
+.mob-toast__message {
+  grid-column: 2;
+  grid-row: 3;
+  font: var(--font-bodyMd);
+  color: var(--ForegroundInvertStrong);
+  padding: 0 var(--size-6) var(--size-6) var(--size-6);
+}
+
+/* XAML: Row 4 — TimeString */
+.mob-toast__time {
+  grid-column: 2;
+  grid-row: 4;
+  font: var(--font-bodySm);
+  color: var(--ForegroundInvertDisabled);
+  padding: 0 var(--size-6) var(--size-6) var(--size-6);
+}
+
+
+/* =============================================================
+   2. NOTIFICATION ITEM (Panel mode — NotificationItem.xaml)
+   Source: NotificationItem.xaml — default (IsToast=False)
+   Persistent list item in the NotificationPanel.
+   ============================================================= */
+
+.mob-notification {
+  position: relative;
+  display: grid;
+  grid-template-columns: 4px 1fr 20px;
+  grid-template-rows: auto auto auto auto auto;
+  background: transparent;
+  cursor: pointer;
+  transition: background var(--duration-mouse-over);
+}
+.mob-notification:hover {
+  background: color-mix(in srgb, var(--MouseOverPrimary) 10%, transparent);
+}
+
+/* XAML: LevelIndicator — Rectangle Width=4 (panel mode) */
+.mob-notification__level {
+  grid-column: 1;
+  grid-row: 1 / -1;
+  width: 4px;
+}
+.mob-notification__level[data-level="info"]     { background: var(--MessageDeliveryIconInfo); }
+.mob-notification__level[data-level="success"]  { background: var(--MessageDeliveryIconOk); }
+.mob-notification__level[data-level="warning"]  { background: var(--MessageDeliveryIconWarning); }
+.mob-notification__level[data-level="critical"] { background: var(--MessageDeliveryIconCritical); }
+.mob-notification__level[data-level="dismissed"] { background: var(--ForegroundDisabled); }
+
+/* XAML: Row 0 — StatusLabel + LevelLabel + ErrorCode + DismissButton */
+.mob-notification__header {
+  grid-column: 2;
+  grid-row: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--size-3);
+  padding: 10px var(--size-6) var(--size-6) var(--size-6);
+}
+
+.mob-notification__status-badge {
+  font: var(--font-meta);
+  text-transform: uppercase;
+}
+.mob-notification__status-badge[data-status="new"]       { color: var(--InformationBlue); }
+.mob-notification__status-badge[data-status="dismissed"] { color: var(--ForegroundDisabled); }
+
+.mob-notification__level-label {
+  font: var(--font-meta);
+  text-transform: uppercase;
+}
+.mob-notification__level-label[data-level="info"]     { color: var(--MessageDeliveryIconInfo); }
+.mob-notification__level-label[data-level="success"]  { color: var(--MessageDeliveryIconOk); }
+.mob-notification__level-label[data-level="warning"]  { color: var(--MessageDeliveryIconWarning); }
+.mob-notification__level-label[data-level="critical"] { color: var(--MessageDeliveryIconCritical); }
+
+.mob-notification__error-code {
+  font: var(--font-bodySm);
+  color: var(--ForegroundDisabled);
+  margin-left: auto;
+}
+
+.mob-notification__dismiss {
+  font-family: 'mobius-system-icons';
+  font-size: var(--size-20);
+  color: var(--ForegroundPrimary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  opacity: 0.5;
+  transition: opacity 0.1s;
+}
+.mob-notification__dismiss:hover { opacity: 1; }
+
+/* XAML: Row 1 — NotificationTitle */
+.mob-notification__title {
+  grid-column: 2;
+  grid-row: 2;
+  font: var(--font-hdrSm);
+  color: var(--ForegroundStrong);
+  padding: 0 var(--size-6) var(--size-12) var(--size-6);
+}
+
+/* XAML: Row 2 — MessageString (inside ExpanderItem) */
+.mob-notification__message {
+  grid-column: 2;
+  grid-row: 3;
+  font: var(--font-bodyMd);
+  color: var(--ForegroundStrong);
+  padding: 0 var(--size-6) var(--size-12) var(--size-6);
+}
+
+/* XAML: Row 3 — Action buttons (LinkButton style) */
+.mob-notification__actions {
+  grid-column: 2;
+  grid-row: 4;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  padding: 0 var(--size-6) 0 var(--size-6);
+}
+.mob-notification__action-link {
+  font: var(--font-bodySm);
+  color: var(--ForegroundAction);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-decoration: none;
+}
+.mob-notification__action-link:hover {
+  text-decoration: underline;
+}
+
+/* XAML: Row 4 — TimeString + nav buttons */
+.mob-notification__footer {
+  grid-column: 2;
+  grid-row: 5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--size-6) var(--size-6) var(--size-6);
+}
+
+.mob-notification__time {
+  font: var(--font-bodySm);
+  color: var(--ForegroundDisabled);
+}
+
+.mob-notification__nav-buttons {
+  display: flex;
+  gap: var(--size-3);
+}
+
+.mob-notification__nav-btn {
+  font-family: 'mobius-system-icons';
+  font-size: var(--size-24);
+  color: var(--ForegroundPrimary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+.mob-notification__nav-btn:hover {
+  color: var(--MouseOverPrimary);
+}
+
+/* Selected state — expanded message */
+.mob-notification.is-selected {
+  background: color-mix(in srgb, var(--BackgroundPrimary) 25%, transparent);
+}
+.mob-notification.is-selected .mob-notification__dismiss { opacity: 1; }
+
+
+/* =============================================================
+   3. NOTIFICATION TOGGLE BUTTON
+   Source: NotificationToggleButton.xaml
+   Sidebar button that opens the panel. Shows badge count.
+   ============================================================= */
+
+.mob-notification-toggle {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 62px;
+  height: 50px;
+  background: var(--BackgroundStrong);
+  border: none;
+  cursor: pointer;
+  color: var(--ForegroundPrimary);
+  transition: opacity var(--duration-mouse-over);
+}
+
+/* XAML: _mouseOverElement — 4px left bar */
+.mob-notification-toggle::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: var(--MouseOverPrimary);
+  opacity: 0;
+  transition: opacity var(--duration-mouse-over);
+}
+.mob-notification-toggle:hover::before { opacity: 1; }
+
+/* XAML: _selectionElement — checked state left bar */
+.mob-notification-toggle.is-checked::before {
+  background: var(--SelectionPrimary);
+  opacity: 1;
+}
+.mob-notification-toggle.is-checked {
+  color: var(--SelectionPrimary);
+}
+
+/* XAML: Icon_Notifications */
+.mob-notification-toggle__icon {
+  font-family: 'mobius-system-icons';
+  font-size: var(--size-20);
+  line-height: 1;
+}
+
+/* XAML: _alertCountVisualElement */
+.mob-notification-toggle__badge {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  font: var(--font-meta);
+  color: var(--ForegroundPrimary);
+  min-width: 12px;
+  text-align: center;
+}
+
+/* XAML: NewCriticalAlert — red background + pulse */
+.mob-notification-toggle.is-critical {
+  background: var(--InformationRedAlt);
+  color: var(--SelectionForeground);
+}
+.mob-notification-toggle.is-critical::before {
+  background: var(--InformationRed);
+  opacity: 1;
+}
+
+@keyframes critical-pulse {
+  0%   { opacity: 0; }
+  50%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+.mob-notification-toggle.is-critical::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--InformationRed);
+  animation: critical-pulse 0.6s linear infinite;
+}
+
+
+/* =============================================================
+   4. NOTIFICATION PANEL (InternalNotificationPanel.xaml)
+   Source: InternalNotificationPanel.xaml
+   Side panel with filter tabs, vehicle/time filter, list of
+   NotificationItems, and a history grid.
+   ============================================================= */
+
+.mob-notification-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--BackgroundStrong);
+}
+
+/* XAML: Row 0 — 24px spacer */
+.mob-notification-panel__spacer {
+  height: 24px;
+}
+
+/* XAML: Row 1 — Filter bar + actions */
+.mob-notification-panel__toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 10px 0 var(--size-24);
+}
+
+/* XAML: HorizontalListBox — filter tabs */
+.mob-notification-panel__filters {
+  display: flex;
+  gap: 0;
+}
+.mob-notification-panel__filter-tab {
+  font: var(--font-bodySm);
+  color: var(--ForegroundPrimary);
+  background: none;
+  border: none;
+  padding: var(--size-6) var(--size-12);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: color var(--duration-mouse-over), border-color var(--duration-mouse-over);
+}
+.mob-notification-panel__filter-tab:hover {
+  color: var(--MouseOverPrimary);
+}
+.mob-notification-panel__filter-tab.is-active {
+  color: var(--SelectionPrimary);
+  border-bottom-color: var(--SelectionPrimary);
+}
+
+/* XAML: VehicleFilterButton, TimeFilterButton, DismissAll, PopOut */
+.mob-notification-panel__actions {
+  display: flex;
+  gap: var(--size-6);
+  align-items: center;
+}
+
+.mob-notification-panel__action-btn {
+  font-family: 'mobius-system-icons';
+  font-size: var(--size-20);
+  color: var(--ForegroundPrimary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: var(--size-6);
+  line-height: 1;
+}
+.mob-notification-panel__action-btn:hover {
+  color: var(--MouseOverPrimary);
+}
+.mob-notification-panel__action-btn.is-filtered {
+  color: var(--SelectionPrimary);
+}
+
+/* XAML: Row 2 — Notification list */
+.mob-notification-panel__list {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* XAML: Empty state text */
+.mob-notification-panel__empty {
+  font: var(--font-bodyMd);
+  color: var(--ForegroundStrong);
+  padding: 8px var(--size-24);
+}
+
+/* XAML: Section title (Recent / History) */
+.mob-notification-panel__section-title {
+  font: var(--font-meta);
+  color: var(--ForegroundInvertPrimary);
+  text-transform: uppercase;
+  padding: var(--size-6) var(--size-24);
+}
+
+/* XAML: GridSplitter between recent + history */
+.mob-notification-panel__splitter {
+  height: 1px;
+  background: var(--InnerLines);
+  margin: 17px 0;
+}
+
+/* XAML: History GridView columns */
+.mob-notification-panel__history {
+  flex: 1;
+  overflow-x: auto;
+}
+
+.mob-notification-panel__history-table {
+  width: 100%;
+  border-collapse: collapse;
+  font: var(--font-bodySm);
+  color: var(--ForegroundPrimary);
+}
+
+.mob-notification-panel__history-table th {
+  font: var(--font-meta);
+  text-align: left;
+  padding: var(--size-6) var(--size-6);
+  border-bottom: 1px solid var(--InnerLines);
+  white-space: nowrap;
+}
+
+.mob-notification-panel__history-table td {
+  padding: var(--size-6) var(--size-6);
+  border-bottom: 1px solid var(--InnerLines);
+  vertical-align: middle;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* XAML: Level indicator in table — 4px colored cell */
+.mob-notification-panel__history-table td:first-child {
+  width: 4px;
+  padding: 0;
+}
+.mob-notification-panel__history-level {
+  display: block;
+  width: 4px;
+  height: 100%;
+  min-height: 24px;
+}
+.mob-notification-panel__history-level[data-level="info"]     { background: var(--MessageDeliveryIconInfo); }
+.mob-notification-panel__history-level[data-level="warning"]  { background: var(--MessageDeliveryIconWarning); }
+.mob-notification-panel__history-level[data-level="critical"] { background: var(--MessageDeliveryIconCritical); }
+.mob-notification-panel__history-level[data-level="dismissed"]{ background: var(--ForegroundDisabled); }
+
+
+/* =============================================================
+   5. ACTIVE ALERT (ActiveAlertUI.xaml — Agriculture plugin)
+   Source: ActiveAlertUI.xaml
+   Full-width banner at viewport bottom. Shows one alert at a
+   time with a timeout progress bar.
+   Levels: Info, Warning, Critical/Error, Inactive/OK
+   ============================================================= */
+
+.mob-active-alert {
+  position: relative;
+  display: grid;
+  grid-template-columns: 60px 1fr;
+  align-items: center;
+  height: 54px;
+  overflow: hidden;
+}
+
+/* XAML: ProgressBar — top 4px bar showing timeout countdown */
+.mob-active-alert__progress {
+  position: absolute;
+  top: 1px;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: rgba(0, 0, 0, 0.067);
+}
+.mob-active-alert__progress-fill {
+  height: 100%;
+  transition: width 1s linear;
+}
+
+/* XAML: Path icon — centered in col 0 */
+.mob-active-alert__icon {
+  font-family: 'mobius-system-icons';
+  font-size: var(--size-20);
+  text-align: center;
+  line-height: 54px;
+}
+
+/* XAML: TextBlock — col 1 */
+.mob-active-alert__text {
+  font: var(--font-bodyMd);
+  color: var(--MessageDeliveryForeground);
+  padding-right: var(--size-20);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-left: -1px;
+}
+
+/* Level variants — XAML: ActiveInfoVisual, ActiveWarningVisual, etc. */
+.mob-active-alert[data-level="info"] {
+  background: var(--MessageDeliveryBackgroundInfo);
+}
+.mob-active-alert[data-level="info"] .mob-active-alert__icon {
+  color: var(--MessageDeliveryIconInfo);
+}
+.mob-active-alert[data-level="info"] .mob-active-alert__progress-fill {
+  background: var(--InformationBlue);
+}
+
+.mob-active-alert[data-level="warning"] {
+  background: var(--MessageDeliveryBackgroundWarning);
+}
+.mob-active-alert[data-level="warning"] .mob-active-alert__icon {
+  color: var(--MessageDeliveryIconWarning);
+}
+.mob-active-alert[data-level="warning"] .mob-active-alert__progress-fill {
+  background: var(--InformationOrange);
+}
+
+.mob-active-alert[data-level="critical"] {
+  background: var(--MessageDeliveryBackgroundCritical);
+}
+.mob-active-alert[data-level="critical"] .mob-active-alert__icon {
+  color: var(--MessageDeliveryIconCritical);
+}
+.mob-active-alert[data-level="critical"] .mob-active-alert__progress-fill {
+  background: var(--InformationRed);
+}
+
+.mob-active-alert[data-level="ok"] {
+  background: var(--MessageDeliveryBackgroundOk);
+}
+.mob-active-alert[data-level="ok"] .mob-active-alert__icon {
+  color: var(--MessageDeliveryIconOk);
+}
+
+
+/* =============================================================
+   6. OK / CANCEL DIALOG (OkCancelDialog.xaml)
+   Source: OkCancelDialog.xaml
+   Simple modal confirmation. Fixed 400x300.
+   ============================================================= */
+
+.mob-dialog {
+  width: 400px;
+  max-height: 300px;
+  background: var(--BackgroundStrong);
+  box-shadow: 0 4px 24px var(--ShadowElements);
+  display: flex;
+  flex-direction: column;
+}
+
+/* XAML: Title bar — window chrome */
+.mob-dialog__titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--size-6) var(--size-12);
+  background: var(--BackgroundStrongStepOne);
+  border-bottom: 1px solid var(--InnerLines);
+}
+.mob-dialog__title {
+  font: var(--font-hdrSm);
+  color: var(--ForegroundStrong);
+}
+.mob-dialog__close {
+  font-family: 'mobius-system-icons';
+  font-size: var(--size-20);
+  color: var(--ForegroundPrimary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+.mob-dialog__close:hover { color: var(--MouseOverPrimary); }
+
+/* XAML: DialogText — Margin 10,30 */
+.mob-dialog__body {
+  flex: 1;
+  padding: 30px 10px;
+  font: var(--font-bodyMd);
+  color: var(--ForegroundPrimary);
+}
+
+/* XAML: Button row — OK + Cancel */
+.mob-dialog__actions {
+  display: flex;
+  gap: 10px;
+  padding: 0 10px 10px;
+}

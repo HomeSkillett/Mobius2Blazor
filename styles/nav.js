@@ -153,6 +153,17 @@
         { label: "ExpanderItem + IconLabelExpander", href: "expander-item/expander-item.html" },
         { label: "DataGrid",     href: "data-grid/data-grid.html" }
       ]
+    },
+    {
+      title: "Alerts & Notifications",
+      links: [
+        { label: "All",                 href: "alerts/alerts.html" },
+        { label: "Toast",               href: "alerts/alerts-toast.html" },
+        { label: "Notification Item",   href: "alerts/alerts-notification.html" },
+        { label: "Notification Panel",  href: "alerts/alerts-panel.html" },
+        { label: "Active Alert (Ag)",   href: "alerts/alerts-active.html" },
+        { label: "Confirmation Dialog", href: "alerts/alerts-dialog.html" }
+      ]
     }
   ];
 

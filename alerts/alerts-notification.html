@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mobius — Notification Item</title>
+  <link id="mob-theme-link" rel="stylesheet" href="../styles/LightTheme.css" />
+  <link rel="stylesheet" href="../styles/base.css" />
+  <link rel="stylesheet" href="alerts.css" />
+  <style>
+    body { margin: 0; }
+    h1 {
+      font: var(--font-hdrMd);
+      margin: 0 0 32px;
+      color: var(--ForegroundStrong);
+    }
+    h2 {
+      font: var(--font-hdrSm);
+      margin: 40px 0 16px;
+      color: var(--ForegroundStrong);
+    }
+    h2:first-of-type { margin-top: 0; }
+    .section-divider {
+      border: none;
+      border-top: var(--line-size) solid var(--InnerLines);
+      margin: 32px 0 0;
+    }
+    .demo-stack {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-item);
+      max-width: 460px;
+      background: var(--BackgroundStrong);
+      border: 1px solid var(--InnerLines);
+    }
+    .note {
+      font: var(--font-bodySm);
+      color: var(--ForegroundDisabled);
+      max-width: 540px;
+      margin: var(--size-6) 0 0;
+    }
+  </style>
+</head>
+<body>
+
+<div class="mob-layout">
+
+  <!-- Sidebar Navigation -->
+  <nav class="mob-nav" id="mob-nav"></nav>
+
+  <!-- Main Content -->
+  <main class="mob-layout__content">
+
+<h1>Notification Item</h1>
+
+
+<!-- =========================================================
+     SECTION 1: NOTIFICATION LEVELS — collapsed state
+     Source: NotificationItem.xaml — VisualState "Unselected"
+     ========================================================= -->
+
+<h2>Levels (Static)</h2>
+
+<div class="demo-stack">
+
+  <!-- ===== Info / New ===== -->
+  <!-- XAML: NotificationItem Grid Row 0: StatusLabel + LevelLabel
+       Row 1: Title (HeadingSm), Row 4: TimeString (ForegroundDisabled)
+       LevelIndicator: 4px rect via NotificationLevelToBrushConverter -->
+  <article class="mob-notification">
+    <div class="mob-notification__level" data-level="info"></div>
+    <div class="mob-notification__header">
+      <span class="mob-notification__status-badge" data-status="new">New</span>
+      <span class="mob-notification__level-label" data-level="info">Info</span>
+      <span class="mob-notification__error-code"></span>
+      <button class="mob-notification__dismiss" aria-label="Dismiss">&#xE454;</button>
+    </div>
+    <p class="mob-notification__title">GPS signal restored on Vehicle 3</p>
+    <div class="mob-notification__footer">
+      <span class="mob-notification__time">a few seconds ago</span>
+    </div>
+  </article>
+
+  <!-- ===== Warning ===== -->
+  <article class="mob-notification">
+    <div class="mob-notification__level" data-level="warning"></div>
+    <div class="mob-notification__header">
+      <span class="mob-notification__status-badge" data-status="new">New</span>
+      <span class="mob-notification__level-label" data-level="warning">Warning</span>
+      <span class="mob-notification__error-code">W-4012</span>
+      <button class="mob-notification__dismiss" aria-label="Dismiss">&#xE454;</button>
+    </div>
+    <p class="mob-notification__title">Vehicle 12 — Low fuel</p>
+    <div class="mob-notification__footer">
+      <span class="mob-notification__time">2 minutes ago</span>
+    </div>
+  </article>
+
+  <!-- ===== Critical ===== -->
+  <article class="mob-notification">
+    <div class="mob-notification__level" data-level="critical"></div>
+    <div class="mob-notification__header">
+      <span class="mob-notification__status-badge" data-status="new">New</span>
+      <span class="mob-notification__level-label" data-level="critical">Critical</span>
+      <span class="mob-notification__error-code">E-7001</span>
+      <button class="mob-notification__dismiss" aria-label="Dismiss">&#xE454;</button>
+    </div>
+    <p class="mob-notification__title">E-Stop activated on Vehicle 7</p>
+    <div class="mob-notification__footer">
+      <span class="mob-notification__time">just now</span>
+    </div>
+  </article>
+
+  <!-- ===== Dismissed ===== -->
+  <!-- XAML: IsDismissed=True causes LevelIndicator Fill to become ForegroundDisabled -->
+  <article class="mob-notification">
+    <div class="mob-notification__level" data-level="dismissed"></div>
+    <div class="mob-notification__header">
+      <span class="mob-notification__status-badge" data-status="dismissed">Dismissed</span>
+      <span class="mob-notification__level-label" data-level="warning">Warning</span>
+      <span class="mob-notification__error-code">W-3088</span>
+    </div>
+    <p class="mob-notification__title">Obstacle detected near path segment 14</p>
+    <div class="mob-notification__footer">
+      <span class="mob-notification__time">15 minutes ago</span>
+    </div>
+  </article>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 2: EXPANDED / SELECTED STATE (static reference)
+     Source: NotificationItem.xaml — VisualState "Selected"
+     ========================================================= -->
+
+<h2>Expanded (Static Reference)</h2>
+
+<div class="demo-stack">
+
+  <article class="mob-notification is-selected">
+    <div class="mob-notification__level" data-level="critical"></div>
+    <div class="mob-notification__header">
+      <span class="mob-notification__status-badge" data-status="new">New</span>
+      <span class="mob-notification__level-label" data-level="critical">Critical</span>
+      <span class="mob-notification__error-code">E-7001</span>
+      <button class="mob-notification__dismiss" aria-label="Dismiss">&#xE454;</button>
+    </div>
+    <!-- XAML: Row 1 — NotificationTitle (HeadingSm) -->
+    <p class="mob-notification__title">E-Stop activated on Vehicle 7</p>
+    <!-- XAML: Row 2 — ExpanderItem with MessageString (Paragraph style) -->
+    <p class="mob-notification__message">
+      Emergency stop triggered by operator. Vehicle is immobilized at coordinates
+      (34.052, -118.244). Manual reset required before vehicle can resume autonomous operation.
+    </p>
+    <!-- XAML: Row 3 — Action buttons (LinkButton style) -->
+    <div class="mob-notification__actions">
+      <button class="mob-notification__action-link">Acknowledge</button>
+      <button class="mob-notification__action-link">Create Error Report</button>
+    </div>
+    <!-- XAML: Row 4 — Time + GoToVehicle, GoToPoint, ErrorReport buttons -->
+    <div class="mob-notification__footer">
+      <span class="mob-notification__time">just now (10:42:15 AM)</span>
+      <span class="mob-notification__nav-buttons">
+        <button class="mob-notification__nav-btn" aria-label="Go to vehicle" title="Go to Vehicle 7">&#xE532;</button>
+        <button class="mob-notification__nav-btn" aria-label="Go to point" title="Go to map point">&#xE42F;</button>
+        <button class="mob-notification__nav-btn" aria-label="Error report" title="Report an Issue">&#xE407;</button>
+      </span>
+    </div>
+  </article>
+
+</div>
+
+<p class="note">
+  Selection applies BackgroundPrimary at 25% opacity. DismissButton goes from 0.5 to 1.0 opacity.
+  ExpanderItem opens to reveal the message text. Nav buttons appear in the footer.
+</p>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     INTERACTIVE DEMO
+     Click to expand/collapse. Dismiss removes with animation.
+     ========================================================= -->
+
+<h2>Interactive Demo</h2>
+
+<p class="note" style="margin-bottom: 16px;">
+  Click a notification to expand it (shows message, actions, nav buttons).
+  Click again to collapse. Hit the X to dismiss with a shrink animation.
+</p>
+
+<div class="demo-stack" id="interactive-list">
+
+  <article class="mob-notification interactive-notification" data-msg="GPS signal restored. Accuracy returned to nominal levels for autonomous operation." data-actions="Acknowledge" data-error="">
+    <div class="mob-notification__level" data-level="info"></div>
+    <div class="mob-notification__header">
+      <span class="mob-notification__status-badge" data-status="new">New</span>
+      <span class="mob-notification__level-label" data-level="info">Info</span>
+      <span class="mob-notification__error-code"></span>
+      <button class="mob-notification__dismiss" aria-label="Dismiss">&#xE454;</button>
+    </div>
+    <p class="mob-notification__title">GPS signal restored on Vehicle 3</p>
+    <div class="mob-notification__footer">
+      <span class="mob-notification__time">a few seconds ago</span>
+    </div>
+  </article>
+
+  <article class="mob-notification interactive-notification" data-msg="Fuel level below 15%. Schedule refueling before next shift to avoid interruption of autonomous operations." data-actions="Acknowledge,Schedule Refuel" data-error="W-4012">
+    <div class="mob-notification__level" data-level="warning"></div>
+    <div class="mob-notification__header">
+      <span class="mob-notification__status-badge" data-status="new">New</span>
+      <span class="mob-notification__level-label" data-level="warning">Warning</span>
+      <span class="mob-notification__error-code">W-4012</span>
+      <button class="mob-notification__dismiss" aria-label="Dismiss">&#xE454;</button>
+    </div>
+    <p class="mob-notification__title">Vehicle 12 — Low fuel</p>
+    <div class="mob-notification__footer">
+      <span class="mob-notification__time">2 minutes ago</span>
+    </div>
+  </article>
+
+  <article class="mob-notification interactive-notification" data-msg="Emergency stop triggered by operator. Vehicle is immobilized at coordinates (34.052, -118.244). Manual reset required." data-actions="Acknowledge,Create Error Report" data-error="E-7001">
+    <div class="mob-notification__level" data-level="critical"></div>
+    <div class="mob-notification__header">
+      <span class="mob-notification__status-badge" data-status="new">New</span>
+      <span class="mob-notification__level-label" data-level="critical">Critical</span>
+      <span class="mob-notification__error-code">E-7001</span>
+      <button class="mob-notification__dismiss" aria-label="Dismiss">&#xE454;</button>
+    </div>
+    <p class="mob-notification__title">E-Stop activated on Vehicle 7</p>
+    <div class="mob-notification__footer">
+      <span class="mob-notification__time">just now</span>
+    </div>
+  </article>
+
+  <article class="mob-notification interactive-notification" data-msg="Obstacle was detected near path segment 14 but has since been cleared." data-actions="" data-error="W-3088">
+    <div class="mob-notification__level" data-level="dismissed"></div>
+    <div class="mob-notification__header">
+      <span class="mob-notification__status-badge" data-status="dismissed">Dismissed</span>
+      <span class="mob-notification__level-label" data-level="warning">Warning</span>
+      <span class="mob-notification__error-code">W-3088</span>
+    </div>
+    <p class="mob-notification__title">Obstacle detected near path segment 14</p>
+    <div class="mob-notification__footer">
+      <span class="mob-notification__time">15 minutes ago</span>
+    </div>
+  </article>
+
+</div>
+
+
+  </main>
+
+</div>
+
+<script src="../styles/nav.js"></script>
+<script>
+(function () {
+  var list = document.getElementById('interactive-list');
+
+  list.addEventListener('click', function (e) {
+    var dismiss = e.target.closest('.mob-notification__dismiss');
+    var article = e.target.closest('.interactive-notification');
+    if (!article) return;
+
+    /* Dismiss button — shrink and remove */
+    if (dismiss) {
+      e.stopPropagation();
+      article.style.transition = 'max-height 0.5s ease, opacity 0.3s ease, margin 0.4s ease';
+      article.style.maxHeight = article.scrollHeight + 'px';
+      requestAnimationFrame(function () {
+        article.style.maxHeight = '0';
+        article.style.opacity = '0';
+        article.style.margin = '0';
+        article.style.overflow = 'hidden';
+      });
+      article.addEventListener('transitionend', function handler() {
+        article.removeEventListener('transitionend', handler);
+        if (article.parentNode) article.parentNode.removeChild(article);
+      });
+      return;
+    }
+
+    /* Toggle expand/collapse */
+    var isExpanded = article.classList.contains('is-selected');
+    var prev = list.querySelector('.interactive-notification.is-selected');
+    if (prev && prev !== article) collapseItem(prev);
+    isExpanded ? collapseItem(article) : expandItem(article);
+  });
+
+  function expandItem(el) {
+    el.classList.add('is-selected');
+
+    /* Inject message */
+    if (!el.querySelector('.mob-notification__message')) {
+      var msg = el.getAttribute('data-msg');
+      if (msg) {
+        var p = document.createElement('p');
+        p.className = 'mob-notification__message';
+        p.textContent = msg;
+        el.querySelector('.mob-notification__title').insertAdjacentElement('afterend', p);
+      }
+    }
+
+    /* Inject actions */
+    if (!el.querySelector('.mob-notification__actions')) {
+      var actionsStr = el.getAttribute('data-actions');
+      if (actionsStr) {
+        var parts = actionsStr.split(',').filter(Boolean);
+        if (parts.length) {
+          var actionsEl = document.createElement('div');
+          actionsEl.className = 'mob-notification__actions';
+          for (var i = 0; i < parts.length; i++) {
+            var btn = document.createElement('button');
+            btn.className = 'mob-notification__action-link';
+            btn.textContent = parts[i];
+            actionsEl.appendChild(btn);
+          }
+          el.querySelector('.mob-notification__footer').insertAdjacentElement('beforebegin', actionsEl);
+        }
+      }
+    }
+
+    /* Inject nav buttons */
+    var footer = el.querySelector('.mob-notification__footer');
+    if (!footer.querySelector('.mob-notification__nav-buttons')) {
+      var navBtns = document.createElement('span');
+      navBtns.className = 'mob-notification__nav-buttons';
+      navBtns.innerHTML =
+        '<button class="mob-notification__nav-btn" aria-label="Go to vehicle" title="Go to Vehicle">\uE532</button>' +
+        '<button class="mob-notification__nav-btn" aria-label="Go to point" title="Go to map point">\uE42F</button>' +
+        '<button class="mob-notification__nav-btn" aria-label="Error report" title="Report an Issue">\uE407</button>';
+      footer.appendChild(navBtns);
+    }
+  }
+
+  function collapseItem(el) {
+    el.classList.remove('is-selected');
+    var msg = el.querySelector('.mob-notification__message');
+    if (msg) msg.parentNode.removeChild(msg);
+    var actions = el.querySelector('.mob-notification__actions');
+    if (actions) actions.parentNode.removeChild(actions);
+    var navBtns = el.querySelector('.mob-notification__nav-buttons');
+    if (navBtns) navBtns.parentNode.removeChild(navBtns);
+  }
+})();
+</script>
+</body>
+</html>

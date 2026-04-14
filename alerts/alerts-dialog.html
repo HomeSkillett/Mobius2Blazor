@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mobius — Confirmation Dialog</title>
+  <link id="mob-theme-link" rel="stylesheet" href="../styles/LightTheme.css" />
+  <link rel="stylesheet" href="../styles/base.css" />
+  <link rel="stylesheet" href="alerts.css" />
+  <style>
+    body { margin: 0; }
+    h1 {
+      font: var(--font-hdrMd);
+      margin: 0 0 32px;
+      color: var(--ForegroundStrong);
+    }
+    h2 {
+      font: var(--font-hdrSm);
+      margin: 40px 0 16px;
+      color: var(--ForegroundStrong);
+    }
+    h2:first-of-type { margin-top: 0; }
+    .section-divider {
+      border: none;
+      border-top: var(--line-size) solid var(--InnerLines);
+      margin: 32px 0 0;
+    }
+    .note {
+      font: var(--font-bodySm);
+      color: var(--ForegroundDisabled);
+      max-width: 540px;
+      margin: var(--size-6) 0 0;
+    }
+    .demo-center {
+      display: flex;
+      justify-content: center;
+      padding: var(--spacing-section-to-section) 0;
+      background: rgba(0, 0, 0, 0.05);
+      max-width: 680px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="mob-layout">
+
+  <!-- Sidebar Navigation -->
+  <nav class="mob-nav" id="mob-nav"></nav>
+
+  <!-- Main Content -->
+  <main class="mob-layout__content">
+
+<h1>Confirmation Dialog</h1>
+
+
+<!-- =========================================================
+     SECTION 1: OK / CANCEL DIALOG
+     Source: OkCancelDialog.xaml
+     Window: common:UserWindow, 400x300, ResizeMode=NoResize,
+     WindowStartupLocation=CenterOwner
+
+     Layout:
+       StackPanel Vertical
+         TextBlock (DialogText) — Margin 10,30,10,30
+         StackPanel Horizontal
+           Button "OK"     — Margin 10,0
+           Button "Cancel" — Margin 10,0
+     ========================================================= -->
+
+<h2>Default State</h2>
+
+<div class="demo-center">
+
+  <!-- XAML: OkCancelDialog — common:UserWindow 400x300 -->
+  <div class="mob-dialog">
+    <!-- XAML: Title="{Binding DialogTitle}" — rendered as window chrome -->
+    <div class="mob-dialog__titlebar">
+      <span class="mob-dialog__title">Confirm Action</span>
+      <!-- XAML: Window close button (standard chrome) -->
+      <button class="mob-dialog__close" aria-label="Close">&#xE454;</button>
+    </div>
+    <!-- XAML: TextBlock DialogText Margin="10,30,10,30" -->
+    <div class="mob-dialog__body">
+      Are you sure you want to remove this role assignment? This action cannot be undone.
+    </div>
+    <!-- XAML: StackPanel Horizontal — OK + Cancel buttons -->
+    <div class="mob-dialog__actions">
+      <!-- XAML: OkButton, Content from LocalizedText.ConfigurationMode.RoleConfiguration.ConfirmationDialogOk -->
+      <button class="mob-btn mob-btn--primary">OK</button>
+      <!-- XAML: CancelButton, Content from LocalizedText.ConfigurationMode.RoleConfiguration.ConfirmationDialogCancel -->
+      <button class="mob-btn mob-btn--outline">Cancel</button>
+    </div>
+  </div>
+
+</div>
+
+<p class="note">
+  Fixed 400&times;300 window. ResizeMode=NoResize. Centered on parent (CenterOwner).
+  Closing the window fires OkCancelDialog_OnClosed. The dialog is modal &mdash; it blocks
+  interaction with the parent window until OK or Cancel is clicked.
+</p>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     INTERACTIVE DEMO
+     Click to open a modal dialog with backdrop.
+     OK / Cancel / X all close it with a result message.
+     Matches the XAML modal behavior: blocks parent window,
+     CenterOwner, returns on OK or Cancel click.
+     ========================================================= -->
+
+<h2>Interactive Demo</h2>
+
+<p class="note" style="margin-bottom: 16px;">
+  Click the button to open the dialog as a modal overlay with backdrop.
+  OK, Cancel, and the X button all close it — the result is shown below.
+</p>
+
+<button class="mob-btn mob-btn--primary" id="demo-open">Open Confirmation Dialog</button>
+<p class="note" id="demo-result" style="margin-top: 12px;">&nbsp;</p>
+
+<!-- Modal backdrop + dialog -->
+<div id="demo-backdrop" style="
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  background: rgba(0, 0, 0, 0.4);
+  align-items: center;
+  justify-content: center;
+">
+  <div class="mob-dialog" style="z-index: 9999;">
+    <div class="mob-dialog__titlebar">
+      <span class="mob-dialog__title">Confirm Action</span>
+      <button class="mob-dialog__close" id="demo-close" aria-label="Close">&#xE454;</button>
+    </div>
+    <div class="mob-dialog__body">
+      Are you sure you want to remove this role assignment? This action cannot be undone.
+    </div>
+    <div class="mob-dialog__actions">
+      <button class="mob-btn mob-btn--primary" id="demo-ok">OK</button>
+      <button class="mob-btn mob-btn--outline" id="demo-cancel">Cancel</button>
+    </div>
+  </div>
+</div>
+
+
+  </main>
+
+</div>
+
+<script src="../styles/nav.js"></script>
+<script>
+(function () {
+  var backdrop = document.getElementById('demo-backdrop');
+  var result = document.getElementById('demo-result');
+
+  function openDialog() {
+    backdrop.style.display = 'flex';
+    result.innerHTML = '&nbsp;';
+  }
+
+  function closeDialog(action) {
+    backdrop.style.display = 'none';
+    result.textContent = 'Result: ' + action + ' — dialog closed.';
+  }
+
+  document.getElementById('demo-open').addEventListener('click', openDialog);
+  document.getElementById('demo-ok').addEventListener('click', function () { closeDialog('OK'); });
+  document.getElementById('demo-cancel').addEventListener('click', function () { closeDialog('Cancel'); });
+  document.getElementById('demo-close').addEventListener('click', function () { closeDialog('Close (X)'); });
+
+  /* Close on backdrop click (outside the dialog) */
+  backdrop.addEventListener('click', function (e) {
+    if (e.target === backdrop) closeDialog('Backdrop click');
+  });
+
+  /* Close on Escape key */
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && backdrop.style.display === 'flex') closeDialog('Escape');
+  });
+})();
+</script>
+</body>
+</html>

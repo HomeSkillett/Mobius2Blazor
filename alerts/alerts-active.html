@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mobius — Active Alert</title>
+  <link id="mob-theme-link" rel="stylesheet" href="../styles/LightTheme.css" />
+  <link rel="stylesheet" href="../styles/base.css" />
+  <link rel="stylesheet" href="alerts.css" />
+  <style>
+    body { margin: 0; }
+    h1 {
+      font: var(--font-hdrMd);
+      margin: 0 0 32px;
+      color: var(--ForegroundStrong);
+    }
+    h2 {
+      font: var(--font-hdrSm);
+      margin: 40px 0 16px;
+      color: var(--ForegroundStrong);
+    }
+    h2:first-of-type { margin-top: 0; }
+    .section-divider {
+      border: none;
+      border-top: var(--line-size) solid var(--InnerLines);
+      margin: 32px 0 0;
+    }
+    .demo-stack {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-field);
+      max-width: 680px;
+    }
+    .note {
+      font: var(--font-bodySm);
+      color: var(--ForegroundDisabled);
+      max-width: 540px;
+      margin: var(--size-6) 0 0;
+    }
+    .demo-trigger-row {
+      display: flex;
+      gap: var(--size-12);
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="mob-layout">
+
+  <!-- Sidebar Navigation -->
+  <nav class="mob-nav" id="mob-nav"></nav>
+
+  <!-- Main Content -->
+  <main class="mob-layout__content">
+
+<h1>Active Alert</h1>
+
+
+<!-- =========================================================
+     SECTION 1: ALL LEVELS (static)
+     Source: ActiveAlertUI.xaml — Agriculture plugin
+     ========================================================= -->
+
+<h2>Alert Levels</h2>
+
+<div class="demo-stack">
+
+  <!-- ===== Info ===== -->
+  <!-- XAML: ActiveInfoVisual — Background: MessageDeliveryBackgroundInfoBrush
+       Icon: Icon_Status_Info, ProgressBar.Foreground: InformationBlueBrush -->
+  <article class="mob-active-alert" data-level="info">
+    <div class="mob-active-alert__progress">
+      <div class="mob-active-alert__progress-fill" style="width: 72%;"></div>
+    </div>
+    <span class="mob-active-alert__icon">&#xE44B;</span>
+    <span class="mob-active-alert__text">GPS accuracy reduced — operating in degraded mode</span>
+  </article>
+
+  <!-- ===== Warning ===== -->
+  <!-- XAML: ActiveWarningVisual — Background: MessageDeliveryBackgroundWarningBrush
+       Icon: Icon_Status_Warning, ProgressBar.Foreground: InformationOrangeBrush -->
+  <article class="mob-active-alert" data-level="warning">
+    <div class="mob-active-alert__progress">
+      <div class="mob-active-alert__progress-fill" style="width: 45%;"></div>
+    </div>
+    <span class="mob-active-alert__icon">&#xE450;</span>
+    <span class="mob-active-alert__text">Obstacle detected ahead — reducing speed</span>
+  </article>
+
+  <!-- ===== Critical / Error ===== -->
+  <!-- XAML: ActiveErrorVisual — Background: MessageDeliveryBackgroundCriticalBrush
+       Icon: Icon_Status_Critical, ProgressBar.Foreground: InformationRedBrush -->
+  <article class="mob-active-alert" data-level="critical">
+    <div class="mob-active-alert__progress">
+      <div class="mob-active-alert__progress-fill" style="width: 88%;"></div>
+    </div>
+    <span class="mob-active-alert__icon">&#xE441;</span>
+    <span class="mob-active-alert__text">E-Stop activated — vehicle immobilized, manual reset required</span>
+  </article>
+
+  <!-- ===== Inactive / OK ===== -->
+  <!-- XAML: InactiveVisual — Background: MessageDeliveryBackgroundOkBrush
+       Icon: Icon_Status_OkayThin, no ProgressBar -->
+  <article class="mob-active-alert" data-level="ok">
+    <span class="mob-active-alert__icon">&#xE449;</span>
+    <span class="mob-active-alert__text">All clear — autonomous operation normal</span>
+  </article>
+
+</div>
+
+<p class="note">
+  Pinned to the bottom of the viewport. Wrapped in an ExpanderItem (IsOpened toggled by
+  VisualState). Progress bar counts down CurrentAlertTimeout against CurrentAlertTimeoutMax.
+</p>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     INTERACTIVE DEMO
+     Switch levels, progress bar counts down in real time.
+     ========================================================= -->
+
+<h2>Interactive Demo</h2>
+
+<p class="note" style="margin-bottom: 16px;">
+  Use the buttons to switch alert levels. The progress bar counts down in real time,
+  then transitions to OK and hides — matching the XAML VisualState lifecycle.
+</p>
+
+<div class="demo-trigger-row">
+  <button class="mob-btn mob-btn--outline" id="demo-info">Info</button>
+  <button class="mob-btn mob-btn--outline" id="demo-warning">Warning</button>
+  <button class="mob-btn mob-btn--outline" id="demo-critical">Critical</button>
+  <button class="mob-btn mob-btn--outline" id="demo-ok">OK / Inactive</button>
+  <button class="mob-btn mob-btn--outline" id="demo-hidden">Hidden</button>
+</div>
+
+<p class="note" id="demo-countdown" style="font-variant-numeric: tabular-nums;">
+  Click a level button to trigger the alert
+</p>
+
+<!-- Pinned to viewport bottom, over main content only (nav = 260px) -->
+<!-- Hidden on load — shown when user clicks a demo button -->
+<article class="mob-active-alert" id="demo-alert" data-level="info"
+  style="position: fixed; bottom: 0; left: 260px; right: 0; z-index: 900; opacity: 0; transform: translateY(100%); transition: opacity 0.3s ease, transform 0.3s ease;">
+  <div class="mob-active-alert__progress">
+    <div class="mob-active-alert__progress-fill" id="demo-progress" style="width: 100%; transition: width 0.1s linear;"></div>
+  </div>
+  <span class="mob-active-alert__icon" id="demo-alert-icon">&#xE44B;</span>
+  <span class="mob-active-alert__text" id="demo-alert-text">GPS accuracy reduced — operating in degraded mode</span>
+</article>
+
+
+  </main>
+
+</div>
+
+<script src="../styles/nav.js"></script>
+<script>
+(function () {
+  var alertEl = document.getElementById('demo-alert');
+  var progress = document.getElementById('demo-progress');
+  var icon = document.getElementById('demo-alert-icon');
+  var text = document.getElementById('demo-alert-text');
+  var countdown = document.getElementById('demo-countdown');
+  var timer = null;
+  var pct = 100;
+
+  var levels = {
+    info:     { icon: '\uE44B', text: 'GPS accuracy reduced \u2014 operating in degraded mode' },
+    warning:  { icon: '\uE450', text: 'Obstacle detected ahead \u2014 reducing speed' },
+    critical: { icon: '\uE441', text: 'E-Stop activated \u2014 vehicle immobilized, manual reset required' },
+    ok:       { icon: '\uE449', text: 'All clear \u2014 autonomous operation normal' }
+  };
+
+  function show() {
+    alertEl.style.opacity = '1';
+    alertEl.style.transform = 'translateY(0)';
+  }
+
+  function setLevel(level, animate) {
+    clearInterval(timer);
+    show();
+    alertEl.setAttribute('data-level', level);
+    icon.innerHTML = levels[level].icon;
+    text.textContent = levels[level].text;
+
+    if (level === 'ok') {
+      progress.style.width = '0%';
+      countdown.textContent = 'Alert resolved \u2014 OK state';
+      return;
+    }
+
+    if (animate) {
+      pct = 100;
+      progress.style.width = '100%';
+      countdown.textContent = 'Countdown: 100%';
+      timer = setInterval(function () {
+        pct -= 1;
+        if (pct < 0) {
+          clearInterval(timer);
+          setLevel('ok', false);
+          setTimeout(function () {
+            hide();
+            countdown.textContent = 'Alert hidden \u2014 ExpanderItem collapsed (VisualState: AlertHidden)';
+          }, 1500);
+          return;
+        }
+        progress.style.width = pct + '%';
+        countdown.textContent = 'Countdown: ' + pct + '%';
+      }, 80);
+    } else {
+      progress.style.width = '100%';
+      countdown.textContent = 'Paused \u2014 click a level to start countdown';
+    }
+  }
+
+  function hide() {
+    clearInterval(timer);
+    alertEl.style.opacity = '0';
+    alertEl.style.transform = 'translateY(100%)';
+    countdown.textContent = 'Alert hidden \u2014 ExpanderItem collapsed (VisualState: AlertHidden)';
+  }
+
+  document.getElementById('demo-info').addEventListener('click', function () { setLevel('info', true); });
+  document.getElementById('demo-warning').addEventListener('click', function () { setLevel('warning', true); });
+  document.getElementById('demo-critical').addEventListener('click', function () { setLevel('critical', true); });
+  document.getElementById('demo-ok').addEventListener('click', function () { setLevel('ok', false); });
+  document.getElementById('demo-hidden').addEventListener('click', function () { hide(); });
+})();
+</script>
+</body>
+</html>

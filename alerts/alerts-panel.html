@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mobius — Notification Panel</title>
+  <link id="mob-theme-link" rel="stylesheet" href="../styles/LightTheme.css" />
+  <link rel="stylesheet" href="../styles/base.css" />
+  <link rel="stylesheet" href="alerts.css" />
+  <style>
+    body { margin: 0; }
+    h1 {
+      font: var(--font-hdrMd);
+      margin: 0 0 32px;
+      color: var(--ForegroundStrong);
+    }
+    h2 {
+      font: var(--font-hdrSm);
+      margin: 40px 0 16px;
+      color: var(--ForegroundStrong);
+    }
+    h2:first-of-type { margin-top: 0; }
+    .section-divider {
+      border: none;
+      border-top: var(--line-size) solid var(--InnerLines);
+      margin: 32px 0 0;
+    }
+    .note {
+      font: var(--font-bodySm);
+      color: var(--ForegroundDisabled);
+      max-width: 540px;
+      margin: var(--size-6) 0 0;
+    }
+    .panel-demo {
+      width: 420px;
+      height: 640px;
+      border: 1px solid var(--InnerLines);
+      overflow: hidden;
+    }
+    .toggle-demo {
+      display: flex;
+      gap: var(--spacing-section-to-header);
+      align-items: flex-start;
+      max-width: 540px;
+    }
+    .toggle-label {
+      font: var(--font-bodySm);
+      color: var(--ForegroundPrimary);
+      margin-top: 14px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="mob-layout">
+
+  <!-- Sidebar Navigation -->
+  <nav class="mob-nav" id="mob-nav"></nav>
+
+  <!-- Main Content -->
+  <main class="mob-layout__content">
+
+<h1>Notification Panel</h1>
+
+
+<!-- =========================================================
+     SECTION 1: TOGGLE BUTTON — static states
+     Source: NotificationToggleButton.xaml
+     ========================================================= -->
+
+<h2>Toggle Button States (Static)</h2>
+
+<div class="toggle-demo">
+  <div>
+    <button class="mob-notification-toggle" aria-label="Notifications">
+      <span class="mob-notification-toggle__icon">&#xE443;</span>
+    </button>
+    <span class="toggle-label">No alerts</span>
+  </div>
+  <div>
+    <button class="mob-notification-toggle" aria-label="Notifications: 3 new">
+      <span class="mob-notification-toggle__icon">&#xE443;</span>
+      <span class="mob-notification-toggle__badge">3</span>
+    </button>
+    <span class="toggle-label">New alerts</span>
+  </div>
+  <div>
+    <button class="mob-notification-toggle is-critical" aria-label="Critical notification">
+      <span class="mob-notification-toggle__icon">&#xE443;</span>
+    </button>
+    <span class="toggle-label">Critical (pulses)</span>
+  </div>
+  <div>
+    <button class="mob-notification-toggle is-checked" aria-label="Notifications panel open">
+      <span class="mob-notification-toggle__icon">&#xE443;</span>
+    </button>
+    <span class="toggle-label">Checked (open)</span>
+  </div>
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     INTERACTIVE: Toggle button cycles states on click
+     ========================================================= -->
+
+<h2>Interactive Toggle</h2>
+
+<p class="note" style="margin-bottom: 16px;">
+  Click the toggle button to cycle: No alerts, New alerts (3), Critical (pulse), Checked (open).
+</p>
+
+<div style="display: flex; align-items: center; gap: 20px;">
+  <button class="mob-notification-toggle" id="demo-toggle" aria-label="Notifications">
+    <span class="mob-notification-toggle__icon">&#xE443;</span>
+  </button>
+  <span id="demo-toggle-label" class="toggle-label" style="margin-top: 0;">No alerts — click to cycle</span>
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     INTERACTIVE PANEL
+     Filter tabs, dismiss-all, click-to-expand.
+     Source: InternalNotificationPanel.xaml
+     ========================================================= -->
+
+<h2>Interactive Panel</h2>
+
+<p class="note" style="margin-bottom: 16px;">
+  Filter tabs switch views. Click a notification to expand. Dismiss-all clears active items.
+</p>
+
+<div class="panel-demo">
+  <div class="mob-notification-panel">
+
+    <!-- XAML: Row 0 — 24px spacer -->
+    <div class="mob-notification-panel__spacer"></div>
+
+    <!-- XAML: Row 1 — Toolbar -->
+    <div class="mob-notification-panel__toolbar">
+      <div class="mob-notification-panel__filters" id="demo-filters">
+        <button class="mob-notification-panel__filter-tab is-active" data-filter="all">All</button>
+        <button class="mob-notification-panel__filter-tab" data-filter="recent">Recent</button>
+        <button class="mob-notification-panel__filter-tab" data-filter="dismissed">Dismissed</button>
+      </div>
+      <div class="mob-notification-panel__actions">
+        <button class="mob-notification-panel__action-btn" aria-label="Filter by vehicle" title="Vehicle filter">&#xE532;</button>
+        <button class="mob-notification-panel__action-btn" aria-label="Filter by time" title="Time filter">&#xE401;</button>
+        <button class="mob-notification-panel__action-btn" id="demo-dismiss-all" aria-label="Dismiss all" title="Clear all undismissed">&#xE403;</button>
+        <button class="mob-notification-panel__action-btn" aria-label="Pop out" title="Open in new window">&#xE447;</button>
+      </div>
+    </div>
+
+    <!-- XAML: Row 2 — Notification list -->
+    <div class="mob-notification-panel__list" id="demo-panel-list">
+
+      <span class="mob-notification-panel__section-title">Recent</span>
+
+      <article class="mob-notification demo-panel-item" data-status="new" data-level="critical" data-msg="Emergency stop triggered by operator at coordinates (34.052, -118.244).">
+        <div class="mob-notification__level" data-level="critical"></div>
+        <div class="mob-notification__header">
+          <span class="mob-notification__status-badge" data-status="new">New</span>
+          <span class="mob-notification__level-label" data-level="critical">Critical</span>
+          <span class="mob-notification__error-code">E-7001</span>
+          <button class="mob-notification__dismiss" aria-label="Dismiss">&#xE454;</button>
+        </div>
+        <p class="mob-notification__title">E-Stop activated on Vehicle 7</p>
+        <div class="mob-notification__footer">
+          <span class="mob-notification__time">just now</span>
+        </div>
+      </article>
+
+      <article class="mob-notification demo-panel-item" data-status="new" data-level="warning" data-msg="Fuel level below 15%. Schedule refueling before next shift.">
+        <div class="mob-notification__level" data-level="warning"></div>
+        <div class="mob-notification__header">
+          <span class="mob-notification__status-badge" data-status="new">New</span>
+          <span class="mob-notification__level-label" data-level="warning">Warning</span>
+          <span class="mob-notification__error-code">W-4012</span>
+          <button class="mob-notification__dismiss" aria-label="Dismiss">&#xE454;</button>
+        </div>
+        <p class="mob-notification__title">Vehicle 12 — Low fuel</p>
+        <div class="mob-notification__footer">
+          <span class="mob-notification__time">2 minutes ago</span>
+        </div>
+      </article>
+
+      <article class="mob-notification demo-panel-item" data-status="new" data-level="info" data-msg="GPS signal restored. Accuracy nominal.">
+        <div class="mob-notification__level" data-level="info"></div>
+        <div class="mob-notification__header">
+          <span class="mob-notification__status-badge" data-status="new">New</span>
+          <span class="mob-notification__level-label" data-level="info">Info</span>
+          <button class="mob-notification__dismiss" aria-label="Dismiss">&#xE454;</button>
+        </div>
+        <p class="mob-notification__title">GPS signal restored on Vehicle 3</p>
+        <div class="mob-notification__footer">
+          <span class="mob-notification__time">5 minutes ago</span>
+        </div>
+      </article>
+
+      <article class="mob-notification demo-panel-item" data-status="dismissed" data-level="warning" data-msg="Path segment 14 cleared by operator.">
+        <div class="mob-notification__level" data-level="dismissed"></div>
+        <div class="mob-notification__header">
+          <span class="mob-notification__status-badge" data-status="dismissed">Dismissed</span>
+          <span class="mob-notification__level-label" data-level="warning">Warning</span>
+          <span class="mob-notification__error-code">W-3088</span>
+        </div>
+        <p class="mob-notification__title">Obstacle detected near path segment 14</p>
+        <div class="mob-notification__footer">
+          <span class="mob-notification__time">15 minutes ago</span>
+        </div>
+      </article>
+
+      <article class="mob-notification demo-panel-item" data-status="dismissed" data-level="info" data-msg="Sensor diagnostics passed all checks.">
+        <div class="mob-notification__level" data-level="dismissed"></div>
+        <div class="mob-notification__header">
+          <span class="mob-notification__status-badge" data-status="dismissed">Dismissed</span>
+          <span class="mob-notification__level-label" data-level="info">Info</span>
+        </div>
+        <p class="mob-notification__title">Vehicle 1 — Sensor check complete</p>
+        <div class="mob-notification__footer">
+          <span class="mob-notification__time">28 minutes ago</span>
+        </div>
+      </article>
+
+    </div>
+
+  </div>
+</div>
+
+<p class="note">
+  Panel supports three display states: Panel (docked sidebar), Overlay (full-height), and PopOut (separate window).
+  Filter tabs change based on state (e.g. "Hybrid" replaces "All" in PopOut mode).
+</p>
+
+
+  </main>
+
+</div>
+
+<script src="../styles/nav.js"></script>
+<script>
+(function () {
+
+  /* ---- Toggle button state cycling ---- */
+  var toggle = document.getElementById('demo-toggle');
+  var toggleLabel = document.getElementById('demo-toggle-label');
+  var states = [
+    { cls: '',            badge: '',  label: 'No alerts — click to cycle' },
+    { cls: '',            badge: '3', label: 'New alerts (badge shows count)' },
+    { cls: 'is-critical', badge: '',  label: 'Critical — red background + pulse' },
+    { cls: 'is-checked',  badge: '',  label: 'Checked — panel is open' }
+  ];
+  var stateIdx = 0;
+
+  toggle.addEventListener('click', function () {
+    stateIdx = (stateIdx + 1) % states.length;
+    var s = states[stateIdx];
+    toggle.className = 'mob-notification-toggle' + (s.cls ? ' ' + s.cls : '');
+
+    var badgeEl = toggle.querySelector('.mob-notification-toggle__badge');
+    if (s.badge) {
+      if (!badgeEl) {
+        badgeEl = document.createElement('span');
+        badgeEl.className = 'mob-notification-toggle__badge';
+        toggle.appendChild(badgeEl);
+      }
+      badgeEl.textContent = s.badge;
+    } else if (badgeEl) {
+      badgeEl.parentNode.removeChild(badgeEl);
+    }
+
+    toggleLabel.textContent = s.label;
+  });
+
+
+  /* ---- Filter tabs ---- */
+  var filters = document.getElementById('demo-filters');
+  var items = document.querySelectorAll('.demo-panel-item');
+
+  filters.addEventListener('click', function (e) {
+    var tab = e.target.closest('.mob-notification-panel__filter-tab');
+    if (!tab) return;
+
+    var tabs = filters.querySelectorAll('.mob-notification-panel__filter-tab');
+    for (var t = 0; t < tabs.length; t++) tabs[t].classList.remove('is-active');
+    tab.classList.add('is-active');
+
+    var filter = tab.getAttribute('data-filter');
+    for (var i = 0; i < items.length; i++) {
+      var status = items[i].getAttribute('data-status');
+      if (filter === 'all') {
+        items[i].style.display = '';
+      } else if (filter === 'recent') {
+        items[i].style.display = (status === 'new') ? '' : 'none';
+      } else if (filter === 'dismissed') {
+        items[i].style.display = (status === 'dismissed') ? '' : 'none';
+      }
+    }
+  });
+
+
+  /* ---- Dismiss all ---- */
+  document.getElementById('demo-dismiss-all').addEventListener('click', function () {
+    for (var i = 0; i < items.length; i++) {
+      if (items[i].getAttribute('data-status') === 'new') {
+        items[i].setAttribute('data-status', 'dismissed');
+        var badge = items[i].querySelector('.mob-notification__status-badge');
+        if (badge) { badge.textContent = 'Dismissed'; badge.setAttribute('data-status', 'dismissed'); }
+        var level = items[i].querySelector('.mob-notification__level');
+        if (level) level.setAttribute('data-level', 'dismissed');
+        var db = items[i].querySelector('.mob-notification__dismiss');
+        if (db) db.style.display = 'none';
+      }
+    }
+  });
+
+
+  /* ---- Click to expand/collapse ---- */
+  var panelList = document.getElementById('demo-panel-list');
+
+  panelList.addEventListener('click', function (e) {
+    var dismiss = e.target.closest('.mob-notification__dismiss');
+    var article = e.target.closest('.demo-panel-item');
+    if (!article) return;
+
+    /* Single-item dismiss */
+    if (dismiss) {
+      e.stopPropagation();
+      article.setAttribute('data-status', 'dismissed');
+      var badge = article.querySelector('.mob-notification__status-badge');
+      if (badge) { badge.textContent = 'Dismissed'; badge.setAttribute('data-status', 'dismissed'); }
+      var lev = article.querySelector('.mob-notification__level');
+      if (lev) lev.setAttribute('data-level', 'dismissed');
+      dismiss.style.display = 'none';
+      collapseItem(article);
+      return;
+    }
+
+    /* Toggle expand */
+    var isExpanded = article.classList.contains('is-selected');
+    var prev = panelList.querySelector('.demo-panel-item.is-selected');
+    if (prev && prev !== article) collapseItem(prev);
+    isExpanded ? collapseItem(article) : expandItem(article);
+  });
+
+  function expandItem(el) {
+    el.classList.add('is-selected');
+    if (!el.querySelector('.mob-notification__message')) {
+      var msg = el.getAttribute('data-msg');
+      if (msg) {
+        var p = document.createElement('p');
+        p.className = 'mob-notification__message';
+        p.textContent = msg;
+        el.querySelector('.mob-notification__title').insertAdjacentElement('afterend', p);
+      }
+    }
+  }
+
+  function collapseItem(el) {
+    el.classList.remove('is-selected');
+    var msg = el.querySelector('.mob-notification__message');
+    if (msg) msg.parentNode.removeChild(msg);
+  }
+
+})();
+</script>
+</body>
+</html>

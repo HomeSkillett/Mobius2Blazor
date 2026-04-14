@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mobius — Alerts &amp; Notifications</title>
+  <link id="mob-theme-link" rel="stylesheet" href="../styles/LightTheme.css" />
+  <link rel="stylesheet" href="../styles/base.css" />
+  <link rel="stylesheet" href="alerts.css" />
+  <style>
+    body { margin: 0; }
+    h1 {
+      font: var(--font-hdrMd);
+      margin: 0 0 32px;
+      color: var(--ForegroundStrong);
+    }
+    h2 {
+      font: var(--font-hdrSm);
+      margin: 40px 0 16px;
+      color: var(--ForegroundStrong);
+    }
+    h2:first-of-type { margin-top: 0; }
+    p {
+      font: var(--font-bodyMd);
+      color: var(--ForegroundPrimary);
+      margin: 0 0 var(--size-12);
+      max-width: 680px;
+    }
+    .section-divider {
+      border: none;
+      border-top: var(--line-size) solid var(--InnerLines);
+      margin: 32px 0 0;
+    }
+    .pattern-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--spacing-section-to-header);
+      max-width: 860px;
+    }
+    .pattern-card {
+      background: var(--BackgroundStepOne);
+      border: 1px solid var(--InnerLines);
+      padding: var(--size-24);
+      display: flex;
+      flex-direction: column;
+      gap: var(--size-12);
+    }
+    .pattern-card__title {
+      font: var(--font-hdrSm);
+      color: var(--ForegroundStrong);
+      margin: 0;
+    }
+    .pattern-card__source {
+      font: var(--font-meta);
+      color: var(--ForegroundDisabled);
+    }
+    .pattern-card__desc {
+      font: var(--font-bodySm);
+      color: var(--ForegroundPrimary);
+      margin: 0;
+    }
+    .pattern-card__link {
+      font: var(--font-bodySm);
+      color: var(--ForegroundAction);
+      text-decoration: none;
+    }
+    .pattern-card__link:hover { text-decoration: underline; }
+
+    /* Mini-example container inside each card */
+    .pattern-card__example {
+      background: var(--BackgroundStrong);
+      border: 1px solid var(--InnerLines);
+      border-radius: 2px;
+      padding: var(--size-12);
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    /* Scale overrides for inline examples */
+    .pattern-card__example .mob-toast {
+      min-width: 0;
+      max-width: 100%;
+    }
+    .pattern-card__example .mob-notification {
+      cursor: default;
+    }
+    .pattern-card__example .mob-notification:hover {
+      background: transparent;
+    }
+    .pattern-card__example .mob-active-alert {
+      height: 44px;
+    }
+    .pattern-card__example .mob-active-alert__icon {
+      line-height: 44px;
+    }
+    .pattern-card__example .mob-dialog {
+      width: 100%;
+      max-height: none;
+      box-shadow: none;
+      border: 1px solid var(--InnerLines);
+    }
+    .pattern-card__example .mob-notification-toggle {
+      display: inline-flex;
+    }
+
+    .enum-table {
+      border-collapse: collapse;
+      font: var(--font-bodySm);
+      color: var(--ForegroundPrimary);
+      margin-top: var(--size-6);
+    }
+    .enum-table th {
+      font: var(--font-meta);
+      text-align: left;
+      padding: var(--size-6) var(--size-12);
+      border-bottom: 1px solid var(--InnerLines);
+    }
+    .enum-table td {
+      padding: var(--size-6) var(--size-12);
+      border-bottom: 1px solid var(--InnerLines);
+      vertical-align: middle;
+    }
+    .color-swatch {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 2px;
+      vertical-align: middle;
+      margin-right: var(--size-6);
+    }
+  </style>
+</head>
+<body>
+
+<div class="mob-layout">
+
+  <!-- Sidebar Navigation -->
+  <nav class="mob-nav" id="mob-nav"></nav>
+
+  <!-- Main Content -->
+  <main class="mob-layout__content">
+
+<h1>Alerts &amp; Notifications</h1>
+
+<!-- =========================================================
+     OVERVIEW
+     The Mobius codebase uses 5 distinct patterns to communicate
+     status information to the user. This section maps what the
+     code calls them vs. what you might expect.
+     ========================================================= -->
+
+<p>
+  Mobius has five distinct patterns for communicating alerts, status changes, and
+  confirmations to the operator. Each serves a different purpose and has its own
+  XAML control.
+</p>
+
+<hr class="section-divider" />
+
+
+<h2>Patterns at a Glance</h2>
+
+<div class="pattern-grid">
+
+  <!-- XAML: NotificationItem.xaml (IsToast=True) -->
+  <div class="pattern-card">
+    <h3 class="pattern-card__title">Toast</h3>
+    <span class="pattern-card__source">NotificationItem.xaml &mdash; IsToast trigger</span>
+    <div class="pattern-card__example">
+      <!-- XAML: NotificationItem with IsToast=True, Level=Warning -->
+      <div class="mob-toast">
+        <div class="mob-toast__level" data-level="warning"></div>
+        <div class="mob-toast__header">
+          <span class="mob-toast__level-label" data-level="warning">Warning</span>
+          <button class="mob-toast__dismiss" aria-label="Dismiss">&#xE454;</button>
+        </div>
+        <div class="mob-toast__title">GPS Signal Lost</div>
+        <div class="mob-toast__message">Vehicle 12 has lost GPS connectivity in Field B.</div>
+        <div class="mob-toast__time">2 min ago</div>
+      </div>
+    </div>
+    <p class="pattern-card__desc">
+      Transient slide-in from the right. Auto-dismisses or can be manually closed.
+      Used for real-time event notifications (vehicle faults, GPS loss, etc.).
+    </p>
+    <a class="pattern-card__link" href="alerts-toast.html">View Toast &rarr;</a>
+  </div>
+
+  <!-- XAML: NotificationItem.xaml (panel mode) -->
+  <div class="pattern-card">
+    <h3 class="pattern-card__title">Notification Item</h3>
+    <span class="pattern-card__source">NotificationItem.xaml &mdash; default mode</span>
+    <div class="pattern-card__example">
+      <!-- XAML: NotificationItem default mode, Level=Critical -->
+      <div class="mob-notification">
+        <div class="mob-notification__level" data-level="critical"></div>
+        <div class="mob-notification__header">
+          <span class="mob-notification__status-badge" data-status="new">New</span>
+          <span class="mob-notification__level-label" data-level="critical">Critical</span>
+          <span class="mob-notification__error-code">ERR-4081</span>
+        </div>
+        <div class="mob-notification__title">E-Stop Activated</div>
+        <div class="mob-notification__footer">
+          <span class="mob-notification__time">11:42 AM</span>
+        </div>
+      </div>
+    </div>
+    <p class="pattern-card__desc">
+      Persistent list item inside the Notification Panel. Expandable message,
+      action buttons, dismiss, and color-coded level bar on the left edge.
+    </p>
+    <a class="pattern-card__link" href="alerts-notification.html">View Notification Item &rarr;</a>
+  </div>
+
+  <!-- XAML: NotificationToggleButton.xaml + InternalNotificationPanel.xaml -->
+  <div class="pattern-card">
+    <h3 class="pattern-card__title">Notification Panel</h3>
+    <span class="pattern-card__source">InternalNotificationPanel.xaml</span>
+    <div class="pattern-card__example">
+      <!-- XAML: NotificationToggleButton with NewAlert state -->
+      <div class="mob-notification-panel__toolbar" style="padding: 0;">
+        <div class="mob-notification-panel__filters">
+          <button class="mob-notification-panel__filter-tab is-active">All</button>
+          <button class="mob-notification-panel__filter-tab">Recent</button>
+          <button class="mob-notification-panel__filter-tab">Dismissed</button>
+        </div>
+        <div class="mob-notification-panel__actions">
+          <button class="mob-notification-panel__action-btn" aria-label="Vehicle filter">&#xE532;</button>
+          <button class="mob-notification-panel__action-btn" aria-label="Dismiss all">&#xE454;</button>
+        </div>
+      </div>
+    </div>
+    <p class="pattern-card__desc">
+      Full sidebar panel with filter tabs, vehicle filter, time filter,
+      dismiss-all, and a history section with sortable grid.
+    </p>
+    <a class="pattern-card__link" href="alerts-panel.html">View Notification Panel &rarr;</a>
+  </div>
+
+  <!-- XAML: ActiveAlertUI.xaml -->
+  <div class="pattern-card">
+    <h3 class="pattern-card__title">Active Alert</h3>
+    <span class="pattern-card__source">ActiveAlertUI.xaml &mdash; Agriculture plugin</span>
+    <div class="pattern-card__example">
+      <!-- XAML: ActiveAlertUI with InfoAlertActive state -->
+      <div class="mob-active-alert" data-level="info">
+        <div class="mob-active-alert__progress">
+          <div class="mob-active-alert__progress-fill" style="width: 65%;"></div>
+        </div>
+        <span class="mob-active-alert__icon">&#xE44B;</span>
+        <span class="mob-active-alert__text">Section coverage complete &mdash; moving to next row</span>
+      </div>
+    </div>
+    <p class="pattern-card__desc">
+      Full-width banner with a progress bar counting down the timeout.
+      Four visual states: Info, Warning, Error, and Inactive/OK.
+    </p>
+    <a class="pattern-card__link" href="alerts-active.html">View Active Alert &rarr;</a>
+  </div>
+
+  <!-- XAML: OkCancelDialog.xaml -->
+  <div class="pattern-card">
+    <h3 class="pattern-card__title">Confirmation Dialog</h3>
+    <span class="pattern-card__source">OkCancelDialog.xaml</span>
+    <div class="pattern-card__example">
+      <!-- XAML: OkCancelDialog -->
+      <div class="mob-dialog">
+        <div class="mob-dialog__titlebar">
+          <span class="mob-dialog__title">Confirm Action</span>
+          <button class="mob-dialog__close">&#xE454;</button>
+        </div>
+        <div class="mob-dialog__body" style="padding: var(--size-12) 10px;">
+          Are you sure you want to end the current task?
+        </div>
+        <div class="mob-dialog__actions">
+          <button class="mob-btn mob-btn--primary" style="flex:1;">OK</button>
+          <button class="mob-btn mob-btn--outline" style="flex:1;">Cancel</button>
+        </div>
+      </div>
+    </div>
+    <p class="pattern-card__desc">
+      Modal dialog for binary confirmations. Contains a title, message,
+      and OK / Cancel buttons. Blocks interaction until dismissed.
+    </p>
+    <a class="pattern-card__link" href="alerts-dialog.html">View Dialog &rarr;</a>
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     ENUMS — MessageDeliveryLevel + NotificationLevel
+     Source: Asi.Interfaces.Shared/Notifications/
+     ========================================================= -->
+
+<h2>Level Enums &amp; Color Mapping</h2>
+
+<p>
+  Two enums drive the color system. <code>MessageDeliveryLevel</code> is used by
+  Toasts and Active Alerts. <code>NotificationLevel</code> is used by the
+  Notification Panel and NotificationItem.
+</p>
+
+<table class="enum-table">
+  <thead>
+    <tr>
+      <th>MessageDeliveryLevel</th>
+      <th>NotificationLevel</th>
+      <th>Icon Color</th>
+      <th>Background</th>
+    </tr>
+  </thead>
+  <tbody>
+    <!-- Info / Information -->
+    <tr>
+      <td>Info</td>
+      <td>Information</td>
+      <td><span class="color-swatch" style="background: var(--MessageDeliveryIconInfo);"></span>MessageDeliveryIconInfo</td>
+      <td><span class="color-swatch" style="background: var(--MessageDeliveryBackgroundInfo);"></span>MessageDeliveryBackgroundInfo</td>
+    </tr>
+    <!-- Success / (no equivalent) -->
+    <tr>
+      <td>Success</td>
+      <td>&mdash;</td>
+      <td><span class="color-swatch" style="background: var(--MessageDeliveryIconOk);"></span>MessageDeliveryIconOk</td>
+      <td><span class="color-swatch" style="background: var(--MessageDeliveryBackgroundOk);"></span>MessageDeliveryBackgroundOk</td>
+    </tr>
+    <!-- Warning / Warning -->
+    <tr>
+      <td>Warning</td>
+      <td>Warning</td>
+      <td><span class="color-swatch" style="background: var(--MessageDeliveryIconWarning);"></span>MessageDeliveryIconWarning</td>
+      <td><span class="color-swatch" style="background: var(--MessageDeliveryBackgroundWarning);"></span>MessageDeliveryBackgroundWarning</td>
+    </tr>
+    <!-- Critical / Critical -->
+    <tr>
+      <td>Critical</td>
+      <td>Critical</td>
+      <td><span class="color-swatch" style="background: var(--MessageDeliveryIconCritical);"></span>MessageDeliveryIconCritical</td>
+      <td><span class="color-swatch" style="background: var(--MessageDeliveryBackgroundCritical);"></span>MessageDeliveryBackgroundCritical</td>
+    </tr>
+    <!-- None -->
+    <tr>
+      <td>&mdash;</td>
+      <td>None</td>
+      <td colspan="2">No visual indicator</td>
+    </tr>
+  </tbody>
+</table>
+
+
+  </main>
+
+</div>
+
+<script src="../styles/nav.js"></script>
+</body>
+</html>
