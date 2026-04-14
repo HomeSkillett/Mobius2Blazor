@@ -1,0 +1,378 @@
+/*
+  overlay.css — Full-screen and sliding overlay component styles for Mobius Blazor components.
+
+  Source XAML files:
+    - TransparentOverlay.xaml                → modal backdrop overlay (Common Controls)
+    - NodeConfigurationOverlayControl.xaml   → slide-in side panel (Common Controls)
+    - ConfigurationHistoryOverlayControl.xaml → history inspector panel (ConfigurationHistory plugin)
+
+  Overlay types:
+    .mob-overlay               — shared base (fixed positioning, z-index)
+    .mob-overlay--modal        — centered modal with semi-transparent backdrop
+    .mob-overlay--panel        — right-edge slide-in panel
+    .mob-overlay--history      — two-column history inspector panel
+*/
+
+
+/* =============================================
+   BASE OVERLAY CONTAINER
+   All overlays share: fixed position, high z-index, full viewport coverage.
+   ============================================= */
+
+.mob-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: none;
+}
+
+.mob-overlay.is-open {
+  display: flex;
+}
+
+
+/* =============================================
+   1. MODAL / TRANSPARENT OVERLAY
+   XAML: TransparentOverlay.xaml — Asi.CustomControls.Client.UI
+     <Grid "BoundaryBreakingCanvas">
+       <Rectangle "Overlay"
+         Fill="ForegroundInvertPrimaryBrush" Opacity="0.4" />
+       <ContentControl
+         HorizontalAlignment="Center" VerticalAlignment="Center"
+         Content="{InnerContent}" />
+     </Grid>
+   Visual states: Active (opacity 0→1, 0.8s), Inactive (opacity 1→0, 0.8s)
+   Close: click outside inner content → CancelledCommand
+   ============================================= */
+
+.mob-overlay--modal {
+  /* XAML: ContentControl centered */
+  align-items: center;
+  justify-content: center;
+}
+
+.mob-overlay--modal .mob-overlay__backdrop {
+  /* XAML: Rectangle Fill="ForegroundInvertPrimaryBrush" Opacity="0.4" */
+  position: absolute;
+  inset: 0;
+  background: var(--ForegroundInvertPrimary);
+  opacity: 0.4;
+}
+
+.mob-overlay--modal .mob-overlay__content {
+  /* XAML: ContentControl — centered inner content */
+  position: relative;
+  z-index: 1;
+  background: var(--BackgroundStrong);
+  box-shadow: 0 0 10px var(--ShadowElements);
+  border: var(--border-width) solid var(--BackgroundInputOutline);
+  max-width: 480px;
+  padding: var(--size-24);
+}
+
+/* Fade animation — XAML: Active/Inactive states with GeneralMouseOutDuration */
+.mob-overlay--modal.is-animated {
+  display: flex;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition-fade) ease;
+}
+
+.mob-overlay--modal.is-animated.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+
+/* =============================================
+   2. SLIDE-IN SIDE PANEL
+   XAML: NodeConfigurationOverlayControl.xaml — Asi.Miscellaneous.Client.UI
+     <ContentPresenter "OverlayControl"
+       RenderTransform="TranslateTransform">
+     OverlayOpen:  TranslateTransform.X → 0 (0.5s, QuinticEase EaseOut)
+     OverlayClosed: TranslateTransform.X → ActualWidth (0.5s, QuinticEase EaseIn)
+   ============================================= */
+
+.mob-overlay--panel {
+  /* XAML: Panel sits at right edge */
+  justify-content: flex-end;
+}
+
+.mob-overlay--panel .mob-overlay__backdrop {
+  /* Semi-transparent backdrop behind panel */
+  position: absolute;
+  inset: 0;
+  background: var(--ForegroundInvertPrimary);
+  opacity: 0.25;
+}
+
+.mob-overlay--panel .mob-overlay__panel {
+  /* XAML: ContentPresenter — slides in from right */
+  position: relative;
+  z-index: 1;
+  width: 400px;
+  height: 100%;
+  background: var(--BackgroundStrong);
+  box-shadow: -2px 0 10px var(--ShadowElements);
+  overflow-y: auto;
+  /* XAML: TranslateTransform.X — slide animation 0.5s quintic */
+  transform: translateX(100%);
+  transition: transform 500ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.mob-overlay--panel.is-open .mob-overlay__panel {
+  /* XAML: OverlayOpen — TranslateTransform.X = 0 */
+  transform: translateX(0);
+}
+
+.mob-overlay__panel-header {
+  /* Panel header bar */
+  display: flex;
+  align-items: center;
+  gap: var(--size-12);
+  padding: var(--size-12) var(--size-20);
+  border-bottom: var(--line-size) solid var(--InnerLines);
+}
+
+.mob-overlay__panel-title {
+  font: var(--font-hdrSm);
+  color: var(--ForegroundStrong);
+  flex: 1;
+}
+
+.mob-overlay__panel-close {
+  /* Close / back button */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--touch);
+  height: var(--touch);
+  border: none;
+  background: transparent;
+  color: var(--ForegroundPrimary);
+  cursor: pointer;
+  font-size: 18px;
+  transition: background-color var(--transition-mouse-out) ease;
+}
+
+.mob-overlay__panel-close:hover {
+  background-color: var(--MouseOverBackground);
+  transition-duration: var(--transition-mouse-over);
+}
+
+.mob-overlay__panel-body {
+  padding: var(--size-12) var(--size-20);
+}
+
+
+/* =============================================
+   3. HISTORY INSPECTOR PANEL (ConfigurationHistory plugin)
+   XAML: ConfigurationHistoryOverlayControl.xaml
+     <Grid Rows="Auto,*,5" Cols="*,5,2*">
+       Row 0: Header with back button + title (spans all cols)
+       Row 1 Col 0: Timeline (ExpanderItems → CommandableContent)
+       Row 1 Col 1: Rectangle divider (5px, BackgroundInvertStrongStepOneBrush)
+       Row 1 Col 2: Detail history (SwitchToggle + entries grid)
+     </Grid>
+   ============================================= */
+
+.mob-overlay--history {
+  /* XAML: Full-screen panel */
+  justify-content: flex-end;
+}
+
+.mob-overlay--history .mob-overlay__backdrop {
+  position: absolute;
+  inset: 0;
+  background: var(--ForegroundInvertPrimary);
+  opacity: 0.25;
+}
+
+.mob-overlay--history .mob-overlay__inspector {
+  /* XAML: 3-column grid — occupies right portion */
+  position: relative;
+  z-index: 1;
+  width: 720px;
+  height: 100%;
+  background: var(--BackgroundStrongStepOne);
+  box-shadow: -2px 0 10px var(--ShadowElements);
+  display: flex;
+  flex-direction: column;
+  /* Slide animation matching panel pattern */
+  transform: translateX(100%);
+  transition: transform 500ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.mob-overlay--history.is-open .mob-overlay__inspector {
+  transform: translateX(0);
+}
+
+.mob-overlay__inspector-header {
+  /* XAML: OverallHeader Border → StackPanel Margin="12" */
+  display: flex;
+  align-items: center;
+  gap: var(--size-12);
+  padding: var(--size-12);
+  border-bottom: var(--line-size) solid var(--InnerLines);
+  background: var(--BackgroundStrong);
+}
+
+.mob-overlay__inspector-header .mob-overlay__panel-close {
+  flex-shrink: 0;
+}
+
+.mob-overlay__inspector-header .mob-overlay__panel-title {
+  flex: 1;
+}
+
+.mob-overlay__inspector-body {
+  /* XAML: Row 1 — two-column layout */
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.mob-overlay__inspector-timeline {
+  /* XAML: Row 1, Col 0 — timeline column (1fr) */
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--size-12);
+}
+
+.mob-overlay__inspector-divider {
+  /* XAML: Row 1, Col 1 — Rectangle 5px BackgroundInvertStrongStepOneBrush */
+  width: 5px;
+  background: var(--BackgroundInvertStrongStepOne);
+  flex-shrink: 0;
+}
+
+.mob-overlay__inspector-detail {
+  /* XAML: Row 1, Col 2 — detail column (2fr) */
+  flex: 2;
+  overflow-y: auto;
+  padding: var(--size-12);
+}
+
+.mob-overlay__inspector-detail-header {
+  /* XAML: detail header with SwitchToggle */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--size-12);
+}
+
+.mob-overlay__inspector-detail-title {
+  font: var(--font-hdrSm);
+  color: var(--ForegroundStrong);
+}
+
+/* Timeline group — XAML: ExpanderItem with TimeGroup header */
+.mob-overlay__timeline-group {
+  margin-bottom: var(--size-12);
+}
+
+.mob-overlay__timeline-group-header {
+  /* XAML: ExpanderItem header */
+  font: var(--font-captionSm);
+  font-weight: var(--font-bold);
+  color: var(--ForegroundWatermark);
+  padding: var(--size-6) 0;
+  border-bottom: var(--line-size) solid var(--InnerLines);
+  margin-bottom: var(--size-6);
+}
+
+.mob-overlay__timeline-item {
+  /* XAML: CommandableContent Grid — icon 18×18 + title */
+  display: flex;
+  align-items: center;
+  gap: var(--size-6);
+  padding: var(--size-6);
+  cursor: pointer;
+  color: var(--ForegroundAction);
+  font: var(--font-default);
+  transition: background-color var(--transition-mouse-out) ease;
+}
+
+.mob-overlay__timeline-item:hover {
+  background-color: var(--MouseOverBackground);
+  transition-duration: var(--transition-mouse-over);
+}
+
+.mob-overlay__timeline-item.is-selected {
+  background: var(--SelectionPrimary);
+  color: var(--SelectionForeground);
+}
+
+.mob-overlay__timeline-item-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ForegroundStrong);
+  font-size: 14px;
+}
+
+/* Detail entry row — XAML: Grid with 6 columns (38/130/150/Auto/10/Auto) */
+.mob-overlay__detail-entry {
+  display: flex;
+  align-items: baseline;
+  gap: var(--size-6);
+  padding: var(--size-3) 0;
+  font: var(--font-captionSm);
+  color: var(--ForegroundPrimary);
+}
+
+.mob-overlay__detail-entry-icon {
+  /* XAML: Col 0 — 38px caution icon */
+  width: 38px;
+  flex-shrink: 0;
+  text-align: center;
+  color: var(--InformationOrange);
+}
+
+.mob-overlay__detail-entry-time {
+  /* XAML: Col 1 — 130px timestamp */
+  width: 130px;
+  flex-shrink: 0;
+  color: var(--ForegroundWatermark);
+}
+
+.mob-overlay__detail-entry-state {
+  /* XAML: Col 2 — 150px state text */
+  width: 150px;
+  flex-shrink: 0;
+}
+
+.mob-overlay__detail-entry-value {
+  /* XAML: Col 3 — auto display value */
+  flex: 1;
+  color: var(--ForegroundStrong);
+}
+
+.mob-overlay__detail-entry-user {
+  /* XAML: Col 5 — auto user name */
+  flex-shrink: 0;
+  color: var(--ForegroundWatermark);
+}
+
+/* Loading state — XAML: ProgressRadial + purple text */
+.mob-overlay__loading {
+  display: flex;
+  align-items: center;
+  gap: var(--size-6);
+  padding: var(--size-12);
+  color: var(--InformationPurple);
+  font: var(--font-captionSm);
+}
+
+/* Empty/warning state — XAML: Path warning icon + orange text */
+.mob-overlay__empty {
+  display: flex;
+  align-items: center;
+  gap: var(--size-6);
+  padding: var(--size-12);
+  color: var(--InformationOrange);
+  font: var(--font-captionSm);
+}

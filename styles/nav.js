@@ -131,6 +131,22 @@
       ]
     },
     {
+      title: "Overlay",
+      links: [
+        { label: "All",                                  href: "overlay/overlay.html" },
+        { label: "Modal",                                href: "overlay/overlay-modal.html" },
+        { label: "Side Panel",                           href: "overlay/overlay-panel.html" },
+        { label: "History Inspector (ConfigurationHistory)", href: "overlay/overlay-history.html" }
+      ]
+    },
+    {
+      title: "Navigation",
+      links: [
+        { label: "TabControl",  href: "tab-control/tab-control.html" },
+        { label: "MasterDetailControl",  href: "master-detail-control/master-detail-control.html" }
+      ]
+    },
+    {
       title: "List & Collection Patterns",
       links: [
         { label: "ItemsControl",                href: "items-control/items-control.html" },

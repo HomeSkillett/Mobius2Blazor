@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mobius — Overlay: Modal</title>
+  <link id="mob-theme-link" rel="stylesheet" href="../styles/LightTheme.css" />
+  <link rel="stylesheet" href="../styles/base.css" />
+  <link rel="stylesheet" href="overlay.css" />
+  <style>
+    body { margin: 0; }
+    h1 { font: var(--font-hdrMd); margin: 0 0 32px; color: var(--ForegroundStrong); }
+    h2 { font: var(--font-hdrSm); margin: 40px 0 16px; color: var(--ForegroundStrong); }
+    h2:first-of-type { margin-top: 0; }
+    .demo-label { font: var(--font-captionSm); color: var(--ForegroundPrimary); margin-bottom: var(--spacing-label-to-control-sm); }
+    .section-divider { border: none; border-top: var(--line-size) solid var(--InnerLines); margin: 32px 0 0; }
+    code { font-family: "Roboto Mono", monospace; font-size: 12px; background: var(--BackgroundStepOne); padding: 2px 6px; border-radius: 3px; }
+    .xaml-note { font: var(--font-captionSm); color: var(--ForegroundWatermark); margin-top: var(--spacing-label-to-control-sm); }
+    .demo-row { display: flex; flex-wrap: wrap; gap: var(--spacing-section-to-section); align-items: flex-start; margin-top: var(--spacing-label-to-control-md); }
+    .demo-block { display: flex; flex-direction: column; gap: var(--spacing-label-to-control-sm); }
+    .demo-block__label { font: var(--font-captionSm); font-weight: var(--font-bold); color: var(--ForegroundStrong); }
+    .demo-hint { display: inline-block; font: var(--font-captionSm); color: var(--SelectionSecondary); background: color-mix(in srgb, var(--SelectionPrimary) 8%, transparent); border: var(--border-width) solid color-mix(in srgb, var(--SelectionPrimary) 20%, transparent); border-radius: var(--size-3); padding: 2px 8px; margin-bottom: var(--spacing-label-to-control-sm); }
+    .demo-trigger { min-height: var(--touch); padding: 0 var(--size-20); border: var(--border-width) solid var(--BackgroundInputOutline); background: var(--BackgroundInput); color: var(--ForegroundPrimary); font: var(--font-default); cursor: pointer; }
+    .demo-trigger:hover { background: var(--MouseOverBackground); }
+    .demo-overlay-scope { position: relative; width: 100%; height: 300px; border: var(--border-width) solid var(--InnerLines); overflow: hidden; background: var(--BackgroundStepOne); margin-top: var(--spacing-label-to-control-sm); }
+  </style>
+</head>
+<body>
+
+<div class="mob-layout">
+  <nav class="mob-nav" id="mob-nav"></nav>
+  <main class="mob-layout__content">
+
+<h1>Modal Overlay</h1>
+<p class="demo-label">
+  Semi-transparent full-viewport backdrop with centered content. Used by <code>TransparentOverlay</code>.
+  Backdrop uses <code>ForegroundInvertPrimaryBrush</code> at 40% opacity. Click outside content dismisses
+  via <code>CancelledCommand</code>. Fade animation uses <code>GeneralMouseOutDuration</code> (500ms).
+</p>
+
+
+<h2>Interactive Demos</h2>
+
+<div class="demo-row">
+
+  <!-- Demo 1: Confirmation Dialog -->
+  <div class="demo-block">
+    <span class="demo-block__label">Confirmation Dialog</span>
+    <span class="demo-hint">Click button, then click backdrop to dismiss</span>
+    <button class="demo-trigger" data-overlay="modal" data-target="demo-modal-1">Confirm Delete</button>
+    <div class="demo-overlay-scope">
+      <!-- XAML: TransparentOverlay — BoundaryBreakingCanvas -->
+      <div class="mob-overlay mob-overlay--modal" id="demo-modal-1" style="position:absolute;">
+        <!-- XAML: Rectangle Overlay Fill=ForegroundInvertPrimaryBrush Opacity=0.4 -->
+        <div class="mob-overlay__backdrop" data-overlay-dismiss></div>
+        <!-- XAML: ContentControl HAlign=Center VAlign=Center Content=InnerContent -->
+        <div class="mob-overlay__content">
+          <p style="font:var(--font-hdrSm);color:var(--ForegroundStrong);margin:0 0 var(--size-12);">Delete Path?</p>
+          <p style="font:var(--font-default);color:var(--ForegroundPrimary);margin:0 0 var(--size-20);">This action cannot be undone. All associated data will be permanently removed.</p>
+          <div style="display:flex;gap:var(--size-12);justify-content:flex-end;">
+            <button class="demo-trigger" data-overlay-dismiss>Cancel</button>
+            <button class="demo-trigger" data-overlay-dismiss style="background:var(--BackgroundPrimary);color:var(--ForegroundPrimary);border-color:var(--BackgroundPrimary);">Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <span class="xaml-note">XAML: TransparentOverlay — confirmation dialog, <code>IsActivated</code> toggles Active/Inactive</span>
+  </div>
+
+  <!-- Demo 2: Information Notice -->
+  <div class="demo-block">
+    <span class="demo-block__label">Information Notice</span>
+    <span class="demo-hint">Click button, then click backdrop to dismiss</span>
+    <button class="demo-trigger" data-overlay="modal" data-target="demo-modal-2">Show Notice</button>
+    <div class="demo-overlay-scope">
+      <div class="mob-overlay mob-overlay--modal" id="demo-modal-2" style="position:absolute;">
+        <div class="mob-overlay__backdrop" data-overlay-dismiss></div>
+        <div class="mob-overlay__content">
+          <p style="font:var(--font-hdrSm);color:var(--ForegroundStrong);margin:0 0 var(--size-12);">System Maintenance</p>
+          <p style="font:var(--font-default);color:var(--ForegroundPrimary);margin:0 0 var(--size-20);">Scheduled maintenance will begin at 02:00 UTC. All active sessions will be saved automatically.</p>
+          <div style="display:flex;gap:var(--size-12);justify-content:flex-end;">
+            <button class="demo-trigger" data-overlay-dismiss style="background:var(--BackgroundPrimary);color:var(--ForegroundPrimary);border-color:var(--BackgroundPrimary);">Understood</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <span class="xaml-note">XAML: TransparentOverlay — informational notice</span>
+  </div>
+
+  <!-- Demo 3: Form Input -->
+  <div class="demo-block">
+    <span class="demo-block__label">Form Input</span>
+    <span class="demo-hint">Click button, then click backdrop to dismiss</span>
+    <button class="demo-trigger" data-overlay="modal" data-target="demo-modal-3">Rename Path</button>
+    <div class="demo-overlay-scope">
+      <div class="mob-overlay mob-overlay--modal" id="demo-modal-3" style="position:absolute;">
+        <div class="mob-overlay__backdrop" data-overlay-dismiss></div>
+        <div class="mob-overlay__content">
+          <p style="font:var(--font-hdrSm);color:var(--ForegroundStrong);margin:0 0 var(--size-12);">Rename Path</p>
+          <div style="margin-bottom:var(--size-20);">
+            <label style="font:var(--font-captionSm);color:var(--ForegroundPrimary);display:block;margin-bottom:var(--spacing-label-to-control-sm);">New Name</label>
+            <input type="text" value="Haul Road East" style="width:100%;height:var(--field-height);padding:0 var(--size-12);border:var(--border-width) solid var(--BackgroundInputOutline);background:var(--BackgroundInput);font:var(--font-default);color:var(--ForegroundStrong);box-sizing:border-box;" />
+          </div>
+          <div style="display:flex;gap:var(--size-12);justify-content:flex-end;">
+            <button class="demo-trigger" data-overlay-dismiss>Cancel</button>
+            <button class="demo-trigger" data-overlay-dismiss style="background:var(--BackgroundPrimary);color:var(--ForegroundPrimary);border-color:var(--BackgroundPrimary);">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <span class="xaml-note">XAML: TransparentOverlay — form input modal</span>
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<h2>Anatomy</h2>
+
+<div class="demo-row">
+  <div class="demo-block" style="max-width:680px;">
+    <span class="demo-block__label">CSS Classes</span>
+    <p class="demo-label">
+      <code>.mob-overlay</code> — base overlay (fixed, z-index 2000)<br/>
+      <code>.mob-overlay--modal</code> — centered modal variant<br/>
+      <code>.mob-overlay__backdrop</code> — semi-transparent click-to-dismiss layer<br/>
+      <code>.mob-overlay__content</code> — centered inner content box<br/>
+      <code>.is-open</code> — show the overlay
+    </p>
+
+    <span class="demo-block__label" style="margin-top:var(--spacing-label-to-control-md);">XAML → CSS Mapping</span>
+    <p class="demo-label">
+      <code>TransparentOverlay.BoundaryBreakingCanvas</code> → <code>.mob-overlay--modal</code><br/>
+      <code>Rectangle Fill=ForegroundInvertPrimaryBrush Opacity=0.4</code> → <code>.mob-overlay__backdrop</code><br/>
+      <code>ContentControl HAlign=Center VAlign=Center</code> → <code>.mob-overlay__content</code><br/>
+      <code>Active state: Grid.Opacity 0→1</code> → <code>transition: opacity var(--transition-fade)</code><br/>
+      <code>IsActivated</code> → <code>.is-open</code><br/>
+      <code>CancelledCommand on Overlay_OnMouseDown</code> → <code>data-overlay-dismiss</code> click handler
+    </p>
+
+    <span class="demo-block__label" style="margin-top:var(--spacing-label-to-control-md);">HTML Structure</span>
+    <p class="demo-label">
+      <code>&lt;div class="mob-overlay mob-overlay--modal"&gt;</code><br/>
+      &nbsp;&nbsp;<code>&lt;div class="mob-overlay__backdrop"&gt;&lt;/div&gt;</code><br/>
+      &nbsp;&nbsp;<code>&lt;div class="mob-overlay__content"&gt;</code><br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;Modal content here<br/>
+      &nbsp;&nbsp;<code>&lt;/div&gt;</code><br/>
+      <code>&lt;/div&gt;</code>
+    </p>
+  </div>
+</div>
+
+
+  </main>
+</div>
+
+<script src="../styles/nav.js"></script>
+<script>
+(function () {
+  document.querySelectorAll('[data-overlay]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var target = document.getElementById(btn.getAttribute('data-target'));
+      if (target) { target.style.display = 'flex'; target.classList.add('is-open'); }
+    });
+  });
+  document.querySelectorAll('[data-overlay-dismiss]').forEach(function (el) {
+    el.addEventListener('click', function () {
+      var overlay = el.closest('.mob-overlay');
+      if (overlay) { overlay.classList.remove('is-open'); overlay.style.display = 'none'; }
+    });
+  });
+})();
+</script>
+
+</body>
+</html>

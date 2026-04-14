@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mobius — TabControl</title>
+  <link id="mob-theme-link" rel="stylesheet" href="../styles/LightTheme.css" />
+  <link rel="stylesheet" href="../styles/base.css" />
+  <link rel="stylesheet" href="tab-control.css" />
+  <style>
+    body { margin: 0; }
+    h1 {
+      font: var(--font-hdrMd);
+      margin: 0 0 32px;
+      color: var(--ForegroundStrong);
+    }
+    h2 {
+      font: var(--font-hdrSm);
+      margin: 40px 0 16px;
+      color: var(--ForegroundStrong);
+    }
+    h2:first-of-type { margin-top: 0; }
+    .section-divider {
+      border: none;
+      border-top: var(--line-size) solid var(--InnerLines);
+      margin: 32px 0 0;
+    }
+    .demo-box {
+      max-width: 640px;
+    }
+    .demo-panel-content {
+      color: var(--ForegroundPrimary);
+      font: var(--font-default);
+    }
+  </style>
+</head>
+<body>
+
+<div class="mob-layout">
+
+  <!-- Sidebar Navigation -->
+  <nav class="mob-nav" id="mob-nav"></nav>
+
+  <!-- Main Content -->
+  <main class="mob-layout__content">
+
+<h1>TabControl</h1>
+
+
+<!-- =========================================================
+     SECTION 1: DEFAULT TAB CONTROL — INTERACTION STATES
+     Source: ModePathBuilder.xaml — Custom TabItem ControlTemplate
+             (lines 1159–1233)
+     ========================================================= -->
+
+<h2>Interaction States</h2>
+
+<div class="demo-box">
+
+  <!-- XAML: TabControl Background=BackgroundPrimaryBrush, Panel.ZIndex="1" -->
+  <div class="mob-tab-control">
+
+    <!-- XAML: TabPanel — horizontal row of TabItem headers -->
+    <div class="mob-tab-strip" role="tablist">
+
+      <!-- ===== Selected tab ===== -->
+      <!-- XAML: TabItem IsSelected=True — Foreground=SelectionPrimary,
+                 _selectionEdge Visibility=Visible -->
+      <button class="mob-tab is-active" role="tab" aria-selected="true">
+        <span class="mob-tab__label">Selected</span>
+      </button>
+
+      <!-- ===== Default (unselected) tab ===== -->
+      <!-- XAML: TabItem IsSelected=False, IsMouseOver=False —
+                 Foreground=ForegroundPrimary, _selectionEdge Hidden -->
+      <button class="mob-tab" role="tab" aria-selected="false">
+        <span class="mob-tab__label">Default</span>
+      </button>
+
+      <!-- ===== Hover (unselected) tab ===== -->
+      <!-- XAML: MultiTrigger — IsMouseOver=True + IsSelected=False
+                 Foreground=MouseOverPrimaryBrush, _selectionEdge Hidden -->
+      <button class="mob-tab is-hovered" role="tab" aria-selected="false">
+        <span class="mob-tab__label">Hover</span>
+      </button>
+
+      <!-- ===== Disabled tab ===== -->
+      <!-- XAML: IsEnabled=False — Opacity -> DisabledOpacity (0.35) -->
+      <button class="mob-tab is-disabled" role="tab" aria-selected="false" aria-disabled="true">
+        <span class="mob-tab__label">Disabled</span>
+      </button>
+
+    </div>
+
+    <!-- XAML: ContentPresenter — displays selected TabItem content -->
+    <div class="mob-tab-panel" role="tabpanel">
+      <p class="demo-panel-content">
+        Panel content for the selected tab. In WPF, this is the TabItem's child content
+        displayed in the ContentPresenter area below the tab strip.
+      </p>
+    </div>
+
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 2: PATHBUILDER PATTERN (2 TABS)
+     Source: ModePathBuilder.xaml — TabControl.Items with
+             2 TabItems: "Action Groups" and "Publishing"
+     ========================================================= -->
+
+<h2>PathBuilder — 2 Tabs</h2>
+
+<div class="demo-box">
+
+  <!-- XAML: TabControl Grid.Row="1"
+             Background=BackgroundPrimaryBrush -->
+  <div class="mob-tab-control">
+
+    <!-- XAML: TabPanel (implicit) -->
+    <div class="mob-tab-strip" role="tablist">
+
+      <!-- XAML: TabItem Header=LocalizedText.ModePathBuilder.ActionGroupsTab.Title -->
+      <button class="mob-tab is-active" role="tab" aria-selected="true">
+        <span class="mob-tab__label">Action Groups</span>
+      </button>
+
+      <!-- XAML: TabItem Header=LocalizedText.ModePathBuilder.PublishingTab.Title -->
+      <button class="mob-tab" role="tab" aria-selected="false">
+        <span class="mob-tab__label">Publishing</span>
+      </button>
+
+    </div>
+
+    <!-- XAML: ui:ActionGroupEditor (selected tab content) -->
+    <div class="mob-tab-panel" role="tabpanel">
+      <p class="demo-panel-content">
+        Action Groups content area — hosts ActionGroupEditor in WPF.
+      </p>
+    </div>
+
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 3: CENTERED TAB STRIP (3 TABS)
+     Source: ErrorReportVisualizationUtility/MainWindow.xaml
+             TabPanel HorizontalAlignment="Center",
+             3 TabItems: Import, Filter/Parse, Export
+     ========================================================= -->
+
+<h2>Centered — 3 Tabs</h2>
+
+<div class="demo-box">
+
+  <!-- XAML: TabControl SelectedIndex="{Binding SelectedIndex}" -->
+  <div class="mob-tab-control mob-tab-control--centered">
+
+    <!-- XAML: TabPanel HorizontalAlignment="Center" -->
+    <div class="mob-tab-strip" role="tablist">
+
+      <!-- XAML: TabItem Header="Import" -->
+      <button class="mob-tab is-active" role="tab" aria-selected="true">
+        <span class="mob-tab__label">Import</span>
+      </button>
+
+      <!-- XAML: TabItem Header="Filter/Parse" -->
+      <button class="mob-tab" role="tab" aria-selected="false">
+        <span class="mob-tab__label">Filter/Parse</span>
+      </button>
+
+      <!-- XAML: TabItem Header="Export" -->
+      <button class="mob-tab" role="tab" aria-selected="false">
+        <span class="mob-tab__label">Export</span>
+      </button>
+
+    </div>
+
+    <!-- XAML: TabItem content area -->
+    <div class="mob-tab-panel" role="tabpanel">
+      <p class="demo-panel-content">
+        Import panel content. Tabs are centered above.
+      </p>
+    </div>
+
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 4: BOTTOM TABS
+     Source: ManualTestingControl.xaml
+             TabStripPlacement="Bottom"
+             ItemsSource="{Binding AutomationCategories}"
+             Dynamic ItemTemplate with TextBlock FontSize="16"
+     ========================================================= -->
+
+<h2>Bottom Tabs</h2>
+
+<div class="demo-box">
+
+  <!-- XAML: TabControl TabStripPlacement="Bottom"
+             DockPanel.Dock="Top" SelectedIndex="0" -->
+  <div class="mob-tab-control mob-tab-control--bottom">
+
+    <!-- XAML: TabPanel rendered at bottom -->
+    <div class="mob-tab-strip" role="tablist">
+
+      <!-- XAML: ItemTemplate — TextBlock Margin="4" Text="{Binding Name}" FontSize="16" -->
+      <button class="mob-tab is-active" role="tab" aria-selected="true">
+        <span class="mob-tab__label">Driving</span>
+      </button>
+
+      <button class="mob-tab" role="tab" aria-selected="false">
+        <span class="mob-tab__label">Steering</span>
+      </button>
+
+      <button class="mob-tab" role="tab" aria-selected="false">
+        <span class="mob-tab__label">Braking</span>
+      </button>
+
+      <button class="mob-tab" role="tab" aria-selected="false">
+        <span class="mob-tab__label">Sensors</span>
+      </button>
+
+    </div>
+
+    <!-- XAML: ContentTemplate — ScrollViewer > ItemsControl
+               ItemsSource="{Binding Automations}" -->
+    <div class="mob-tab-panel" role="tabpanel">
+      <p class="demo-panel-content">
+        Automation controls for "Driving" category.
+        Tab strip is at the bottom of the panel.
+      </p>
+    </div>
+
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 5: STRETCH TABS
+     Common usage with 2–3 tabs that fill equal width.
+     No single XAML source — composite of observed patterns.
+     ========================================================= -->
+
+<h2>Stretch Tabs</h2>
+
+<div class="demo-box">
+
+  <div class="mob-tab-control">
+
+    <div class="mob-tab-strip mob-tab-strip--stretch" role="tablist">
+
+      <button class="mob-tab is-active" role="tab" aria-selected="true">
+        <span class="mob-tab__label">Configuration</span>
+      </button>
+
+      <button class="mob-tab" role="tab" aria-selected="false">
+        <span class="mob-tab__label">Diagnostics</span>
+      </button>
+
+      <button class="mob-tab" role="tab" aria-selected="false">
+        <span class="mob-tab__label">History</span>
+      </button>
+
+    </div>
+
+    <div class="mob-tab-panel" role="tabpanel">
+      <p class="demo-panel-content">
+        Each tab stretches to fill equal width of the container.
+      </p>
+    </div>
+
+  </div>
+
+</div>
+
+
+  </main>
+
+</div>
+
+<script src="../styles/nav.js"></script>
+</body>
+</html>

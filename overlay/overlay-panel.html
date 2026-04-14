@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mobius — Overlay: Side Panel</title>
+  <link id="mob-theme-link" rel="stylesheet" href="../styles/LightTheme.css" />
+  <link rel="stylesheet" href="../styles/base.css" />
+  <link rel="stylesheet" href="overlay.css" />
+  <style>
+    body { margin: 0; }
+    h1 { font: var(--font-hdrMd); margin: 0 0 32px; color: var(--ForegroundStrong); }
+    h2 { font: var(--font-hdrSm); margin: 40px 0 16px; color: var(--ForegroundStrong); }
+    h2:first-of-type { margin-top: 0; }
+    .demo-label { font: var(--font-captionSm); color: var(--ForegroundPrimary); margin-bottom: var(--spacing-label-to-control-sm); }
+    .section-divider { border: none; border-top: var(--line-size) solid var(--InnerLines); margin: 32px 0 0; }
+    code { font-family: "Roboto Mono", monospace; font-size: 12px; background: var(--BackgroundStepOne); padding: 2px 6px; border-radius: 3px; }
+    .xaml-note { font: var(--font-captionSm); color: var(--ForegroundWatermark); margin-top: var(--spacing-label-to-control-sm); }
+    .demo-row { display: flex; flex-wrap: wrap; gap: var(--spacing-section-to-section); align-items: flex-start; margin-top: var(--spacing-label-to-control-md); }
+    .demo-block { display: flex; flex-direction: column; gap: var(--spacing-label-to-control-sm); }
+    .demo-block__label { font: var(--font-captionSm); font-weight: var(--font-bold); color: var(--ForegroundStrong); }
+    .demo-hint { display: inline-block; font: var(--font-captionSm); color: var(--SelectionSecondary); background: color-mix(in srgb, var(--SelectionPrimary) 8%, transparent); border: var(--border-width) solid color-mix(in srgb, var(--SelectionPrimary) 20%, transparent); border-radius: var(--size-3); padding: 2px 8px; margin-bottom: var(--spacing-label-to-control-sm); }
+    .demo-trigger { min-height: var(--touch); padding: 0 var(--size-20); border: var(--border-width) solid var(--BackgroundInputOutline); background: var(--BackgroundInput); color: var(--ForegroundPrimary); font: var(--font-default); cursor: pointer; }
+    .demo-trigger:hover { background: var(--MouseOverBackground); }
+    .demo-overlay-scope { position: relative; width: 100%; height: 400px; border: var(--border-width) solid var(--InnerLines); overflow: hidden; background: var(--BackgroundStepOne); margin-top: var(--spacing-label-to-control-sm); }
+  </style>
+</head>
+<body>
+
+<div class="mob-layout">
+  <nav class="mob-nav" id="mob-nav"></nav>
+  <main class="mob-layout__content">
+
+<h1>Side Panel Overlay</h1>
+<p class="demo-label">
+  Slide-in panel from the right edge. Used by <code>NodeConfigurationOverlayControl</code>.
+  Slides in with 0.5s quintic easing (<code>QuinticEase EaseOut</code>), slides out with <code>EaseIn</code>.
+  Semi-transparent backdrop at 25% opacity.
+</p>
+
+
+<h2>Interactive Demos</h2>
+
+<div class="demo-row">
+
+  <!-- Demo 1: Node Configuration -->
+  <div class="demo-block">
+    <span class="demo-block__label">Node Configuration</span>
+    <span class="demo-hint">Click button, click backdrop or arrow to dismiss</span>
+    <button class="demo-trigger" data-overlay="panel" data-target="demo-panel-1">Configure Node</button>
+    <div class="demo-overlay-scope">
+      <!-- XAML: NodeConfigurationOverlayControl — ContentPresenter with TranslateTransform -->
+      <div class="mob-overlay mob-overlay--panel" id="demo-panel-1" style="position:absolute;">
+        <!-- XAML: semi-transparent backdrop -->
+        <div class="mob-overlay__backdrop" data-overlay-dismiss></div>
+        <!-- XAML: ContentPresenter OverlayControl — slides in from right -->
+        <div class="mob-overlay__panel">
+          <div class="mob-overlay__panel-header">
+            <!-- XAML: Back button → CloseCommand -->
+            <button class="mob-overlay__panel-close" data-overlay-dismiss>&#8592;</button>
+            <span class="mob-overlay__panel-title">Node Configuration</span>
+          </div>
+          <div class="mob-overlay__panel-body">
+            <div style="margin-bottom:var(--size-12);">
+              <label style="font:var(--font-captionSm);color:var(--ForegroundPrimary);display:block;margin-bottom:var(--spacing-label-to-control-sm);">Node Name</label>
+              <input type="text" value="Intersection-A4" style="width:100%;height:var(--field-height);padding:0 var(--size-12);border:var(--border-width) solid var(--BackgroundInputOutline);background:var(--BackgroundInput);font:var(--font-default);color:var(--ForegroundStrong);box-sizing:border-box;" />
+            </div>
+            <div>
+              <label style="font:var(--font-captionSm);color:var(--ForegroundPrimary);display:block;margin-bottom:var(--spacing-label-to-control-sm);">Speed Limit</label>
+              <input type="text" value="15.0 km/h" style="width:100%;height:var(--field-height);padding:0 var(--size-12);border:var(--border-width) solid var(--BackgroundInputOutline);background:var(--BackgroundInput);font:var(--font-default);color:var(--ForegroundStrong);box-sizing:border-box;" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <span class="xaml-note">XAML: NodeConfigurationOverlayControl — <code>IsOverlayOpen</code> toggles slide</span>
+  </div>
+
+  <!-- Demo 2: Vehicle Settings -->
+  <div class="demo-block">
+    <span class="demo-block__label">Vehicle Settings</span>
+    <span class="demo-hint">Click button, click backdrop or arrow to dismiss</span>
+    <button class="demo-trigger" data-overlay="panel" data-target="demo-panel-2">Vehicle Settings</button>
+    <div class="demo-overlay-scope">
+      <div class="mob-overlay mob-overlay--panel" id="demo-panel-2" style="position:absolute;">
+        <div class="mob-overlay__backdrop" data-overlay-dismiss></div>
+        <div class="mob-overlay__panel">
+          <div class="mob-overlay__panel-header">
+            <button class="mob-overlay__panel-close" data-overlay-dismiss>&#8592;</button>
+            <span class="mob-overlay__panel-title">Vehicle Settings</span>
+          </div>
+          <div class="mob-overlay__panel-body">
+            <div style="margin-bottom:var(--size-12);">
+              <label style="font:var(--font-captionSm);color:var(--ForegroundPrimary);display:block;margin-bottom:var(--spacing-label-to-control-sm);">Vehicle ID</label>
+              <input type="text" value="CAT 797F-01" style="width:100%;height:var(--field-height);padding:0 var(--size-12);border:var(--border-width) solid var(--BackgroundInputOutline);background:var(--BackgroundInput);font:var(--font-default);color:var(--ForegroundStrong);box-sizing:border-box;" />
+            </div>
+            <div style="margin-bottom:var(--size-12);">
+              <label style="font:var(--font-captionSm);color:var(--ForegroundPrimary);display:block;margin-bottom:var(--spacing-label-to-control-sm);">Max Speed</label>
+              <input type="text" value="65.0 km/h" style="width:100%;height:var(--field-height);padding:0 var(--size-12);border:var(--border-width) solid var(--BackgroundInputOutline);background:var(--BackgroundInput);font:var(--font-default);color:var(--ForegroundStrong);box-sizing:border-box;" />
+            </div>
+            <div>
+              <label style="font:var(--font-captionSm);color:var(--ForegroundPrimary);display:block;margin-bottom:var(--spacing-label-to-control-sm);">Operating Zone</label>
+              <input type="text" value="Zone A — North Pit" style="width:100%;height:var(--field-height);padding:0 var(--size-12);border:var(--border-width) solid var(--BackgroundInputOutline);background:var(--BackgroundInput);font:var(--font-default);color:var(--ForegroundStrong);box-sizing:border-box;" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <span class="xaml-note">XAML: NodeConfigurationOverlayControl — vehicle config variant</span>
+  </div>
+
+  <!-- Demo 3: Path Properties -->
+  <div class="demo-block">
+    <span class="demo-block__label">Path Properties</span>
+    <span class="demo-hint">Click button, click backdrop or arrow to dismiss</span>
+    <button class="demo-trigger" data-overlay="panel" data-target="demo-panel-3">Path Properties</button>
+    <div class="demo-overlay-scope">
+      <div class="mob-overlay mob-overlay--panel" id="demo-panel-3" style="position:absolute;">
+        <div class="mob-overlay__backdrop" data-overlay-dismiss></div>
+        <div class="mob-overlay__panel">
+          <div class="mob-overlay__panel-header">
+            <button class="mob-overlay__panel-close" data-overlay-dismiss>&#8592;</button>
+            <span class="mob-overlay__panel-title">Path Properties</span>
+          </div>
+          <div class="mob-overlay__panel-body">
+            <div style="margin-bottom:var(--size-12);">
+              <label style="font:var(--font-captionSm);color:var(--ForegroundPrimary);display:block;margin-bottom:var(--spacing-label-to-control-sm);">Path Name</label>
+              <input type="text" value="Haul Road East" style="width:100%;height:var(--field-height);padding:0 var(--size-12);border:var(--border-width) solid var(--BackgroundInputOutline);background:var(--BackgroundInput);font:var(--font-default);color:var(--ForegroundStrong);box-sizing:border-box;" />
+            </div>
+            <div style="margin-bottom:var(--size-12);">
+              <label style="font:var(--font-captionSm);color:var(--ForegroundPrimary);display:block;margin-bottom:var(--spacing-label-to-control-sm);">Revision</label>
+              <input type="text" value="3" disabled style="width:100%;height:var(--field-height);padding:0 var(--size-12);border:var(--border-width) solid var(--BackgroundInputOutline);background:var(--BackgroundStepOne);font:var(--font-default);color:var(--ForegroundWatermark);box-sizing:border-box;" />
+            </div>
+            <div style="margin-bottom:var(--size-12);">
+              <label style="font:var(--font-captionSm);color:var(--ForegroundPrimary);display:block;margin-bottom:var(--spacing-label-to-control-sm);">Turn Radius</label>
+              <input type="text" value="5.0 m" style="width:100%;height:var(--field-height);padding:0 var(--size-12);border:var(--border-width) solid var(--BackgroundInputOutline);background:var(--BackgroundInput);font:var(--font-default);color:var(--ForegroundStrong);box-sizing:border-box;" />
+            </div>
+            <div>
+              <label style="font:var(--font-captionSm);color:var(--ForegroundPrimary);display:block;margin-bottom:var(--spacing-label-to-control-sm);">Tags</label>
+              <input type="text" value="priority, main-route" style="width:100%;height:var(--field-height);padding:0 var(--size-12);border:var(--border-width) solid var(--BackgroundInputOutline);background:var(--BackgroundInput);font:var(--font-default);color:var(--ForegroundStrong);box-sizing:border-box;" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <span class="xaml-note">XAML: NodeConfigurationOverlayControl — path properties variant</span>
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<h2>Anatomy</h2>
+
+<div class="demo-row">
+  <div class="demo-block" style="max-width:680px;">
+    <span class="demo-block__label">CSS Classes</span>
+    <p class="demo-label">
+      <code>.mob-overlay</code> — base overlay (fixed, z-index 2000)<br/>
+      <code>.mob-overlay--panel</code> — right-edge slide-in variant<br/>
+      <code>.mob-overlay__backdrop</code> — click-to-dismiss backdrop (25% opacity)<br/>
+      <code>.mob-overlay__panel</code> — panel container (400px, slides via translateX)<br/>
+      <code>.mob-overlay__panel-header</code> — header with close + title<br/>
+      <code>.mob-overlay__panel-title</code> — heading text<br/>
+      <code>.mob-overlay__panel-close</code> — back/close button<br/>
+      <code>.mob-overlay__panel-body</code> — scrollable content area<br/>
+      <code>.is-open</code> — show overlay + trigger slide animation
+    </p>
+
+    <span class="demo-block__label" style="margin-top:var(--spacing-label-to-control-md);">XAML → CSS Mapping</span>
+    <p class="demo-label">
+      <code>NodeConfigurationOverlayControl</code> → <code>.mob-overlay--panel</code><br/>
+      <code>ContentPresenter OverlayControl</code> → <code>.mob-overlay__panel</code><br/>
+      <code>TranslateTransform.X: ActualWidth→0</code> → <code>translateX(100%)→translateX(0)</code><br/>
+      <code>0.5s QuinticEase EaseOut</code> → <code>500ms cubic-bezier(0.23, 1, 0.32, 1)</code><br/>
+      <code>IsOverlayOpen</code> → <code>.is-open</code>
+    </p>
+
+    <span class="demo-block__label" style="margin-top:var(--spacing-label-to-control-md);">HTML Structure</span>
+    <p class="demo-label">
+      <code>&lt;div class="mob-overlay mob-overlay--panel"&gt;</code><br/>
+      &nbsp;&nbsp;<code>&lt;div class="mob-overlay__backdrop"&gt;&lt;/div&gt;</code><br/>
+      &nbsp;&nbsp;<code>&lt;div class="mob-overlay__panel"&gt;</code><br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;<code>&lt;div class="mob-overlay__panel-header"&gt;</code><br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>&lt;button class="mob-overlay__panel-close"&gt;</code>&#8592;<code>&lt;/button&gt;</code><br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>&lt;span class="mob-overlay__panel-title"&gt;</code>Title<code>&lt;/span&gt;</code><br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;<code>&lt;/div&gt;</code><br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;<code>&lt;div class="mob-overlay__panel-body"&gt;</code>Content<code>&lt;/div&gt;</code><br/>
+      &nbsp;&nbsp;<code>&lt;/div&gt;</code><br/>
+      <code>&lt;/div&gt;</code>
+    </p>
+  </div>
+</div>
+
+
+  </main>
+</div>
+
+<script src="../styles/nav.js"></script>
+<script>
+(function () {
+  document.querySelectorAll('[data-overlay]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var target = document.getElementById(btn.getAttribute('data-target'));
+      if (target) { target.style.display = 'flex'; target.classList.add('is-open'); }
+    });
+  });
+  document.querySelectorAll('[data-overlay-dismiss]').forEach(function (el) {
+    el.addEventListener('click', function () {
+      var overlay = el.closest('.mob-overlay');
+      if (overlay) { overlay.classList.remove('is-open'); overlay.style.display = 'none'; }
+    });
+  });
+})();
+</script>
+
+</body>
+</html>

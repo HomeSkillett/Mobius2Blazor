@@ -1,0 +1,238 @@
+/*
+  tab-control.css — Mobius TabControl component styles
+  Sources:
+    ModePathBuilder.xaml — Custom TabItem ControlTemplate (lines 1159–1233)
+    ErrorReportVisualizationUtility/MainWindow.xaml — Standard TabControl (lines 13–535)
+    ManualTestingControl.xaml — TabStripPlacement="Bottom" TabControl (lines 24–97)
+    DefaultControls.xaml — ModeBar/MasterDetailControl (lines 6240–6791)
+
+  XAML TabItem Template layers (ModePathBuilder pattern):
+    Panel (Grid)                    -> .mob-tab  (the tab button)
+      Row 0: ContentPresenter      -> .mob-tab__label  (Margin="10,15,10,15", centered)
+      Row 1: _selectionEdge        -> ::after pseudo-element (4px tall, SelectionPrimary)
+
+  XAML TabItem MultiTriggers:
+    Hover + Selected     -> Foreground = SelectionPrimary,  edge visible
+    Hover + !Selected    -> Foreground = MouseOverPrimary,  edge hidden
+    !Hover + Selected    -> Foreground = SelectionPrimary,  edge visible
+    !Hover + !Selected   -> Foreground = ForegroundPrimary, edge hidden
+
+  XAML TabControl:
+    Background = BackgroundPrimary
+
+  Classes:
+    .mob-tab-control              Tab container (flex column)
+    .mob-tab-strip                Tab header row (flex row)
+    .mob-tab                      Individual tab button
+    .mob-tab__label               Tab text
+    .mob-tab-panel                Content area below the tab strip
+    .mob-tab-control--bottom      Variant: tabs at bottom (ManualTesting pattern)
+    .mob-tab-control--centered    Variant: centered tab strip (ErrorReport pattern)
+
+  Static demo classes:
+    .is-active                    Currently selected tab
+    .is-hovered                   Simulated hover
+    .is-disabled                  Simulated disabled
+*/
+
+
+/* =============================================
+   TAB CONTROL CONTAINER  (.mob-tab-control)
+   XAML: TabControl — Background=BackgroundPrimaryBrush
+   ============================================= */
+
+.mob-tab-control {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--BackgroundPrimary);
+}
+
+
+/* =============================================
+   TAB STRIP  (.mob-tab-strip)
+   XAML: TabPanel — horizontal row of TabItems.
+         Sits at top by default, separated from
+         content by an InnerLines border.
+   ============================================= */
+
+.mob-tab-strip {
+  display: flex;
+  flex-direction: row;
+  border-bottom: var(--line-size) solid var(--InnerLines);
+  background-color: var(--BackgroundPrimary);
+}
+
+
+/* =============================================
+   INDIVIDUAL TAB  (.mob-tab)
+   XAML: TabItem ControlTemplate — Grid with
+         2 rows: Auto (ContentPresenter) + 4px
+         (_selectionEdge).
+   ============================================= */
+
+.mob-tab {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 15px 10px;                    /* XAML: ContentPresenter Margin="10,15,10,15" */
+  min-height: var(--touch);              /* WCAG touch target */
+  cursor: pointer;
+  background: none;
+  border: none;
+  -webkit-user-select: none;
+  user-select: none;
+  transition:
+    color var(--transition-mouse-out) ease;
+}
+
+
+/* --- Selection edge indicator --- */
+/* XAML: _selectionEdge — Border in Row 1, Height=TouchSize (4px used),
+         Background=SelectionPrimaryBrush, Visibility toggled by triggers */
+
+.mob-tab::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--border-width-selected);  /* XAML: RowDefinition Height="4" */
+  background-color: var(--SelectionPrimary);
+  opacity: 0;
+  transition: opacity var(--transition-select) ease;
+}
+
+
+/* =============================================
+   TAB LABEL  (.mob-tab__label)
+   XAML: ContentPresenter ContentSource="Header"
+         — inherits Foreground from TabItem.
+         Font = default Roboto (via inherited style).
+   ============================================= */
+
+.mob-tab__label {
+  color: var(--ForegroundPrimary);       /* XAML: !Hover + !Selected -> ForegroundPrimary */
+  font: var(--font-default);
+  transition: color var(--transition-mouse-out) ease;
+}
+
+
+/* =============================================
+   SELECTED STATE  (.is-active)
+   XAML: IsSelected=True — Foreground=SelectionPrimary,
+         _selectionEdge Visibility=Visible
+   ============================================= */
+
+.mob-tab.is-active .mob-tab__label {
+  color: var(--SelectionPrimary);        /* XAML: SelectionPrimaryBrush */
+}
+
+.mob-tab.is-active::after {
+  opacity: 1;                            /* XAML: _selectionEdge Visible */
+}
+
+
+/* =============================================
+   HOVER STATE
+   XAML MultiTriggers:
+     Hover + !Selected -> Foreground=MouseOverPrimary, edge hidden
+     Hover + Selected  -> Foreground=SelectionPrimary, edge visible
+   ============================================= */
+
+.mob-tab:hover .mob-tab__label,
+.mob-tab.is-hovered .mob-tab__label {
+  color: var(--MouseOverPrimary);        /* XAML: MouseOverPrimaryBrush */
+  transition-duration: var(--transition-mouse-over);
+}
+
+/* When hovered AND active, keep SelectionPrimary instead of MouseOver */
+.mob-tab.is-active:hover .mob-tab__label,
+.mob-tab.is-active.is-hovered .mob-tab__label {
+  color: var(--SelectionPrimary);        /* XAML: Hover + Selected -> SelectionPrimary */
+}
+
+
+/* =============================================
+   FOCUS STATE
+   XAML: FocusVisualStyle — 2px outline adorner
+   ============================================= */
+
+.mob-tab:focus-visible {
+  outline: var(--border-width-focused) solid var(--MouseOverPrimary);
+  outline-offset: calc(-1 * var(--border-width-focused));
+  transition-duration: var(--transition-focus);
+}
+
+.mob-tab:focus:not(:focus-visible) {
+  outline: none;
+}
+
+
+/* =============================================
+   DISABLED STATE
+   XAML: IsEnabled=False — Opacity -> DisabledOpacity
+   ============================================= */
+
+.mob-tab.is-disabled {
+  opacity: var(--opacity-disabled);      /* XAML: DisabledOpacity = 0.35 */
+  cursor: default;
+  pointer-events: none;
+}
+
+
+/* =============================================
+   TAB PANEL  (.mob-tab-panel)
+   XAML: ContentPresenter inside TabControl —
+         displays selected TabItem content.
+         Background inherits from TabControl
+         (BackgroundPrimary).
+   ============================================= */
+
+.mob-tab-panel {
+  padding: var(--spacing-section-to-header);  /* 24px — matches SectionToHeader */
+  background-color: var(--BackgroundPrimary);
+}
+
+
+/* =============================================
+   VARIANT: BOTTOM TABS  (.mob-tab-control--bottom)
+   XAML: TabStripPlacement="Bottom"
+         (ManualTestingControl.xaml)
+   ============================================= */
+
+.mob-tab-control--bottom {
+  flex-direction: column-reverse;
+}
+
+.mob-tab-control--bottom .mob-tab-strip {
+  border-bottom: none;
+  border-top: var(--line-size) solid var(--InnerLines);
+}
+
+.mob-tab-control--bottom .mob-tab::after {
+  bottom: auto;
+  top: 0;                               /* Edge indicator moves to top of tab strip */
+}
+
+
+/* =============================================
+   VARIANT: CENTERED TAB STRIP
+   XAML: ErrorReportVisualizationUtility —
+         TabPanel HorizontalAlignment="Center"
+   ============================================= */
+
+.mob-tab-control--centered .mob-tab-strip {
+  justify-content: center;
+}
+
+
+/* =============================================
+   VARIANT: STRETCH TABS
+   All tabs fill equal width of their container.
+   Common for 2–3 tab layouts.
+   ============================================= */
+
+.mob-tab-strip--stretch .mob-tab {
+  flex: 1;
+}

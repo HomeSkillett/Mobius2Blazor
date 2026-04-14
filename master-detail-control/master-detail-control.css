@@ -1,0 +1,283 @@
+/* master-detail-control.css — MasterDetailControl (list-detail split layout)
+   Source: MasterDetailControl.xaml + MasterDetailControl.cs
+           StaticMasterDetailControl.xaml + StaticMasterDetailControl.cs
+           MasterDetailActionButton.xaml
+   ====================================================================== */
+
+
+/* ==============================================
+   OUTER CONTAINER
+   XAML: ControlTemplate → Grid
+         Grid.ColumnDefinitions:
+           Col 0 = MasterDetailsMasterListWidth (236px)
+           Col 1 = * (remaining space)
+   ============================================== */
+.mob-master-detail {
+  display: grid;
+  grid-template-columns: var(--panel-master-list-width) 1fr;
+  min-height: 0;
+  height: 100%;
+  background: var(--BackgroundPrimary);
+}
+
+
+/* ==============================================
+   MASTER LIST COLUMN (left)
+   XAML: Grid Column="0" — contains list + add button
+         Border Style=EdgeBorderVertical (right edge line)
+   ============================================== */
+.mob-master-detail__master {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border-right: var(--line-size) solid var(--InnerLines);
+  background: var(--BackgroundPrimary);
+}
+
+
+/* ==============================================
+   LIST SCROLL AREA
+   XAML: Border Grid.Row="0"
+         → SortableGroupListView x:Name="listBox"
+           Padding="0,27"
+           SelectionMode="Single"
+           VirtualizingPanel.ScrollUnit="Pixel"
+   ============================================== */
+.mob-master-detail__list {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: var(--size-24) 0;
+}
+
+
+/* ==============================================
+   LIST ITEM
+   XAML: ListBoxItem — ItemContainerStyle
+         Padding="30,0"
+         MinHeight=TouchSize (44px)
+         Foreground=ForegroundPrimaryBrush
+         Background=BackgroundPrimaryBrush
+         Template=Mobius_UI_Resources_Templates_ListBoxItem
+   ============================================== */
+.mob-master-detail__item {
+  display: flex;
+  align-items: center;
+  min-height: var(--touch);
+  padding: 0 var(--size-24);
+  margin: var(--margin-master-list);
+  color: var(--ForegroundPrimary);
+  font: var(--font-default);
+  cursor: pointer;
+  user-select: none;
+  transition:
+    background-color var(--transition-mouse-out) ease,
+    color var(--transition-unselect) ease;
+}
+
+
+/* --- Hover ---
+   XAML: ListBoxItem MouseOver → Background=MouseOverBackgroundBrush */
+.mob-master-detail__item:hover {
+  background-color: var(--MouseOverBackground);
+  transition-duration: var(--transition-mouse-over);
+}
+
+/* --- Selected ---
+   XAML: ListBoxItem IsSelected → Background=SelectionPrimary,
+         Foreground=SelectionForeground */
+.mob-master-detail__item.is-selected {
+  background-color: var(--SelectionPrimary);
+  color: var(--SelectionForeground);
+  transition-duration: var(--transition-select);
+}
+
+/* --- Focused ---
+   XAML: FocusVisualStyle — dashed outline */
+.mob-master-detail__item:focus-visible {
+  outline: var(--border-width-focused) solid var(--MouseOverPrimary);
+  outline-offset: calc(-1 * var(--border-width-focused));
+}
+
+
+/* ==============================================
+   ADD BUTTON AREA
+   XAML: Grid Row="1" — StackPanel
+         Visibility bound to EnableAdd
+         Rectangle x:Name="addButtonConditionalMargin" Height="20"
+         Border Margin="0,0,0,20"
+           → IconLabelButton
+               Margin=MasterDetailsListMargin (40,0,0,0)
+               Icon, Text bound
+   ============================================== */
+.mob-master-detail__add {
+  flex: 0 0 auto;
+  border-top: var(--line-size) solid var(--InnerLines);
+  padding: var(--size-20) 0;
+}
+
+/* Re-use the existing IconLabelButton pattern inside the add area.
+   XAML: Margin=MasterDetailsListMargin → 0 0 0 40px */
+.mob-master-detail__add .mob-icon-label-btn {
+  margin: var(--margin-master-list);
+}
+
+
+/* ==============================================
+   DETAIL COLUMN (right)
+   XAML: Grid Column="1" x:Name="detailsContent"
+         Row 0 = ScrollViewer + ContentPresenter
+         Row 1 = Delete panel (MinHeight=70, BackgroundStrongStepOne)
+   ============================================== */
+.mob-master-detail__detail {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: var(--BackgroundPrimary);
+}
+
+
+/* ==============================================
+   DETAIL CONTENT AREA
+   XAML: Grid Row="0" → ScrollViewer x:Name="detailsScrollViewer"
+         ContentPresenter Margin="0"
+   ============================================== */
+.mob-master-detail__detail-content {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: var(--size-24) var(--size-20);
+}
+
+
+/* ==============================================
+   NO-ITEMS / NO-SELECTION PLACEHOLDER
+   XAML: ContentPresenter x:Name="noItemsContent"
+         Margin="20,-1,0,1" VerticalAlignment="Top"
+         Shown via VisualState HasNoItems / HasItemsNoneSelected
+   ============================================== */
+.mob-master-detail__placeholder {
+  padding: var(--size-24) var(--size-20);
+  color: var(--ForegroundDisabled);
+  font: var(--font-default);
+}
+
+
+/* ==============================================
+   DELETE PANEL (bottom of detail column)
+   XAML: Border Grid.Row="1"
+         MinHeight=70
+         Background=BackgroundStrongStepOneBrush
+         Visibility bound to EnableDelete
+         → ConfirmCommandButton
+             StackPanel Horizontal: Path(Icon_Delete 20x20) + TextBlock
+   ============================================== */
+.mob-master-detail__delete-bar {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  min-height: 70px; /* XAML: SizingObjectMarginHeight=70 — no close token match */
+  padding: 0 var(--size-20);
+  background: var(--BackgroundStrongStepOne);
+}
+
+/* XAML: ConfirmCommandButton → wraps a Button + confirm step
+   Rendered as a simple button with icon + label */
+.mob-master-detail__delete-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--size-12);
+  border: none;
+  background: transparent;
+  color: var(--ForegroundPrimary);
+  font: var(--font-default);
+  cursor: pointer;
+  padding: 0;
+  transition:
+    color var(--transition-mouse-out) ease,
+    opacity var(--transition-mouse-out) ease;
+}
+
+.mob-master-detail__delete-btn:hover {
+  color: var(--MouseOverPrimary);
+  transition-duration: var(--transition-mouse-over);
+}
+
+.mob-master-detail__delete-btn:focus-visible {
+  outline: var(--border-width-focused) solid var(--MouseOverPrimary);
+  outline-offset: var(--focus-outline-offset);
+}
+
+.mob-master-detail__delete-btn:disabled {
+  opacity: var(--opacity-disabled);
+  cursor: default;
+}
+
+/* XAML: Path — Icon_Delete (20x20), Fill=foreground inherited */
+.mob-master-detail__delete-icon {
+  font: var(--font-icons);
+  color: inherit;
+  flex-shrink: 0;
+}
+
+
+/* ==============================================
+   STATIC VARIANT — GROUPED LIST
+   XAML: StaticMasterDetailControl.xaml
+         CollectionViewSource with GroupDescriptions
+         ListView with GroupStyle → ExpanderItem
+         ToggleButton for Show Advanced
+   ============================================== */
+
+/* XAML: GroupStyle → ExpanderItem wrapper per group
+   Re-uses mob-expander-item from expander-item.css */
+.mob-master-detail__group-header {
+  font: var(--font-default);
+  color: var(--ForegroundStrong);
+  padding: 0 var(--size-24);
+  margin: var(--margin-master-list);
+  min-height: var(--touch);
+  display: flex;
+  align-items: center;
+}
+
+/* XAML: ToggleButton — Style=AdvancedLinkToggleButton
+   Margin="40,0,0,0" — show/hide advanced items */
+.mob-master-detail__advanced-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-label-to-control);
+  margin: var(--margin-master-list);
+  padding: var(--size-6) 0;
+  border: none;
+  background: transparent;
+  color: var(--ForegroundAction);
+  font: var(--font-default);
+  cursor: pointer;
+  transition: color var(--transition-mouse-out) ease;
+}
+
+.mob-master-detail__advanced-toggle:hover {
+  color: var(--MouseOverPrimary);
+  transition-duration: var(--transition-mouse-over);
+}
+
+
+/* ==============================================
+   VISUAL STATES
+   XAML: VisualStateGroup "ItemsStates"
+     HasItems          → list + detail + delete visible
+     HasItemsNoneSelected → list visible, detail hidden, placeholder shown
+     HasNoItems         → placeholder shown, delete hidden, add margin=0
+   In Blazor: conditionally render via @if blocks
+   In HTML demo: use modifier classes
+   ============================================== */
+
+/* State: has-no-items — hide detail content, show placeholder */
+.mob-master-detail.has-no-items .mob-master-detail__detail-content,
+.mob-master-detail.has-no-items .mob-master-detail__delete-bar {
+  display: none;
+}
+
+/* State: has-items-none-selected — hide detail content, show placeholder */
+.mob-master-detail.has-items-none-selected .mob-master-detail__detail-content {
+  display: none;
+}

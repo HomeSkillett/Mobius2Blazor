@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mobius — Overlay</title>
+  <link id="mob-theme-link" rel="stylesheet" href="../styles/LightTheme.css" />
+  <link rel="stylesheet" href="../styles/base.css" />
+  <link rel="stylesheet" href="overlay.css" />
+  <style>
+    body { margin: 0; }
+    h1 { font: var(--font-hdrMd); margin: 0 0 32px; color: var(--ForegroundStrong); }
+    h2 { font: var(--font-hdrSm); margin: 40px 0 16px; color: var(--ForegroundStrong); }
+    h2:first-of-type { margin-top: 0; }
+    .demo-label { font: var(--font-captionSm); color: var(--ForegroundPrimary); margin-bottom: var(--spacing-label-to-control-sm); }
+    .section-divider { border: none; border-top: var(--line-size) solid var(--InnerLines); margin: 32px 0 0; }
+    code { font-family: "Roboto Mono", monospace; font-size: 12px; background: var(--BackgroundStepOne); padding: 2px 6px; border-radius: 3px; }
+    .xaml-note { font: var(--font-captionSm); color: var(--ForegroundWatermark); margin-top: var(--spacing-label-to-control-sm); }
+    .demo-row { display: flex; flex-wrap: wrap; gap: var(--spacing-section-to-section); align-items: flex-start; margin-top: var(--spacing-label-to-control-md); }
+    .demo-block { display: flex; flex-direction: column; gap: var(--spacing-label-to-control-sm); }
+    .demo-block__label { font: var(--font-captionSm); font-weight: var(--font-bold); color: var(--ForegroundStrong); }
+    .demo-hint { display: inline-block; font: var(--font-captionSm); color: var(--SelectionSecondary); background: color-mix(in srgb, var(--SelectionPrimary) 8%, transparent); border: var(--border-width) solid color-mix(in srgb, var(--SelectionPrimary) 20%, transparent); border-radius: var(--size-3); padding: 2px 8px; margin-bottom: var(--spacing-label-to-control-sm); }
+    /* Demo trigger button styling */
+    .demo-trigger { min-height: var(--touch); padding: 0 var(--size-20); border: var(--border-width) solid var(--BackgroundInputOutline); background: var(--BackgroundInput); color: var(--ForegroundPrimary); font: var(--font-default); cursor: pointer; }
+    .demo-trigger:hover { background: var(--MouseOverBackground); }
+    /* Scoped overlay for demos — contained within page, not truly fixed */
+    .demo-overlay-scope { position: relative; width: 100%; height: 400px; border: var(--border-width) solid var(--InnerLines); overflow: hidden; background: var(--BackgroundStepOne); }
+  </style>
+</head>
+<body>
+<div class="mob-layout">
+  <nav class="mob-nav" id="mob-nav"></nav>
+  <main class="mob-layout__content">
+    <h1>Overlay</h1>
+    <p style="font: var(--font-default); color: var(--ForegroundPrimary); margin: 0 0 32px;">Full-screen and sliding overlay components. Unlike Popup (which anchors to a trigger element), Overlay components cover the viewport — either as a semi-transparent modal backdrop or a slide-in side panel. Three patterns from Common Controls and the ConfigurationHistory plugin.</p>
+
+    <!-- Section 1: Modal Overlay -->
+    <h2>Modal Overlay</h2>
+    <p style="font: var(--font-captionSm); color: var(--ForegroundPrimary); margin: 0 0 16px;">Semi-transparent backdrop with centered content. Click backdrop to dismiss. Fade animation uses <code>GeneralMouseOutDuration</code>.</p>
+
+    <div class="demo-block">
+      <span class="demo-hint">Click the button, then click backdrop to dismiss</span>
+      <button class="demo-trigger" data-overlay="modal" data-target="demo-modal-1">Open Modal</button>
+      <div class="demo-overlay-scope">
+        <!-- XAML: TransparentOverlay — BoundaryBreakingCanvas -->
+        <div class="mob-overlay mob-overlay--modal" id="demo-modal-1" style="position:absolute; display:none;">
+          <!-- XAML: Rectangle Overlay Fill=ForegroundInvertPrimaryBrush Opacity=0.4 -->
+          <div class="mob-overlay__backdrop" data-overlay-dismiss></div>
+          <!-- XAML: ContentControl HAlign=Center VAlign=Center Content=InnerContent -->
+          <div class="mob-overlay__content">
+            <p style="font:var(--font-hdrSm);color:var(--ForegroundStrong);margin:0 0 var(--size-12);">Confirm Action</p>
+            <p style="font:var(--font-default);color:var(--ForegroundPrimary);margin:0 0 var(--size-20);">Are you sure you want to proceed with this operation?</p>
+            <div style="display:flex;gap:var(--size-12);justify-content:flex-end;">
+              <button class="demo-trigger" data-overlay-dismiss>Cancel</button>
+              <button class="demo-trigger" data-overlay-dismiss style="background:var(--BackgroundPrimary);color:var(--ForegroundPrimary);border-color:var(--BackgroundPrimary);">Confirm</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <span class="xaml-note">XAML: TransparentOverlay — <code>IsActivated</code> toggles Active/Inactive states</span>
+    </div>
+
+    <!-- Section divider -->
+    <hr class="section-divider" />
+
+    <!-- Section 2: Side Panel -->
+    <h2>Side Panel</h2>
+    <p style="font: var(--font-captionSm); color: var(--ForegroundPrimary); margin: 0 0 16px;">Slide-in panel from the right edge. 0.5s quintic easing. Used for configuration forms.</p>
+
+    <div class="demo-block">
+      <span class="demo-hint">Click the button to slide in panel from the right</span>
+      <button class="demo-trigger" data-overlay="panel" data-target="demo-panel-1">Open Panel</button>
+      <div class="demo-overlay-scope">
+        <!-- XAML: NodeConfigurationOverlayControl — Overlay Container -->
+        <div class="mob-overlay mob-overlay--panel" id="demo-panel-1" style="position:absolute; display:none;">
+          <!-- XAML: Rectangle Backdrop Opacity=0.4 -->
+          <div class="mob-overlay__backdrop" data-overlay-dismiss></div>
+          <!-- XAML: ContentPresenter OverlayControl with TranslateTransform -->
+          <div class="mob-overlay__panel">
+            <!-- XAML: OverallHeader Border -->
+            <div class="mob-overlay__panel-header">
+              <!-- XAML: Back button → CloseCommand -->
+              <button class="mob-overlay__panel-close" data-overlay-dismiss>&#8592;</button>
+              <span class="mob-overlay__panel-title">Node Configuration</span>
+            </div>
+            <!-- XAML: ScrollViewer VerticalScrollBarVisibility=Auto -->
+            <div class="mob-overlay__panel-body">
+              <p style="font:var(--font-default);color:var(--ForegroundPrimary);margin:0 0 var(--size-12);">Configure node settings for the selected element.</p>
+              <!-- XAML: TextBlock + TextBox for Node Name -->
+              <div style="margin-bottom:var(--size-12);">
+                <label style="font:var(--font-captionSm);color:var(--ForegroundPrimary);display:block;margin-bottom:var(--spacing-label-to-control-sm);">Node Name</label>
+                <input type="text" value="Intersection-A4" style="width:100%;height:var(--field-height);padding:0 var(--size-12);border:var(--border-width) solid var(--BackgroundInputOutline);background:var(--BackgroundInput);font:var(--font-default);color:var(--ForegroundStrong);box-sizing:border-box;" />
+              </div>
+              <!-- XAML: TextBlock + TextBox for Speed Limit -->
+              <div style="margin-bottom:var(--size-12);">
+                <label style="font:var(--font-captionSm);color:var(--ForegroundPrimary);display:block;margin-bottom:var(--spacing-label-to-control-sm);">Speed Limit</label>
+                <input type="text" value="15.0 km/h" style="width:100%;height:var(--field-height);padding:0 var(--size-12);border:var(--border-width) solid var(--BackgroundInputOutline);background:var(--BackgroundInput);font:var(--font-default);color:var(--ForegroundStrong);box-sizing:border-box;" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <span class="xaml-note">XAML: NodeConfigurationOverlayControl — <code>IsOverlayOpen</code> toggles OverlayOpen/OverlayClosed states</span>
+    </div>
+
+    <!-- Section divider -->
+    <hr class="section-divider" />
+
+    <!-- Section 3: History Inspector -->
+    <h2>History Inspector (ConfigurationHistory)</h2>
+    <p style="font: var(--font-captionSm); color: var(--ForegroundPrimary); margin: 0 0 16px;">Two-column inspector with timeline on the left and detail entries on the right. 5px divider.</p>
+
+    <div class="demo-block">
+      <span class="demo-hint">Click to open history. Select timeline items to view details</span>
+      <button class="demo-trigger" data-overlay="history" data-target="demo-history-1">Open History</button>
+      <div class="demo-overlay-scope">
+        <!-- XAML: ConfigurationHistoryOverlayControl — Grid Main Container -->
+        <div class="mob-overlay mob-overlay--history" id="demo-history-1" style="position:absolute; display:none;">
+          <!-- XAML: Rectangle Backdrop Opacity=0.4 -->
+          <div class="mob-overlay__backdrop" data-overlay-dismiss></div>
+          <!-- XAML: ConfigurationHistoryOverlayControl Grid -->
+          <div class="mob-overlay__inspector">
+            <!-- XAML: OverallHeader Border → StackPanel -->
+            <div class="mob-overlay__inspector-header">
+              <!-- XAML: Back button → CloseCommand -->
+              <button class="mob-overlay__panel-close" data-overlay-dismiss>&#8592;</button>
+              <span class="mob-overlay__panel-title">Configuration History</span>
+            </div>
+            <!-- XAML: Grid Row 0 with 3 columns -->
+            <div class="mob-overlay__inspector-body">
+              <!-- XAML: Row 0, Col 0 — Timeline ItemsControl -->
+              <div class="mob-overlay__inspector-timeline">
+                <!-- XAML: CollectionViewSource GroupingByDate — Today Group -->
+                <div class="mob-overlay__timeline-group">
+                  <div class="mob-overlay__timeline-group-header">Today</div>
+                  <!-- XAML: ListBoxItem IsSelected=True -->
+                  <div class="mob-overlay__timeline-item is-selected">
+                    <span class="mob-overlay__timeline-item-icon">&#9998;</span>
+                    <span>Speed Limit Changed</span>
+                  </div>
+                  <!-- XAML: ListBoxItem -->
+                  <div class="mob-overlay__timeline-item">
+                    <span class="mob-overlay__timeline-item-icon">&#9998;</span>
+                    <span>Path Name Updated</span>
+                  </div>
+                </div>
+                <!-- XAML: CollectionViewSource GroupingByDate — Yesterday Group -->
+                <div class="mob-overlay__timeline-group">
+                  <div class="mob-overlay__timeline-group-header">Yesterday</div>
+                  <!-- XAML: ListBoxItem -->
+                  <div class="mob-overlay__timeline-item">
+                    <span class="mob-overlay__timeline-item-icon">&#9998;</span>
+                    <span>Turn Radius Modified</span>
+                  </div>
+                </div>
+              </div>
+              <!-- XAML: Row 0, Col 1 — GridSplitter 5px vertical divider -->
+              <div class="mob-overlay__inspector-divider"></div>
+              <!-- XAML: Row 0, Col 2 — Detail ItemsControl -->
+              <div class="mob-overlay__inspector-detail">
+                <!-- XAML: DetailHeader Border -->
+                <div class="mob-overlay__inspector-detail-header">
+                  <span class="mob-overlay__inspector-detail-title">Speed Limit Changed</span>
+                </div>
+                <!-- XAML: DetailEntry Item 1 — Latest change -->
+                <div class="mob-overlay__detail-entry">
+                  <span class="mob-overlay__detail-entry-time">10:34 AM</span>
+                  <span class="mob-overlay__detail-entry-state">Modified</span>
+                  <span class="mob-overlay__detail-entry-value">25.0 km/h → 15.0 km/h</span>
+                  <span class="mob-overlay__detail-entry-user">J. Smith</span>
+                </div>
+                <!-- XAML: DetailEntry Item 2 — Original creation -->
+                <div class="mob-overlay__detail-entry">
+                  <span class="mob-overlay__detail-entry-time">9:12 AM</span>
+                  <span class="mob-overlay__detail-entry-state">Created</span>
+                  <span class="mob-overlay__detail-entry-value">25.0 km/h</span>
+                  <span class="mob-overlay__detail-entry-user">A. Johnson</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <span class="xaml-note">XAML: ConfigurationHistoryOverlayControl — <code>CloseCommand</code> on back button</span>
+    </div>
+
+    <!-- Section divider -->
+    <hr class="section-divider" />
+
+    <!-- Section 4: Blazor Usage -->
+    <h2>Blazor Usage</h2>
+    <p style="font: var(--font-default); color: var(--ForegroundPrimary); margin: 0 0 16px;">CSS classes for implementing overlay components in Blazor:</p>
+    <div style="font: var(--font-captionSm); color: var(--ForegroundPrimary); margin: 0;">
+      <div style="margin-bottom: var(--size-12);"><strong>.mob-overlay</strong> — Base container (required)</div>
+      <div style="margin-bottom: var(--size-12);"><strong>.mob-overlay--modal</strong> — Centered modal with backdrop</div>
+      <div style="margin-bottom: var(--size-12);"><strong>.mob-overlay--panel</strong> — Slide-in side panel</div>
+      <div style="margin-bottom: var(--size-12);"><strong>.mob-overlay--history</strong> — Two-column history inspector</div>
+      <div style="margin-bottom: var(--size-12);"><strong>.mob-overlay__backdrop</strong> — Click-to-dismiss backdrop</div>
+      <div style="margin-bottom: var(--size-12);"><strong>.mob-overlay__content</strong> — Modal inner content</div>
+      <div style="margin-bottom: var(--size-12);"><strong>.mob-overlay__panel</strong> — Side panel container</div>
+      <div style="margin-bottom: var(--size-12);"><strong>.mob-overlay__panel-header</strong> / <strong>__panel-title</strong> / <strong>__panel-close</strong> / <strong>__panel-body</strong> — Panel sections</div>
+      <div style="margin-bottom: var(--size-12);"><strong>.mob-overlay__inspector</strong> / <strong>__inspector-header</strong> / <strong>__inspector-body</strong> — Inspector layout</div>
+      <div style="margin-bottom: var(--size-12);"><strong>.mob-overlay__inspector-timeline</strong> / <strong>__inspector-divider</strong> / <strong>__inspector-detail</strong> — Timeline and detail areas</div>
+      <div style="margin-bottom: var(--size-12);"><strong>.is-open</strong> — Show the overlay (add via JS)</div>
+    </div>
+
+  </main>
+</div>
+
+<script src="../styles/nav.js"></script>
+<script>
+(function () {
+  // Open overlay buttons
+  document.querySelectorAll('[data-overlay]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var target = document.getElementById(btn.getAttribute('data-target'));
+      if (target) {
+        target.style.display = 'flex';
+        target.classList.add('is-open');
+      }
+    });
+  });
+
+  // Dismiss (backdrop click or close button)
+  document.querySelectorAll('[data-overlay-dismiss]').forEach(function (el) {
+    el.addEventListener('click', function (e) {
+      var overlay = el.closest('.mob-overlay');
+      if (overlay) {
+        overlay.classList.remove('is-open');
+        overlay.style.display = 'none';
+      }
+    });
+  });
+
+  // Timeline item selection
+  document.querySelectorAll('.mob-overlay__timeline-item').forEach(function (item) {
+    item.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var timeline = item.closest('.mob-overlay__inspector-timeline');
+      timeline.querySelectorAll('.mob-overlay__timeline-item').forEach(function (i) { i.classList.remove('is-selected'); });
+      item.classList.add('is-selected');
+    });
+  });
+})();
+</script>
+
+</main>
+</div>
+</body>
+</html>
