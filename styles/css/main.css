@@ -1,0 +1,41 @@
+/*
+  main.css — Master import file for Mobius Blazor components
+  Load order matters: primitives first, then layout, then components.
+*/
+
+/* 1. Primitives (font declarations, tokens, typography) */
+@import "primitives.css";
+
+/* 2. Layout */
+@import "nav.css";
+@import "theme-switcher.css";
+
+/* 3. Components */
+@import "../../buttons/buttons.css";
+@import "../../field-input/field-input.css";
+@import "../../typography/typography.css";
+@import "../../switch-toggle/switch-toggle.css";
+@import "../../combobox/combobox.css";
+@import "../../radio-button/radio-button.css";
+@import "../../scroll-viewer/scroll-viewer.css";
+@import "../../items-control/items-control.css";
+@import "../../expander-item/expander-item.css";
+@import "../../data-grid/data-grid.css";
+@import "../../popup/popup.css";
+@import "../../overlay/overlay.css";
+@import "../../master-detail-control/master-detail-control.css";
+@import "../../alerts/alerts.css";
+@import "../../status-gauge/status-gauge.css";
+@import "../../text-gauge/text-gauge.css";
+@import "../../odometer-gauge/odometer-gauge.css";
+@import "../../indicator-gauge/indicator-gauge.css";
+@import "../../button-gauge/button-gauge.css";
+@import "../../combobox-gauge/combobox-gauge.css";
+@import "../../gps-gauge/gps-gauge.css";
+@import "../../boom-feedback-gauge/boom-feedback-gauge.css";
+@import "../../degree-gauge/degree-gauge.css";
+@import "../../slider-gauge/slider-gauge.css";
+@import "../../multiple-row-gauge/multiple-row-gauge.css";
+@import "../../primary-tractor-gauge/primary-tractor-gauge.css";
+@import "../../primary-vehicle-gauge/primary-vehicle-gauge.css";
+@import "../../view-switch-gauge/view-switch-gauge.css";

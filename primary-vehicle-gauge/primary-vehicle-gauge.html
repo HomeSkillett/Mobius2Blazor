@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mobius — Primary Vehicle Gauge</title>
+  <link id="mob-theme-link" rel="stylesheet" href="../styles/color-theme-tokens/LightTheme.css" />
+  <link rel="stylesheet" href="../styles/css/main.css" />
+  <link rel="stylesheet" href="primary-vehicle-gauge.css" />
+  <style>
+    body { margin: 0; }
+    h1 { font: var(--font-hdrMd); margin: 0 0 32px; color: var(--ForegroundStrong); }
+    h2 { font: var(--font-hdrSm); margin: 40px 0 16px; color: var(--ForegroundStrong); }
+    h2:first-of-type { margin-top: 0; }
+    .demo-list { display: flex; flex-direction: column; gap: var(--spacing-section-to-header); max-width: 540px; }
+    .section-divider { border: none; border-top: var(--line-size) solid var(--InnerLines); margin: 32px 0 0; }
+    .demo-caption { font: var(--font-bodySm); color: var(--ForegroundDisabled); margin-top: var(--spacing-label-to-control-sm); }
+    .demo-row { display: flex; gap: 40px; align-items: flex-start; flex-wrap: wrap; }
+  </style>
+</head>
+<body>
+
+<div class="mob-layout">
+
+  <!-- Sidebar Navigation -->
+  <nav class="mob-nav" id="mob-nav"></nav>
+
+  <!-- Main Content -->
+  <main class="mob-layout__content">
+
+<h1>Primary Vehicle Gauge</h1>
+
+
+<!-- =========================================================
+     SECTION 1: LARGE SIZE — NORMAL
+     Source: PrimaryVehicleGauge.xaml — SizeState=Large,
+     StatusIndicator=OK
+     ========================================================= -->
+
+<h2>Large Size (Normal)</h2>
+
+<div class="demo-row">
+
+  <!-- XAML: PrimaryVehicleGauge — RPM=3500/6000 (58%), Velocity=45,
+       Gear=D3, Mode=Auto, SpeedLimit=65, Size=Large (200px) -->
+  <div class="mob-vehicle-gauge">
+
+    <!-- XAML: Outer dial container -->
+    <div class="mob-vehicle-gauge__dial">
+
+      <!-- XAML: fullRange — Pie arc 270deg track -->
+      <div class="mob-vehicle-gauge__track"></div>
+
+      <!-- XAML: currentValue — Pie arc, RPMRotation
+           58% of 270deg = ~157deg fill -->
+      <div class="mob-vehicle-gauge__fill" style="--gauge-fill: 157deg;"></div>
+
+      <!-- XAML: redZone — hatched critical arc at end
+           starts at 83% of 270deg = ~224deg -->
+      <div class="mob-vehicle-gauge__redzone" style="--redzone-start: 224deg;"></div>
+
+      <!-- XAML: Needle — 4px, pivot center, rotated to RPMRotation
+           58% of 270deg from start: 135deg + 157deg = 292deg
+           CSS: rotate from left origin: -135deg + 157deg = 22deg -->
+      <div class="mob-vehicle-gauge__needle" style="--needle-angle: 22deg;"></div>
+
+      <!-- XAML: Inner ring — Ellipse margin=6, opacity=0.5 -->
+      <div class="mob-vehicle-gauge__inner-ring"></div>
+
+      <!-- XAML: Inner background — Ellipse margin=10, full opacity -->
+      <div class="mob-vehicle-gauge__inner-bg"></div>
+
+      <!-- XAML: RPM tick marks — generated around inner ring -->
+      <div class="mob-vehicle-gauge__ticks">
+        <!-- 0 RPM (135deg) -->
+        <span class="mob-vehicle-gauge__tick mob-vehicle-gauge__tick--major" style="transform: rotate(-135deg);"></span>
+        <!-- 1000 RPM -->
+        <span class="mob-vehicle-gauge__tick" style="transform: rotate(-90deg);"></span>
+        <!-- 2000 RPM -->
+        <span class="mob-vehicle-gauge__tick mob-vehicle-gauge__tick--major" style="transform: rotate(-45deg);"></span>
+        <!-- 3000 RPM -->
+        <span class="mob-vehicle-gauge__tick" style="transform: rotate(0deg);"></span>
+        <!-- 4000 RPM -->
+        <span class="mob-vehicle-gauge__tick mob-vehicle-gauge__tick--major" style="transform: rotate(45deg);"></span>
+        <!-- 5000 RPM -->
+        <span class="mob-vehicle-gauge__tick" style="transform: rotate(90deg);"></span>
+        <!-- 6000 RPM -->
+        <span class="mob-vehicle-gauge__tick mob-vehicle-gauge__tick--major" style="transform: rotate(135deg);"></span>
+      </div>
+
+      <!-- XAML: Center content — status, velocity, gear/mode -->
+      <div class="mob-vehicle-gauge__center">
+
+        <!-- XAML: _velocityPanel — velocity value + unit -->
+        <div class="mob-vehicle-gauge__velocity">
+          <span class="mob-vehicle-gauge__velocity-value">45</span>
+          <span class="mob-vehicle-gauge__velocity-unit">MPH</span>
+        </div>
+
+        <!-- XAML: _gearAndModePanel — mode label + gear border -->
+        <div class="mob-vehicle-gauge__gear-mode">
+          <!-- XAML: _modeBorder — mode label with background -->
+          <span class="mob-vehicle-gauge__mode">Auto</span>
+          <!-- XAML: _gearBorder — gear with border -->
+          <span class="mob-vehicle-gauge__gear">D3</span>
+        </div>
+
+      </div>
+
+      <!-- XAML: Speed limit indicator — 28px circle, top center -->
+      <div class="mob-vehicle-gauge__speed-limit">65</div>
+
+    </div>
+
+  </div>
+
+  <!-- XAML: PrimaryVehicleGauge — low RPM, idle state
+       RPM=800/6000 (13%), Velocity=0, Gear=P, Mode=Auto -->
+  <div class="mob-vehicle-gauge">
+    <div class="mob-vehicle-gauge__dial">
+      <div class="mob-vehicle-gauge__track"></div>
+      <!-- 13% of 270 = ~35deg -->
+      <div class="mob-vehicle-gauge__fill" style="--gauge-fill: 35deg;"></div>
+      <div class="mob-vehicle-gauge__redzone" style="--redzone-start: 224deg;"></div>
+      <div class="mob-vehicle-gauge__needle" style="--needle-angle: -100deg;"></div>
+      <div class="mob-vehicle-gauge__inner-ring"></div>
+      <div class="mob-vehicle-gauge__inner-bg"></div>
+      <div class="mob-vehicle-gauge__ticks">
+        <span class="mob-vehicle-gauge__tick mob-vehicle-gauge__tick--major" style="transform: rotate(-135deg);"></span>
+        <span class="mob-vehicle-gauge__tick" style="transform: rotate(-90deg);"></span>
+        <span class="mob-vehicle-gauge__tick mob-vehicle-gauge__tick--major" style="transform: rotate(-45deg);"></span>
+        <span class="mob-vehicle-gauge__tick" style="transform: rotate(0deg);"></span>
+        <span class="mob-vehicle-gauge__tick mob-vehicle-gauge__tick--major" style="transform: rotate(45deg);"></span>
+        <span class="mob-vehicle-gauge__tick" style="transform: rotate(90deg);"></span>
+        <span class="mob-vehicle-gauge__tick mob-vehicle-gauge__tick--major" style="transform: rotate(135deg);"></span>
+      </div>
+      <div class="mob-vehicle-gauge__center">
+        <div class="mob-vehicle-gauge__velocity">
+          <span class="mob-vehicle-gauge__velocity-value">0</span>
+          <span class="mob-vehicle-gauge__velocity-unit">MPH</span>
+        </div>
+        <div class="mob-vehicle-gauge__gear-mode">
+          <span class="mob-vehicle-gauge__mode">Auto</span>
+          <span class="mob-vehicle-gauge__gear">P</span>
+        </div>
+      </div>
+      <div class="mob-vehicle-gauge__speed-limit">65</div>
+    </div>
+  </div>
+
+</div>
+<p class="demo-caption">SizeState=Large (200px), StatusIndicator=OK. Left: 45 mph / D3. Right: Idle / Park.</p>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 2: WARNING STATE
+     Source: PrimaryVehicleGauge.xaml — StatusIndicator=Warning
+     ========================================================= -->
+
+<h2>Warning State</h2>
+
+<div class="demo-row">
+
+  <!-- XAML: PrimaryVehicleGauge — StatusIndicator=Warning,
+       RPM=4800/6000 (80%), Velocity=72, Gear=D5 -->
+  <div class="mob-vehicle-gauge" data-status="warning">
+    <div class="mob-vehicle-gauge__dial">
+      <div class="mob-vehicle-gauge__track"></div>
+      <!-- 80% of 270 = 216deg -->
+      <div class="mob-vehicle-gauge__fill" style="--gauge-fill: 216deg;"></div>
+      <div class="mob-vehicle-gauge__redzone" style="--redzone-start: 224deg;"></div>
+      <div class="mob-vehicle-gauge__needle" style="--needle-angle: 81deg;"></div>
+      <div class="mob-vehicle-gauge__inner-ring"></div>
+      <div class="mob-vehicle-gauge__inner-bg"></div>
+      <div class="mob-vehicle-gauge__ticks">
+        <span class="mob-vehicle-gauge__tick mob-vehicle-gauge__tick--major" style="transform: rotate(-135deg);"></span>
+        <span class="mob-vehicle-gauge__tick" style="transform: rotate(-90deg);"></span>
+        <span class="mob-vehicle-gauge__tick mob-vehicle-gauge__tick--major" style="transform: rotate(-45deg);"></span>
+        <span class="mob-vehicle-gauge__tick" style="transform: rotate(0deg);"></span>
+        <span class="mob-vehicle-gauge__tick mob-vehicle-gauge__tick--major" style="transform: rotate(45deg);"></span>
+        <span class="mob-vehicle-gauge__tick" style="transform: rotate(90deg);"></span>
+        <span class="mob-vehicle-gauge__tick mob-vehicle-gauge__tick--major" style="transform: rotate(135deg);"></span>
+      </div>
+      <div class="mob-vehicle-gauge__center">
+        <!-- XAML: _statusIcon — Warning indicator -->
+        <span class="mob-vehicle-gauge__status-icon mob-vehicle-gauge__status-icon--warning"></span>
+        <div class="mob-vehicle-gauge__velocity">
+          <span class="mob-vehicle-gauge__velocity-value">72</span>
+          <span class="mob-vehicle-gauge__velocity-unit">MPH</span>
+        </div>
+        <div class="mob-vehicle-gauge__gear-mode">
+          <span class="mob-vehicle-gauge__mode">Manual</span>
+          <span class="mob-vehicle-gauge__gear">D5</span>
+        </div>
+      </div>
+      <div class="mob-vehicle-gauge__speed-limit">65</div>
+    </div>
+  </div>
+
+</div>
+<p class="demo-caption">StatusIndicator=Warning, RPM in high range, exceeding speed limit</p>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 3: CRITICAL STATE
+     Source: PrimaryVehicleGauge.xaml — StatusIndicator=Critical
+     ========================================================= -->
+
+<h2>Critical State</h2>
+
+<div class="demo-row">
+
+  <!-- XAML: PrimaryVehicleGauge — StatusIndicator=Critical,
+       RPM=5500/6000 (92%), Velocity=85, Gear=D5 -->
+  <div class="mob-vehicle-gauge" data-status="critical">
+    <div class="mob-vehicle-gauge__dial">
+      <div class="mob-vehicle-gauge__track"></div>
+      <!-- 92% of 270 = ~248deg -->
+      <div class="mob-vehicle-gauge__fill" style="--gauge-fill: 248deg;"></div>
+      <div class="mob-vehicle-gauge__redzone" style="--redzone-start: 224deg;"></div>
+      <div class="mob-vehicle-gauge__needle" style="--needle-angle: 113deg;"></div>
+      <div class="mob-vehicle-gauge__inner-ring"></div>
+      <div class="mob-vehicle-gauge__inner-bg"></div>
+      <div class="mob-vehicle-gauge__ticks">
+        <span class="mob-vehicle-gauge__tick mob-vehicle-gauge__tick--major" style="transform: rotate(-135deg);"></span>
+        <span class="mob-vehicle-gauge__tick" style="transform: rotate(-90deg);"></span>
+        <span class="mob-vehicle-gauge__tick mob-vehicle-gauge__tick--major" style="transform: rotate(-45deg);"></span>
+        <span class="mob-vehicle-gauge__tick" style="transform: rotate(0deg);"></span>
+        <span class="mob-vehicle-gauge__tick mob-vehicle-gauge__tick--major" style="transform: rotate(45deg);"></span>
+        <span class="mob-vehicle-gauge__tick" style="transform: rotate(90deg);"></span>
+        <span class="mob-vehicle-gauge__tick mob-vehicle-gauge__tick--major" style="transform: rotate(135deg);"></span>
+      </div>
+      <div class="mob-vehicle-gauge__center">
+        <!-- XAML: _statusIcon — Critical indicator -->
+        <span class="mob-vehicle-gauge__status-icon mob-vehicle-gauge__status-icon--critical"></span>
+        <div class="mob-vehicle-gauge__velocity">
+          <span class="mob-vehicle-gauge__velocity-value">85</span>
+          <span class="mob-vehicle-gauge__velocity-unit">MPH</span>
+        </div>
+        <div class="mob-vehicle-gauge__gear-mode">
+          <span class="mob-vehicle-gauge__mode">Manual</span>
+          <span class="mob-vehicle-gauge__gear">D5</span>
+        </div>
+      </div>
+      <div class="mob-vehicle-gauge__speed-limit">65</div>
+    </div>
+  </div>
+
+</div>
+<p class="demo-caption">StatusIndicator=Critical, RPM in red zone, well above speed limit</p>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 4: SIZES
+     Source: PrimaryVehicleGauge.xaml — SizeStates
+     ========================================================= -->
+
+<h2>Sizes</h2>
+
+<div class="demo-row">
+
+  <!-- XAML: SizeState=Medium (160px) -->
+  <div class="mob-vehicle-gauge mob-vehicle-gauge--md">
+    <div class="mob-vehicle-gauge__dial">
+      <div class="mob-vehicle-gauge__track"></div>
+      <div class="mob-vehicle-gauge__fill" style="--gauge-fill: 135deg;"></div>
+      <div class="mob-vehicle-gauge__redzone" style="--redzone-start: 224deg;"></div>
+      <div class="mob-vehicle-gauge__needle" style="--needle-angle: 0deg;"></div>
+      <div class="mob-vehicle-gauge__inner-ring"></div>
+      <div class="mob-vehicle-gauge__inner-bg"></div>
+      <div class="mob-vehicle-gauge__center">
+        <div class="mob-vehicle-gauge__velocity">
+          <span class="mob-vehicle-gauge__velocity-value">32</span>
+          <span class="mob-vehicle-gauge__velocity-unit">MPH</span>
+        </div>
+        <div class="mob-vehicle-gauge__gear-mode">
+          <span class="mob-vehicle-gauge__mode">A</span>
+          <span class="mob-vehicle-gauge__gear">D2</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- XAML: SizeState=Large (200px, default) -->
+  <div class="mob-vehicle-gauge">
+    <div class="mob-vehicle-gauge__dial">
+      <div class="mob-vehicle-gauge__track"></div>
+      <div class="mob-vehicle-gauge__fill" style="--gauge-fill: 135deg;"></div>
+      <div class="mob-vehicle-gauge__redzone" style="--redzone-start: 224deg;"></div>
+      <div class="mob-vehicle-gauge__needle" style="--needle-angle: 0deg;"></div>
+      <div class="mob-vehicle-gauge__inner-ring"></div>
+      <div class="mob-vehicle-gauge__inner-bg"></div>
+      <div class="mob-vehicle-gauge__center">
+        <div class="mob-vehicle-gauge__velocity">
+          <span class="mob-vehicle-gauge__velocity-value">32</span>
+          <span class="mob-vehicle-gauge__velocity-unit">MPH</span>
+        </div>
+        <div class="mob-vehicle-gauge__gear-mode">
+          <span class="mob-vehicle-gauge__mode">Auto</span>
+          <span class="mob-vehicle-gauge__gear">D2</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- XAML: SizeState=XLarge (260px) -->
+  <div class="mob-vehicle-gauge mob-vehicle-gauge--xl">
+    <div class="mob-vehicle-gauge__dial">
+      <div class="mob-vehicle-gauge__track"></div>
+      <div class="mob-vehicle-gauge__fill" style="--gauge-fill: 135deg;"></div>
+      <div class="mob-vehicle-gauge__redzone" style="--redzone-start: 224deg;"></div>
+      <div class="mob-vehicle-gauge__needle" style="--needle-angle: 0deg;"></div>
+      <div class="mob-vehicle-gauge__inner-ring"></div>
+      <div class="mob-vehicle-gauge__inner-bg"></div>
+      <div class="mob-vehicle-gauge__center">
+        <div class="mob-vehicle-gauge__velocity">
+          <span class="mob-vehicle-gauge__velocity-value">32</span>
+          <span class="mob-vehicle-gauge__velocity-unit">MPH</span>
+        </div>
+        <div class="mob-vehicle-gauge__gear-mode">
+          <span class="mob-vehicle-gauge__mode">Auto</span>
+          <span class="mob-vehicle-gauge__gear">D2</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+<p class="demo-caption">SizeStates: Medium (160px), Large (200px), XLarge (260px)</p>
+
+
+  </main>
+</div>
+
+<script src="../js/nav.js"></script>
+</body>
+</html>

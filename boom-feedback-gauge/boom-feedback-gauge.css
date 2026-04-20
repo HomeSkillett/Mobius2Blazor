@@ -1,0 +1,102 @@
+/* =============================================
+   BOOM FEEDBACK GAUGE
+   Source: BoomFeedbackGauge.xaml
+   Asi.Gauges.Client.UI
+
+   A 48x48 SVG illustration showing a boom vehicle
+   chassis with a rotating boom arm. The arm angle
+   is bound to BoomAngle in WPF.
+
+   XAML structure:
+     Grid x:Name="BoomFeedbackContainer" — transparent bg
+       Canvas Width=48 Height=48
+         Path — main chassis (wheels/frame)
+           Fill=GaugeDataTickBrush
+         Canvas (34x10, Left=1, Top=11) — rotating boom arm
+           RenderTransformOrigin="1.2,1.0"
+           RotateTransform.Angle bound to BoomAngle
+           Path — boom arm rectangle
+             Fill=GaugeValueForegroundBrush
+           Path — boom cab/head
+             Fill=GaugeValueForegroundBrush
+             Counter-rotation applied
+
+   Since boom angle is dynamic in WPF, the HTML demo
+   shows static snapshots at different angles.
+   ============================================= */
+
+
+/* --- Root container ---------------------------------------------- */
+/* XAML: Grid x:Name="BoomFeedbackContainer"
+   Background="Transparent" */
+.mob-boom-feedback-gauge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  position: relative;
+}
+
+
+/* --- SVG element ------------------------------------------------- */
+/* XAML: Canvas Width=48 Height=48 — holds all paths */
+.mob-boom-feedback-gauge__svg {
+  width: 48px;
+  height: 48px;
+  overflow: visible;
+}
+
+
+/* --- Chassis paths ----------------------------------------------- */
+/* XAML: Path — main boom chassis (wheels/frame)
+   Fill=GaugeDataTickBrush */
+.mob-boom-feedback-gauge__chassis {
+  fill: var(--GaugeInvertDataTick);
+}
+
+
+/* --- Boom arm group ---------------------------------------------- */
+/* XAML: Canvas Width=34 Height=10, Canvas.Left=1, Canvas.Top=11
+   RenderTransformOrigin="1.2,1.0"
+   RotateTransform.Angle = BoomAngle
+   Pivot is near the right side of the arm canvas */
+.mob-boom-feedback-gauge__arm {
+  transform-origin: 40px 21px;
+  transition: transform var(--transition-fade) ease-out;
+}
+
+
+/* --- Boom arm path ----------------------------------------------- */
+/* XAML: Path — boom arm rectangle
+   Fill=GaugeValueForegroundBrush */
+.mob-boom-feedback-gauge__arm-bar {
+  fill: var(--GaugeInvertValueForeground);
+}
+
+
+/* --- Boom cab/head ----------------------------------------------- */
+/* XAML: Path — boom cab/head shape
+   Fill=GaugeValueForegroundBrush
+   Has counter-rotation in WPF to stay upright */
+.mob-boom-feedback-gauge__arm-head {
+  fill: var(--GaugeInvertValueForeground);
+}
+
+
+/* --- Label (optional, below gauge) ------------------------------- */
+.mob-boom-feedback-gauge__label {
+  font: var(--font-Sm);
+  color: var(--GaugeInvertForeground);
+  text-align: center;
+  margin-top: var(--size-6);
+}
+
+
+/* --- Wrapper for demo row layout --------------------------------- */
+.mob-boom-feedback-gauge-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--size-6);
+}

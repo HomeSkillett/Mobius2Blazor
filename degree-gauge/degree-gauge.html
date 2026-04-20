@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mobius — Degree Gauge</title>
+  <link id="mob-theme-link" rel="stylesheet" href="../styles/color-theme-tokens/LightTheme.css" />
+  <link rel="stylesheet" href="../styles/css/main.css" />
+  <link rel="stylesheet" href="degree-gauge.css" />
+  <style>
+    body { margin: 0; }
+    h1 { font: var(--font-hdrMd); margin: 0 0 32px; color: var(--ForegroundStrong); }
+    h2 { font: var(--font-hdrSm); margin: 40px 0 16px; color: var(--ForegroundStrong); }
+    h2:first-of-type { margin-top: 0; }
+    .demo-list { display: flex; flex-direction: column; gap: var(--spacing-section-to-header); max-width: 540px; }
+    .section-divider { border: none; border-top: var(--line-size) solid var(--InnerLines); margin: 32px 0 0; }
+    .demo-caption { font: var(--font-bodySm); color: var(--ForegroundDisabled); margin-top: var(--spacing-label-to-control-sm); }
+    .demo-row { display: flex; gap: 32px; align-items: flex-start; flex-wrap: wrap; }
+  </style>
+</head>
+<body>
+
+<div class="mob-layout">
+
+  <!-- Sidebar Navigation -->
+  <nav class="mob-nav" id="mob-nav"></nav>
+
+  <!-- Main Content -->
+  <main class="mob-layout__content">
+
+<h1>Degree Gauge</h1>
+
+
+<!-- =========================================================
+     SECTION 1: COMPASS STYLE (360deg circle)
+     Source: DegreeGauge.xaml — RotationType=Circle
+     ========================================================= -->
+
+<h2>Compass Style (360°)</h2>
+
+<div class="demo-row">
+
+  <!-- XAML: DegreeGauge — RotationType=Circle, CurrentAngle=45,
+       ArrowType=Front, Size=Medium (120px default) -->
+  <div class="mob-degree-gauge">
+    <!-- XAML: DegreeGauge._dial — Viewbox containing dial assembly -->
+    <div class="mob-degree-gauge__dial" style="--needle-angle: 45deg; --degree-fill: 45deg;">
+      <!-- XAML: DegreeGauge._dataBackground — full circle track -->
+      <div class="mob-degree-gauge__track"></div>
+      <!-- XAML: DegreeGauge._dataCoverTop / _dataCoverBottom — arc fill -->
+      <div class="mob-degree-gauge__fill" style="--degree-fill: 45deg;"></div>
+      <!-- XAML: 8 tick marks — 4 cardinal + 4 diagonal -->
+      <div class="mob-degree-gauge__ticks">
+        <span class="mob-degree-gauge__tick"></span>
+        <span class="mob-degree-gauge__tick"></span>
+        <span class="mob-degree-gauge__tick"></span>
+        <span class="mob-degree-gauge__tick"></span>
+        <span class="mob-degree-gauge__tick"></span>
+        <span class="mob-degree-gauge__tick"></span>
+        <span class="mob-degree-gauge__tick"></span>
+        <span class="mob-degree-gauge__tick"></span>
+      </div>
+      <!-- XAML: DegreeGauge._positionBorder — 3px needle, rotated to angle -->
+      <div class="mob-degree-gauge__needle" style="--needle-angle: 45deg;"></div>
+      <!-- XAML: DegreeGauge._labelBackground — center circle -->
+      <div class="mob-degree-gauge__center">
+        <!-- XAML: DegreeGauge._displayIcon — 28x28 compass icon -->
+        <svg class="mob-degree-gauge__icon" viewBox="0 0 24 24">
+          <path d="M12 2L4.5 20.3l.7.7L12 18l6.8 3 .7-.7z"/>
+        </svg>
+      </div>
+      <!-- XAML: ArrowType=Front — directional arrow at top -->
+      <svg class="mob-degree-gauge__arrow mob-degree-gauge__arrow--front" viewBox="0 0 12 12">
+        <path d="M6 0L10 6H2z"/>
+      </svg>
+    </div>
+    <!-- XAML: Grid Row="1" — value below dial -->
+    <span class="mob-degree-gauge__value">45°</span>
+    <span class="mob-degree-gauge__label">Heading</span>
+  </div>
+
+  <!-- XAML: DegreeGauge — CurrentAngle=180, ArrowType=Front -->
+  <div class="mob-degree-gauge">
+    <div class="mob-degree-gauge__dial" style="--needle-angle: 180deg; --degree-fill: 180deg;">
+      <div class="mob-degree-gauge__track"></div>
+      <div class="mob-degree-gauge__fill" style="--degree-fill: 180deg;"></div>
+      <div class="mob-degree-gauge__ticks">
+        <span class="mob-degree-gauge__tick"></span>
+        <span class="mob-degree-gauge__tick"></span>
+        <span class="mob-degree-gauge__tick"></span>
+        <span class="mob-degree-gauge__tick"></span>
+        <span class="mob-degree-gauge__tick"></span>
+        <span class="mob-degree-gauge__tick"></span>
+        <span class="mob-degree-gauge__tick"></span>
+        <span class="mob-degree-gauge__tick"></span>
+      </div>
+      <div class="mob-degree-gauge__needle" style="--needle-angle: 180deg;"></div>
+      <div class="mob-degree-gauge__center">
+        <svg class="mob-degree-gauge__icon" viewBox="0 0 24 24">
+          <path d="M12 2L4.5 20.3l.7.7L12 18l6.8 3 .7-.7z"/>
+        </svg>
+      </div>
+      <svg class="mob-degree-gauge__arrow mob-degree-gauge__arrow--front" viewBox="0 0 12 12">
+        <path d="M6 0L10 6H2z"/>
+      </svg>
+    </div>
+    <span class="mob-degree-gauge__value">180°</span>
+    <span class="mob-degree-gauge__label">Heading</span>
+  </div>
+
+  <!-- XAML: DegreeGauge — CurrentAngle=315 -->
+  <div class="mob-degree-gauge">
+    <div class="mob-degree-gauge__dial" style="--needle-angle: 315deg; --degree-fill: 315deg;">
+      <div class="mob-degree-gauge__track"></div>
+      <div class="mob-degree-gauge__fill" style="--degree-fill: 315deg;"></div>
+      <div class="mob-degree-gauge__ticks">
+        <span class="mob-degree-gauge__tick"></span>
+        <span class="mob-degree-gauge__tick"></span>
+        <span class="mob-degree-gauge__tick"></span>
+        <span class="mob-degree-gauge__tick"></span>
+        <span class="mob-degree-gauge__tick"></span>
+        <span class="mob-degree-gauge__tick"></span>
+        <span class="mob-degree-gauge__tick"></span>
+        <span class="mob-degree-gauge__tick"></span>
+      </div>
+      <div class="mob-degree-gauge__needle" style="--needle-angle: 315deg;"></div>
+      <div class="mob-degree-gauge__center">
+        <svg class="mob-degree-gauge__icon" viewBox="0 0 24 24">
+          <path d="M12 2L4.5 20.3l.7.7L12 18l6.8 3 .7-.7z"/>
+        </svg>
+      </div>
+    </div>
+    <span class="mob-degree-gauge__value">315°</span>
+    <span class="mob-degree-gauge__label">Heading</span>
+  </div>
+
+</div>
+<p class="demo-caption">RotationType=Circle, ArrowType=Front, Medium (120px)</p>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 2: TILT GAUGE (limited range)
+     Source: DegreeGauge.xaml — RotationType=Tilt
+     ========================================================= -->
+
+<h2>Tilt Gauge (Limited Range)</h2>
+
+<div class="demo-row">
+
+  <!-- XAML: DegreeGauge — RotationType=Tilt, CurrentAngle=30, ArrowType=Left -->
+  <div class="mob-degree-gauge mob-degree-gauge--tilt">
+    <div class="mob-degree-gauge__dial" style="--needle-angle: 30deg; --degree-fill: 165deg;">
+      <div class="mob-degree-gauge__track"></div>
+      <div class="mob-degree-gauge__fill" style="--degree-fill: 165deg;"></div>
+      <div class="mob-degree-gauge__ticks">
+        <span class="mob-degree-gauge__tick"></span>
+        <span class="mob-degree-gauge__tick"></span>
+        <span class="mob-degree-gauge__tick"></span>
+        <span class="mob-degree-gauge__tick"></span>
+        <span class="mob-degree-gauge__tick"></span>
+        <span class="mob-degree-gauge__tick"></span>
+        <span class="mob-degree-gauge__tick"></span>
+        <span class="mob-degree-gauge__tick"></span>
+      </div>
+      <div class="mob-degree-gauge__needle" style="--needle-angle: 30deg;"></div>
+      <div class="mob-degree-gauge__center">
+        <span class="mob-degree-gauge__center-label">Tilt</span>
+      </div>
+      <svg class="mob-degree-gauge__arrow mob-degree-gauge__arrow--left" viewBox="0 0 12 12">
+        <path d="M0 6L6 2v8z"/>
+      </svg>
+    </div>
+    <span class="mob-degree-gauge__value">30°</span>
+    <span class="mob-degree-gauge__label">Left Tilt</span>
+  </div>
+
+  <!-- XAML: DegreeGauge — RotationType=Tilt, CurrentAngle=-15, ArrowType=Right -->
+  <div class="mob-degree-gauge mob-degree-gauge--tilt">
+    <div class="mob-degree-gauge__dial" style="--needle-angle: -15deg; --degree-fill: 120deg;">
+      <div class="mob-degree-gauge__track"></div>
+      <div class="mob-degree-gauge__fill" style="--degree-fill: 120deg;"></div>
+      <div class="mob-degree-gauge__ticks">
+        <span class="mob-degree-gauge__tick"></span>
+        <span class="mob-degree-gauge__tick"></span>
+        <span class="mob-degree-gauge__tick"></span>
+        <span class="mob-degree-gauge__tick"></span>
+        <span class="mob-degree-gauge__tick"></span>
+        <span class="mob-degree-gauge__tick"></span>
+        <span class="mob-degree-gauge__tick"></span>
+        <span class="mob-degree-gauge__tick"></span>
+      </div>
+      <div class="mob-degree-gauge__needle" style="--needle-angle: -15deg;"></div>
+      <div class="mob-degree-gauge__center">
+        <span class="mob-degree-gauge__center-label">Tilt</span>
+      </div>
+      <svg class="mob-degree-gauge__arrow mob-degree-gauge__arrow--right" viewBox="0 0 12 12">
+        <path d="M12 6L6 2v8z"/>
+      </svg>
+    </div>
+    <span class="mob-degree-gauge__value">-15°</span>
+    <span class="mob-degree-gauge__label">Right Tilt</span>
+  </div>
+
+</div>
+<p class="demo-caption">RotationType=Tilt, ArrowType=Left/Right</p>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 3: SIZES
+     Source: DegreeGauge.xaml — SizeStates
+     ========================================================= -->
+
+<h2>Sizes</h2>
+
+<div class="demo-row">
+
+  <!-- XAML: DegreeGauge — Size=Small (80px) -->
+  <div class="mob-degree-gauge mob-degree-gauge--sm">
+    <div class="mob-degree-gauge__dial" style="--needle-angle: 90deg;">
+      <div class="mob-degree-gauge__track"></div>
+      <div class="mob-degree-gauge__fill" style="--degree-fill: 90deg;"></div>
+      <div class="mob-degree-gauge__ticks">
+        <span class="mob-degree-gauge__tick"></span>
+        <span class="mob-degree-gauge__tick"></span>
+        <span class="mob-degree-gauge__tick"></span>
+        <span class="mob-degree-gauge__tick"></span>
+        <span class="mob-degree-gauge__tick"></span>
+        <span class="mob-degree-gauge__tick"></span>
+        <span class="mob-degree-gauge__tick"></span>
+        <span class="mob-degree-gauge__tick"></span>
+      </div>
+      <div class="mob-degree-gauge__needle" style="--needle-angle: 90deg;"></div>
+      <div class="mob-degree-gauge__center">
+        <svg class="mob-degree-gauge__icon" viewBox="0 0 24 24">
+          <path d="M12 2L4.5 20.3l.7.7L12 18l6.8 3 .7-.7z"/>
+        </svg>
+      </div>
+    </div>
+    <span class="mob-degree-gauge__value">90°</span>
+    <span class="mob-degree-gauge__label">Small</span>
+  </div>
+
+  <!-- XAML: DegreeGauge — Size=Medium (120px, default) -->
+  <div class="mob-degree-gauge">
+    <div class="mob-degree-gauge__dial" style="--needle-angle: 135deg;">
+      <div class="mob-degree-gauge__track"></div>
+      <div class="mob-degree-gauge__fill" style="--degree-fill: 135deg;"></div>
+      <div class="mob-degree-gauge__ticks">
+        <span class="mob-degree-gauge__tick"></span>
+        <span class="mob-degree-gauge__tick"></span>
+        <span class="mob-degree-gauge__tick"></span>
+        <span class="mob-degree-gauge__tick"></span>
+        <span class="mob-degree-gauge__tick"></span>
+        <span class="mob-degree-gauge__tick"></span>
+        <span class="mob-degree-gauge__tick"></span>
+        <span class="mob-degree-gauge__tick"></span>
+      </div>
+      <div class="mob-degree-gauge__needle" style="--needle-angle: 135deg;"></div>
+      <div class="mob-degree-gauge__center">
+        <svg class="mob-degree-gauge__icon" viewBox="0 0 24 24">
+          <path d="M12 2L4.5 20.3l.7.7L12 18l6.8 3 .7-.7z"/>
+        </svg>
+      </div>
+    </div>
+    <span class="mob-degree-gauge__value">135°</span>
+    <span class="mob-degree-gauge__label">Medium</span>
+  </div>
+
+  <!-- XAML: DegreeGauge — Size=Large (160px) -->
+  <div class="mob-degree-gauge mob-degree-gauge--lg">
+    <div class="mob-degree-gauge__dial" style="--needle-angle: 225deg;">
+      <div class="mob-degree-gauge__track"></div>
+      <div class="mob-degree-gauge__fill" style="--degree-fill: 225deg;"></div>
+      <div class="mob-degree-gauge__ticks">
+        <span class="mob-degree-gauge__tick"></span>
+        <span class="mob-degree-gauge__tick"></span>
+        <span class="mob-degree-gauge__tick"></span>
+        <span class="mob-degree-gauge__tick"></span>
+        <span class="mob-degree-gauge__tick"></span>
+        <span class="mob-degree-gauge__tick"></span>
+        <span class="mob-degree-gauge__tick"></span>
+        <span class="mob-degree-gauge__tick"></span>
+      </div>
+      <div class="mob-degree-gauge__needle" style="--needle-angle: 225deg;"></div>
+      <div class="mob-degree-gauge__center">
+        <svg class="mob-degree-gauge__icon" viewBox="0 0 24 24">
+          <path d="M12 2L4.5 20.3l.7.7L12 18l6.8 3 .7-.7z"/>
+        </svg>
+      </div>
+    </div>
+    <span class="mob-degree-gauge__value">225°</span>
+    <span class="mob-degree-gauge__label">Large</span>
+  </div>
+
+  <!-- XAML: DegreeGauge — Size=XLarge (200px) -->
+  <div class="mob-degree-gauge mob-degree-gauge--xl">
+    <div class="mob-degree-gauge__dial" style="--needle-angle: 270deg;">
+      <div class="mob-degree-gauge__track"></div>
+      <div class="mob-degree-gauge__fill" style="--degree-fill: 270deg;"></div>
+      <div class="mob-degree-gauge__ticks">
+        <span class="mob-degree-gauge__tick"></span>
+        <span class="mob-degree-gauge__tick"></span>
+        <span class="mob-degree-gauge__tick"></span>
+        <span class="mob-degree-gauge__tick"></span>
+        <span class="mob-degree-gauge__tick"></span>
+        <span class="mob-degree-gauge__tick"></span>
+        <span class="mob-degree-gauge__tick"></span>
+        <span class="mob-degree-gauge__tick"></span>
+      </div>
+      <div class="mob-degree-gauge__needle" style="--needle-angle: 270deg;"></div>
+      <div class="mob-degree-gauge__center">
+        <svg class="mob-degree-gauge__icon" viewBox="0 0 24 24">
+          <path d="M12 2L4.5 20.3l.7.7L12 18l6.8 3 .7-.7z"/>
+        </svg>
+      </div>
+    </div>
+    <span class="mob-degree-gauge__value">270°</span>
+    <span class="mob-degree-gauge__label">XLarge</span>
+  </div>
+
+</div>
+<p class="demo-caption">SizeStates: Small (80px), Medium (120px), Large (160px), XLarge (200px)</p>
+
+
+  </main>
+</div>
+
+<script src="../js/nav.js"></script>
+</body>
+</html>

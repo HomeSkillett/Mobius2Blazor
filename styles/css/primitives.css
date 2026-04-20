@@ -1,0 +1,17 @@
+/*
+  primitives.css — Single import entry point for all Mobius design tokens.
+  Load order matters: font declarations first, then tokens, then typography.
+
+  Note: Color theme is loaded via <link id="mob-theme-link"> in each HTML file
+  so the JS theme-switcher can swap it. Default: LightTheme.css
+*/
+
+/* 1. Font declarations (must load before any font-family references) */
+@import "../fonts/font-imports.css";
+
+/* 2. Token layers */
+@import "../fonts/font-tokens.css";
+@import "../spacing/spacing-tokens.css";
+
+/* 3. Typography utility classes (depends on font-tokens + color theme) */
+@import "../fonts/typography.css";

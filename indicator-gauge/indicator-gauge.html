@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mobius — Indicator Gauge</title>
+  <link id="mob-theme-link" rel="stylesheet" href="../styles/color-theme-tokens/LightTheme.css" />
+  <link rel="stylesheet" href="../styles/css/main.css" />
+  <link rel="stylesheet" href="indicator-gauge.css" />
+  <style>
+    body { margin: 0; }
+    h1 { font: var(--font-hdrMd); margin: 0 0 32px; color: var(--ForegroundStrong); }
+    h2 { font: var(--font-hdrSm); margin: 40px 0 16px; color: var(--ForegroundStrong); }
+    h2:first-of-type { margin-top: 0; }
+    .demo-list { display: flex; flex-direction: column; gap: var(--spacing-section-to-header); max-width: 540px; }
+    .section-divider { border: none; border-top: var(--line-size) solid var(--InnerLines); margin: 32px 0 0; }
+    .demo-caption { font: var(--font-bodySm); color: var(--ForegroundDisabled); margin-top: var(--spacing-label-to-control-sm); }
+    .demo-row { display: flex; gap: 32px; align-items: flex-start; flex-wrap: wrap; }
+  </style>
+</head>
+<body>
+
+<div class="mob-layout">
+
+  <!-- Sidebar Navigation -->
+  <nav class="mob-nav" id="mob-nav"></nav>
+
+  <!-- Main Content -->
+  <main class="mob-layout__content">
+
+<h1>Indicator Gauge</h1>
+
+
+<!-- =========================================================
+     SECTION 1: ICON STATES — SMALL (48px default)
+     Source: IndicatorGauge.xaml — VisualStateGroup "IconStates"
+     Each IconState maps to a different icon color/opacity.
+     SizeState: Small (48px circle, 20px icon)
+     ========================================================= -->
+
+<h2>Icon States (Small — 48px)</h2>
+
+<div class="demo-list">
+  <div class="demo-row">
+
+    <!-- XAML: IndicatorGauge IconState="IconOff"
+         Path Foreground=GaugeForegroundBrush, Opacity=0.4 -->
+    <div class="mob-indicator-gauge" data-status="unknown">
+      <div class="mob-indicator-gauge__circle">
+        <!-- XAML: Path 20x20 — ActiveIconData glyph, IconOff state -->
+        <span class="mob-indicator-gauge__icon mob-indicator-gauge__icon--off" aria-hidden="true">&#x25CF;</span>
+      </div>
+      <!-- XAML: TextBlock — LabelString -->
+      <span class="mob-indicator-gauge__label">Off</span>
+    </div>
+
+    <!-- XAML: IndicatorGauge IconState="IconOn"
+         Path Foreground=GaugeValueForegroundBrush -->
+    <div class="mob-indicator-gauge" data-status="ok">
+      <div class="mob-indicator-gauge__circle">
+        <!-- XAML: Path 20x20 — ActiveIconData glyph, IconOn state -->
+        <span class="mob-indicator-gauge__icon mob-indicator-gauge__icon--on" aria-hidden="true">&#x25CF;</span>
+        <!-- XAML: 18x18 status adorner — top-right, StatusOK -->
+        <span class="mob-indicator-gauge__adorner mob-indicator-gauge__adorner--ok" aria-label="OK">&#x2713;</span>
+      </div>
+      <span class="mob-indicator-gauge__label">On</span>
+    </div>
+
+    <!-- XAML: IndicatorGauge IconState="IconProgress"
+         Path Foreground=GaugeInteractionBrush -->
+    <div class="mob-indicator-gauge" data-status="unknown">
+      <div class="mob-indicator-gauge__circle">
+        <span class="mob-indicator-gauge__icon mob-indicator-gauge__icon--progress" aria-hidden="true">&#x21BB;</span>
+      </div>
+      <span class="mob-indicator-gauge__label">Progress</span>
+    </div>
+
+    <!-- XAML: IndicatorGauge IconState="IconWarning"
+         Path Foreground=GaugeStatusWarningBrush -->
+    <div class="mob-indicator-gauge" data-status="warning">
+      <div class="mob-indicator-gauge__circle">
+        <span class="mob-indicator-gauge__icon mob-indicator-gauge__icon--warning" aria-hidden="true">&#x26A0;</span>
+        <!-- XAML: status adorner — warning -->
+        <span class="mob-indicator-gauge__adorner mob-indicator-gauge__adorner--warning" aria-label="Warning">!</span>
+      </div>
+      <span class="mob-indicator-gauge__label">Warning</span>
+    </div>
+
+    <!-- XAML: IndicatorGauge IconState="IconError"
+         Path Foreground=GaugeStatusCriticalBrush -->
+    <div class="mob-indicator-gauge" data-status="critical">
+      <div class="mob-indicator-gauge__circle">
+        <span class="mob-indicator-gauge__icon mob-indicator-gauge__icon--error" aria-hidden="true">&#x2716;</span>
+        <!-- XAML: status adorner — critical -->
+        <span class="mob-indicator-gauge__adorner mob-indicator-gauge__adorner--critical" aria-label="Critical">&#x2716;</span>
+      </div>
+      <span class="mob-indicator-gauge__label">Error</span>
+    </div>
+
+    <!-- XAML: IndicatorGauge IconState="IconOkay"
+         Path Foreground=GaugeStatusOKBrush -->
+    <div class="mob-indicator-gauge" data-status="ok">
+      <div class="mob-indicator-gauge__circle">
+        <span class="mob-indicator-gauge__icon mob-indicator-gauge__icon--okay" aria-hidden="true">&#x2713;</span>
+        <span class="mob-indicator-gauge__adorner mob-indicator-gauge__adorner--ok" aria-label="OK">&#x2713;</span>
+      </div>
+      <span class="mob-indicator-gauge__label">Okay</span>
+    </div>
+
+  </div>
+  <p class="demo-caption">All 6 IconStates at default 48px size — Off, On, Progress, Warning, Error, Okay</p>
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 2: MEDIUM SIZE (120px)
+     Source: VisualStateGroup "SizeStates" — VisualState "Medium"
+     Width/Height=120, icon scales up
+     ========================================================= -->
+
+<h2>Medium Size (120px)</h2>
+
+<div class="demo-list">
+  <div class="demo-row">
+
+    <!-- XAML: IndicatorGauge SizeState="Medium", IconState="IconOn" -->
+    <div class="mob-indicator-gauge mob-indicator-gauge--medium" data-status="ok">
+      <div class="mob-indicator-gauge__circle">
+        <span class="mob-indicator-gauge__icon mob-indicator-gauge__icon--on" aria-hidden="true">&#x25CF;</span>
+        <span class="mob-indicator-gauge__adorner mob-indicator-gauge__adorner--ok" aria-label="OK">&#x2713;</span>
+      </div>
+      <!-- XAML: Viewbox — ValueString -->
+      <span class="mob-indicator-gauge__value">72</span>
+      <span class="mob-indicator-gauge__label">Engine RPM</span>
+    </div>
+
+    <!-- XAML: IndicatorGauge SizeState="Medium", IconState="IconWarning" -->
+    <div class="mob-indicator-gauge mob-indicator-gauge--medium" data-status="warning">
+      <div class="mob-indicator-gauge__circle">
+        <span class="mob-indicator-gauge__icon mob-indicator-gauge__icon--warning" aria-hidden="true">&#x26A0;</span>
+        <span class="mob-indicator-gauge__adorner mob-indicator-gauge__adorner--warning" aria-label="Warning">!</span>
+      </div>
+      <span class="mob-indicator-gauge__value">88</span>
+      <span class="mob-indicator-gauge__label">Oil Pressure</span>
+    </div>
+
+    <!-- XAML: IndicatorGauge SizeState="Medium", IconState="IconError" -->
+    <div class="mob-indicator-gauge mob-indicator-gauge--medium" data-status="critical">
+      <div class="mob-indicator-gauge__circle">
+        <span class="mob-indicator-gauge__icon mob-indicator-gauge__icon--error" aria-hidden="true">&#x2716;</span>
+        <span class="mob-indicator-gauge__adorner mob-indicator-gauge__adorner--critical" aria-label="Critical">&#x2716;</span>
+      </div>
+      <span class="mob-indicator-gauge__value">FAULT</span>
+      <span class="mob-indicator-gauge__label">E-Brake</span>
+    </div>
+
+  </div>
+  <p class="demo-caption">SizeState="Medium" — 120px circle, larger icon, value + label below</p>
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 3: SELECTED STATE
+     Source: _selectedBorder — SelectionPrimary border when selected
+     Typically toggled via IsSelected binding
+     ========================================================= -->
+
+<h2>Selected State</h2>
+
+<div class="demo-list">
+  <div class="demo-row">
+
+    <!-- XAML: IndicatorGauge IsSelected="True"
+         _selectedBorder visible with SelectionPrimary -->
+    <div class="mob-indicator-gauge" data-status="ok">
+      <div class="mob-indicator-gauge__circle mob-indicator-gauge__circle--selected">
+        <span class="mob-indicator-gauge__icon mob-indicator-gauge__icon--on" aria-hidden="true">&#x25CF;</span>
+        <span class="mob-indicator-gauge__adorner mob-indicator-gauge__adorner--ok" aria-label="OK">&#x2713;</span>
+      </div>
+      <span class="mob-indicator-gauge__label">Selected</span>
+    </div>
+
+    <!-- Unselected for comparison -->
+    <div class="mob-indicator-gauge" data-status="ok">
+      <div class="mob-indicator-gauge__circle">
+        <span class="mob-indicator-gauge__icon mob-indicator-gauge__icon--on" aria-hidden="true">&#x25CF;</span>
+        <span class="mob-indicator-gauge__adorner mob-indicator-gauge__adorner--ok" aria-label="OK">&#x2713;</span>
+      </div>
+      <span class="mob-indicator-gauge__label">Unselected</span>
+    </div>
+
+    <!-- Selected + Medium -->
+    <div class="mob-indicator-gauge mob-indicator-gauge--medium" data-status="ok">
+      <div class="mob-indicator-gauge__circle mob-indicator-gauge__circle--selected">
+        <span class="mob-indicator-gauge__icon mob-indicator-gauge__icon--on" aria-hidden="true">&#x25CF;</span>
+        <span class="mob-indicator-gauge__adorner mob-indicator-gauge__adorner--ok" aria-label="OK">&#x2713;</span>
+      </div>
+      <span class="mob-indicator-gauge__value">OK</span>
+      <span class="mob-indicator-gauge__label">Selected Medium</span>
+    </div>
+
+  </div>
+  <p class="demo-caption">IsSelected="True" — _selectedBorder shows SelectionPrimary ring (3px)</p>
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 4: TOGGLE SWITCH GAUGE VARIANT
+     Source: ToggleSwitchGauge template in IndicatorGauge.xaml
+     Alternative template: SwitchToggle inside the circle
+     ========================================================= -->
+
+<h2>Toggle Switch Gauge Variant</h2>
+
+<div class="demo-list">
+  <div class="demo-row">
+
+    <!-- XAML: ToggleSwitchGauge IsOn="True"
+         Circle border = InformationGreen when on -->
+    <div class="mob-indicator-gauge mob-indicator-gauge--toggle" data-status="on">
+      <div class="mob-indicator-gauge__circle">
+        <!-- XAML: SwitchToggle inside circle — represented by text placeholder -->
+        <span class="mob-indicator-gauge__toggle-content" aria-label="Toggle on">ON</span>
+      </div>
+      <span class="mob-indicator-gauge__label">Lights</span>
+    </div>
+
+    <!-- XAML: ToggleSwitchGauge IsOn="False"
+         Circle border = GaugeDataTickBrush (default) -->
+    <div class="mob-indicator-gauge mob-indicator-gauge--toggle" data-status="off">
+      <div class="mob-indicator-gauge__circle">
+        <span class="mob-indicator-gauge__toggle-content" aria-label="Toggle off">OFF</span>
+      </div>
+      <span class="mob-indicator-gauge__label">Lights</span>
+    </div>
+
+  </div>
+  <p class="demo-caption">ToggleSwitchGauge variant — SwitchToggle inside the indicator circle</p>
+</div>
+
+
+  </main>
+
+</div>
+
+<script src="../js/nav.js"></script>
+</body>
+</html>

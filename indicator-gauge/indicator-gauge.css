@@ -1,0 +1,252 @@
+/* =============================================
+   INDICATOR GAUGE
+   Source: IndicatorGauge.xaml (740 lines)
+   Asi.Gauges.Client.UI
+
+   A circular indicator with an icon center and
+   optional label/value below. Used standalone or
+   inside a StatusGauge display slot.
+
+   XAML ControlTemplate structure:
+     Border CornerRadius=100000 (outer circle)
+       > _primaryContainer: Background=GaugeBackgroundBrush
+       > _statusBorderContainer: Border with status color
+       > _selectedBorder: SelectionPrimary ring when selected
+       > StatusBorder: innermost status ring
+       > Center: icon Paths (20x20) for each IconState
+       > Below: ValueViewbox + LabelTextBlock
+
+   SizeStates: Small=48px (default), Medium=120px
+   IconStates: IconOff, IconOn, IconProgress,
+               IconWarning, IconError, IconOkay
+
+   Also includes ToggleSwitchGauge variant.
+   ============================================= */
+
+
+/* --- Root wrapper ------------------------------------------------ */
+/* XAML: StackPanel — vertical stack of circle + value + label */
+.mob-indicator-gauge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--size-6);
+}
+
+
+/* --- Circle container -------------------------------------------- */
+/* XAML: Border CornerRadius=100000 — _primaryContainer
+   Background=GaugeBackgroundBrush, Width/Height=48 (Small) */
+.mob-indicator-gauge__circle {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--GaugeInvertBackground);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+/* XAML: _statusBorderContainer — inner Border with GaugeDataTickBrush
+   BorderThickness="2" CornerRadius=100000 */
+.mob-indicator-gauge__circle::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid var(--GaugeInvertDataTick);
+  box-sizing: border-box;
+  transition: border-color var(--transition-fade) ease-out;
+}
+
+
+/* --- Selected state ---------------------------------------------- */
+/* XAML: _selectedBorder — SelectionPrimary border, visible when Selected */
+.mob-indicator-gauge__circle--selected::before {
+  border-color: var(--SelectionPrimary);
+  border-width: 3px;
+}
+
+
+/* --- Status border overlay --------------------------------------- */
+/* XAML: StatusBorder — innermost border showing status color ring */
+.mob-indicator-gauge[data-status="ok"] .mob-indicator-gauge__circle::before {
+  border-color: var(--GaugeInvertStatusOK);
+}
+
+.mob-indicator-gauge[data-status="warning"] .mob-indicator-gauge__circle::before {
+  border-color: var(--GaugeInvertStatusWarning);
+}
+
+.mob-indicator-gauge[data-status="critical"] .mob-indicator-gauge__circle::before {
+  border-color: var(--GaugeInvertStatusCritical);
+}
+
+.mob-indicator-gauge[data-status="unknown"] .mob-indicator-gauge__circle::before {
+  border-color: var(--GaugeInvertStatusUnknown);
+}
+
+
+/* --- Icon element ------------------------------------------------ */
+/* XAML: Path 20x20 inside Viewbox — icon glyph per IconState
+   Uses font-icon placeholder (Mobius-System-Icons) */
+.mob-indicator-gauge__icon {
+  font-family: var(--font-icon);
+  font-size: 20px;
+  line-height: 1;
+  transition: color var(--transition-fade) ease-out,
+              opacity var(--transition-fade) ease-out;
+}
+
+/* XAML: IconOn state — Foreground=GaugeValueForegroundBrush */
+.mob-indicator-gauge__icon--on {
+  color: var(--GaugeInvertValueForeground);
+}
+
+/* XAML: IconOff state — Foreground=GaugeForegroundBrush, Opacity=0.4 */
+.mob-indicator-gauge__icon--off {
+  color: var(--GaugeInvertForeground);
+  opacity: 0.4;
+}
+
+/* XAML: IconProgress state — animated/pulsing, uses interaction color */
+.mob-indicator-gauge__icon--progress {
+  color: var(--GaugeInvertInteraction);
+}
+
+/* XAML: IconWarning state — Foreground=GaugeStatusWarningBrush */
+.mob-indicator-gauge__icon--warning {
+  color: var(--GaugeInvertStatusWarning);
+}
+
+/* XAML: IconError state — Foreground=GaugeStatusCriticalBrush */
+.mob-indicator-gauge__icon--error {
+  color: var(--GaugeInvertStatusCritical);
+}
+
+/* XAML: IconOkay state — Foreground=GaugeStatusOKBrush */
+.mob-indicator-gauge__icon--okay {
+  color: var(--GaugeInvertStatusOK);
+}
+
+
+/* --- Status adorner ---------------------------------------------- */
+/* XAML: 18x18 circle in top-right corner with status icon
+   Positioned via Canvas or absolute offset in template */
+.mob-indicator-gauge__adorner {
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-icon);
+  font-size: var(--icon-sm);
+  color: var(--GaugeInvertBackground);
+}
+
+.mob-indicator-gauge__adorner--ok {
+  background: var(--GaugeInvertStatusOK);
+}
+
+.mob-indicator-gauge__adorner--warning {
+  background: var(--GaugeInvertStatusWarning);
+}
+
+.mob-indicator-gauge__adorner--critical {
+  background: var(--GaugeInvertStatusCritical);
+}
+
+.mob-indicator-gauge__adorner--unknown {
+  background: var(--GaugeInvertStatusUnknown);
+}
+
+
+/* --- Value text -------------------------------------------------- */
+/* XAML: Viewbox — ValueString below circle (optional) */
+.mob-indicator-gauge__value {
+  font: var(--font-hdrSm);
+  color: var(--GaugeInvertValueForeground);
+  text-align: center;
+  line-height: 1;
+}
+
+
+/* --- Label text -------------------------------------------------- */
+/* XAML: TextBlock — LabelString below value
+   Foreground=GaugeForegroundBrush, TextAlignment=Center */
+.mob-indicator-gauge__label {
+  font: var(--font-Sm);
+  color: var(--GaugeInvertForeground);
+  text-align: center;
+  text-transform: uppercase;
+}
+
+
+/* =================================================================
+   SIZE STATES
+   Source: VisualStateGroup "SizeStates" in IndicatorGauge.xaml
+   Small = 48px (default), Medium = 120px
+   ================================================================= */
+
+/* XAML: VisualState "Medium" — Width/Height=120 */
+.mob-indicator-gauge--medium .mob-indicator-gauge__circle {
+  width: 120px;
+  height: 120px;
+}
+
+.mob-indicator-gauge--medium .mob-indicator-gauge__icon {
+  font-size: 48px;
+}
+
+.mob-indicator-gauge--medium .mob-indicator-gauge__adorner {
+  width: 28px;
+  height: 28px;
+  top: -2px;
+  right: -2px;
+  font-size: 16px;
+}
+
+.mob-indicator-gauge--medium .mob-indicator-gauge__value {
+  font: var(--font-hdrMd);
+}
+
+.mob-indicator-gauge--medium .mob-indicator-gauge__label {
+  font: var(--font-default);
+}
+
+
+/* =================================================================
+   TOGGLE SWITCH GAUGE VARIANT
+   Source: ToggleSwitchGauge template in IndicatorGauge.xaml
+   Uses the same circle container but places a SwitchToggle
+   inside instead of an icon.
+   ================================================================= */
+
+/* XAML: ToggleSwitchGauge — circle with embedded switch toggle */
+.mob-indicator-gauge--toggle .mob-indicator-gauge__circle {
+  width: 60px;
+  height: 60px;
+}
+
+/* XAML: SwitchToggle inside circle, centered */
+.mob-indicator-gauge__toggle-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Toggle on state — border uses InformationGreen */
+.mob-indicator-gauge--toggle[data-status="on"] .mob-indicator-gauge__circle::before {
+  border-color: var(--InformationGreen);
+}
+
+/* Toggle off state — default GaugeDataTickBrush border */
+.mob-indicator-gauge--toggle[data-status="off"] .mob-indicator-gauge__circle::before {
+  border-color: var(--GaugeInvertDataTick);
+}

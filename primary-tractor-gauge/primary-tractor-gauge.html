@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mobius — Primary Tractor Gauge</title>
+  <link id="mob-theme-link" rel="stylesheet" href="../styles/color-theme-tokens/LightTheme.css" />
+  <link rel="stylesheet" href="../styles/css/main.css" />
+  <link rel="stylesheet" href="primary-tractor-gauge.css" />
+  <style>
+    body { margin: 0; }
+    h1 { font: var(--font-hdrMd); margin: 0 0 32px; color: var(--ForegroundStrong); }
+    h2 { font: var(--font-hdrSm); margin: 40px 0 16px; color: var(--ForegroundStrong); }
+    h2:first-of-type { margin-top: 0; }
+    .demo-list { display: flex; flex-direction: column; gap: var(--spacing-section-to-header); max-width: 540px; }
+    .section-divider { border: none; border-top: var(--line-size) solid var(--InnerLines); margin: 32px 0 0; }
+    .demo-caption { font: var(--font-bodySm); color: var(--ForegroundDisabled); margin-top: var(--spacing-label-to-control-sm); }
+  </style>
+</head>
+<body>
+
+<div class="mob-layout">
+
+  <!-- Sidebar Navigation -->
+  <nav class="mob-nav" id="mob-nav"></nav>
+
+  <!-- Main Content -->
+  <main class="mob-layout__content">
+
+<h1>Primary Tractor Gauge</h1>
+
+
+<!-- =========================================================
+     SECTION 1: FORWARD MODE
+     Source: PrimaryTractorGauge.xaml — DirectionState=Forward
+     Grid: [40px][*][Auto][*][92px]
+     ========================================================= -->
+
+<h2>Forward Mode</h2>
+
+<div class="demo-list">
+
+  <!-- XAML: PrimaryTractorGauge — Direction=Forward, Gear=3,
+       RPM=1850, Velocity=12.4 mph, Mode=Auto -->
+  <div class="mob-tractor-gauge" data-direction="forward">
+
+    <!-- XAML: Grid.Column="0" — Shuttle/Direction column -->
+    <div class="mob-tractor-gauge__shuttle">
+      <!-- XAML: Forward arrow — active (highlighted) -->
+      <div class="mob-tractor-gauge__arrow mob-tractor-gauge__arrow--up mob-tractor-gauge__arrow--active">
+        <svg viewBox="0 0 24 24"><path d="M12 4l-8 8h5v8h6v-8h5z"/></svg>
+      </div>
+      <!-- XAML: Shuttle indicator — "F" for Forward -->
+      <div class="mob-tractor-gauge__shuttle-icon">F</div>
+      <!-- XAML: Reverse arrow — inactive -->
+      <div class="mob-tractor-gauge__arrow mob-tractor-gauge__arrow--down">
+        <svg viewBox="0 0 24 24"><path d="M12 20l8-8h-5V4H9v8H4z"/></svg>
+      </div>
+      <!-- XAML: Mode label — Auto -->
+      <span class="mob-tractor-gauge__mode-label">Auto</span>
+    </div>
+
+    <!-- XAML: Grid.Column="1" — spacer -->
+    <div class="mob-tractor-gauge__spacer"></div>
+
+    <!-- XAML: Grid.Column="2" — Gears column -->
+    <div class="mob-tractor-gauge__gears">
+      <!-- XAML: Forward gear — large, active -->
+      <span class="mob-tractor-gauge__gear-value">3</span>
+      <span class="mob-tractor-gauge__gear-label">Forward</span>
+
+      <!-- XAML: Gear lock button — unlocked -->
+      <div class="mob-tractor-gauge__gear-lock">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 2C9.24 2 7 4.24 7 7v3H6c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2v-8c0-1.1-.9-2-2-2h-1V7c0-2.76-2.24-5-5-5zm0 2c1.66 0 3 1.34 3 3v3H9V7c0-1.66 1.34-3 3-3zm0 10c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2z"/>
+        </svg>
+        <!-- XAML: Lock badge — unlock icon -->
+        <div class="mob-tractor-gauge__lock-badge">
+          <svg viewBox="0 0 24 24">
+            <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6h2c0-1.66 1.34-3 3-3s3 1.34 3 3v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2z"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- XAML: Reverse gear — inactive -->
+      <span class="mob-tractor-gauge__gear-value mob-tractor-gauge__gear-value--inactive">2</span>
+      <span class="mob-tractor-gauge__gear-label">Reverse</span>
+
+      <!-- XAML: Gear increment/decrement buttons -->
+      <div class="mob-tractor-gauge__gear-buttons">
+        <div class="mob-tractor-gauge__gear-btn">
+          <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
+        </div>
+        <div class="mob-tractor-gauge__gear-btn">
+          <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- XAML: Grid.Column="3" — spacer -->
+    <div class="mob-tractor-gauge__spacer"></div>
+
+    <!-- XAML: Grid.Column="4" — Speed/RPM readouts -->
+    <div class="mob-tractor-gauge__readouts">
+      <!-- XAML: RPM section -->
+      <div class="mob-tractor-gauge__rpm">
+        <div class="mob-tractor-gauge__rpm-value">
+          1850
+          <!-- XAML: RPM lock icon — unlocked -->
+          <span class="mob-tractor-gauge__rpm-lock">
+            <svg viewBox="0 0 24 24">
+              <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6h2c0-1.66 1.34-3 3-3s3 1.34 3 3v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2z"/>
+            </svg>
+          </span>
+        </div>
+        <span class="mob-tractor-gauge__rpm-label">RPM</span>
+      </div>
+
+      <!-- XAML: Velocity section -->
+      <div class="mob-tractor-gauge__velocity">
+        <span class="mob-tractor-gauge__velocity-value">12.4</span>
+        <span class="mob-tractor-gauge__velocity-label">MPH</span>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+<p class="demo-caption">DirectionState=Forward, Gear 3, RPM 1850, Auto mode</p>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 2: REVERSE MODE WITH LOCKED RPM
+     Source: PrimaryTractorGauge.xaml — DirectionState=Reverse,
+     FixedRPMState=LockedRPM
+     ========================================================= -->
+
+<h2>Reverse Mode (RPM Locked)</h2>
+
+<div class="demo-list">
+
+  <!-- XAML: PrimaryTractorGauge — Direction=Reverse, Gear=1,
+       RPM=1200 (locked at 1400), Velocity=5.2 mph, Mode=Manual -->
+  <div class="mob-tractor-gauge" data-direction="reverse">
+
+    <div class="mob-tractor-gauge__shuttle">
+      <div class="mob-tractor-gauge__arrow mob-tractor-gauge__arrow--up">
+        <svg viewBox="0 0 24 24"><path d="M12 4l-8 8h5v8h6v-8h5z"/></svg>
+      </div>
+      <div class="mob-tractor-gauge__shuttle-icon">R</div>
+      <!-- XAML: Reverse arrow — active -->
+      <div class="mob-tractor-gauge__arrow mob-tractor-gauge__arrow--down mob-tractor-gauge__arrow--active">
+        <svg viewBox="0 0 24 24"><path d="M12 20l8-8h-5V4H9v8H4z"/></svg>
+      </div>
+      <span class="mob-tractor-gauge__mode-label">Manual</span>
+    </div>
+
+    <div class="mob-tractor-gauge__spacer"></div>
+
+    <div class="mob-tractor-gauge__gears">
+      <span class="mob-tractor-gauge__gear-value mob-tractor-gauge__gear-value--inactive">3</span>
+      <span class="mob-tractor-gauge__gear-label">Forward</span>
+
+      <!-- XAML: Gear lock — locked state -->
+      <div class="mob-tractor-gauge__gear-lock mob-tractor-gauge__gear-lock--locked">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 2C9.24 2 7 4.24 7 7v3H6c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2v-8c0-1.1-.9-2-2-2h-1V7c0-2.76-2.24-5-5-5zm0 2c1.66 0 3 1.34 3 3v3H9V7c0-1.66 1.34-3 3-3zm0 10c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2z"/>
+        </svg>
+        <div class="mob-tractor-gauge__lock-badge">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 2C9.24 2 7 4.24 7 7v3H6c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2v-8c0-1.1-.9-2-2-2h-1V7c0-2.76-2.24-5-5-5zm0 2c1.66 0 3 1.34 3 3v3H9V7c0-1.66 1.34-3 3-3z"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- XAML: Reverse gear — active -->
+      <span class="mob-tractor-gauge__gear-value">1</span>
+      <span class="mob-tractor-gauge__gear-label">Reverse</span>
+
+      <div class="mob-tractor-gauge__gear-buttons">
+        <div class="mob-tractor-gauge__gear-btn">
+          <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
+        </div>
+        <div class="mob-tractor-gauge__gear-btn">
+          <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="mob-tractor-gauge__spacer"></div>
+
+    <div class="mob-tractor-gauge__readouts">
+      <div class="mob-tractor-gauge__rpm">
+        <div class="mob-tractor-gauge__rpm-value">
+          1200
+          <!-- XAML: RPM lock — locked state -->
+          <span class="mob-tractor-gauge__rpm-lock mob-tractor-gauge__rpm-lock--locked">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 2C9.24 2 7 4.24 7 7v3H6c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2v-8c0-1.1-.9-2-2-2h-1V7c0-2.76-2.24-5-5-5zm0 2c1.66 0 3 1.34 3 3v3H9V7c0-1.66 1.34-3 3-3z"/>
+            </svg>
+          </span>
+        </div>
+        <span class="mob-tractor-gauge__rpm-label">RPM</span>
+        <!-- XAML: Set RPM — InformationRed, shown when locked -->
+        <span class="mob-tractor-gauge__rpm-setpoint">Set: 1400</span>
+      </div>
+
+      <div class="mob-tractor-gauge__velocity">
+        <span class="mob-tractor-gauge__velocity-value">5.2</span>
+        <span class="mob-tractor-gauge__velocity-label">MPH</span>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+<p class="demo-caption">DirectionState=Reverse, FixedGearState=LockedGear, FixedRPMState=LockedRPM (set 1400)</p>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 3: PARK / NEUTRAL
+     Source: PrimaryTractorGauge.xaml — DirectionState=Park, Neutral
+     ========================================================= -->
+
+<h2>Park and Neutral</h2>
+
+<div class="demo-list">
+
+  <!-- XAML: PrimaryTractorGauge — Direction=Park -->
+  <div class="mob-tractor-gauge" data-direction="park">
+    <div class="mob-tractor-gauge__shuttle">
+      <div class="mob-tractor-gauge__arrow mob-tractor-gauge__arrow--up">
+        <svg viewBox="0 0 24 24"><path d="M12 4l-8 8h5v8h6v-8h5z"/></svg>
+      </div>
+      <div class="mob-tractor-gauge__shuttle-icon">P</div>
+      <div class="mob-tractor-gauge__arrow mob-tractor-gauge__arrow--down">
+        <svg viewBox="0 0 24 24"><path d="M12 20l8-8h-5V4H9v8H4z"/></svg>
+      </div>
+      <span class="mob-tractor-gauge__mode-label">Auto</span>
+    </div>
+    <div class="mob-tractor-gauge__spacer"></div>
+    <div class="mob-tractor-gauge__gears">
+      <span class="mob-tractor-gauge__gear-value mob-tractor-gauge__gear-value--inactive">3</span>
+      <span class="mob-tractor-gauge__gear-label">Forward</span>
+      <div class="mob-tractor-gauge__gear-lock">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 2C9.24 2 7 4.24 7 7v3H6c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2v-8c0-1.1-.9-2-2-2h-1V7c0-2.76-2.24-5-5-5zm0 2c1.66 0 3 1.34 3 3v3H9V7c0-1.66 1.34-3 3-3zm0 10c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2z"/>
+        </svg>
+      </div>
+      <span class="mob-tractor-gauge__gear-value mob-tractor-gauge__gear-value--inactive">1</span>
+      <span class="mob-tractor-gauge__gear-label">Reverse</span>
+    </div>
+    <div class="mob-tractor-gauge__spacer"></div>
+    <div class="mob-tractor-gauge__readouts">
+      <div class="mob-tractor-gauge__rpm">
+        <div class="mob-tractor-gauge__rpm-value">0</div>
+        <span class="mob-tractor-gauge__rpm-label">RPM</span>
+      </div>
+      <div class="mob-tractor-gauge__velocity">
+        <span class="mob-tractor-gauge__velocity-value">0.0</span>
+        <span class="mob-tractor-gauge__velocity-label">MPH</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+<p class="demo-caption">DirectionState=Park — both arrows inactive, shuttle shows "P"</p>
+
+
+  </main>
+</div>
+
+<script src="../js/nav.js"></script>
+</body>
+</html>

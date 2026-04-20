@@ -5,8 +5,8 @@
 
   Usage:
     1. Add <nav class="mob-nav" id="mob-nav"></nav> to each page.
-    2. Add <script src="../styles/nav.js"></script> before </body>.
-       (Use "styles/nav.js" for pages at the root level like index.html.)
+    2. Add <script src="../js/nav.js"></script> before </body>.
+       (Use "js/nav.js" for pages at the root level like index.html.)
     3. The script auto-detects the path prefix and the active page.
 
   To add a new page to the nav, edit the NAV_LINKS array below.
@@ -34,43 +34,44 @@
   var NAV_LINKS = [
     {
       title: "Tokens / Styles",
-      download: { label: "\u2913 Download All", href: "styles/tokens-styles-all.zip" },
+      download: { label: "\u2913 Download All", href: "styles/css/tokens-styles-all.zip" },
       links: [
-        { label: "base.css",           href: "styles/base.css" },
-        { label: "LightTheme.css",     href: "styles/LightTheme.css" },
-        { label: "fontTokens.css",     href: "styles/fontTokens.css" },
-        { label: "spacingTokens.css",  href: "styles/spacingTokens.css" },
-        { label: "fontImport.css",     href: "styles/fontImport.css" },
-        { label: "typography.css",     href: "styles/typography.css" },
-        { label: "nav.css",            href: "styles/nav.css" }
+        { label: "main.css",             href: "styles/css/main.css" },
+        { label: "LightTheme.css",      href: "styles/color-theme-tokens/LightTheme.css" },
+        { label: "font-tokens.css",     href: "styles/fonts/font-tokens.css" },
+        { label: "spacing-tokens.css",  href: "styles/spacing/spacing-tokens.css" },
+        { label: "font-imports.css",    href: "styles/fonts/font-imports.css" },
+        { label: "typography.css",      href: "styles/fonts/typography.css" },
+        { label: "nav.css",             href: "styles/css/nav.css" }
       ]
     },
     {
       title: "Fonts",
-      download: { label: "\u2913 Download All", href: "fonts/fonts-all.zip" },
+      download: { label: "\u2913 Download All", href: "styles/fonts/files/fonts-all.zip" },
       links: [
-        { label: "mobius-system-icons.woff",          href: "fonts/mobius-system-icons.woff" },
-        { label: "mobius-system-icons.woff2",         href: "fonts/mobius-system-icons.woff2" },
-        { label: "roboto-light.eot",                  href: "fonts/roboto-light.eot" },
-        { label: "roboto-light.svg",                  href: "fonts/roboto-light.svg" },
-        { label: "roboto-light.ttf",                  href: "fonts/roboto-light.ttf" },
-        { label: "roboto-light.woff",                 href: "fonts/roboto-light.woff" },
-        { label: "roboto-light.woff2",                href: "fonts/roboto-light.woff2" },
-        { label: "roboto-regular.eot",                href: "fonts/roboto-regular.eot" },
-        { label: "roboto-regular.svg",                href: "fonts/roboto-regular.svg" },
-        { label: "roboto-regular.ttf",                href: "fonts/roboto-regular.ttf" },
-        { label: "roboto-regular.woff",               href: "fonts/roboto-regular.woff" },
-        { label: "roboto-regular.woff2",              href: "fonts/roboto-regular.woff2" },
-        { label: "roboto-thin.eot",                   href: "fonts/roboto-thin.eot" },
-        { label: "roboto-thin.svg",                   href: "fonts/roboto-thin.svg" },
-        { label: "roboto-thin.ttf",                   href: "fonts/roboto-thin.ttf" },
-        { label: "roboto-thin.woff",                  href: "fonts/roboto-thin.woff" },
-        { label: "roboto-thin.woff2",                 href: "fonts/roboto-thin.woff2" },
-        { label: "robotocondensed-regular.eot",       href: "fonts/robotocondensed-regular.eot" },
-        { label: "robotocondensed-regular.svg",       href: "fonts/robotocondensed-regular.svg" },
-        { label: "robotocondensed-regular.ttf",       href: "fonts/robotocondensed-regular.ttf" },
-        { label: "robotocondensed-regular.woff",      href: "fonts/robotocondensed-regular.woff" },
-        { label: "robotocondensed-regular.woff2",     href: "fonts/robotocondensed-regular.woff2" }
+        { label: "mobius-system-icons.woff",          href: "styles/fonts/files/mobius-system-icons.woff" },
+        { label: "mobius-system-icons.woff2",         href: "styles/fonts/files/mobius-system-icons.woff2" },
+        { label: "mobius-system-icons.ttf",           href: "styles/fonts/files/mobius-system-icons.ttf" },
+        { label: "roboto-light.eot",                  href: "styles/fonts/files/roboto-light.eot" },
+        { label: "roboto-light.svg",                  href: "styles/fonts/files/roboto-light.svg" },
+        { label: "roboto-light.ttf",                  href: "styles/fonts/files/roboto-light.ttf" },
+        { label: "roboto-light.woff",                 href: "styles/fonts/files/roboto-light.woff" },
+        { label: "roboto-light.woff2",                href: "styles/fonts/files/roboto-light.woff2" },
+        { label: "roboto-regular.eot",                href: "styles/fonts/files/roboto-regular.eot" },
+        { label: "roboto-regular.svg",                href: "styles/fonts/files/roboto-regular.svg" },
+        { label: "roboto-regular.ttf",                href: "styles/fonts/files/roboto-regular.ttf" },
+        { label: "roboto-regular.woff",               href: "styles/fonts/files/roboto-regular.woff" },
+        { label: "roboto-regular.woff2",              href: "styles/fonts/files/roboto-regular.woff2" },
+        { label: "roboto-thin.eot",                   href: "styles/fonts/files/roboto-thin.eot" },
+        { label: "roboto-thin.svg",                   href: "styles/fonts/files/roboto-thin.svg" },
+        { label: "roboto-thin.ttf",                   href: "styles/fonts/files/roboto-thin.ttf" },
+        { label: "roboto-thin.woff",                  href: "styles/fonts/files/roboto-thin.woff" },
+        { label: "roboto-thin.woff2",                 href: "styles/fonts/files/roboto-thin.woff2" },
+        { label: "robotocondensed-regular.eot",       href: "styles/fonts/files/robotocondensed-regular.eot" },
+        { label: "robotocondensed-regular.svg",       href: "styles/fonts/files/robotocondensed-regular.svg" },
+        { label: "robotocondensed-regular.ttf",       href: "styles/fonts/files/robotocondensed-regular.ttf" },
+        { label: "robotocondensed-regular.woff",      href: "styles/fonts/files/robotocondensed-regular.woff" },
+        { label: "robotocondensed-regular.woff2",     href: "styles/fonts/files/robotocondensed-regular.woff2" }
       ]
     },
     {
@@ -92,7 +93,7 @@
     {
       title: "Forms",
       links: [
-        { label: "Text Input",    href: "text-input/text-input.html" },
+        { label: "FieldInput",    href: "field-input/field-input.html" },
         { label: "ComboBox",      href: "combobox/combobox.html" },
         { label: "Switch Toggle", href: "switch-toggle/switch-toggle.html" },
         { label: "Radio Button",  href: "radio-button/radio-button.html" },
@@ -163,6 +164,25 @@
         { label: "Notification Panel",  href: "alerts/alerts-panel.html" },
         { label: "Active Alert (Ag)",   href: "alerts/alerts-active.html" },
         { label: "Confirmation Dialog", href: "alerts/alerts-dialog.html" }
+      ]
+    },
+    {
+      title: "Gauges",
+      links: [
+        { label: "StatusGauge",           href: "status-gauge/status-gauge.html" },
+        { label: "TextGauge",             href: "text-gauge/text-gauge.html" },
+        { label: "OdometerGauge",         href: "odometer-gauge/odometer-gauge.html" },
+        { label: "IndicatorGauge",        href: "indicator-gauge/indicator-gauge.html" },
+        { label: "ButtonGauge",           href: "button-gauge/button-gauge.html" },
+        { label: "ComboBoxGauge",         href: "combobox-gauge/combobox-gauge.html" },
+        { label: "GPSGauge",             href: "gps-gauge/gps-gauge.html" },
+        { label: "BoomFeedbackGauge",     href: "boom-feedback-gauge/boom-feedback-gauge.html" },
+        { label: "DegreeGauge",           href: "degree-gauge/degree-gauge.html" },
+        { label: "SliderGauge",           href: "slider-gauge/slider-gauge.html" },
+        { label: "MultipleRowGauge",      href: "multiple-row-gauge/multiple-row-gauge.html" },
+        { label: "PrimaryTractorGauge",   href: "primary-tractor-gauge/primary-tractor-gauge.html" },
+        { label: "PrimaryVehicleGauge",   href: "primary-vehicle-gauge/primary-vehicle-gauge.html" },
+        { label: "ViewSwitchGauge",       href: "view-switch-gauge/view-switch-gauge.html" }
       ]
     }
   ];
@@ -263,7 +283,7 @@
   }
 
   function themePath(name) {
-    return P + "styles/" + name + "Theme.css";
+    return P + "styles/color-theme-tokens/" + name + "Theme.css";
   }
 
   function applyTheme(name) {

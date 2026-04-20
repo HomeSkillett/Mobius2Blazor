@@ -1,0 +1,127 @@
+/* =============================================
+   BUTTON GAUGE
+   Source: ButtonGauge.xaml (158 lines)
+   Asi.Gauges.Client.UI
+
+   A circular button gauge with an icon and optional label.
+
+   Layout (from XAML ControlTemplate):
+     StackPanel — vertical
+       _primaryContainer: Border 48px, CornerRadius=100000 (circle)
+         Background=GaugeBackgroundBrush
+         _innerBorder: Border inside, BorderBrush=SelectionPrimary
+           _icon: Path 20x20, Fill=GaugeValueForegroundBrush
+       Label: TextBlock below, Foreground=GaugeForegroundBrush
+
+   States:
+     CommonStates: Normal, MouseOver, Pressed, Disabled
+     SizeStates: Small (48px), Medium (120px)
+
+   Gauge colors use the "GaugeInvert" token set.
+   ============================================= */
+
+
+/* --- Root container --------------------------------------------- */
+/* XAML: StackPanel — vertical alignment, centers content */
+.mob-button-gauge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-label-to-control);
+}
+
+
+/* --- Primary container (circle button) -------------------------- */
+/* XAML: _primaryContainer — Border Width/Height=48
+   CornerRadius="100000" (full circle)
+   Background=GaugeBackgroundBrush */
+.mob-button-gauge__button {
+  width: 48px;
+  height: 48px;
+  border-radius: 100000px;
+  background: var(--GaugeInvertBackground);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: none;
+  padding: 0;
+  position: relative;
+  transition: opacity var(--transition-fade);
+}
+
+
+/* --- Inner border ----------------------------------------------- */
+/* XAML: _innerBorder — Border inside _primaryContainer
+   BorderBrush=SelectionPrimary, BorderThickness="2" */
+.mob-button-gauge__button::after {
+  content: "";
+  position: absolute;
+  inset: 2px;
+  border-radius: 100000px;
+  border: 2px solid var(--GaugeInvertInteraction);
+  pointer-events: none;
+}
+
+
+/* --- Icon ------------------------------------------------------- */
+/* XAML: _icon — Path Width/Height=20
+   Fill=GaugeValueForegroundBrush */
+.mob-button-gauge__icon {
+  width: 20px;
+  height: 20px;
+  color: var(--GaugeInvertValueForeground);
+  fill: currentColor;
+}
+
+
+/* --- Label ------------------------------------------------------ */
+/* XAML: TextBlock below button
+   Foreground=GaugeForegroundBrush */
+.mob-button-gauge__label {
+  font: var(--font-Sm);
+  color: var(--GaugeInvertForeground);
+  text-align: center;
+}
+
+
+/* === CommonStates =============================================== */
+
+/* XAML: VisualState MouseOver — opacity or highlight change */
+.mob-button-gauge__button:hover {
+  opacity: 0.85;
+}
+
+/* XAML: VisualState Pressed — slight scale / darker */
+.mob-button-gauge__button:active {
+  opacity: 0.7;
+}
+
+/* XAML: VisualState Disabled — reduced opacity, no interaction */
+.mob-button-gauge--disabled .mob-button-gauge__button {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.mob-button-gauge--disabled .mob-button-gauge__label {
+  opacity: 0.4;
+}
+
+
+/* === SizeStates ================================================= */
+
+/* XAML: SizeState Small — Width/Height=48 (default) */
+/* Default size is 48px, already set above */
+
+/* XAML: SizeState Medium — Width/Height=120 */
+.mob-button-gauge--medium .mob-button-gauge__button {
+  width: 120px;
+  height: 120px;
+}
+
+/* Scale icon proportionally for medium size */
+.mob-button-gauge--medium .mob-button-gauge__icon {
+  width: 48px;
+  height: 48px;
+}

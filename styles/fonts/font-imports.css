@@ -1,13 +1,11 @@
-/* fonts.css
+/* font-imports.css
    Self-hosted font declarations with fallbacks.
 
-   Font folder: ../fonts/ (flat, no subdirectories)
+   Font folder: files/ (flat, no subdirectories)
      roboto-thin.woff2 / .woff / .ttf
      roboto-light.woff2 / .woff / .ttf
      roboto-regular.woff2 / .woff / .ttf
-     roboto-bold.woff2 / .woff / .ttf        (optional)
      robotocondensed-regular.woff2 / .woff / .ttf
-     robotocondensed-bold.woff2 / .woff / .ttf
      mobius-system-icons.woff2 / .woff / .ttf
 
    Notes:
@@ -24,9 +22,9 @@
 @font-face {
   font-family: "Roboto";
   src:
-    url("../fonts/roboto-thin.woff2") format("woff2"),
-    url("../fonts/roboto-thin.woff") format("woff"),
-    url("../fonts/roboto-thin.ttf") format("truetype");
+    url("files/roboto-thin.woff2") format("woff2"),
+    url("files/roboto-thin.woff") format("woff"),
+    url("files/roboto-thin.ttf") format("truetype");
   font-weight: 100;
   font-style: normal;
   font-display: swap;
@@ -35,9 +33,9 @@
 @font-face {
   font-family: "Roboto";
   src:
-    url("../fonts/roboto-light.woff2") format("woff2"),
-    url("../fonts/roboto-light.woff") format("woff"),
-    url("../fonts/roboto-light.ttf") format("truetype");
+    url("files/roboto-light.woff2") format("woff2"),
+    url("files/roboto-light.woff") format("woff"),
+    url("files/roboto-light.ttf") format("truetype");
   font-weight: 300;
   font-style: normal;
   font-display: swap;
@@ -46,9 +44,9 @@
 @font-face {
   font-family: "Roboto";
   src:
-    url("../fonts/roboto-regular.woff2") format("woff2"),
-    url("../fonts/roboto-regular.woff") format("woff"),
-    url("../fonts/roboto-regular.ttf") format("truetype");
+    url("files/roboto-regular.woff2") format("woff2"),
+    url("files/roboto-regular.woff") format("woff"),
+    url("files/roboto-regular.ttf") format("truetype");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -58,9 +56,9 @@
 @font-face {
   font-family: "Roboto";
   src:
-    url("../fonts/roboto-bold.woff2") format("woff2"),
-    url("../fonts/roboto-bold.woff") format("woff"),
-    url("../fonts/roboto-bold.ttf") format("truetype");
+    url("files/roboto-bold.woff2") format("woff2"),
+    url("files/roboto-bold.woff") format("woff"),
+    url("files/roboto-bold.ttf") format("truetype");
   font-weight: 700;
   font-style: normal;
   font-display: swap;
@@ -73,9 +71,9 @@
 @font-face {
   font-family: "Roboto Condensed";
   src:
-    url("../fonts/robotocondensed-regular.woff2") format("woff2"),
-    url("../fonts/robotocondensed-regular.woff") format("woff"),
-    url("../fonts/robotocondensed-regular.ttf") format("truetype");
+    url("files/robotocondensed-regular.woff2") format("woff2"),
+    url("files/robotocondensed-regular.woff") format("woff"),
+    url("files/robotocondensed-regular.ttf") format("truetype");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -85,9 +83,9 @@
 @font-face {
   font-family: "Roboto Condensed";
   src:
-    url("../fonts/robotocondensed-bold.woff2") format("woff2"),
-    url("../fonts/robotocondensed-bold.woff") format("woff"),
-    url("../fonts/robotocondensed-bold.ttf") format("truetype");
+    url("files/robotocondensed-bold.woff2") format("woff2"),
+    url("files/robotocondensed-bold.woff") format("woff"),
+    url("files/robotocondensed-bold.ttf") format("truetype");
   font-weight: 700;
   font-style: normal;
   font-display: swap;
@@ -100,8 +98,9 @@
 @font-face {
   font-family: "Mobius-System-Icons";
   src:
-    url("../fonts/mobius-system-icons.woff2") format("woff2"),
-    url("../fonts/mobius-system-icons.woff") format("woff");
+    url("files/mobius-system-icons.woff2") format("woff2"),
+    url("files/mobius-system-icons.woff") format("woff"),
+    url("files/mobius-system-icons.ttf") format("truetype");
   font-weight: 400;
   font-style: normal;
   font-display: block;

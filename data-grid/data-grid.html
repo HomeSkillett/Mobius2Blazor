@@ -5,8 +5,8 @@
   <link rel="icon" type="image/x-icon" href="../assets/favicon.ico">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Mobius — DataGrid</title>
-  <link id="mob-theme-link" rel="stylesheet" href="../styles/LightTheme.css" />
-  <link rel="stylesheet" href="../styles/base.css" />
+  <link id="mob-theme-link" rel="stylesheet" href="../styles/color-theme-tokens/LightTheme.css" />
+  <link rel="stylesheet" href="../styles/css/main.css" />
   <link rel="stylesheet" href="data-grid.css" />
   <style>
     body { margin: 0; }
@@ -846,10 +846,276 @@
 </div>
 
 
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 8: SORT INDICATORS
+     Source: SimpleSortListView.cs — applies HeaderTemplateArrowUp /
+             HeaderTemplateArrowDown dynamically to sorted column.
+             Icon_Arrow_PointerUpSm / Icon_Arrow_PointerDownSm (12×12)
+             PathIconSm style: 12×12, Stretch=Uniform
+             Fill inherits from header Foreground (ForegroundStrongBrush)
+     ========================================================= -->
+
+<h2>Sort Indicators — Arrow Up / Arrow Down in Header</h2>
+
+<p class="note">
+  <code>SimpleSortListView.cs</code> injects <code>HeaderTemplateArrowUp</code>
+  or <code>HeaderTemplateArrowDown</code> into the active column's
+  <code>HeaderTemplate</code> on click. Arrow uses <code>PathIconSm</code>
+  style (12×12) with <code>Icon_Arrow_PointerUpSm</code> /
+  <code>Icon_Arrow_PointerDownSm</code> geometry. Fill inherits from
+  <code>ForegroundStrongBrush</code>. Clicking a new column clears the
+  previous arrow and applies to the new column — single-column sort only.
+</p>
+
+<!-- XAML: SimpleSortListView with active sort on "Name" ascending -->
+<table class="mob-datagrid">
+
+  <thead>
+    <tr class="mob-datagrid__header-row">
+      <!-- XAML: FixedWidthGridViewColumn Width="80" SortField="CodeText" — unsorted -->
+      <th class="mob-datagrid__th" style="width: 80px;">Code</th>
+      <!-- XAML: FixedWidthGridViewColumn Width="300" SortField="Title" — sorted ascending -->
+      <th class="mob-datagrid__th" style="width: 300px;">
+        Title
+        <!-- XAML: HeaderTemplateArrowUp → Icon_Arrow_PointerUpSm -->
+        <span class="mob-datagrid__sort-arrow">&#x25B2;</span>
+      </th>
+      <!-- XAML: FixedWidthGridViewColumn Width="110" SortField="Level" — unsorted -->
+      <th class="mob-datagrid__th" style="width: 110px;">Level</th>
+      <!-- XAML: FixedWidthGridViewColumn Width="400" SortField="Description" — unsorted -->
+      <th class="mob-datagrid__th" style="width: 400px;">Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr class="mob-datagrid__row">
+      <td class="mob-datagrid__td">1001</td>
+      <td class="mob-datagrid__td">Brake Pressure Low</td>
+      <td class="mob-datagrid__td">Warning</td>
+      <td class="mob-datagrid__td">Hydraulic brake pressure below safe threshold</td>
+    </tr>
+    <tr class="mob-datagrid__row">
+      <td class="mob-datagrid__td">2010</td>
+      <td class="mob-datagrid__td">Calibration Drift Detected</td>
+      <td class="mob-datagrid__td">Information</td>
+      <td class="mob-datagrid__td">IMU calibration offset exceeds 0.5 degrees</td>
+    </tr>
+    <tr class="mob-datagrid__row">
+      <td class="mob-datagrid__td">1042</td>
+      <td class="mob-datagrid__td">GPS Signal Lost</td>
+      <td class="mob-datagrid__td">Critical</td>
+      <td class="mob-datagrid__td">Vehicle has lost GPS fix for more than 30 seconds</td>
+    </tr>
+  </tbody>
+</table>
+
+<p class="note" style="margin-top: var(--spacing-section-to-header);">
+  Descending sort variant — arrow points down:
+</p>
+
+<!-- XAML: Same table with sort direction toggled to descending -->
+<table class="mob-datagrid">
+
+  <thead>
+    <tr class="mob-datagrid__header-row">
+      <th class="mob-datagrid__th" style="width: 80px;">Code</th>
+      <th class="mob-datagrid__th" style="width: 300px;">
+        Title
+        <!-- XAML: HeaderTemplateArrowDown → Icon_Arrow_PointerDownSm -->
+        <span class="mob-datagrid__sort-arrow">&#x25BC;</span>
+      </th>
+      <th class="mob-datagrid__th" style="width: 110px;">Level</th>
+      <th class="mob-datagrid__th" style="width: 400px;">Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr class="mob-datagrid__row">
+      <td class="mob-datagrid__td">1042</td>
+      <td class="mob-datagrid__td">GPS Signal Lost</td>
+      <td class="mob-datagrid__td">Critical</td>
+      <td class="mob-datagrid__td">Vehicle has lost GPS fix for more than 30 seconds</td>
+    </tr>
+    <tr class="mob-datagrid__row">
+      <td class="mob-datagrid__td">2010</td>
+      <td class="mob-datagrid__td">Calibration Drift Detected</td>
+      <td class="mob-datagrid__td">Information</td>
+      <td class="mob-datagrid__td">IMU calibration offset exceeds 0.5 degrees</td>
+    </tr>
+    <tr class="mob-datagrid__row">
+      <td class="mob-datagrid__td">1001</td>
+      <td class="mob-datagrid__td">Brake Pressure Low</td>
+      <td class="mob-datagrid__td">Warning</td>
+      <td class="mob-datagrid__td">Hydraulic brake pressure below safe threshold</td>
+    </tr>
+  </tbody>
+</table>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 9: FILTER BAR
+     Source: FilterBarControl.xaml — used above 4 table views
+     XAML: <FilterBarControl
+             Categories="{Binding Filter.FilterCategories}"
+             FilterText="{Binding Filter.FilterText}"
+             SelectedCategory="{Binding Filter.SelectedCategory}" />
+     Template: 3-column Grid
+       Col 0 — ToggleButton (Icon_Search), Style=IconToggleButton, Width=92
+       Col 1 — ExpanderItem (ExpandLeft) → TouchTextBox Width=220,
+               Height=TouchSize, MaxLength=30, Delay=300ms
+       Col 2 — ListBox Style=HorizontalListBox, SelectionMode=Single
+     Used in: ErrorDescriptorTableView, TelemetryItemTableView,
+              GlobalTelemetryTableView, NodeConfigurationView
+     ========================================================= -->
+
+<h2>Filter Bar — Search Toggle + Category Tabs</h2>
+
+<p class="note">
+  <code>FilterBarControl.xaml</code> sits above the table in a
+  <code>StackPanel</code> with <code>Margin="0,30"</code>.
+  Three-part layout: a search <code>ToggleButton</code> (92 px,
+  <code>Icon_Search</code>), an expanding <code>TouchTextBox</code>
+  (220 px, <code>MaxLength=30</code>, 300 ms debounce), and a
+  <code>HorizontalListBox</code> of category filters
+  (<code>SelectionMode=Single</code>). Pressing Escape closes the
+  search box and clears <code>FilterText</code>. Used across
+  ErrorDescriptor, Telemetry, GlobalTelemetry, and NodeConfiguration.
+</p>
+
+<!-- State 1: Search box closed (default) -->
+<p class="note"><strong>Default state</strong> — search collapsed, category selected:</p>
+
+<!-- XAML: FilterBarControl with IsSearchBoxOpen=False -->
+<div class="mob-datagrid__filter-bar">
+  <!-- XAML: ToggleButton IsChecked=False, Style=IconToggleButton, Icon_Search -->
+  <button class="mob-datagrid__filter-search-btn" title="Toggle search">&#xE520;</button>
+  <!-- XAML: ExpanderItem IsOpened=False — search box hidden -->
+  <!-- XAML: ListBox Style=HorizontalListBox, SelectedItem="All" -->
+  <nav class="mob-datagrid__filter-categories">
+    <button class="mob-datagrid__filter-category is-active">All</button>
+    <button class="mob-datagrid__filter-category">Motion</button>
+    <button class="mob-datagrid__filter-category">Powertrain</button>
+    <button class="mob-datagrid__filter-category">Perception</button>
+    <button class="mob-datagrid__filter-category">Load</button>
+  </nav>
+</div>
+
+<!-- State 2: Search box open -->
+<p class="note"><strong>Search open</strong> — text input expanded, filtering active:</p>
+
+<!-- XAML: FilterBarControl with IsSearchBoxOpen=True, FilterText="brake" -->
+<div class="mob-datagrid__filter-bar">
+  <!-- XAML: ToggleButton IsChecked=True -->
+  <button class="mob-datagrid__filter-search-btn is-active" title="Toggle search">&#xE520;</button>
+  <!-- XAML: ExpanderItem IsOpened=True → TouchTextBox -->
+  <input class="mob-datagrid__filter-input" type="text" value="brake" maxlength="30" placeholder="Search..." />
+  <!-- XAML: ListBox — "Powertrain" selected -->
+  <nav class="mob-datagrid__filter-categories">
+    <button class="mob-datagrid__filter-category">All</button>
+    <button class="mob-datagrid__filter-category">Motion</button>
+    <button class="mob-datagrid__filter-category is-active">Powertrain</button>
+    <button class="mob-datagrid__filter-category">Perception</button>
+    <button class="mob-datagrid__filter-category">Load</button>
+  </nav>
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 10: EXPORT CSV BUTTON
+     Source: TelemetryItemTableView.xaml, ErrorDescriptorTableView.xaml
+     XAML: <IconLabelButton
+             Icon="{AppStaticResource Icon_DocumentAdorned}"
+             AdornerIcon="{AppStaticResource Icon_Adorner_ArrowUpRight}"
+             AdornerIconFill="{AppStaticResource InformationBlueBrush}"
+             Spacing="{AppStaticResource LabelToControlDistance}"
+             Text="Export to File"
+             Command="{Binding ExportCsvCommand}"
+             Background="Transparent" />
+     Parent: StackPanel Height=TouchSize, Margin="0,0,0,30"
+     Template: Grid [22px icon | 10px spacing | * text]
+               Icon area has main Path + AdornerIcon overlay
+     ========================================================= -->
+
+<h2>Export CSV Button — IconLabelButton Toolbar Pattern</h2>
+
+<p class="note">
+  <code>IconLabelButton</code> used in <code>TelemetryItemTableView.xaml</code>
+  and <code>ErrorDescriptorTableView.xaml</code>. Sits in a
+  <code>StackPanel</code> (<code>Height=TouchSize</code>,
+  <code>Margin="0,0,0,30"</code>) above the table. Template is a
+  3-column Grid: 22 px icon area, <code>LabelToControlDistance</code>
+  (10 px) spacing, and text. The icon area layers a main icon
+  (<code>Icon_DocumentAdorned</code>) with a blue adorner overlay
+  (<code>Icon_Adorner_ArrowUpRight</code>,
+  <code>InformationBlueBrush</code>). Inherits
+  <code>SimpleIconButton</code> style — transparent background,
+  foreground-colored text and icon.
+</p>
+
+<!-- XAML: StackPanel Height=TouchSize, Margin="0,0,0,30" -->
+<div class="mob-datagrid__toolbar">
+  <!-- XAML: IconLabelButton Icon=Icon_DocumentAdorned, AdornerIcon=Icon_Adorner_ArrowUpRight -->
+  <button class="mob-datagrid__export-btn">
+    <span class="mob-datagrid__export-btn__icon-wrap">
+      <!-- XAML: Path Data=Icon_DocumentAdorned, Fill=Foreground -->
+      <span class="mob-datagrid__export-btn__icon">&#xEC04;</span>
+      <!-- XAML: Path Data=Icon_Adorner_ArrowUpRight, Fill=InformationBlueBrush -->
+      <span class="mob-datagrid__export-btn__adorner">&#xEB0A;</span>
+    </span>
+    Export to File
+  </button>
+</div>
+
+<!-- Example: table following the export button -->
+<table class="mob-datagrid">
+  <thead>
+    <tr class="mob-datagrid__header-row">
+      <th class="mob-datagrid__th" style="width: 300px;">Name</th>
+      <th class="mob-datagrid__th" style="width: 260px;">Category</th>
+      <th class="mob-datagrid__th" style="width: 120px;">Commandable</th>
+      <th class="mob-datagrid__th" style="width: 120px;">Units</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class="mob-datagrid__row">
+      <td class="mob-datagrid__td">Vehicle.Speed</td>
+      <td class="mob-datagrid__td">Motion</td>
+      <td class="mob-datagrid__td">
+        <span class="mob-datagrid__bool-icon">&#xE502;</span>
+      </td>
+      <td class="mob-datagrid__td">km/h</td>
+    </tr>
+    <tr class="mob-datagrid__row">
+      <td class="mob-datagrid__td">Engine.RPM</td>
+      <td class="mob-datagrid__td">Powertrain</td>
+      <td class="mob-datagrid__td"></td>
+      <td class="mob-datagrid__td">rpm</td>
+    </tr>
+    <tr class="mob-datagrid__row">
+      <td class="mob-datagrid__td">Steering.Angle</td>
+      <td class="mob-datagrid__td">Motion</td>
+      <td class="mob-datagrid__td">
+        <span class="mob-datagrid__bool-icon">&#xE502;</span>
+      </td>
+      <td class="mob-datagrid__td">deg</td>
+    </tr>
+  </tbody>
+</table>
+
+
   </main>
 
 </div>
 
-<script src="../styles/nav.js"></script>
+<script src="../js/nav.js"></script>
 </body>
 </html>

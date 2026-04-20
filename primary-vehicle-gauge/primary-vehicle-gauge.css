@@ -1,0 +1,385 @@
+/* =============================================
+   PRIMARY VEHICLE GAUGE
+   Source: PrimaryVehicleGauge.xaml (500 lines)
+   Asi.Gauges.Client.UI
+
+   Circular speedometer/tachometer with arc fill,
+   needle, RPM ticks, and center readout.
+
+   XAML ControlTemplate structure:
+     Outer container (rotated grid, 225deg offset):
+       fullRange: Pie arc 270deg — GaugeDataBackgroundBrush (track)
+       currentValue: Pie arc (dynamic) — GaugeDataForegroundBrush (fill)
+       redZone: Pie arc — hatched GaugeStatusCriticalBrush
+     Needle: 4px rectangle, pivot center, RPMRotation
+     Inner circles: margin=6 (0.5 opacity), margin=10 (full bg)
+     RPM tick marks: around inner ring at margin=13
+     Center:
+       _statusIcon: 12x12 StatusIcon (Warning/Critical)
+       _velocityPanel: velocity value + unit
+       _gearAndModePanel: mode + gear indicators
+     Speed limit: 28px circle, critical ring, speed inside
+
+   StatusIndicatorStates: Unknown, OK, Warning, Critical
+   SizeStates: Medium=160px, Large=200px, XLarge=260px
+   ============================================= */
+
+
+/* --- Root wrapper ------------------------------------------------ */
+/* XAML: outer container — positions all gauge layers */
+.mob-vehicle-gauge {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+
+/* --- Dial container ---------------------------------------------- */
+/* XAML: Grid (rotated 225deg) — holds arcs, needle, center content */
+.mob-vehicle-gauge__dial {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+}
+
+
+/* --- Track arc (full range) -------------------------------------- */
+/* XAML: fullRange — Pie arc 270deg, GaugeDataBackgroundBrush
+   Rotated so gauge opens at bottom (225deg start) */
+.mob-vehicle-gauge__track {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 135deg,
+    var(--GaugeInvertDataBackground) 0deg,
+    var(--GaugeInvertDataBackground) 270deg,
+    transparent 270deg,
+    transparent 360deg
+  );
+}
+
+
+/* --- Value arc (current fill) ------------------------------------ */
+/* XAML: currentValue — Pie arc (RPMRotation), GaugeDataForegroundBrush */
+.mob-vehicle-gauge__fill {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 135deg,
+    var(--GaugeInvertDataForeground) 0deg,
+    var(--GaugeInvertDataForeground) var(--gauge-fill, 0deg),
+    transparent var(--gauge-fill, 0deg),
+    transparent 360deg
+  );
+}
+
+
+/* --- Red zone (hatched critical area) ---------------------------- */
+/* XAML: redZone — Pie arc at end, hatched pattern
+   GaugeStatusCriticalBrush diagonal stripes */
+.mob-vehicle-gauge__redzone {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 135deg,
+    transparent 0deg,
+    transparent var(--redzone-start, 230deg),
+    var(--GaugeInvertStatusCritical) var(--redzone-start, 230deg),
+    var(--GaugeInvertStatusCritical) 270deg,
+    transparent 270deg,
+    transparent 360deg
+  );
+  -webkit-mask-image: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 2px,
+    black 2px,
+    black 4px
+  );
+  mask-image: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 2px,
+    black 2px,
+    black 4px
+  );
+}
+
+
+/* --- Needle ------------------------------------------------------ */
+/* XAML: Rectangle Height=4, pivot from center, RPMRotation angle */
+.mob-vehicle-gauge__needle {
+  position: absolute;
+  width: 50%;
+  height: 4px;
+  top: calc(50% - 2px);
+  left: 0;
+  transform-origin: 100% 50%;
+  transform: rotate(var(--needle-angle, -135deg));
+  background: var(--GaugeInvertValueForeground);
+  border-radius: 2px;
+  transition: transform var(--transition-fade) ease-out;
+  z-index: 2;
+}
+
+
+/* --- Inner circle (donut hole, outer) ---------------------------- */
+/* XAML: Ellipse Margin=6, Opacity=0.5 — semi-transparent ring */
+.mob-vehicle-gauge__inner-ring {
+  position: absolute;
+  inset: 6px;
+  border-radius: 50%;
+  background: var(--GaugeInvertBackground);
+  opacity: 0.5;
+  z-index: 3;
+}
+
+
+/* --- Inner circle (donut hole, inner) ---------------------------- */
+/* XAML: Ellipse Margin=10 — full opacity background, the donut hole */
+.mob-vehicle-gauge__inner-bg {
+  position: absolute;
+  inset: 10px;
+  border-radius: 50%;
+  background: var(--GaugeInvertBackground);
+  z-index: 4;
+}
+
+
+/* --- RPM tick marks ---------------------------------------------- */
+/* XAML: Generated in code-behind — ticks around inner ring at margin=13 */
+.mob-vehicle-gauge__ticks {
+  position: absolute;
+  inset: 13px;
+  border-radius: 50%;
+  z-index: 5;
+}
+
+.mob-vehicle-gauge__tick {
+  position: absolute;
+  width: 1px;
+  height: 8px;
+  background: var(--GaugeInvertDataTick);
+  top: 0;
+  left: 50%;
+  transform-origin: 0.5px calc(200px / 2 - 13px);
+}
+
+/* Major ticks (every 1000 RPM) — longer and thicker */
+.mob-vehicle-gauge__tick--major {
+  height: 12px;
+  width: 2px;
+  background: var(--GaugeInvertForeground);
+  transform-origin: 1px calc(200px / 2 - 13px);
+}
+
+
+/* --- Center content container ------------------------------------ */
+/* XAML: StackPanel centered — status + velocity + gear/mode */
+.mob-vehicle-gauge__center {
+  position: absolute;
+  inset: 20px;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--size-6);
+  z-index: 6;
+}
+
+
+/* --- Status icon ------------------------------------------------- */
+/* XAML: _statusIcon — 12x12 StatusIcon at top center
+   Shown for Warning/Critical/Unknown */
+.mob-vehicle-gauge__status-icon {
+  width: var(--icon-sm);
+  height: var(--icon-sm);
+  border-radius: 50%;
+}
+
+.mob-vehicle-gauge__status-icon--warning {
+  background: var(--GaugeInvertStatusWarning);
+}
+
+.mob-vehicle-gauge__status-icon--critical {
+  background: var(--GaugeInvertStatusCritical);
+}
+
+.mob-vehicle-gauge__status-icon--unknown {
+  background: var(--GaugeInvertStatusUnknown);
+}
+
+/* XAML: StatusIndicatorStates — OK: hide icon */
+.mob-vehicle-gauge__status-icon--ok {
+  display: none;
+}
+
+
+/* --- Velocity panel ---------------------------------------------- */
+/* XAML: _velocityPanel — centered stack, velocity value + unit */
+.mob-vehicle-gauge__velocity {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+/* XAML: Velocity value — HeadingsSm, UltraLight, max-height 90px Viewbox */
+.mob-vehicle-gauge__velocity-value {
+  font: var(--font-hdrLg);
+  font-weight: 100;
+  color: var(--GaugeInvertValueForeground);
+  line-height: 1;
+}
+
+/* XAML: Velocity unit — CaseConverter uppercase */
+.mob-vehicle-gauge__velocity-unit {
+  font: var(--font-Sm);
+  color: var(--GaugeInvertForeground);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+
+/* --- Gear and mode panel ----------------------------------------- */
+/* XAML: _gearAndModePanel — bottom center stack */
+.mob-vehicle-gauge__gear-mode {
+  display: flex;
+  align-items: center;
+  gap: var(--size-6);
+}
+
+/* XAML: _modeBorder — mode label, GaugeDataBackgroundBrush bg, rounded */
+.mob-vehicle-gauge__mode {
+  font: var(--font-Sm);
+  color: var(--GaugeInvertForeground);
+  text-transform: uppercase;
+  background: var(--GaugeInvertDataBackground);
+  padding: 2px 8px;
+  border-radius: 4px;
+  letter-spacing: 0.5px;
+}
+
+/* XAML: _gearBorder — gear indicator, GaugeDataForegroundBrush 2px border */
+.mob-vehicle-gauge__gear {
+  font: var(--font-hdrSm);
+  color: var(--GaugeInvertValueForeground);
+  border: 2px solid var(--GaugeInvertDataForeground);
+  padding: 2px 8px;
+  border-radius: 4px;
+  min-width: 20px;
+  text-align: center;
+}
+
+
+/* --- Speed limit indicator --------------------------------------- */
+/* XAML: Top center, 28px circle, critical-colored ring, speed inside */
+.mob-vehicle-gauge__speed-limit {
+  position: absolute;
+  top: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid var(--GaugeInvertStatusCritical);
+  background: var(--GaugeInvertBackground);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font: var(--font-Sm);
+  color: var(--GaugeInvertStatusCritical);
+  font-weight: 600;
+  z-index: 7;
+  box-sizing: border-box;
+}
+
+
+/* === SIZE STATES ================================================= */
+
+/* XAML: SizeStates — Medium (160px) */
+.mob-vehicle-gauge--md .mob-vehicle-gauge__dial {
+  width: 160px;
+  height: 160px;
+}
+
+.mob-vehicle-gauge--md .mob-vehicle-gauge__tick {
+  transform-origin: 0.5px calc(160px / 2 - 13px);
+}
+
+.mob-vehicle-gauge--md .mob-vehicle-gauge__tick--major {
+  transform-origin: 1px calc(160px / 2 - 13px);
+}
+
+.mob-vehicle-gauge--md .mob-vehicle-gauge__velocity-value {
+  font: var(--font-hdrMd);
+  font-weight: 100;
+}
+
+/* XAML: SizeStates — Large (200px, default) */
+/* Base styles are 200px — no overrides needed */
+
+/* XAML: SizeStates — XLarge (260px) */
+.mob-vehicle-gauge--xl .mob-vehicle-gauge__dial {
+  width: 260px;
+  height: 260px;
+}
+
+.mob-vehicle-gauge--xl .mob-vehicle-gauge__tick {
+  height: 10px;
+  transform-origin: 0.5px calc(260px / 2 - 13px);
+}
+
+.mob-vehicle-gauge--xl .mob-vehicle-gauge__tick--major {
+  height: 14px;
+  transform-origin: 1px calc(260px / 2 - 13px);
+}
+
+.mob-vehicle-gauge--xl .mob-vehicle-gauge__velocity-value {
+  font-size: 48px;
+}
+
+.mob-vehicle-gauge--xl .mob-vehicle-gauge__speed-limit {
+  width: 36px;
+  height: 36px;
+  font-size: 14px;
+}
+
+
+/* === STATUS STATES =============================================== */
+
+/* XAML: StatusIndicatorStates — Warning: needle + fill change color */
+.mob-vehicle-gauge[data-status="warning"] .mob-vehicle-gauge__needle {
+  background: var(--GaugeInvertStatusWarning);
+}
+
+.mob-vehicle-gauge[data-status="warning"] .mob-vehicle-gauge__fill {
+  background: conic-gradient(
+    from 135deg,
+    var(--GaugeInvertStatusWarning) 0deg,
+    var(--GaugeInvertStatusWarning) var(--gauge-fill, 0deg),
+    transparent var(--gauge-fill, 0deg),
+    transparent 360deg
+  );
+}
+
+/* XAML: StatusIndicatorStates — Critical */
+.mob-vehicle-gauge[data-status="critical"] .mob-vehicle-gauge__needle {
+  background: var(--GaugeInvertStatusCritical);
+}
+
+.mob-vehicle-gauge[data-status="critical"] .mob-vehicle-gauge__fill {
+  background: conic-gradient(
+    from 135deg,
+    var(--GaugeInvertStatusCritical) 0deg,
+    var(--GaugeInvertStatusCritical) var(--gauge-fill, 0deg),
+    transparent var(--gauge-fill, 0deg),
+    transparent 360deg
+  );
+}

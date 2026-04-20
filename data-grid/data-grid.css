@@ -278,3 +278,172 @@
 .mob-datagrid__notif-action-btn:hover {
   color: var(--MouseOverPrimary);
 }
+
+
+/* ==============================================
+   SORT INDICATOR (arrow in header cell)
+   XAML: SimpleSortListView.cs applies
+         HeaderTemplateArrowUp / HeaderTemplateArrowDown
+         dynamically to the active column header.
+         Icon_Arrow_PointerUpSm (12×12)
+         Icon_Arrow_PointerDownSm (12×12)
+         PathIconSm style: 12×12, Stretch=Uniform
+         Fill inherits from header Foreground
+   ============================================== */
+.mob-datagrid__sort-arrow {
+  display: inline-block;
+  font-family: var(--font-icon);
+  font-size: var(--icon-sm);
+  color: var(--ForegroundStrong);
+  margin-left: var(--spacing-label-to-control-sm);
+  vertical-align: middle;
+}
+
+
+/* ==============================================
+   FILTER BAR (above table)
+   XAML: FilterBarControl.xaml
+         3-column Grid:
+           Col 0 — ToggleButton (Icon_Search), Style=IconToggleButton
+                   Width=MinWidth (92px)
+           Col 1 — ExpanderItem (ExpandLeft) wrapping
+                   TouchTextBox Width=220, Height=TouchSize,
+                   MaxLength=30, Delay=300ms
+           Col 2 — ListBox Style=HorizontalListBox
+                   SelectionMode=Single
+         Foreground=ForegroundPrimaryBrush
+   ============================================== */
+.mob-datagrid__filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin-bottom: var(--spacing-section-to-header);
+}
+
+/* XAML: ToggleButton Style=IconToggleButton, Width=92 */
+.mob-datagrid__filter-search-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 92px;
+  height: var(--touch);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-icon);
+  font-size: var(--icon);
+  color: var(--ForegroundPrimary);
+  flex-shrink: 0;
+}
+
+.mob-datagrid__filter-search-btn:hover {
+  color: var(--MouseOverPrimary);
+}
+
+.mob-datagrid__filter-search-btn.is-active {
+  color: var(--SelectionPrimary);
+}
+
+/* XAML: TouchTextBox Width=220, Height=TouchSize, Margin="0,0,40,0" */
+.mob-datagrid__filter-input {
+  font: var(--font-default);
+  color: var(--ForegroundPrimary);
+  background: var(--BackgroundInput);
+  border: var(--border-width) solid var(--BackgroundInputOutline);
+  width: 220px;
+  height: var(--touch);
+  padding: 0 var(--size-12);
+  margin-right: var(--spacing-section-to-section);
+}
+
+.mob-datagrid__filter-input:focus {
+  border-color: var(--SelectionPrimary);
+  outline: none;
+}
+
+/* XAML: ListBox Style=HorizontalListBox, SelectionMode=Single */
+.mob-datagrid__filter-categories {
+  display: flex;
+  gap: 0;
+}
+
+.mob-datagrid__filter-category {
+  font: var(--font-default);
+  color: var(--ForegroundPrimary);
+  background: none;
+  border: none;
+  padding: var(--size-6) var(--size-12);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+}
+
+.mob-datagrid__filter-category:hover {
+  color: var(--MouseOverPrimary);
+}
+
+.mob-datagrid__filter-category.is-active {
+  color: var(--SelectionPrimary);
+  border-bottom-color: var(--SelectionPrimary);
+}
+
+
+/* ==============================================
+   EXPORT CSV BUTTON (above table, in toolbar)
+   XAML: IconLabelButton (ErrorDescriptorTableView,
+         TelemetryItemTableView)
+         Icon=Icon_DocumentAdorned (22px column)
+         AdornerIcon=Icon_Adorner_ArrowUpRight
+         AdornerIconFill=InformationBlueBrush
+         Spacing=LabelToControlDistance (10px)
+         Height=TouchSize
+         Text="Export to File"
+         Style=SimpleIconButton (transparent bg)
+         StackPanel Margin="0,0,0,30" above table
+   ============================================== */
+.mob-datagrid__toolbar {
+  display: flex;
+  align-items: center;
+  height: var(--touch);
+  margin-bottom: var(--spacing-section-to-header);
+}
+
+.mob-datagrid__export-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-label-to-control);
+  background: transparent;
+  border: none;
+  font: var(--font-default);
+  color: var(--ForegroundPrimary);
+  cursor: pointer;
+  padding: 0;
+  height: var(--touch);
+}
+
+.mob-datagrid__export-btn:hover {
+  color: var(--MouseOverPrimary);
+}
+
+/* XAML: Grid Column 0 = 22px icon area with main + adorner paths */
+.mob-datagrid__export-btn__icon-wrap {
+  position: relative;
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+}
+
+.mob-datagrid__export-btn__icon {
+  font-family: var(--font-icon);
+  font-size: var(--icon);
+  color: inherit;
+}
+
+/* XAML: AdornerIcon overlay — InformationBlueBrush, PathIconAdorner style */
+.mob-datagrid__export-btn__adorner {
+  position: absolute;
+  right: -13px;
+  bottom: 2px;
+  font-family: var(--font-icon);
+  font-size: var(--icon);
+  color: var(--InformationBlue);
+}

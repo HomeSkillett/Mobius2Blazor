@@ -1,0 +1,390 @@
+/* =============================================
+   SLIDER GAUGE
+   Source: SliderGauge.xaml (1350 lines)
+   Asi.Gauges.Client.UI
+
+   A horizontal/vertical bar gauge with a draggable
+   thumb for setting values. Extends BarGauge with
+   IndicatorSlider thumb and set-point display.
+
+   XAML ControlTemplate structure:
+     Grid — 5 rows [12px][13px][1px][10px][12px] (horizontal)
+       Row 0: LabelStatusIcon + _displayValue header
+       Row 1-3: Track area
+         > _dataBackground: full track (GaugeDataBackgroundBrush)
+         > PART_RangeBar: critical/warning zones
+         > PART_ProgressBar: fill to current value
+         > PART_SetPointBar: set-point indicator line
+         > IndicatorSlider: 26x26 Thumb circle
+       Row 4: min/max labels
+
+   ValueToSetPointStates: SliderNormal, UserSet,
+     GetSynced, Locked, LockedAndSynced
+   UserInputSetPointStates: ReadOnlyDisplay, UserManualEdit
+   ============================================= */
+
+
+/* --- Root wrapper ------------------------------------------------ */
+/* XAML: Grid — 5-row vertical structure */
+.mob-slider-gauge {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  min-width: 140px;
+  color: var(--GaugeInvertForeground);
+}
+
+
+/* --- Header row -------------------------------------------------- */
+/* XAML: Grid Row="0" Height="12" — label + value */
+.mob-slider-gauge__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 12px;
+  margin-bottom: 6px;
+}
+
+
+/* --- Label group (icon + text) ----------------------------------- */
+/* XAML: StackPanel — StatusIcon + LabelString */
+.mob-slider-gauge__label-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* XAML: StatusIcon inside label group — 12x12 indicator */
+.mob-slider-gauge__status-icon {
+  width: var(--icon-sm);
+  height: var(--icon-sm);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.mob-slider-gauge__status-icon--ok {
+  background: var(--GaugeInvertStatusOK);
+}
+
+.mob-slider-gauge__status-icon--warning {
+  background: var(--GaugeInvertStatusWarning);
+}
+
+.mob-slider-gauge__status-icon--critical {
+  background: var(--GaugeInvertStatusCritical);
+}
+
+/* XAML: LabelString TextBlock — uppercase label */
+.mob-slider-gauge__label {
+  font: var(--font-Sm);
+  text-transform: uppercase;
+  color: var(--GaugeInvertForeground);
+  letter-spacing: 0.5px;
+}
+
+
+/* --- Display value ----------------------------------------------- */
+/* XAML: _displayValue TextBlock — current value readout */
+.mob-slider-gauge__value {
+  font: var(--font-hdrSm);
+  color: var(--GaugeInvertValueForeground);
+}
+
+
+/* --- Track container --------------------------------------------- */
+/* XAML: Grid Rows 1-3 — contains track, ranges, progress, thumb */
+.mob-slider-gauge__track-wrapper {
+  position: relative;
+  height: 24px;
+  display: flex;
+  align-items: center;
+}
+
+
+/* --- Track background -------------------------------------------- */
+/* XAML: _dataBackground Rectangle — GaugeDataBackgroundBrush
+   full-width 1px bar */
+.mob-slider-gauge__track {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--GaugeInvertDataBackground);
+  transform: translateY(-50%);
+}
+
+
+/* --- Range zones ------------------------------------------------- */
+/* XAML: PART_RangeBar — critical/warning range indicators */
+.mob-slider-gauge__ranges {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 3px;
+  transform: translateY(-50%);
+}
+
+.mob-slider-gauge__range {
+  position: absolute;
+  top: 0;
+  height: 100%;
+}
+
+/* XAML: PART_CriticalMinimum — left critical zone */
+.mob-slider-gauge__range--critical-min {
+  background: var(--GaugeInvertStatusCritical);
+}
+
+/* XAML: PART_WarningMinimum — left warning zone */
+.mob-slider-gauge__range--warning-min {
+  background: var(--GaugeInvertStatusWarning);
+}
+
+/* XAML: PART_WarningMaximum — right warning zone */
+.mob-slider-gauge__range--warning-max {
+  background: var(--GaugeInvertStatusWarning);
+}
+
+/* XAML: PART_CriticalMaximum — right critical zone */
+.mob-slider-gauge__range--critical-max {
+  background: var(--GaugeInvertStatusCritical);
+}
+
+
+/* --- Progress fill ----------------------------------------------- */
+/* XAML: PART_ProgressBar Rectangle — GaugeDataForegroundBrush
+   fill from left edge to current value */
+.mob-slider-gauge__progress {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  height: 3px;
+  width: var(--slider-progress, 50%);
+  background: var(--GaugeInvertDataForeground);
+  transform: translateY(-50%);
+}
+
+/* XAML: Center-based progress — starts from center when CenterBased=True */
+.mob-slider-gauge__progress--center {
+  left: 50%;
+  width: var(--slider-progress, 0%);
+  transform: translateY(-50%) translateX(calc(min(var(--slider-progress, 0%), 0%)));
+}
+
+
+/* --- Set-point indicator ----------------------------------------- */
+/* XAML: PART_SetPointBar — thin line at the set-point position,
+   visible when ValueToSetPointState=UserSet */
+.mob-slider-gauge__setpoint {
+  position: absolute;
+  top: calc(50% - 8px);
+  left: var(--setpoint-position, 50%);
+  width: 2px;
+  height: 16px;
+  background: var(--InformationRed);
+  transform: translateX(-1px);
+}
+
+/* XAML: Set-point value label — appears above the line */
+.mob-slider-gauge__setpoint-label {
+  position: absolute;
+  top: -14px;
+  left: var(--setpoint-position, 50%);
+  transform: translateX(-50%);
+  font: var(--font-Sm);
+  color: var(--InformationRed);
+  white-space: nowrap;
+}
+
+
+/* --- Tick marks -------------------------------------------------- */
+/* XAML: 5 StackPanel tick marks evenly across track */
+.mob-slider-gauge__ticks {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.mob-slider-gauge__tick {
+  width: 1px;
+  height: 7px;
+  background: var(--GaugeInvertDataTick);
+}
+
+
+/* --- Thumb (IndicatorSlider) ------------------------------------- */
+/* XAML: IndicatorSlider — custom Thumb 26x26 circle,
+   Border=SelectionPrimary, Background=GaugeBackgroundBrush */
+.mob-slider-gauge__thumb {
+  position: absolute;
+  top: 50%;
+  left: var(--slider-progress, 50%);
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 2px solid var(--SelectionPrimary);
+  background: var(--GaugeInvertBackground);
+  transform: translate(-50%, -50%);
+  box-sizing: border-box;
+  cursor: pointer;
+}
+
+/* XAML: Thumb inner dot — center indicator */
+.mob-slider-gauge__thumb::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--SelectionPrimary);
+  transform: translate(-50%, -50%);
+}
+
+
+/* --- Footer (min/max labels) ------------------------------------- */
+/* XAML: Grid Row="4" Height="12" — min/max range labels */
+.mob-slider-gauge__footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 4px;
+}
+
+.mob-slider-gauge__min,
+.mob-slider-gauge__max {
+  font: var(--font-Sm);
+  color: var(--GaugeInvertForeground);
+}
+
+
+/* === STATES ====================================================== */
+
+/* XAML: ValueToSetPointStates — UserSet: shows set-point marker */
+.mob-slider-gauge--user-set .mob-slider-gauge__setpoint {
+  display: block;
+}
+
+.mob-slider-gauge--user-set .mob-slider-gauge__setpoint-label {
+  display: block;
+}
+
+/* Default: hide set-point elements */
+.mob-slider-gauge__setpoint,
+.mob-slider-gauge__setpoint-label {
+  display: none;
+}
+
+/* XAML: ValueToSetPointStates — Locked: thumb border changes */
+.mob-slider-gauge--locked .mob-slider-gauge__thumb {
+  border-color: var(--GaugeInvertDataTick);
+  cursor: default;
+}
+
+.mob-slider-gauge--locked .mob-slider-gauge__thumb::after {
+  background: var(--GaugeInvertDataTick);
+}
+
+/* XAML: ValueToSetPointStates — LockedAndSynced */
+.mob-slider-gauge--locked-synced .mob-slider-gauge__thumb {
+  border-color: var(--GaugeInvertStatusOK);
+  cursor: default;
+}
+
+.mob-slider-gauge--locked-synced .mob-slider-gauge__thumb::after {
+  background: var(--GaugeInvertStatusOK);
+}
+
+/* XAML: ValueToSetPointStates — GetSynced: syncing animation */
+.mob-slider-gauge--synced .mob-slider-gauge__thumb {
+  border-color: var(--InformationBlue);
+}
+
+.mob-slider-gauge--synced .mob-slider-gauge__thumb::after {
+  background: var(--InformationBlue);
+}
+
+
+/* --- Manual edit display ----------------------------------------- */
+/* XAML: UserInputSetPointStates — UserManualEdit
+   TouchTextBox for editable value entry */
+.mob-slider-gauge__manual-input {
+  font: var(--font-hdrSm);
+  color: var(--GaugeInvertInteraction);
+  border-bottom: 1px solid var(--GaugeInvertInteraction);
+  padding: 0 2px;
+}
+
+
+/* === VERTICAL ORIENTATION ======================================== */
+/* XAML: Vertical template — rotated layout */
+.mob-slider-gauge--vertical {
+  min-width: auto;
+  width: 48px;
+  min-height: 140px;
+  flex-direction: column;
+}
+
+.mob-slider-gauge--vertical .mob-slider-gauge__header {
+  flex-direction: column;
+  height: auto;
+  margin-bottom: 0;
+}
+
+.mob-slider-gauge--vertical .mob-slider-gauge__track-wrapper {
+  height: auto;
+  min-height: 100px;
+  width: 24px;
+  margin: 0 auto;
+  flex-direction: column;
+}
+
+.mob-slider-gauge--vertical .mob-slider-gauge__track {
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  right: auto;
+  width: 1px;
+  height: auto;
+  transform: translateX(-50%);
+}
+
+.mob-slider-gauge--vertical .mob-slider-gauge__progress {
+  top: auto;
+  bottom: 0;
+  left: 50%;
+  width: 3px;
+  height: var(--slider-progress, 50%);
+  transform: translateX(-50%);
+}
+
+.mob-slider-gauge--vertical .mob-slider-gauge__thumb {
+  top: auto;
+  bottom: var(--slider-progress, 50%);
+  left: 50%;
+  transform: translate(-50%, 50%);
+}
+
+.mob-slider-gauge--vertical .mob-slider-gauge__ticks {
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  right: auto;
+  width: 7px;
+  height: auto;
+  flex-direction: column;
+  transform: translateX(-50%);
+}
+
+.mob-slider-gauge--vertical .mob-slider-gauge__tick {
+  width: 7px;
+  height: 1px;
+}

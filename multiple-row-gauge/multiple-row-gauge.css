@@ -1,0 +1,293 @@
+/* =============================================
+   MULTIPLE ROW GAUGE
+   Source: MultipleRowGauge.xaml (866 lines)
+   Asi.Gauges.Client.UI
+
+   Multi-column vertical bars with toggle switches.
+   Shows 4 large vertical bar items in a row, each
+   with a progress bar, icon, and numbered toggle.
+
+   XAML ControlTemplate structure:
+     Grid — 2 rows [*][Auto]
+       Row 0: Grid — columns [72px][*]
+         Col 0: Target label + "All" toggle switch
+         Col 1: PART_LargeItemsGrid — 7 cols (3*|*|3*|*|3*|*|3*)
+           4 × MultipleRowGaugeLargeItem:
+             vertical ProgressBar + icon + numbered toggle
+       Row 1: PART_SmallItemsGrid — selection group row (48px)
+         RadioButton sections with selection highlight bar
+
+   Toggle: 38x24 pill, 24px knob, 14px translate
+   Status: Normal, Warning (GaugeStatusWarning),
+           Critical (GaugeStatusCritical)
+   ============================================= */
+
+
+/* --- Root wrapper ------------------------------------------------ */
+/* XAML: Grid — outer 2-row layout */
+.mob-multi-row-gauge {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-label-to-control);
+  color: var(--GaugeInvertForeground);
+}
+
+
+/* --- Main row (labels + bars) ------------------------------------ */
+/* XAML: Grid Row="0" — columns [72px][*] */
+.mob-multi-row-gauge__main {
+  display: grid;
+  grid-template-columns: 72px 1fr;
+  gap: 0;
+  align-items: stretch;
+}
+
+
+/* --- Control column (left) --------------------------------------- */
+/* XAML: Grid.Column="0" — Target label + "All" toggle */
+.mob-multi-row-gauge__controls {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-end;
+  gap: var(--size-6);
+  padding-bottom: 4px;
+}
+
+/* XAML: TextBlock — "Target" label */
+.mob-multi-row-gauge__target-label {
+  font: var(--font-Sm);
+  color: var(--GaugeInvertForeground);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+
+/* --- Toggle switch ----------------------------------------------- */
+/* XAML: SwitchToggle — 38x24 pill shape, circular 24px knob
+   Unchecked: foreground tint 0.1 opacity
+   Checked: InformationBlue/Green 0.75 opacity */
+.mob-multi-row-gauge__toggle {
+  position: relative;
+  width: 38px;
+  height: 24px;
+  border-radius: 12px;
+  background: rgba(118, 118, 118, 0.1);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* XAML: SwitchToggle knob — circular, 24px, translates 14px */
+.mob-multi-row-gauge__toggle-knob {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--GaugeInvertForeground);
+  transition: transform var(--transition-fade) ease-out,
+              background var(--transition-fade) ease-out;
+}
+
+/* XAML: SwitchToggle Checked state — knob slides right */
+.mob-multi-row-gauge__toggle--on {
+  background: rgba(0, 159, 218, 0.75);
+}
+
+.mob-multi-row-gauge__toggle--on .mob-multi-row-gauge__toggle-knob {
+  transform: translateX(14px);
+  background: var(--InformationBlue);
+}
+
+/* XAML: Active/Off labels flanking the toggle */
+.mob-multi-row-gauge__toggle-labels {
+  display: flex;
+  justify-content: space-between;
+  width: 38px;
+}
+
+.mob-multi-row-gauge__toggle-label {
+  font: var(--font-Sm);
+  color: var(--GaugeInvertForeground);
+}
+
+
+/* --- Items grid -------------------------------------------------- */
+/* XAML: PART_LargeItemsGrid — 7 columns (3*|*|3*|*|3*|*|3*)
+   4 large items with spacer columns between */
+.mob-multi-row-gauge__items {
+  display: grid;
+  grid-template-columns: 3fr 1fr 3fr 1fr 3fr 1fr 3fr;
+  gap: 0;
+  align-items: end;
+}
+
+
+/* --- Large item -------------------------------------------------- */
+/* XAML: MultipleRowGaugeLargeItem — vertical bar + icon + toggle */
+.mob-multi-row-gauge__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--size-6);
+}
+
+/* XAML: Spacer columns between items */
+.mob-multi-row-gauge__item-spacer {
+  min-width: 4px;
+}
+
+
+/* --- Vertical progress bar --------------------------------------- */
+/* XAML: ProgressBar — vertical orientation
+   Border=GaugeDataTickBrush, fill=GaugeValueForegroundBrush (0.4 opacity) */
+.mob-multi-row-gauge__bar-track {
+  position: relative;
+  width: 100%;
+  height: 120px;
+  border: 1px solid var(--GaugeInvertDataTick);
+  border-radius: 2px;
+  background: var(--GaugeInvertDataBackground);
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* XAML: ProgressBar fill — bottom-aligned, GaugeValueForegroundBrush */
+.mob-multi-row-gauge__bar-fill {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--bar-fill, 50%);
+  background: var(--GaugeInvertValueForeground);
+  opacity: 0.4;
+  transition: height var(--transition-fade) ease-out;
+}
+
+/* XAML: Status=Warning — fill color changes */
+.mob-multi-row-gauge__bar-track--warning .mob-multi-row-gauge__bar-fill {
+  background: var(--GaugeInvertStatusWarning);
+  opacity: 0.6;
+}
+
+/* XAML: Status=Critical — fill color changes */
+.mob-multi-row-gauge__bar-track--critical .mob-multi-row-gauge__bar-fill {
+  background: var(--GaugeInvertStatusCritical);
+  opacity: 0.6;
+}
+
+
+/* --- Item icon --------------------------------------------------- */
+/* XAML: Path icon below bar — status indicator */
+.mob-multi-row-gauge__item-icon {
+  width: 20px;
+  height: 20px;
+  fill: var(--GaugeInvertForeground);
+}
+
+.mob-multi-row-gauge__item-icon--warning {
+  fill: var(--GaugeInvertStatusWarning);
+}
+
+.mob-multi-row-gauge__item-icon--critical {
+  fill: var(--GaugeInvertStatusCritical);
+}
+
+
+/* --- Item number label ------------------------------------------- */
+/* XAML: TextBlock — numbered item identifier */
+.mob-multi-row-gauge__item-number {
+  font: var(--font-Sm);
+  color: var(--GaugeInvertValueForeground);
+  font-weight: 600;
+}
+
+
+/* --- Item toggle (numbered) -------------------------------------- */
+/* XAML: SwitchToggle per item — smaller version with number */
+.mob-multi-row-gauge__item-toggle {
+  position: relative;
+  width: 38px;
+  height: 24px;
+  border-radius: 12px;
+  background: rgba(118, 118, 118, 0.1);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.mob-multi-row-gauge__item-toggle-knob {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--GaugeInvertForeground);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font: var(--font-Sm);
+  color: var(--GaugeInvertBackground);
+  transition: transform var(--transition-fade) ease-out;
+}
+
+.mob-multi-row-gauge__item-toggle--on {
+  background: rgba(0, 159, 218, 0.75);
+}
+
+.mob-multi-row-gauge__item-toggle--on .mob-multi-row-gauge__item-toggle-knob {
+  transform: translateX(14px);
+  background: var(--InformationBlue);
+}
+
+/* XAML: Green variant toggle */
+.mob-multi-row-gauge__item-toggle--green.mob-multi-row-gauge__item-toggle--on {
+  background: rgba(146, 212, 0, 0.75);
+}
+
+.mob-multi-row-gauge__item-toggle--green.mob-multi-row-gauge__item-toggle--on .mob-multi-row-gauge__item-toggle-knob {
+  background: var(--InformationGreen);
+}
+
+
+/* === SELECTION ROW (bottom) ====================================== */
+/* XAML: Grid Row="1" — PART_SmallItemsGrid, 48px height
+   RadioButton sections with SelectionPrimary highlight bar */
+.mob-multi-row-gauge__selection-row {
+  display: flex;
+  gap: 0;
+  height: 48px;
+  border-top: 1px solid var(--GaugeInvertDataTick);
+  align-items: stretch;
+}
+
+/* XAML: RadioButton section — each selectable group */
+.mob-multi-row-gauge__selection-item {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  cursor: pointer;
+  font: var(--font-Sm);
+  color: var(--GaugeInvertForeground);
+  text-transform: uppercase;
+}
+
+/* XAML: SelectionPrimary highlight bar — 4px bottom border on selected */
+.mob-multi-row-gauge__selection-item--active {
+  color: var(--GaugeInvertValueForeground);
+}
+
+.mob-multi-row-gauge__selection-item--active::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--SelectionPrimary);
+}

@@ -1,0 +1,429 @@
+/* =============================================
+   STATUS GAUGE
+   Source: StatusGauge.xaml + StatusGauge.cs
+   Asi.Gauges.Client.UI
+
+   A composite gauge that pairs a pluggable status
+   display (left) with a value + label readout (right).
+   The status display slot accepts any visual: bar gauge,
+   indicator icon, radial, etc.
+
+   Layout (from XAML ControlTemplate):
+     Grid — 3 columns: [*] [10px gap] [Auto, min-width 100px]
+       Col 0: ContentControl (StatusDisplay) — 48px tall
+       Col 2: Grid — 48px tall
+         Top:    Value (HeadingMd) + Unit (optional, 6px left)
+         Bottom: StatusIcon (12px) + Label (uppercase)
+
+   Gauge colors use the "GaugeInvert" token set by default
+   (matches XAML Style Setter chain on BarGauge / gauge panel).
+   ============================================= */
+
+
+/* --- Root container --------------------------------------------- */
+/* XAML: ControlTemplate Grid — 3-column layout
+   Columns: [*] [10px] [Auto MinWidth=LabelWidth] */
+.mob-status-gauge {
+  display: grid;
+  grid-template-columns: 1fr var(--spacing-label-to-control) auto;
+  align-items: stretch;
+  min-height: 48px;
+  color: var(--GaugeInvertForeground);
+}
+
+
+/* --- Status display slot (left) --------------------------------- */
+/* XAML: ContentControl — StatusDisplay, Height=48
+   Accepts any child visual (BarGauge, IndicatorGauge, etc.) */
+.mob-status-gauge__display {
+  display: flex;
+  align-items: center;
+  height: 48px;
+  min-width: 0;
+}
+
+
+/* --- Info panel (right) ----------------------------------------- */
+/* XAML: Grid Grid.Column="2" — Height=48, holds value + label stacks */
+.mob-status-gauge__info {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 48px;
+  min-width: 100px;
+}
+
+
+/* --- Value row (top of info panel) ------------------------------ */
+/* XAML: StackPanel VerticalAlignment="Top" Orientation="Horizontal"
+   Contains ValueString (HeadingMd) + UnitString */
+.mob-status-gauge__value-row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--size-6);
+}
+
+/* XAML: TextBlock — Style=HeadingMd, Text=ValueString */
+.mob-status-gauge__value {
+  font: var(--font-hdrMd);
+  color: var(--GaugeInvertValueForeground);
+  line-height: 1;
+}
+
+/* XAML: TextBlock — Text=UnitString, VerticalAlignment bound to UnitAlignment
+   Margin.Left="6", Visibility bound to ShowUnits */
+.mob-status-gauge__unit {
+  font: var(--font-default);
+  color: var(--GaugeInvertForeground);
+}
+
+/* Unit alignment: default is baseline (Bottom in XAML).
+   Use --unit-top to shift to flex-start when UnitAlignment=Top */
+.mob-status-gauge__unit--top {
+  align-self: flex-start;
+}
+
+
+/* --- Label row (bottom of info panel) --------------------------- */
+/* XAML: StackPanel VerticalAlignment="Bottom" Orientation="Horizontal"
+   Margin="0,0,0,-1" */
+.mob-status-gauge__label-row {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: -1px;
+}
+
+/* XAML: Grid Width="12" Height="12" Margin="0,0,5,0"
+   Contains StatusIcon — uses existing mob-status-icon--sm */
+/* (No additional CSS needed — use mob-status-icon mob-status-icon--sm) */
+
+/* XAML: TextBlock — Text=LabelString, Converter=CaseConverter (uppercase) */
+.mob-status-gauge__label {
+  font: var(--font-default);
+  color: var(--GaugeInvertForeground);
+  text-transform: uppercase;
+}
+
+
+/* =================================================================
+   BAR GAUGE (embedded in StatusGauge display slot)
+   Source: BarGauge.xaml — Mobius_UI_Gauges_Templates_BarGaugeTemplateHorizontal
+   Asi.Gauges.Client.UI
+
+   A horizontal range bar with:
+     - Label + status icon row
+     - Current value display
+     - Edge tick marks
+     - Track with critical/warning range zones
+     - Progress fill with needle indicator
+     - Min/max labels
+
+   Row heights (from XAML Grid.RowDefinitions):
+     Row 0: 12px — label + value
+     Row 1: 13px — tick overhang
+     Row 2: 1px  — (spacer)
+     Row 3: 10px — bar track
+     Row 4: 12px — min/max labels
+   ================================================================= */
+
+/* --- Bar gauge root ---------------------------------------------- */
+/* XAML: Grid x:Name="_templateRoot" — 5-row grid */
+.mob-bar-gauge {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  position: relative;
+}
+
+
+/* --- Header row: label + value ----------------------------------- */
+/* XAML: Grid Row="0" — Columns: [*] [LabelToControlDistance] [Auto]
+   LabelStatusIcon on left, value on right */
+.mob-bar-gauge__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  height: 12px;
+  margin-bottom: 1px;
+}
+
+/* XAML: LabelStatusIcon — label + optional status icon + optional gauge icon */
+.mob-bar-gauge__label-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+}
+
+.mob-bar-gauge__icon {
+  font-family: var(--font-icon);
+  font-size: var(--icon-sm);
+  line-height: 1;
+  color: var(--GaugeInvertValueForeground);
+}
+
+.mob-bar-gauge__label {
+  font: var(--font-Sm);
+  color: var(--GaugeInvertForeground);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* XAML: TextBlock x:Name="_displayValue" — Foreground=GaugeValueForegroundBrush
+   HorizontalAlignment="Right", Margin="0,0,5,-3" */
+.mob-bar-gauge__value {
+  font: var(--font-Sm);
+  color: var(--GaugeInvertValueForeground);
+  white-space: nowrap;
+  margin-right: 5px;
+}
+
+
+/* --- Track assembly ---------------------------------------------- */
+/* XAML: Grid Row="3" — bar background + tick marks + range bars + progress */
+.mob-bar-gauge__track-wrapper {
+  position: relative;
+  height: 10px;
+  margin-top: 13px;
+}
+
+/* XAML: Rectangle Grid.Column="0" Grid.ColumnSpan="9"
+   Fill=GaugeDataBackgroundBrush */
+.mob-bar-gauge__track {
+  position: absolute;
+  inset: 0;
+  background: var(--GaugeInvertDataBackground);
+}
+
+
+/* --- Tick marks -------------------------------------------------- */
+/* XAML: 5 StackPanels at columns 0, 2, 4, 6, 8 — vertical 1px rectangles
+   separated by 1px GaugeBackgroundBrush gaps.
+   Edge ticks: solid 1px line at left/right.
+   Interior ticks: 1px gap, 1px tick, 1px gap. */
+.mob-bar-gauge__ticks {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  justify-content: space-between;
+  pointer-events: none;
+}
+
+.mob-bar-gauge__tick {
+  width: 1px;
+  height: 100%;
+  background: var(--GaugeInvertDataTick);
+}
+
+/* Edge ticks extend upward into the header area */
+/* XAML: Rectangle Grid.Row="0" Grid.RowSpan="2" Width="1" — right edge
+         Rectangle Row="1" Width="1" Height="7" — left edge */
+.mob-bar-gauge__tick--edge-left,
+.mob-bar-gauge__tick--edge-right {
+  position: absolute;
+  width: 1px;
+  background: var(--GaugeInvertDataTick);
+  transition: background-color var(--transition-fade) ease-out;
+}
+
+.mob-bar-gauge__tick--edge-right {
+  top: -25px;
+  right: 0;
+  height: 25px;
+}
+
+.mob-bar-gauge__tick--edge-left {
+  bottom: 0;
+  left: 0;
+  height: 17px;
+}
+
+
+/* --- Range zones ------------------------------------------------- */
+/* XAML: PART_CriticalMinimum, PART_CriticalMaximum,
+         PART_WarningMinimum, PART_WarningMaximum
+   Positioned via width percentages (set via --range-* custom props).
+   Opacity transitions per VisualState. */
+.mob-bar-gauge__ranges {
+  position: absolute;
+  inset: 0 2px;
+  pointer-events: none;
+}
+
+.mob-bar-gauge__range {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  transition: opacity var(--transition-fade) ease-out;
+}
+
+/* Critical zones — default 0.5 opacity, full at data-status="critical" */
+/* XAML: PART_CriticalMinimum — Opacity="0.5",
+         Fill=GaugeStatusCriticalRangeBrush */
+.mob-bar-gauge__range--critical-min,
+.mob-bar-gauge__range--critical-max {
+  background: var(--GaugeInvertStatusCritical);
+  opacity: 0.5;
+}
+
+/* Warning zones — default hidden, visible at data-status="warning" */
+/* XAML: PART_WarningMinimum — Opacity="0.0",
+         Fill=GaugeStatusWarningRangeBrush */
+.mob-bar-gauge__range--warning-min,
+.mob-bar-gauge__range--warning-max {
+  background: var(--GaugeInvertStatusWarning);
+  opacity: 0;
+}
+
+
+/* --- Progress fill + needle -------------------------------------- */
+/* XAML: ProgressBar inside Grid Row="3" — custom ControlTemplate
+   PART_Indicator contains: fill rect (0.5 opacity) + needle (2px wide) */
+.mob-bar-gauge__fill-area {
+  position: absolute;
+  top: 0;
+  left: 2px;
+  right: 2px;
+  height: 100%;
+  overflow: visible;
+}
+
+.mob-bar-gauge__fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: var(--bar-progress, 0%);
+  min-width: 4px;
+}
+
+/* XAML: Rectangle Height="10" Margin="2,0,4,-4"
+   Fill=GaugeDataForegroundBrush, Opacity="0.5" */
+.mob-bar-gauge__fill-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 4px;
+  height: 100%;
+  background: var(--GaugeInvertDataForeground);
+  opacity: 0.5;
+}
+
+/* XAML: Rectangle Width="2" Height="14" — the needle indicator
+   Fill=GaugeValueForegroundBrush, aligned right of PART_Indicator */
+.mob-bar-gauge__needle {
+  position: absolute;
+  top: -2px;
+  right: 0;
+  width: 2px;
+  height: 14px;
+  background: var(--GaugeInvertValueForeground);
+}
+
+
+/* --- Min/Max labels ---------------------------------------------- */
+/* XAML: TextBlock Grid.Row="4" — Foreground=GaugeForegroundBrush, Opacity=0.8 */
+.mob-bar-gauge__range-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 2px;
+}
+
+.mob-bar-gauge__range-label {
+  font: var(--font-Sm);
+  color: var(--GaugeInvertForeground);
+  opacity: 0.8;
+}
+
+
+/* =================================================================
+   STATUS-DRIVEN STATE CHANGES
+   Source: VisualStateManager.VisualStateGroups in BarGauge.xaml
+   Maps data-status attribute to color/opacity transitions.
+   ================================================================= */
+
+/* --- Warning state ----------------------------------------------- */
+/* XAML: VisualState "Warning" — edge ticks turn Warning color,
+   value text turns Warning, warning range zones appear */
+.mob-bar-gauge[data-status="warning"] .mob-bar-gauge__tick--edge-left,
+.mob-bar-gauge[data-status="warning"] .mob-bar-gauge__tick--edge-right {
+  background: var(--GaugeInvertStatusWarning);
+}
+
+.mob-bar-gauge[data-status="warning"] .mob-bar-gauge__value {
+  color: var(--GaugeInvertStatusWarning);
+}
+
+.mob-bar-gauge[data-status="warning"] .mob-bar-gauge__range--warning-min,
+.mob-bar-gauge[data-status="warning"] .mob-bar-gauge__range--warning-max {
+  opacity: 1;
+}
+
+/* --- Critical state ---------------------------------------------- */
+/* XAML: VisualState "Critical" — edge ticks turn Critical color,
+   value text turns Critical, critical range zones go full opacity */
+.mob-bar-gauge[data-status="critical"] .mob-bar-gauge__tick--edge-left,
+.mob-bar-gauge[data-status="critical"] .mob-bar-gauge__tick--edge-right {
+  background: var(--GaugeInvertStatusCritical);
+}
+
+.mob-bar-gauge[data-status="critical"] .mob-bar-gauge__value {
+  color: var(--GaugeInvertStatusCritical);
+}
+
+.mob-bar-gauge[data-status="critical"] .mob-bar-gauge__range--critical-min,
+.mob-bar-gauge[data-status="critical"] .mob-bar-gauge__range--critical-max {
+  opacity: 1;
+}
+
+
+/* =================================================================
+   BAR GAUGE — VERTICAL ORIENTATION
+   Source: Mobius_UI_Gauges_Templates_BarGaugeTemplateVertical
+   Style.Trigger: Orientation=Vertical swaps template.
+
+   Row heights:
+     Row 0: 12px — label
+     Row 1: 24px — value
+     Row 2: 12px — max label
+     Row 3: 5px  — spacer
+     Row 4: *    — bar (fill available)
+     Row 5: 12px — min label
+   ================================================================= */
+
+.mob-bar-gauge--vertical {
+  width: auto;
+  align-items: center;
+  min-height: 120px;
+}
+
+/* XAML: LabelStatusIcon Row="0" HorizontalAlignment="Center" */
+.mob-bar-gauge--vertical .mob-bar-gauge__header {
+  justify-content: center;
+  height: auto;
+  margin-bottom: 0;
+}
+
+/* XAML: TextBlock Row="1" HorizontalAlignment="Center" */
+.mob-bar-gauge--vertical .mob-bar-gauge__value {
+  text-align: center;
+  margin: 3px 0;
+}
+
+/* Vertical track — 10px wide, fills available height */
+.mob-bar-gauge--vertical .mob-bar-gauge__track-wrapper {
+  width: 10px;
+  height: 100%;
+  min-height: 60px;
+  margin-top: 5px;
+  flex: 1;
+}
+
+/* Range labels stack vertically: max on top, min on bottom */
+.mob-bar-gauge--vertical .mob-bar-gauge__range-labels {
+  flex-direction: column-reverse;
+  align-items: center;
+  margin-top: 0;
+}

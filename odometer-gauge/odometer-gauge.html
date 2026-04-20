@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mobius — Odometer Gauge</title>
+  <link id="mob-theme-link" rel="stylesheet" href="../styles/color-theme-tokens/LightTheme.css" />
+  <link rel="stylesheet" href="../styles/css/main.css" />
+  <link rel="stylesheet" href="odometer-gauge.css" />
+  <style>
+    body { margin: 0; }
+    h1 { font: var(--font-hdrMd); margin: 0 0 32px; color: var(--ForegroundStrong); }
+    h2 { font: var(--font-hdrSm); margin: 40px 0 16px; color: var(--ForegroundStrong); }
+    h2:first-of-type { margin-top: 0; }
+    .demo-list { display: flex; flex-direction: column; gap: var(--spacing-section-to-header); max-width: 540px; }
+    .section-divider { border: none; border-top: var(--line-size) solid var(--InnerLines); margin: 32px 0 0; }
+    .demo-caption { font: var(--font-bodySm); color: var(--ForegroundDisabled); margin-top: var(--spacing-label-to-control-sm); }
+  </style>
+</head>
+<body>
+
+<div class="mob-layout">
+
+  <!-- Sidebar Navigation -->
+  <nav class="mob-nav" id="mob-nav"></nav>
+
+  <!-- Main Content -->
+  <main class="mob-layout__content">
+
+<h1>Odometer Gauge</h1>
+
+
+<!-- =========================================================
+     SECTION 1: ODOMETER GAUGE — DEFAULT
+     Source: OdometerGauge.xaml — 2-row grid
+     Row 0: 7 digit cells in horizontal StackPanel
+     Row 1: Label + Unit row
+     ========================================================= -->
+
+<h2>Default</h2>
+
+<div class="demo-list">
+
+  <!-- XAML: OdometerGauge — ValueString="0012345",
+       LabelString="Odometer", UnitString="miles" -->
+  <div class="mob-odometer-gauge">
+    <!-- XAML: StackPanel Orientation="Horizontal" Row="0" — 7 digit cells -->
+    <div class="mob-odometer-gauge__digits">
+      <!-- XAML: Border Width="26" Height="34" — Digits 6-1
+           Background=GaugeDataBackgroundBrush
+           BorderBrush=GaugeDataTickBrush Opacity=0.5 -->
+      <span class="mob-odometer-gauge__digit">0</span>
+      <span class="mob-odometer-gauge__digit">0</span>
+      <span class="mob-odometer-gauge__digit">1</span>
+      <span class="mob-odometer-gauge__digit">2</span>
+      <span class="mob-odometer-gauge__digit">3</span>
+      <span class="mob-odometer-gauge__digit">4</span>
+      <!-- XAML: Digit 0 (last) — Background=GaugeBackgroundBrush
+           BorderBrush=GaugeStatusCriticalBrush Opacity=0.25 -->
+      <span class="mob-odometer-gauge__digit mob-odometer-gauge__digit--tenths">5</span>
+    </div>
+    <!-- XAML: Grid Row="1" — [*][20px][Auto] -->
+    <div class="mob-odometer-gauge__info">
+      <!-- XAML: TextBlock Col="0" Foreground=GaugeForegroundBrush -->
+      <span class="mob-odometer-gauge__label">Odometer</span>
+      <!-- XAML: TextBlock Col="2" Foreground=GaugeForegroundBrush -->
+      <span class="mob-odometer-gauge__unit">miles</span>
+    </div>
+  </div>
+  <p class="demo-caption">Default — 6 standard digits + 1 tenths digit (red-bordered)</p>
+
+
+  <!-- XAML: OdometerGauge — ValueString="0845672",
+       LabelString="Engine Hours", UnitString="hrs" -->
+  <div class="mob-odometer-gauge">
+    <div class="mob-odometer-gauge__digits">
+      <span class="mob-odometer-gauge__digit">0</span>
+      <span class="mob-odometer-gauge__digit">8</span>
+      <span class="mob-odometer-gauge__digit">4</span>
+      <span class="mob-odometer-gauge__digit">5</span>
+      <span class="mob-odometer-gauge__digit">6</span>
+      <span class="mob-odometer-gauge__digit">7</span>
+      <span class="mob-odometer-gauge__digit mob-odometer-gauge__digit--tenths">2</span>
+    </div>
+    <div class="mob-odometer-gauge__info">
+      <span class="mob-odometer-gauge__label">Engine Hours</span>
+      <span class="mob-odometer-gauge__unit">hrs</span>
+    </div>
+  </div>
+  <p class="demo-caption">Engine hours variant</p>
+
+
+  <!-- XAML: OdometerGauge — ValueString="0000000" (zero state),
+       LabelString="Trip", UnitString="km" -->
+  <div class="mob-odometer-gauge">
+    <div class="mob-odometer-gauge__digits">
+      <span class="mob-odometer-gauge__digit">0</span>
+      <span class="mob-odometer-gauge__digit">0</span>
+      <span class="mob-odometer-gauge__digit">0</span>
+      <span class="mob-odometer-gauge__digit">0</span>
+      <span class="mob-odometer-gauge__digit">0</span>
+      <span class="mob-odometer-gauge__digit">0</span>
+      <span class="mob-odometer-gauge__digit mob-odometer-gauge__digit--tenths">0</span>
+    </div>
+    <div class="mob-odometer-gauge__info">
+      <span class="mob-odometer-gauge__label">Trip</span>
+      <span class="mob-odometer-gauge__unit">km</span>
+    </div>
+  </div>
+  <p class="demo-caption">Zero state — all digits at 0</p>
+
+</div>
+
+
+  </main>
+
+</div>
+
+<script src="../js/nav.js"></script>
+</body>
+</html>

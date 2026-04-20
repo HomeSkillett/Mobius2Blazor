@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mobius — Boom Feedback Gauge</title>
+  <link id="mob-theme-link" rel="stylesheet" href="../styles/color-theme-tokens/LightTheme.css" />
+  <link rel="stylesheet" href="../styles/css/main.css" />
+  <link rel="stylesheet" href="boom-feedback-gauge.css" />
+  <style>
+    body { margin: 0; }
+    h1 { font: var(--font-hdrMd); margin: 0 0 32px; color: var(--ForegroundStrong); }
+    h2 { font: var(--font-hdrSm); margin: 40px 0 16px; color: var(--ForegroundStrong); }
+    h2:first-of-type { margin-top: 0; }
+    .demo-list { display: flex; flex-direction: column; gap: var(--spacing-section-to-header); max-width: 540px; }
+    .section-divider { border: none; border-top: var(--line-size) solid var(--InnerLines); margin: 32px 0 0; }
+    .demo-caption { font: var(--font-bodySm); color: var(--ForegroundDisabled); margin-top: var(--spacing-label-to-control-sm); }
+    .demo-row { display: flex; gap: 48px; align-items: flex-end; flex-wrap: wrap; }
+  </style>
+</head>
+<body>
+
+<div class="mob-layout">
+
+  <!-- Sidebar Navigation -->
+  <nav class="mob-nav" id="mob-nav"></nav>
+
+  <!-- Main Content -->
+  <main class="mob-layout__content">
+
+<h1>Boom Feedback Gauge</h1>
+
+
+<!-- =========================================================
+     SECTION 1: BOOM ANGLES
+     Source: BoomFeedbackGauge.xaml
+     Canvas 48x48 with chassis Path + rotating boom arm Canvas.
+     BoomAngle bound via RotateTransform.
+
+     Showing 3 static angle snapshots since WPF binding
+     is dynamic. Pivot: RenderTransformOrigin="1.2,1.0"
+     (near right side of the 34x10 arm canvas).
+     ========================================================= -->
+
+<h2>Boom Angle Positions</h2>
+
+<div class="demo-list">
+  <div class="demo-row">
+
+    <!-- ===== Boom Level (0 degrees) ===== -->
+    <!-- XAML: BoomFeedbackGauge BoomAngle="0"
+         RotateTransform.Angle=0 -->
+    <div class="mob-boom-feedback-gauge-group">
+      <div class="mob-boom-feedback-gauge">
+        <!-- XAML: Canvas Width=48 Height=48 -->
+        <svg class="mob-boom-feedback-gauge__svg" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+
+          <!-- XAML: Path — main chassis (wheels + frame)
+               Fill=GaugeDataTickBrush
+               Simplified representation of boom vehicle body -->
+          <g class="mob-boom-feedback-gauge__chassis">
+            <!-- Chassis body -->
+            <rect x="18" y="24" width="28" height="12" rx="2" />
+            <!-- Cab -->
+            <rect x="36" y="18" width="10" height="6" rx="1" />
+            <!-- Left wheel -->
+            <circle cx="24" cy="40" r="4" />
+            <circle cx="24" cy="40" r="2" fill="var(--GaugeInvertBackground)" />
+            <!-- Right wheel -->
+            <circle cx="40" cy="40" r="4" />
+            <circle cx="40" cy="40" r="2" fill="var(--GaugeInvertBackground)" />
+            <!-- Axle line -->
+            <rect x="22" y="36" width="20" height="1" />
+          </g>
+
+          <!-- XAML: Canvas Width=34 Height=10, Canvas.Left=1, Canvas.Top=11
+               RenderTransformOrigin="1.2,1.0"
+               RotateTransform.Angle=0 (level) -->
+          <g class="mob-boom-feedback-gauge__arm" transform="rotate(0, 40, 21)">
+            <!-- XAML: Path — boom arm rectangle
+                 Fill=GaugeValueForegroundBrush -->
+            <rect class="mob-boom-feedback-gauge__arm-bar"
+                  x="6" y="19" width="34" height="4" rx="1" />
+            <!-- XAML: Path — boom cab/head at tip
+                 Fill=GaugeValueForegroundBrush
+                 Counter-rotation keeps head upright -->
+            <rect class="mob-boom-feedback-gauge__arm-head"
+                  x="2" y="16" width="8" height="10" rx="1" />
+          </g>
+
+        </svg>
+      </div>
+      <span class="mob-boom-feedback-gauge__label">0° Level</span>
+    </div>
+
+    <!-- ===== Boom Up (30 degrees) ===== -->
+    <!-- XAML: BoomFeedbackGauge BoomAngle="30"
+         RotateTransform.Angle=30 (negative Y = up in screen coords) -->
+    <div class="mob-boom-feedback-gauge-group">
+      <div class="mob-boom-feedback-gauge">
+        <svg class="mob-boom-feedback-gauge__svg" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+
+          <!-- XAML: Path — chassis (same as above) -->
+          <g class="mob-boom-feedback-gauge__chassis">
+            <rect x="18" y="24" width="28" height="12" rx="2" />
+            <rect x="36" y="18" width="10" height="6" rx="1" />
+            <circle cx="24" cy="40" r="4" />
+            <circle cx="24" cy="40" r="2" fill="var(--GaugeInvertBackground)" />
+            <circle cx="40" cy="40" r="4" />
+            <circle cx="40" cy="40" r="2" fill="var(--GaugeInvertBackground)" />
+            <rect x="22" y="36" width="20" height="1" />
+          </g>
+
+          <!-- XAML: RotateTransform.Angle=30 (boom raised)
+               Pivot at (40, 21) — near right end of arm -->
+          <g class="mob-boom-feedback-gauge__arm" transform="rotate(-30, 40, 21)">
+            <rect class="mob-boom-feedback-gauge__arm-bar"
+                  x="6" y="19" width="34" height="4" rx="1" />
+            <!-- Counter-rotated head to stay upright -->
+            <g transform="rotate(30, 6, 21)">
+              <rect class="mob-boom-feedback-gauge__arm-head"
+                    x="2" y="16" width="8" height="10" rx="1" />
+            </g>
+          </g>
+
+        </svg>
+      </div>
+      <span class="mob-boom-feedback-gauge__label">30° Up</span>
+    </div>
+
+    <!-- ===== Boom Down (-15 degrees) ===== -->
+    <!-- XAML: BoomFeedbackGauge BoomAngle="-15"
+         RotateTransform.Angle=-15 (positive Y = down) -->
+    <div class="mob-boom-feedback-gauge-group">
+      <div class="mob-boom-feedback-gauge">
+        <svg class="mob-boom-feedback-gauge__svg" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+
+          <!-- XAML: Path — chassis -->
+          <g class="mob-boom-feedback-gauge__chassis">
+            <rect x="18" y="24" width="28" height="12" rx="2" />
+            <rect x="36" y="18" width="10" height="6" rx="1" />
+            <circle cx="24" cy="40" r="4" />
+            <circle cx="24" cy="40" r="2" fill="var(--GaugeInvertBackground)" />
+            <circle cx="40" cy="40" r="4" />
+            <circle cx="40" cy="40" r="2" fill="var(--GaugeInvertBackground)" />
+            <rect x="22" y="36" width="20" height="1" />
+          </g>
+
+          <!-- XAML: RotateTransform.Angle=-15 (boom lowered) -->
+          <g class="mob-boom-feedback-gauge__arm" transform="rotate(15, 40, 21)">
+            <rect class="mob-boom-feedback-gauge__arm-bar"
+                  x="6" y="19" width="34" height="4" rx="1" />
+            <g transform="rotate(-15, 6, 21)">
+              <rect class="mob-boom-feedback-gauge__arm-head"
+                    x="2" y="16" width="8" height="10" rx="1" />
+            </g>
+          </g>
+
+        </svg>
+      </div>
+      <span class="mob-boom-feedback-gauge__label">-15° Down</span>
+    </div>
+
+  </div>
+  <p class="demo-caption">BoomAngle bound to RotateTransform.Angle — pivot at RenderTransformOrigin="1.2,1.0"</p>
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 2: BOOM AT EXTREME ANGLE
+     Source: Same XAML, showing max rotation for reference
+     ========================================================= -->
+
+<h2>Extreme Angle (60° Up)</h2>
+
+<div class="demo-list">
+  <div class="demo-row">
+
+    <!-- XAML: BoomFeedbackGauge BoomAngle="60" -->
+    <div class="mob-boom-feedback-gauge-group">
+      <div class="mob-boom-feedback-gauge">
+        <svg class="mob-boom-feedback-gauge__svg" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+          <g class="mob-boom-feedback-gauge__chassis">
+            <rect x="18" y="24" width="28" height="12" rx="2" />
+            <rect x="36" y="18" width="10" height="6" rx="1" />
+            <circle cx="24" cy="40" r="4" />
+            <circle cx="24" cy="40" r="2" fill="var(--GaugeInvertBackground)" />
+            <circle cx="40" cy="40" r="4" />
+            <circle cx="40" cy="40" r="2" fill="var(--GaugeInvertBackground)" />
+            <rect x="22" y="36" width="20" height="1" />
+          </g>
+
+          <!-- XAML: RotateTransform.Angle=60 -->
+          <g class="mob-boom-feedback-gauge__arm" transform="rotate(-60, 40, 21)">
+            <rect class="mob-boom-feedback-gauge__arm-bar"
+                  x="6" y="19" width="34" height="4" rx="1" />
+            <g transform="rotate(60, 6, 21)">
+              <rect class="mob-boom-feedback-gauge__arm-head"
+                    x="2" y="16" width="8" height="10" rx="1" />
+            </g>
+          </g>
+        </svg>
+      </div>
+      <span class="mob-boom-feedback-gauge__label">60° Up</span>
+    </div>
+
+  </div>
+  <p class="demo-caption">Extreme boom angle — head counter-rotates to stay upright per XAML counter-rotation transform</p>
+</div>
+
+
+  </main>
+
+</div>
+
+<script src="../js/nav.js"></script>
+</body>
+</html>

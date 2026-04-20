@@ -1,0 +1,93 @@
+/* =============================================
+   TEXT GAUGE
+   Source: TextGauge.xaml
+   Asi.Gauges.Client.UI
+
+   A simple text-only gauge that displays a large
+   numeric value with optional label and unit.
+
+   Layout (from XAML ControlTemplate):
+     Grid — 3 rows: [12px] [8px gap] [*]
+       Row 0: LabelStatusIcon (label text)
+       Row 2: Grid — 2 columns: [*] [Auto]
+         Col 0: Viewbox > TextBlock FontSize=32 UltraLight (HeadingLg)
+         Col 1: Unit TextBlock, top-aligned, 3px left margin
+
+   Gauge colors use the "GaugeInvert" token set.
+   ============================================= */
+
+
+/* --- Root container --------------------------------------------- */
+/* XAML: ControlTemplate Grid — 3 rows [12px][8px][*] */
+.mob-text-gauge {
+  display: flex;
+  flex-direction: column;
+}
+
+
+/* --- Label row (Row 0) ------------------------------------------ */
+/* XAML: LabelStatusIcon — Row="0"
+   Margin="-2,-3,-2,-5", Foreground=GaugeInvertForeground */
+.mob-text-gauge__label {
+  font: var(--font-default);
+  color: var(--GaugeInvertForeground);
+  margin: -2px -3px -2px -5px;
+  line-height: 12px;
+}
+
+/* XAML: VisualState ShowLabel — label visible (default) */
+/* XAML: VisualState HideLabel — label collapsed */
+.mob-text-gauge--hide-label .mob-text-gauge__label {
+  display: none;
+}
+
+
+/* --- Spacer between label and value (Row 1) --------------------- */
+/* XAML: RowDefinition Height="8" — gap between label and value row */
+.mob-text-gauge__label + .mob-text-gauge__value-row {
+  margin-top: 8px;
+}
+
+/* When label is hidden, no gap needed */
+.mob-text-gauge--hide-label .mob-text-gauge__value-row {
+  margin-top: 0;
+}
+
+
+/* --- Value row (Row 2) ------------------------------------------ */
+/* XAML: Grid Row="2" — 2 columns [*][Auto] */
+.mob-text-gauge__value-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+}
+
+
+/* --- Value text (Col 0) ----------------------------------------- */
+/* XAML: Viewbox > TextBlock FontSize="32" FontWeight="UltraLight"
+   Foreground=GaugeValueForegroundBrush, Style=HeadingLg */
+.mob-text-gauge__value {
+  font: var(--font-hdrLg);
+  font-weight: 200;
+  color: var(--GaugeInvertValueForeground);
+  line-height: 1;
+}
+
+
+/* --- Unit text (Col 1) ------------------------------------------ */
+/* XAML: TextBlock VerticalAlignment="Top"
+   Margin.Left=3, Margin.Vertical=-2
+   Foreground=GaugeValueForegroundBrush */
+.mob-text-gauge__unit {
+  font: var(--font-default);
+  color: var(--GaugeInvertValueForeground);
+  margin-left: 3px;
+  margin-top: -2px;
+  margin-bottom: -2px;
+}
+
+/* XAML: VisualState ShowUnits — unit visible (default) */
+/* XAML: VisualState HideUnits — unit collapsed */
+.mob-text-gauge--hide-units .mob-text-gauge__unit {
+  display: none;
+}

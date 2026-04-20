@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mobius — Status Gauge</title>
+  <link id="mob-theme-link" rel="stylesheet" href="../styles/color-theme-tokens/LightTheme.css" />
+  <link rel="stylesheet" href="../styles/css/main.css" />
+  <link rel="stylesheet" href="../status-icon/status-icon.css" />
+  <link rel="stylesheet" href="status-gauge.css" />
+  <style>
+    body { margin: 0; }
+    h1 {
+      font: var(--font-hdrMd);
+      margin: 0 0 32px;
+      color: var(--ForegroundStrong);
+    }
+    h2 {
+      font: var(--font-hdrSm);
+      margin: 40px 0 16px;
+      color: var(--ForegroundStrong);
+    }
+    h2:first-of-type { margin-top: 0; }
+    .demo-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-section-to-header);
+      max-width: 540px;
+    }
+    .section-divider {
+      border: none;
+      border-top: var(--line-size) solid var(--InnerLines);
+      margin: 32px 0 0;
+    }
+    .demo-caption {
+      font: var(--font-bodySm);
+      color: var(--ForegroundDisabled);
+      margin-top: var(--spacing-label-to-control-sm);
+    }
+    /* Vertical demo needs constrained height */
+    .vertical-row {
+      display: flex;
+      gap: var(--spacing-section-to-section);
+      height: 180px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="mob-layout">
+
+  <!-- Sidebar Navigation -->
+  <nav class="mob-nav" id="mob-nav"></nav>
+
+  <!-- Main Content -->
+  <main class="mob-layout__content">
+
+<h1>Status Gauge</h1>
+
+
+<!-- =========================================================
+     SECTION 1: STATUS GAUGE — COMPOSITE LAYOUT
+     Source: StatusGauge.xaml — Mobius_UI_Gauges_Templates_StatusGauge
+     C#:     StatusGauge.cs extends GaugeBase
+
+     Grid: [*] [10px gap] [Auto, MinWidth=100]
+       Col 0 — StatusDisplay (pluggable content, 48px tall)
+       Col 2 — Info panel: value+unit on top, icon+label on bottom
+     ========================================================= -->
+
+<h2>Status Gauge with Bar Display</h2>
+
+<div class="demo-list">
+
+  <!-- ===== OK state ===== -->
+  <!-- XAML: StatusGauge root Grid — StatusDisplay=BarGauge,
+       StatusIndicator=OK, ValueString="72", UnitString="RPM",
+       LabelString="Engine Speed" -->
+  <div class="mob-status-gauge">
+
+    <!-- XAML: ContentControl — StatusDisplay (Col 0)
+         Here: an embedded horizontal BarGauge -->
+    <div class="mob-status-gauge__display">
+
+      <!-- XAML: BarGauge — CurrentValue=72, Min=0, Max=100,
+           WarningMin=20, WarningMax=85, CriticalMin=10, CriticalMax=95 -->
+      <div class="mob-bar-gauge" data-status="ok">
+
+        <!-- XAML: Grid Row="0" — LabelStatusIcon + _displayValue -->
+        <div class="mob-bar-gauge__header">
+          <div class="mob-bar-gauge__label-group">
+            <!-- XAML: StatusIcon inside LabelStatusIcon -->
+            <span class="mob-status-icon mob-status-icon--sm" data-status="ok" aria-label="OK"></span>
+            <!-- XAML: LabelString on LabelStatusIcon -->
+            <span class="mob-bar-gauge__label">Engine Speed</span>
+          </div>
+          <!-- XAML: TextBlock x:Name="_displayValue" -->
+          <span class="mob-bar-gauge__value">72</span>
+        </div>
+
+        <!-- XAML: Grid Row="3" — bar track + ticks + ranges + progress -->
+        <div class="mob-bar-gauge__track-wrapper">
+          <!-- XAML: Rectangle Grid.Row="0" Grid.RowSpan="2" Width="1" HorizontalAlignment="Right" -->
+          <div class="mob-bar-gauge__tick--edge-right"></div>
+          <!-- XAML: Rectangle Row="1" Width="1" Height="7" HorizontalAlignment="Left" -->
+          <div class="mob-bar-gauge__tick--edge-left"></div>
+
+          <!-- XAML: Rectangle ColumnSpan="9" Fill=GaugeDataBackgroundBrush -->
+          <div class="mob-bar-gauge__track"></div>
+
+          <!-- XAML: 5 tick StackPanels at columns 0,2,4,6,8 -->
+          <div class="mob-bar-gauge__ticks">
+            <span class="mob-bar-gauge__tick"></span>
+            <span class="mob-bar-gauge__tick"></span>
+            <span class="mob-bar-gauge__tick"></span>
+            <span class="mob-bar-gauge__tick"></span>
+            <span class="mob-bar-gauge__tick"></span>
+          </div>
+
+          <!-- XAML: PART_RangeBar Grid — Critical/Warning range rectangles -->
+          <div class="mob-bar-gauge__ranges">
+            <!-- XAML: PART_CriticalMinimum — left 0%, width 10% -->
+            <div class="mob-bar-gauge__range mob-bar-gauge__range--critical-min"
+                 style="left: 0%; width: 10%;"></div>
+            <!-- XAML: PART_WarningMinimum — left 10%, width 10% -->
+            <div class="mob-bar-gauge__range mob-bar-gauge__range--warning-min"
+                 style="left: 10%; width: 10%;"></div>
+            <!-- XAML: PART_WarningMaximum — right edge, width 15% -->
+            <div class="mob-bar-gauge__range mob-bar-gauge__range--warning-max"
+                 style="right: 5%; width: 10%;"></div>
+            <!-- XAML: PART_CriticalMaximum — far right, width 5% -->
+            <div class="mob-bar-gauge__range mob-bar-gauge__range--critical-max"
+                 style="right: 0%; width: 5%;"></div>
+          </div>
+
+          <!-- XAML: ProgressBar — custom template with fill + needle -->
+          <div class="mob-bar-gauge__fill-area">
+            <div class="mob-bar-gauge__fill" style="--bar-progress: 72%;">
+              <!-- XAML: Rectangle Fill=GaugeDataForegroundBrush Opacity=0.5 -->
+              <div class="mob-bar-gauge__fill-bar"></div>
+              <!-- XAML: Rectangle Width="2" Height="14" — needle -->
+              <div class="mob-bar-gauge__needle"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- XAML: TextBlock Grid.Row="4" — Min/Max labels -->
+        <div class="mob-bar-gauge__range-labels">
+          <span class="mob-bar-gauge__range-label">0</span>
+          <span class="mob-bar-gauge__range-label">100</span>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- XAML: Grid Grid.Column="2" — info panel -->
+    <div class="mob-status-gauge__info">
+      <!-- XAML: StackPanel VerticalAlignment="Top" — value + unit -->
+      <div class="mob-status-gauge__value-row">
+        <!-- XAML: TextBlock Style=HeadingMd Text=ValueString -->
+        <span class="mob-status-gauge__value">72</span>
+        <!-- XAML: TextBlock Text=UnitString, Margin.Left="6" -->
+        <span class="mob-status-gauge__unit">RPM</span>
+      </div>
+      <!-- XAML: StackPanel VerticalAlignment="Bottom" — icon + label -->
+      <div class="mob-status-gauge__label-row">
+        <!-- XAML: Grid 12x12 Margin="0,0,5,0" > StatusIcon -->
+        <span class="mob-status-icon mob-status-icon--sm" data-status="ok" aria-label="OK"></span>
+        <!-- XAML: TextBlock Text=LabelString Converter=CaseConverter -->
+        <span class="mob-status-gauge__label">ENGINE SPEED</span>
+      </div>
+    </div>
+
+  </div>
+  <p class="demo-caption">OK state — value within normal range</p>
+
+
+  <!-- ===== Warning state ===== -->
+  <!-- XAML: StatusGauge — StatusIndicator=Warning, ValueString="88",
+       UnitString="PSI", LabelString="Oil Pressure" -->
+  <div class="mob-status-gauge">
+
+    <div class="mob-status-gauge__display">
+      <!-- XAML: BarGauge — data-status="warning" triggers edge tick + value color change -->
+      <div class="mob-bar-gauge" data-status="warning">
+        <div class="mob-bar-gauge__header">
+          <div class="mob-bar-gauge__label-group">
+            <span class="mob-status-icon mob-status-icon--sm" data-status="warning" aria-label="Warning"></span>
+            <span class="mob-bar-gauge__label">Oil Pressure</span>
+          </div>
+          <span class="mob-bar-gauge__value">88</span>
+        </div>
+
+        <div class="mob-bar-gauge__track-wrapper">
+          <div class="mob-bar-gauge__tick--edge-right"></div>
+          <div class="mob-bar-gauge__tick--edge-left"></div>
+          <div class="mob-bar-gauge__track"></div>
+          <div class="mob-bar-gauge__ticks">
+            <span class="mob-bar-gauge__tick"></span>
+            <span class="mob-bar-gauge__tick"></span>
+            <span class="mob-bar-gauge__tick"></span>
+            <span class="mob-bar-gauge__tick"></span>
+            <span class="mob-bar-gauge__tick"></span>
+          </div>
+          <div class="mob-bar-gauge__ranges">
+            <div class="mob-bar-gauge__range mob-bar-gauge__range--critical-min"
+                 style="left: 0%; width: 5%;"></div>
+            <div class="mob-bar-gauge__range mob-bar-gauge__range--warning-min"
+                 style="left: 5%; width: 10%;"></div>
+            <div class="mob-bar-gauge__range mob-bar-gauge__range--warning-max"
+                 style="right: 5%; width: 10%;"></div>
+            <div class="mob-bar-gauge__range mob-bar-gauge__range--critical-max"
+                 style="right: 0%; width: 5%;"></div>
+          </div>
+          <div class="mob-bar-gauge__fill-area">
+            <div class="mob-bar-gauge__fill" style="--bar-progress: 88%;">
+              <div class="mob-bar-gauge__fill-bar"></div>
+              <div class="mob-bar-gauge__needle"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mob-bar-gauge__range-labels">
+          <span class="mob-bar-gauge__range-label">0</span>
+          <span class="mob-bar-gauge__range-label">100</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="mob-status-gauge__info">
+      <div class="mob-status-gauge__value-row">
+        <span class="mob-status-gauge__value">88</span>
+        <span class="mob-status-gauge__unit">PSI</span>
+      </div>
+      <div class="mob-status-gauge__label-row">
+        <span class="mob-status-icon mob-status-icon--sm" data-status="warning" aria-label="Warning"></span>
+        <span class="mob-status-gauge__label">OIL PRESSURE</span>
+      </div>
+    </div>
+
+  </div>
+  <p class="demo-caption">Warning state — value in warning range, edge ticks + value turn orange</p>
+
+
+  <!-- ===== Critical state ===== -->
+  <!-- XAML: StatusGauge — StatusIndicator=Critical, ValueString="97",
+       UnitString="°C", LabelString="Coolant Temp" -->
+  <div class="mob-status-gauge">
+
+    <div class="mob-status-gauge__display">
+      <div class="mob-bar-gauge" data-status="critical">
+        <div class="mob-bar-gauge__header">
+          <div class="mob-bar-gauge__label-group">
+            <span class="mob-status-icon mob-status-icon--sm" data-status="critical" aria-label="Critical"></span>
+            <span class="mob-bar-gauge__label">Coolant Temp</span>
+          </div>
+          <span class="mob-bar-gauge__value">97</span>
+        </div>
+
+        <div class="mob-bar-gauge__track-wrapper">
+          <div class="mob-bar-gauge__tick--edge-right"></div>
+          <div class="mob-bar-gauge__tick--edge-left"></div>
+          <div class="mob-bar-gauge__track"></div>
+          <div class="mob-bar-gauge__ticks">
+            <span class="mob-bar-gauge__tick"></span>
+            <span class="mob-bar-gauge__tick"></span>
+            <span class="mob-bar-gauge__tick"></span>
+            <span class="mob-bar-gauge__tick"></span>
+            <span class="mob-bar-gauge__tick"></span>
+          </div>
+          <div class="mob-bar-gauge__ranges">
+            <div class="mob-bar-gauge__range mob-bar-gauge__range--critical-min"
+                 style="left: 0%; width: 5%;"></div>
+            <div class="mob-bar-gauge__range mob-bar-gauge__range--warning-min"
+                 style="left: 5%; width: 10%;"></div>
+            <div class="mob-bar-gauge__range mob-bar-gauge__range--warning-max"
+                 style="right: 10%; width: 10%;"></div>
+            <div class="mob-bar-gauge__range mob-bar-gauge__range--critical-max"
+                 style="right: 0%; width: 10%;"></div>
+          </div>
+          <div class="mob-bar-gauge__fill-area">
+            <div class="mob-bar-gauge__fill" style="--bar-progress: 97%;">
+              <div class="mob-bar-gauge__fill-bar"></div>
+              <div class="mob-bar-gauge__needle"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mob-bar-gauge__range-labels">
+          <span class="mob-bar-gauge__range-label">0</span>
+          <span class="mob-bar-gauge__range-label">100</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="mob-status-gauge__info">
+      <div class="mob-status-gauge__value-row">
+        <span class="mob-status-gauge__value">97</span>
+        <span class="mob-status-gauge__unit">°C</span>
+      </div>
+      <div class="mob-status-gauge__label-row">
+        <span class="mob-status-icon mob-status-icon--sm" data-status="critical" aria-label="Critical"></span>
+        <span class="mob-status-gauge__label">COOLANT TEMP</span>
+      </div>
+    </div>
+
+  </div>
+  <p class="demo-caption">Critical state — value in critical range, edge ticks + value turn red, range zones full opacity</p>
+
+
+  <!-- ===== Unknown state ===== -->
+  <!-- XAML: StatusGauge — StatusIndicator=Unknown, ValueString="--",
+       UnitString="V", LabelString="Battery" -->
+  <div class="mob-status-gauge">
+
+    <div class="mob-status-gauge__display">
+      <div class="mob-bar-gauge" data-status="unknown">
+        <div class="mob-bar-gauge__header">
+          <div class="mob-bar-gauge__label-group">
+            <span class="mob-status-icon mob-status-icon--sm" data-status="unknown" aria-label="Unknown"></span>
+            <span class="mob-bar-gauge__label">Battery</span>
+          </div>
+          <span class="mob-bar-gauge__value">--</span>
+        </div>
+
+        <div class="mob-bar-gauge__track-wrapper">
+          <div class="mob-bar-gauge__tick--edge-right"></div>
+          <div class="mob-bar-gauge__tick--edge-left"></div>
+          <div class="mob-bar-gauge__track"></div>
+          <div class="mob-bar-gauge__ticks">
+            <span class="mob-bar-gauge__tick"></span>
+            <span class="mob-bar-gauge__tick"></span>
+            <span class="mob-bar-gauge__tick"></span>
+            <span class="mob-bar-gauge__tick"></span>
+            <span class="mob-bar-gauge__tick"></span>
+          </div>
+          <div class="mob-bar-gauge__ranges">
+            <div class="mob-bar-gauge__range mob-bar-gauge__range--critical-min"
+                 style="left: 0%; width: 8%;"></div>
+            <div class="mob-bar-gauge__range mob-bar-gauge__range--critical-max"
+                 style="right: 0%; width: 8%;"></div>
+          </div>
+          <div class="mob-bar-gauge__fill-area">
+            <div class="mob-bar-gauge__fill" style="--bar-progress: 0%;">
+              <div class="mob-bar-gauge__fill-bar"></div>
+              <div class="mob-bar-gauge__needle"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mob-bar-gauge__range-labels">
+          <span class="mob-bar-gauge__range-label">0</span>
+          <span class="mob-bar-gauge__range-label">14.4</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="mob-status-gauge__info">
+      <div class="mob-status-gauge__value-row">
+        <span class="mob-status-gauge__value">--</span>
+        <span class="mob-status-gauge__unit">V</span>
+      </div>
+      <div class="mob-status-gauge__label-row">
+        <span class="mob-status-icon mob-status-icon--sm" data-status="unknown" aria-label="Unknown"></span>
+        <span class="mob-status-gauge__label">BATTERY</span>
+      </div>
+    </div>
+
+  </div>
+  <p class="demo-caption">Unknown state — no data, default tick colors, critical zones at half opacity</p>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 2: STATUS GAUGE — NO UNITS
+     Source: StatusGauge.cs — ShowUnits=false hides UnitString
+     XAML: Visibility="{TemplateBinding ShowUnits,
+           Converter={StaticResource BoolToVisOrCollapsedConverter}}"
+     ========================================================= -->
+
+<h2>Without Units</h2>
+
+<div class="demo-list">
+
+  <!-- XAML: StatusGauge ShowUnits="False" — UnitString TextBlock collapsed -->
+  <div class="mob-status-gauge">
+    <div class="mob-status-gauge__display">
+      <div class="mob-bar-gauge" data-status="ok">
+        <div class="mob-bar-gauge__header">
+          <div class="mob-bar-gauge__label-group">
+            <span class="mob-status-icon mob-status-icon--sm" data-status="ok" aria-label="OK"></span>
+            <span class="mob-bar-gauge__label">Signal Strength</span>
+          </div>
+          <span class="mob-bar-gauge__value">4</span>
+        </div>
+        <div class="mob-bar-gauge__track-wrapper">
+          <div class="mob-bar-gauge__tick--edge-right"></div>
+          <div class="mob-bar-gauge__tick--edge-left"></div>
+          <div class="mob-bar-gauge__track"></div>
+          <div class="mob-bar-gauge__ticks">
+            <span class="mob-bar-gauge__tick"></span>
+            <span class="mob-bar-gauge__tick"></span>
+            <span class="mob-bar-gauge__tick"></span>
+            <span class="mob-bar-gauge__tick"></span>
+            <span class="mob-bar-gauge__tick"></span>
+          </div>
+          <div class="mob-bar-gauge__fill-area">
+            <div class="mob-bar-gauge__fill" style="--bar-progress: 80%;">
+              <div class="mob-bar-gauge__fill-bar"></div>
+              <div class="mob-bar-gauge__needle"></div>
+            </div>
+          </div>
+        </div>
+        <div class="mob-bar-gauge__range-labels">
+          <span class="mob-bar-gauge__range-label">0</span>
+          <span class="mob-bar-gauge__range-label">5</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="mob-status-gauge__info">
+      <div class="mob-status-gauge__value-row">
+        <span class="mob-status-gauge__value">4</span>
+        <!-- UnitString omitted: ShowUnits=false -->
+      </div>
+      <div class="mob-status-gauge__label-row">
+        <span class="mob-status-icon mob-status-icon--sm" data-status="ok" aria-label="OK"></span>
+        <span class="mob-status-gauge__label">SIGNAL STRENGTH</span>
+      </div>
+    </div>
+  </div>
+  <p class="demo-caption">ShowUnits="False" — unit text hidden via BoolToVisOrCollapsedConverter</p>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 3: STATUS GAUGE — WITH INDICATOR DISPLAY
+     Source: IndicatorGaugeTemplate.xaml + StatusGauge.xaml
+     When StatusDisplay contains an IndicatorGauge instead
+     of a BarGauge, the left slot shows an icon indicator.
+     ========================================================= -->
+
+<h2>With Indicator Display</h2>
+
+<div class="demo-list">
+
+  <!-- XAML: StatusGauge — StatusDisplay=IndicatorGauge
+       IndicatorGauge shows a large icon glyph as the visual -->
+  <div class="mob-status-gauge">
+    <!-- XAML: ContentControl — StatusDisplay=IndicatorGauge icon -->
+    <div class="mob-status-gauge__display" style="justify-content: center;">
+      <!-- XAML: IndicatorGauge — ActiveIconData=Gauge_CheckEngine glyph
+           IconState=Active, large icon display -->
+      <span class="mob-status-icon mob-status-icon--lg" data-status="ok" aria-label="OK"></span>
+    </div>
+    <div class="mob-status-gauge__info">
+      <div class="mob-status-gauge__value-row">
+        <span class="mob-status-gauge__value">OK</span>
+      </div>
+      <div class="mob-status-gauge__label-row">
+        <span class="mob-status-icon mob-status-icon--sm" data-status="ok" aria-label="OK"></span>
+        <span class="mob-status-gauge__label">CHECK ENGINE</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="mob-status-gauge">
+    <div class="mob-status-gauge__display" style="justify-content: center;">
+      <span class="mob-status-icon mob-status-icon--lg" data-status="critical" aria-label="Critical"></span>
+    </div>
+    <div class="mob-status-gauge__info">
+      <div class="mob-status-gauge__value-row">
+        <span class="mob-status-gauge__value">FAULT</span>
+      </div>
+      <div class="mob-status-gauge__label-row">
+        <span class="mob-status-icon mob-status-icon--sm" data-status="critical" aria-label="Critical"></span>
+        <span class="mob-status-gauge__label">E-BRAKE</span>
+      </div>
+    </div>
+  </div>
+
+  <p class="demo-caption">StatusDisplay slot holds an IndicatorGauge icon instead of a BarGauge</p>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 4: BAR GAUGE — STANDALONE HORIZONTAL
+     Source: BarGauge.xaml — Mobius_UI_Gauges_Templates_BarGaugeTemplateHorizontal
+     C#:     BarGauge.xaml.cs extends RangeGaugeBase
+     ========================================================= -->
+
+<h2>Bar Gauge (Standalone Horizontal)</h2>
+
+<div class="demo-list" style="max-width: 400px;">
+
+  <!-- XAML: BarGauge Orientation="Horizontal" — standalone, not inside StatusGauge -->
+  <div class="mob-bar-gauge" data-status="ok">
+    <div class="mob-bar-gauge__header">
+      <div class="mob-bar-gauge__label-group">
+        <span class="mob-status-icon mob-status-icon--sm" data-status="ok" aria-label="OK"></span>
+        <span class="mob-bar-gauge__label">Fuel Level</span>
+      </div>
+      <span class="mob-bar-gauge__value">65%</span>
+    </div>
+    <div class="mob-bar-gauge__track-wrapper">
+      <div class="mob-bar-gauge__tick--edge-right"></div>
+      <div class="mob-bar-gauge__tick--edge-left"></div>
+      <div class="mob-bar-gauge__track"></div>
+      <div class="mob-bar-gauge__ticks">
+        <span class="mob-bar-gauge__tick"></span>
+        <span class="mob-bar-gauge__tick"></span>
+        <span class="mob-bar-gauge__tick"></span>
+        <span class="mob-bar-gauge__tick"></span>
+        <span class="mob-bar-gauge__tick"></span>
+      </div>
+      <div class="mob-bar-gauge__ranges">
+        <div class="mob-bar-gauge__range mob-bar-gauge__range--critical-min"
+             style="left: 0%; width: 10%;"></div>
+        <div class="mob-bar-gauge__range mob-bar-gauge__range--warning-min"
+             style="left: 10%; width: 10%;"></div>
+      </div>
+      <div class="mob-bar-gauge__fill-area">
+        <div class="mob-bar-gauge__fill" style="--bar-progress: 65%;">
+          <div class="mob-bar-gauge__fill-bar"></div>
+          <div class="mob-bar-gauge__needle"></div>
+        </div>
+      </div>
+    </div>
+    <div class="mob-bar-gauge__range-labels">
+      <span class="mob-bar-gauge__range-label">E</span>
+      <span class="mob-bar-gauge__range-label">F</span>
+    </div>
+  </div>
+
+  <div class="mob-bar-gauge" data-status="warning">
+    <div class="mob-bar-gauge__header">
+      <div class="mob-bar-gauge__label-group">
+        <span class="mob-status-icon mob-status-icon--sm" data-status="warning" aria-label="Warning"></span>
+        <span class="mob-bar-gauge__label">Hydraulic Pressure</span>
+      </div>
+      <span class="mob-bar-gauge__value">2,450 PSI</span>
+    </div>
+    <div class="mob-bar-gauge__track-wrapper">
+      <div class="mob-bar-gauge__tick--edge-right"></div>
+      <div class="mob-bar-gauge__tick--edge-left"></div>
+      <div class="mob-bar-gauge__track"></div>
+      <div class="mob-bar-gauge__ticks">
+        <span class="mob-bar-gauge__tick"></span>
+        <span class="mob-bar-gauge__tick"></span>
+        <span class="mob-bar-gauge__tick"></span>
+        <span class="mob-bar-gauge__tick"></span>
+        <span class="mob-bar-gauge__tick"></span>
+      </div>
+      <div class="mob-bar-gauge__ranges">
+        <div class="mob-bar-gauge__range mob-bar-gauge__range--critical-min"
+             style="left: 0%; width: 5%;"></div>
+        <div class="mob-bar-gauge__range mob-bar-gauge__range--warning-min"
+             style="left: 5%; width: 10%;"></div>
+        <div class="mob-bar-gauge__range mob-bar-gauge__range--warning-max"
+             style="right: 5%; width: 10%;"></div>
+        <div class="mob-bar-gauge__range mob-bar-gauge__range--critical-max"
+             style="right: 0%; width: 5%;"></div>
+      </div>
+      <div class="mob-bar-gauge__fill-area">
+        <div class="mob-bar-gauge__fill" style="--bar-progress: 82%;">
+          <div class="mob-bar-gauge__fill-bar"></div>
+          <div class="mob-bar-gauge__needle"></div>
+        </div>
+      </div>
+    </div>
+    <div class="mob-bar-gauge__range-labels">
+      <span class="mob-bar-gauge__range-label">0</span>
+      <span class="mob-bar-gauge__range-label">3,000</span>
+    </div>
+  </div>
+
+  <div class="mob-bar-gauge" data-status="critical">
+    <div class="mob-bar-gauge__header">
+      <div class="mob-bar-gauge__label-group">
+        <span class="mob-status-icon mob-status-icon--sm" data-status="critical" aria-label="Critical"></span>
+        <span class="mob-bar-gauge__label">Retarder Temp</span>
+      </div>
+      <span class="mob-bar-gauge__value">285 °F</span>
+    </div>
+    <div class="mob-bar-gauge__track-wrapper">
+      <div class="mob-bar-gauge__tick--edge-right"></div>
+      <div class="mob-bar-gauge__tick--edge-left"></div>
+      <div class="mob-bar-gauge__track"></div>
+      <div class="mob-bar-gauge__ticks">
+        <span class="mob-bar-gauge__tick"></span>
+        <span class="mob-bar-gauge__tick"></span>
+        <span class="mob-bar-gauge__tick"></span>
+        <span class="mob-bar-gauge__tick"></span>
+        <span class="mob-bar-gauge__tick"></span>
+      </div>
+      <div class="mob-bar-gauge__ranges">
+        <div class="mob-bar-gauge__range mob-bar-gauge__range--warning-max"
+             style="right: 10%; width: 10%;"></div>
+        <div class="mob-bar-gauge__range mob-bar-gauge__range--critical-max"
+             style="right: 0%; width: 10%;"></div>
+      </div>
+      <div class="mob-bar-gauge__fill-area">
+        <div class="mob-bar-gauge__fill" style="--bar-progress: 95%;">
+          <div class="mob-bar-gauge__fill-bar"></div>
+          <div class="mob-bar-gauge__needle"></div>
+        </div>
+      </div>
+    </div>
+    <div class="mob-bar-gauge__range-labels">
+      <span class="mob-bar-gauge__range-label">0</span>
+      <span class="mob-bar-gauge__range-label">300</span>
+    </div>
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 5: BAR GAUGE — VERTICAL ORIENTATION
+     Source: BarGauge.xaml — Mobius_UI_Gauges_Templates_BarGaugeTemplateVertical
+     Trigger: Orientation=Vertical swaps template via Style.Triggers
+     ========================================================= -->
+
+<h2>Bar Gauge (Vertical)</h2>
+
+<div class="vertical-row">
+
+  <!-- XAML: BarGauge Orientation="Vertical" — rotated bar layout -->
+  <div class="mob-bar-gauge mob-bar-gauge--vertical" data-status="ok">
+    <div class="mob-bar-gauge__header">
+      <div class="mob-bar-gauge__label-group">
+        <span class="mob-status-icon mob-status-icon--sm" data-status="ok" aria-label="OK"></span>
+        <span class="mob-bar-gauge__label">RPM</span>
+      </div>
+    </div>
+    <span class="mob-bar-gauge__value">1,850</span>
+    <div class="mob-bar-gauge__track-wrapper">
+      <div class="mob-bar-gauge__track"></div>
+      <div class="mob-bar-gauge__ticks">
+        <span class="mob-bar-gauge__tick"></span>
+        <span class="mob-bar-gauge__tick"></span>
+        <span class="mob-bar-gauge__tick"></span>
+        <span class="mob-bar-gauge__tick"></span>
+        <span class="mob-bar-gauge__tick"></span>
+      </div>
+      <div class="mob-bar-gauge__fill-area">
+        <div class="mob-bar-gauge__fill" style="--bar-progress: 62%;">
+          <div class="mob-bar-gauge__fill-bar"></div>
+          <div class="mob-bar-gauge__needle"></div>
+        </div>
+      </div>
+    </div>
+    <div class="mob-bar-gauge__range-labels">
+      <span class="mob-bar-gauge__range-label">0</span>
+      <span class="mob-bar-gauge__range-label">3,000</span>
+    </div>
+  </div>
+
+  <div class="mob-bar-gauge mob-bar-gauge--vertical" data-status="warning">
+    <div class="mob-bar-gauge__header">
+      <div class="mob-bar-gauge__label-group">
+        <span class="mob-status-icon mob-status-icon--sm" data-status="warning" aria-label="Warning"></span>
+        <span class="mob-bar-gauge__label">PSI</span>
+      </div>
+    </div>
+    <span class="mob-bar-gauge__value">88</span>
+    <div class="mob-bar-gauge__track-wrapper">
+      <div class="mob-bar-gauge__track"></div>
+      <div class="mob-bar-gauge__ticks">
+        <span class="mob-bar-gauge__tick"></span>
+        <span class="mob-bar-gauge__tick"></span>
+        <span class="mob-bar-gauge__tick"></span>
+        <span class="mob-bar-gauge__tick"></span>
+        <span class="mob-bar-gauge__tick"></span>
+      </div>
+      <div class="mob-bar-gauge__fill-area">
+        <div class="mob-bar-gauge__fill" style="--bar-progress: 88%;">
+          <div class="mob-bar-gauge__fill-bar"></div>
+          <div class="mob-bar-gauge__needle"></div>
+        </div>
+      </div>
+    </div>
+    <div class="mob-bar-gauge__range-labels">
+      <span class="mob-bar-gauge__range-label">0</span>
+      <span class="mob-bar-gauge__range-label">100</span>
+    </div>
+  </div>
+
+  <div class="mob-bar-gauge mob-bar-gauge--vertical" data-status="critical">
+    <div class="mob-bar-gauge__header">
+      <div class="mob-bar-gauge__label-group">
+        <span class="mob-status-icon mob-status-icon--sm" data-status="critical" aria-label="Critical"></span>
+        <span class="mob-bar-gauge__label">°C</span>
+      </div>
+    </div>
+    <span class="mob-bar-gauge__value">97</span>
+    <div class="mob-bar-gauge__track-wrapper">
+      <div class="mob-bar-gauge__track"></div>
+      <div class="mob-bar-gauge__ticks">
+        <span class="mob-bar-gauge__tick"></span>
+        <span class="mob-bar-gauge__tick"></span>
+        <span class="mob-bar-gauge__tick"></span>
+        <span class="mob-bar-gauge__tick"></span>
+        <span class="mob-bar-gauge__tick"></span>
+      </div>
+      <div class="mob-bar-gauge__fill-area">
+        <div class="mob-bar-gauge__fill" style="--bar-progress: 97%;">
+          <div class="mob-bar-gauge__fill-bar"></div>
+          <div class="mob-bar-gauge__needle"></div>
+        </div>
+      </div>
+    </div>
+    <div class="mob-bar-gauge__range-labels">
+      <span class="mob-bar-gauge__range-label">0</span>
+      <span class="mob-bar-gauge__range-label">100</span>
+    </div>
+  </div>
+
+</div>
+<p class="demo-caption">Orientation="Vertical" — Style.Trigger swaps to BarGaugeTemplateVertical</p>
+
+
+  </main>
+
+</div>
+
+<script src="../js/nav.js"></script>
+</body>
+</html>

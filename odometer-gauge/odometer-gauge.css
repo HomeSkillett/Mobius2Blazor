@@ -1,0 +1,98 @@
+/* =============================================
+   ODOMETER GAUGE
+   Source: OdometerGauge.xaml
+   Asi.Gauges.Client.UI
+
+   A mechanical-style odometer with 7 digit cells
+   and a label/unit row below.
+
+   Layout (from XAML ControlTemplate):
+     Grid — 2 rows
+       Row 0: StackPanel Horizontal — 7 digit cells (26x34px each)
+         Digits 6-1: BG=GaugeDataBackground, Border=GaugeDataTick @0.5
+         Digit 0 (last): BG=GaugeBackground, Border=GaugeStatusCritical @0.25
+       Row 1: Grid — 3 columns [*][20px gap][Auto]
+         Col 0: Label (GaugeForeground)
+         Col 2: Unit (GaugeForeground)
+
+   Gauge colors use the "GaugeInvert" token set.
+   ============================================= */
+
+
+/* --- Root container --------------------------------------------- */
+/* XAML: ControlTemplate root Grid — 2 rows */
+.mob-odometer-gauge {
+  display: flex;
+  flex-direction: column;
+}
+
+
+/* --- Digit row (Row 0) ------------------------------------------ */
+/* XAML: StackPanel Orientation="Horizontal" — 7 digit cells */
+.mob-odometer-gauge__digits {
+  display: flex;
+  flex-direction: row;
+}
+
+
+/* --- Individual digit cell -------------------------------------- */
+/* XAML: Border Width="26" Height="34" BorderThickness="1"
+   Digits 6-1: Background=GaugeDataBackgroundBrush
+   BorderBrush=GaugeDataTickBrush, Opacity=0.5 */
+.mob-odometer-gauge__digit {
+  width: 26px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--GaugeInvertDataBackground);
+  border: 1px solid color-mix(in srgb, var(--GaugeInvertDataTick) 50%, transparent);
+  margin-right: 1px;
+  font: var(--font-hdrSm);
+  color: var(--GaugeInvertValueForeground);
+}
+
+/* Remove right margin on last digit */
+.mob-odometer-gauge__digit:last-child {
+  margin-right: 0;
+}
+
+
+/* --- Tenths digit (Digit 0, last cell) -------------------------- */
+/* XAML: Border — Background=GaugeBackgroundBrush
+   BorderBrush=GaugeStatusCriticalBrush, Opacity=0.25 */
+.mob-odometer-gauge__digit--tenths {
+  background: var(--GaugeInvertBackground);
+  border-color: color-mix(in srgb, var(--GaugeInvertStatusCritical) 25%, transparent);
+  color: var(--GaugeInvertForeground);
+}
+
+
+/* --- Info row (Row 1) ------------------------------------------- */
+/* XAML: Grid Row="1" — 3 columns [*][20px][Auto] */
+.mob-odometer-gauge__info {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-top: var(--size-6);
+  gap: 20px;
+}
+
+
+/* --- Label text (Col 0) ----------------------------------------- */
+/* XAML: TextBlock Foreground=GaugeForegroundBrush */
+.mob-odometer-gauge__label {
+  font: var(--font-default);
+  color: var(--GaugeInvertForeground);
+  flex: 1;
+  min-width: 0;
+}
+
+
+/* --- Unit text (Col 2) ------------------------------------------ */
+/* XAML: TextBlock Foreground=GaugeForegroundBrush */
+.mob-odometer-gauge__unit {
+  font: var(--font-default);
+  color: var(--GaugeInvertForeground);
+  flex-shrink: 0;
+}

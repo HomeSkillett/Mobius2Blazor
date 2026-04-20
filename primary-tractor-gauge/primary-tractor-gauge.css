@@ -1,0 +1,320 @@
+/* =============================================
+   PRIMARY TRACTOR GAUGE
+   Source: PrimaryTractorGauge.xaml (780 lines)
+   Asi.Gauges.Client.UI
+
+   Gear/direction/RPM display for tractor controls.
+   Shows shuttle direction, gear selection, and
+   speed/RPM readouts in a 5-column layout.
+
+   XAML ControlTemplate structure:
+     Grid — 5 columns [40px][*][Auto][*][92px]
+       Col 0: Shuttle/Direction arrows + mode label
+       Col 2: Gear display + lock + increment/decrement
+       Col 4: Speed/RPM values + lock icons
+
+   DirectionStates: Forward, Reverse, Park, Neutral
+   FixedGearStates: UnlockedGear, LockedGear
+   FixedRPMStates: UnlockedRPM, LockedRPM
+   ============================================= */
+
+
+/* --- Root wrapper ------------------------------------------------ */
+/* XAML: Grid — 5-column layout */
+.mob-tractor-gauge {
+  display: grid;
+  grid-template-columns: 40px 1fr auto 1fr 92px;
+  align-items: stretch;
+  min-height: 160px;
+  color: var(--GaugeInvertForeground);
+  background: var(--GaugeInvertBackground);
+  padding: var(--spacing-label-to-control);
+  border-radius: 4px;
+}
+
+
+/* === COLUMN 0: SHUTTLE / DIRECTION =============================== */
+/* XAML: Grid.Column="0" — Forward/Reverse arrows + shuttle indicator */
+.mob-tractor-gauge__shuttle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--size-6);
+}
+
+/* XAML: Forward arrow — up arrow, top of shuttle column */
+.mob-tractor-gauge__arrow {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mob-tractor-gauge__arrow svg {
+  width: 16px;
+  height: 16px;
+  fill: var(--GaugeInvertDataTick);
+  transition: fill var(--transition-fade) ease-out;
+}
+
+/* XAML: Arrow active state — direction is engaged */
+.mob-tractor-gauge__arrow--active svg {
+  fill: var(--GaugeInvertValueForeground);
+}
+
+/* XAML: Shuttle indicator — center P/N/F/R icons (complex SVG paths) */
+.mob-tractor-gauge__shuttle-icon {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font: var(--font-hdrMd);
+  color: var(--GaugeInvertValueForeground);
+  font-weight: 300;
+}
+
+/* XAML: Auto/Manual/Teleop mode label — bottom of shuttle */
+.mob-tractor-gauge__mode-label {
+  font: var(--font-Sm);
+  color: var(--GaugeInvertForeground);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  text-align: center;
+}
+
+
+/* === COLUMN 1: SPACER ============================================ */
+/* XAML: Grid.Column="1" — flexible spacer */
+.mob-tractor-gauge__spacer {
+  min-width: 8px;
+}
+
+
+/* === COLUMN 2: GEARS ============================================= */
+/* XAML: Grid.Column="2" — Forward gear, reverse gear, lock, buttons */
+.mob-tractor-gauge__gears {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--size-6);
+}
+
+/* XAML: Forward gear — large Viewbox (60px height), UltraLight text */
+.mob-tractor-gauge__gear-value {
+  font: var(--font-hdrLg);
+  font-weight: 100;
+  color: var(--GaugeInvertValueForeground);
+  line-height: 1;
+  min-width: 40px;
+  text-align: center;
+}
+
+/* XAML: Gear inactive (non-current direction) */
+.mob-tractor-gauge__gear-value--inactive {
+  color: var(--GaugeInvertDataTick);
+  font-size: 24px;
+}
+
+/* XAML: "Forward" / "Reverse" label under each gear */
+.mob-tractor-gauge__gear-label {
+  font: var(--font-Sm);
+  color: var(--GaugeInvertForeground);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  text-align: center;
+}
+
+/* XAML: Gear lock button — 50px with gear icon + lock/unlock overlay */
+.mob-tractor-gauge__gear-lock {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 2px solid var(--GaugeInvertDataTick);
+  background: var(--GaugeInvertBackground);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+}
+
+.mob-tractor-gauge__gear-lock svg {
+  width: 24px;
+  height: 24px;
+  fill: var(--GaugeInvertForeground);
+}
+
+/* XAML: FixedGearStates — LockedGear */
+.mob-tractor-gauge__gear-lock--locked {
+  border-color: var(--GaugeInvertInteraction);
+}
+
+.mob-tractor-gauge__gear-lock--locked svg {
+  fill: var(--GaugeInvertInteraction);
+}
+
+/* XAML: Lock icon overlay — small lock indicator on gear button */
+.mob-tractor-gauge__lock-badge {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--GaugeInvertBackground);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mob-tractor-gauge__lock-badge svg {
+  width: 10px;
+  height: 10px;
+}
+
+/* XAML: Gear increment/decrement buttons — 28px circles,
+   GaugeInteractionBrush border, arrow icons */
+.mob-tractor-gauge__gear-buttons {
+  display: flex;
+  gap: var(--size-6);
+}
+
+.mob-tractor-gauge__gear-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid var(--GaugeInvertInteraction);
+  background: var(--GaugeInvertBackground);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.mob-tractor-gauge__gear-btn svg {
+  width: 12px;
+  height: 12px;
+  fill: var(--GaugeInvertInteraction);
+}
+
+
+/* === COLUMN 4: SPEED / RPM ======================================= */
+/* XAML: Grid.Column="4" — RPM + velocity values, 92px wide */
+.mob-tractor-gauge__readouts {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  gap: var(--spacing-label-to-control);
+}
+
+/* XAML: RPM section — value + label + lock icon */
+.mob-tractor-gauge__rpm {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+/* XAML: RPM value — HeadingLg style */
+.mob-tractor-gauge__rpm-value {
+  font: var(--font-hdrLg);
+  color: var(--GaugeInvertValueForeground);
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* XAML: RPM lock icon button */
+.mob-tractor-gauge__rpm-lock {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.mob-tractor-gauge__rpm-lock svg {
+  width: 16px;
+  height: 16px;
+  fill: var(--GaugeInvertForeground);
+}
+
+/* XAML: FixedRPMStates — LockedRPM: lock icon highlighted */
+.mob-tractor-gauge__rpm-lock--locked svg {
+  fill: var(--GaugeInvertInteraction);
+}
+
+/* XAML: RPM label */
+.mob-tractor-gauge__rpm-label {
+  font: var(--font-Sm);
+  color: var(--GaugeInvertForeground);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* XAML: Set RPM value — InformationRed, shown when RPM is locked */
+.mob-tractor-gauge__rpm-setpoint {
+  font: var(--font-hdrSm);
+  color: var(--InformationRed);
+}
+
+/* XAML: Velocity section — value + unit label */
+.mob-tractor-gauge__velocity {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+/* XAML: Velocity value — HeadingLg, UltraLight */
+.mob-tractor-gauge__velocity-value {
+  font: var(--font-hdrLg);
+  font-weight: 100;
+  color: var(--GaugeInvertValueForeground);
+  line-height: 1;
+}
+
+/* XAML: Velocity unit label */
+.mob-tractor-gauge__velocity-label {
+  font: var(--font-Sm);
+  color: var(--GaugeInvertForeground);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+
+/* === DIRECTION STATES ============================================ */
+
+/* XAML: DirectionStates — Forward */
+.mob-tractor-gauge[data-direction="forward"] .mob-tractor-gauge__arrow--up svg {
+  fill: var(--GaugeInvertValueForeground);
+}
+
+.mob-tractor-gauge[data-direction="forward"] .mob-tractor-gauge__arrow--down svg {
+  fill: var(--GaugeInvertDataTick);
+}
+
+/* XAML: DirectionStates — Reverse */
+.mob-tractor-gauge[data-direction="reverse"] .mob-tractor-gauge__arrow--up svg {
+  fill: var(--GaugeInvertDataTick);
+}
+
+.mob-tractor-gauge[data-direction="reverse"] .mob-tractor-gauge__arrow--down svg {
+  fill: var(--GaugeInvertValueForeground);
+}
+
+/* XAML: DirectionStates — Park */
+.mob-tractor-gauge[data-direction="park"] .mob-tractor-gauge__arrow--up svg,
+.mob-tractor-gauge[data-direction="park"] .mob-tractor-gauge__arrow--down svg {
+  fill: var(--GaugeInvertDataTick);
+}
+
+/* XAML: DirectionStates — Neutral */
+.mob-tractor-gauge[data-direction="neutral"] .mob-tractor-gauge__arrow--up svg,
+.mob-tractor-gauge[data-direction="neutral"] .mob-tractor-gauge__arrow--down svg {
+  fill: var(--GaugeInvertDataTick);
+}

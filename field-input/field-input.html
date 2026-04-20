@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mobius — FieldInput</title>
+  <link id="mob-theme-link" rel="stylesheet" href="../styles/color-theme-tokens/LightTheme.css" />
+  <link rel="stylesheet" href="../styles/css/main.css" />
+  <link rel="stylesheet" href="field-input.css" />
+  <style>
+    body { margin: 0; }
+    h1 {
+      font: var(--font-hdrMd);
+      margin: 0 0 32px;
+      color: var(--ForegroundStrong);
+    }
+    h2 {
+      font: var(--font-hdrSm);
+      margin: 40px 0 16px;
+      color: var(--ForegroundStrong);
+    }
+    h2:first-of-type { margin-top: 0; }
+    h3 {
+      font: var(--font-default);
+      font-weight: var(--font-bold);
+      margin: 24px 0 12px;
+      color: var(--ForegroundStrong);
+    }
+    .states-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-field);
+      max-width: 540px;
+    }
+    .section-divider {
+      border: none;
+      border-top: var(--line-size) solid var(--InnerLines);
+      margin: 32px 0 0;
+    }
+    /* Invert demo panel — dark-ish background to show contrast */
+    .invert-panel {
+      background-color: var(--BackgroundInvertStrong);
+      border: var(--border-width) solid var(--InnerLines);
+      padding: var(--size-24);
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="mob-layout">
+
+  <!-- Sidebar Navigation -->
+  <nav class="mob-nav" id="mob-nav"></nav>
+
+  <!-- Main Content -->
+  <main class="mob-layout__content">
+
+<h1>FieldInput</h1>
+<p style="font: var(--font-default); color: var(--ForegroundPrimary); margin: -20px 0 32px; max-width: 600px;">
+  The primary text input component in Mobius (382 uses across the codebase). Combines a label, text input, optional unit display, and validation feedback into a single control. Supports numeric entry with min/max ranges, unit-of-measure conversion, hex input, and keyboard commit/revert behavior. Extends <code style="font-family: var(--font-monospace);">Control</code> and wraps <code style="font-family: var(--font-monospace);">TouchTextBox</code>. Source: <code style="font-family: var(--font-monospace);">FieldInput.xaml</code> + <code style="font-family: var(--font-monospace);">FieldInput.cs</code>.
+</p>
+
+
+<!-- =========================================================
+     SECTION 1: HORIZONTAL TEMPLATE — INTERACTION STATES
+     Source: FieldInput.xaml — Mobius_UI_Common_Templates_FieldInputHorizontal
+     Style:  Mobius_UI_Resources_Styles_FieldInput (default)
+     ========================================================= -->
+
+<h2>Horizontal Template (Default)</h2>
+<p style="font: var(--font-default); color: var(--ForegroundPrimary); margin: 0 0 16px; max-width: 600px;">
+  The most common layout. Four-column grid: label, status icon, text input, unit label. Label column uses <code style="font-family: var(--font-monospace);">SharedSizeGroup</code> so labels in the same form section align to the widest. Default label min-width is 130px. XAML key: <code style="font-family: var(--font-monospace);">Mobius_UI_Common_Templates_FieldInputHorizontal</code>.
+</p>
+
+<h3>Interaction States</h3>
+
+<div class="states-list">
+
+  <!-- ===== Default ===== -->
+  <!-- XAML: FieldInputHorizontal — Normal state
+       Grid.Column 0: TextBlock (LabelText)
+       Grid.Column 2: TouchTextBox (PART_ContentTextBox)
+       Background=BackgroundInputBrush, BorderBrush=BackgroundInputOutlineBrush -->
+  <div class="mob-field">
+    <label class="mob-field__label">Label:</label>
+    <div class="mob-field__body">
+      <input class="mob-input" type="text" value="Default" />
+    </div>
+  </div>
+
+  <!-- ===== Hover ===== -->
+  <!-- XAML: MouseOver VisualState — border + foreground -> MouseOverPrimary -->
+  <div class="mob-field">
+    <label class="mob-field__label">Label:</label>
+    <div class="mob-field__body">
+      <input class="mob-input is-hovered" type="text" value="Hover" />
+    </div>
+  </div>
+
+  <!-- ===== Focused ===== -->
+  <!-- XAML: Focused VisualState + FocusVisualStyle — 2px MouseOverPrimary outline -->
+  <div class="mob-field">
+    <label class="mob-field__label">Label:</label>
+    <div class="mob-field__body">
+      <input class="mob-input is-focused" type="text" value="Focused" />
+    </div>
+  </div>
+
+  <!-- ===== Read-only ===== -->
+  <!-- XAML: ReadOnly VisualState — background transparent, foreground -> ForegroundPrimary -->
+  <div class="mob-field">
+    <label class="mob-field__label">Label:</label>
+    <div class="mob-field__body">
+      <input class="mob-input" type="text" value="Read-only" readonly />
+    </div>
+  </div>
+
+  <!-- ===== Placeholder ===== -->
+  <!-- XAML: TouchTextBox Placeholder property — ForegroundWatermark, PlaceholderOpacity -->
+  <div class="mob-field">
+    <label class="mob-field__label">Label:</label>
+    <div class="mob-field__body">
+      <input class="mob-input" type="text" placeholder="Placeholder" />
+    </div>
+  </div>
+
+  <!-- ===== Disabled ===== -->
+  <!-- XAML: Disabled VisualState — opacity -> DisabledOpacity, background transparent -->
+  <div class="mob-field">
+    <label class="mob-field__label">Label:</label>
+    <div class="mob-field__body">
+      <input class="mob-input" type="text" value="Disabled" disabled />
+    </div>
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 2: HORIZONTAL — VISUAL STATES (Warning / Working)
+     Source: FieldInput.xaml — VisualStateGroup "ShowStates"
+             _validationVisualElement border overlay
+     ========================================================= -->
+
+<h3>Visual States</h3>
+<p style="font: var(--font-default); color: var(--ForegroundPrimary); margin: 0 0 16px; max-width: 600px;">
+  FieldInput has three validation visual states controlled by the <code style="font-family: var(--font-monospace);">ShowStates</code> VisualStateGroup. Warning shows an orange border + exclamation icon when input is out of range. Working shows a green border + checkmark when the value has been edited but not yet committed (Enter to commit, Esc to revert). Error/invalid is from the base TextBox validation template.
+</p>
+
+<div class="states-list">
+
+  <!-- ===== Error / Invalid ===== -->
+  <!-- XAML: _validationElement — InformationRedBrush border, 2px -->
+  <div class="mob-field">
+    <label class="mob-field__label">Error:</label>
+    <div class="mob-field__body">
+      <input class="mob-input is-invalid" type="text" value="Invalid entry" />
+    </div>
+  </div>
+
+  <!-- ===== Warning (with icon) ===== -->
+  <!-- XAML: ShowWarning — _validationVisualElement -> InformationOrange, 2px
+       WarningSymbol Path: Icon_Status_WarningSm, Fill=InformationOrangeBrush
+       DetailsPopUp wraps the icon for tooltip behavior -->
+  <div class="mob-field mob-field--warning">
+    <label class="mob-field__label">Warning:</label>
+    <!-- XAML: DetailsPopUp > Grid > Path (WarningSymbol) -->
+    <span class="mob-field__icon mob-field__icon--warning">
+      <svg viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M5,0L0,9.2L1.8,12h8.3L12,9.2L7,0H5z M7,10H5V8h2V10z M7,7H5V3h2V7z" />
+      </svg>
+    </span>
+    <div class="mob-field__body">
+      <input class="mob-input is-warning" type="text" value="Needs attention" />
+    </div>
+  </div>
+
+  <!-- ===== Working / OK (with icon) ===== -->
+  <!-- XAML: ShowWorking — _validationVisualElement -> InformationGreen, 2px
+       WorkingSymbol Path: Icon_Status_OkaySm, Fill=InformationGreenBrush -->
+  <div class="mob-field mob-field--working">
+    <label class="mob-field__label">Working:</label>
+    <!-- XAML: DetailsPopUp > Grid > Path (WorkingSymbol) -->
+    <span class="mob-field__icon mob-field__icon--working">
+      <svg viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M12,6c0,3.3-2.7,6-6,6S0,9.3,0,6s2.7-6,6-6S12,2.7,12,6z M2,5v1.4L4.6,9h0.8L10,4.4V3H8.6L5,6.6L3.4,5H2z" />
+      </svg>
+    </span>
+    <div class="mob-field__body">
+      <input class="mob-input is-working" type="text" value="Validated" />
+    </div>
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 3: HORIZONTAL — UNIT LABEL
+     Source: FieldInput.xaml — PART_UnitLabel (Grid.Column 3)
+             VisualStateGroup "ShowUnitLabelStates"
+     ========================================================= -->
+
+<h3>Unit Label</h3>
+<p style="font: var(--font-default); color: var(--ForegroundPrimary); margin: 0 0 16px; max-width: 600px;">
+  Displays the current unit of measure (ft, mm, deg, sec, etc.) to the right of the input. Driven by the <code style="font-family: var(--font-monospace);">PhysicalType</code> property and the app's <code style="font-family: var(--font-monospace);">UnitsManager</code> (metric vs imperial). Visibility controlled by <code style="font-family: var(--font-monospace);">ShowUnitLabelStates</code>. Dims to 50% opacity when the field is disabled.
+</p>
+
+<div class="states-list">
+
+  <!-- ===== With unit label ===== -->
+  <!-- XAML: PART_UnitLabel — TextBlock, Margin.Left=Size6 -->
+  <div class="mob-field">
+    <label class="mob-field__label">Distance:</label>
+    <div class="mob-field__body">
+      <input class="mob-input" type="text" value="1500" />
+      <span class="mob-field__unit">mm</span>
+    </div>
+  </div>
+
+  <div class="mob-field">
+    <label class="mob-field__label">Angle:</label>
+    <div class="mob-field__body">
+      <input class="mob-input" type="text" value="45" />
+      <span class="mob-field__unit">deg</span>
+    </div>
+  </div>
+
+  <!-- ===== Unit label + warning state ===== -->
+  <!-- XAML: ShowWarning with PART_UnitLabel visible -->
+  <div class="mob-field mob-field--warning">
+    <label class="mob-field__label">Speed:</label>
+    <span class="mob-field__icon mob-field__icon--warning">
+      <svg viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M5,0L0,9.2L1.8,12h8.3L12,9.2L7,0H5z M7,10H5V8h2V10z M7,7H5V3h2V7z" />
+      </svg>
+    </span>
+    <div class="mob-field__body">
+      <input class="mob-input is-warning" type="text" value="999" />
+      <span class="mob-field__unit">km/h</span>
+    </div>
+  </div>
+
+  <!-- ===== Disabled with unit ===== -->
+  <!-- XAML: IsEnabled=False — unit label Opacity dims to 0.5 -->
+  <div class="mob-field">
+    <label class="mob-field__label">Distance:</label>
+    <div class="mob-field__body">
+      <input class="mob-input" type="text" value="0" disabled />
+      <span class="mob-field__unit">mm</span>
+    </div>
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 4: HORIZONTAL — HELPER TEXT
+     Source: GeneralConfiguration.xaml — TextBlock below input
+     ========================================================= -->
+
+<h3>Helper Text</h3>
+<p style="font: var(--font-default); color: var(--ForegroundPrimary); margin: 0 0 16px; max-width: 600px;">
+  Descriptive hint text below the input, aligned to the input's left edge (not the label). Used in configuration forms to clarify expected format. Not part of the FieldInput control itself, but a common companion pattern in the XAML views (e.g. <code style="font-family: var(--font-monospace);">GeneralConfiguration.xaml</code>).
+</p>
+
+<div class="states-list">
+
+  <!-- XAML: TextBlock below IP input, Margin="0,0,0,12" -->
+  <div class="mob-field">
+    <label class="mob-field__label">Address:</label>
+    <div class="mob-field__body-wrap">
+      <div class="mob-field__body">
+        <input class="mob-input" type="text" value="127.0.0.1" />
+      </div>
+      <span class="mob-field__helper">(IP Address : Optional Port)</span>
+    </div>
+  </div>
+
+  <!-- Helper text + warning state -->
+  <div class="mob-field">
+    <label class="mob-field__label">Address:</label>
+    <span class="mob-field__icon mob-field__icon--warning">
+      <svg viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M5,0L0,9.2L1.8,12h8.3L12,9.2L7,0H5z M7,10H5V8h2V10z M7,7H5V3h2V7z" />
+      </svg>
+    </span>
+    <div class="mob-field__body-wrap">
+      <div class="mob-field__body">
+        <input class="mob-input is-warning" type="text" value="not-an-ip" />
+      </div>
+      <span class="mob-field__helper">(IP Address : Optional Port)</span>
+    </div>
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 5: HORIZONTAL — AUTO-WIDTH LABEL
+     Source: FieldInput with LabelMinWidth="0"
+             PositionHistory/DataTemplates/Templates.xaml
+     ========================================================= -->
+
+<h3>Auto-Width Label</h3>
+<p style="font: var(--font-default); color: var(--ForegroundPrimary); margin: 0 0 16px; max-width: 600px;">
+  When <code style="font-family: var(--font-monospace);">LabelMinWidth="0"</code>, the label column auto-sizes to its content instead of the default 130px minimum. Wrap sibling fields in <code style="font-family: var(--font-monospace);">.mob-field-group</code> to use CSS Grid subgrid alignment, mirroring XAML's <code style="font-family: var(--font-monospace);">SharedSizeGroup</code> behavior. Used in compact panels like Position History settings.
+</p>
+
+<div class="states-list">
+
+  <!-- XAML: SharedSizeGroup — wrapping div aligns labels to widest -->
+  <div class="mob-field-group" style="min-width: 300px;">
+
+    <!-- XAML: FieldInput — MaxHistoryMeters, LabelMinWidth="0" -->
+    <div class="mob-field mob-field--auto-label">
+      <label class="mob-field__label">Maximum length:</label>
+      <div class="mob-field__body">
+        <input class="mob-input" type="text" value="3,281" />
+        <span class="mob-field__unit">ft</span>
+      </div>
+    </div>
+
+    <!-- XAML: FieldInput — MaxHistoryMinutes, LabelMinWidth="0" -->
+    <div class="mob-field mob-field--auto-label">
+      <label class="mob-field__label">Maximum time:</label>
+      <div class="mob-field__body">
+        <input class="mob-input" type="text" value="10" />
+        <span class="mob-field__unit">min</span>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 6: VERTICAL TEMPLATE
+     Source: FieldInput.xaml — Mobius_UI_Common_Templates_FieldInputVertical
+     Style:  Mobius_UI_Resources_Styles_FieldInputVertical
+             Row 0: StackPanel(ExpanderItem + label), Height=TouchSize
+             Row 1: TouchTextBox + validation border + unit label
+     ========================================================= -->
+
+<h2>Vertical Template</h2>
+<p style="font: var(--font-default); color: var(--ForegroundPrimary); margin: 0 0 16px; max-width: 600px;">
+  Label stacked above the input. Label row is fixed at <code style="font-family: var(--font-monospace);">TouchSize</code> (44px) height. Warning/working icons slide in to the left of the label text via an <code style="font-family: var(--font-monospace);">ExpanderItem</code> animation. Unit label sits to the right of the input in the bottom row. Used in forms where horizontal space is tight or fields need more visual separation. XAML key: <code style="font-family: var(--font-monospace);">Mobius_UI_Common_Templates_FieldInputVertical</code>.
+</p>
+
+<div class="states-list">
+
+  <!-- ===== Vertical — default ===== -->
+  <!-- XAML: FieldInputVertical — label in Row 0, input in Row 1 -->
+  <div class="mob-field mob-field--vertical">
+    <label class="mob-field__label">Vehicle Name:</label>
+    <div class="mob-field__body">
+      <input class="mob-input" type="text" value="AV-001" />
+    </div>
+  </div>
+
+  <!-- ===== Vertical — with unit ===== -->
+  <!-- XAML: PART_UnitLabel in Grid.Row="1", Grid.Column="1" -->
+  <div class="mob-field mob-field--vertical">
+    <label class="mob-field__label">Buffer Distance:</label>
+    <div class="mob-field__body">
+      <input class="mob-input" type="text" value="2.50" />
+      <span class="mob-field__unit">ft</span>
+    </div>
+  </div>
+
+  <!-- ===== Vertical — warning ===== -->
+  <!-- XAML: ExpanderItem.IsOpened=True, WarningSymbol visible in Row 0 label row -->
+  <div class="mob-field mob-field--vertical mob-field--warning">
+    <label class="mob-field__label">Path Name:</label>
+    <div class="mob-field__body">
+      <input class="mob-input is-warning" type="text" value="Duplicate name" />
+    </div>
+  </div>
+
+  <!-- ===== Vertical — working ===== -->
+  <!-- XAML: ExpanderItem.IsOpened=True, WorkingSymbol visible in Row 0 label row -->
+  <div class="mob-field mob-field--vertical mob-field--working">
+    <label class="mob-field__label">Zone ID:</label>
+    <div class="mob-field__body">
+      <input class="mob-input is-working" type="text" value="ZONE-14" />
+    </div>
+  </div>
+
+  <!-- ===== Vertical — placeholder ===== -->
+  <div class="mob-field mob-field--vertical">
+    <label class="mob-field__label">Description:</label>
+    <div class="mob-field__body">
+      <input class="mob-input" type="text" placeholder="Enter description..." />
+    </div>
+  </div>
+
+  <!-- ===== Vertical — disabled ===== -->
+  <div class="mob-field mob-field--vertical">
+    <label class="mob-field__label">Serial Number:</label>
+    <div class="mob-field__body">
+      <input class="mob-input" type="text" value="SN-00482" disabled />
+    </div>
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 7: INLINE TEMPLATE
+     Source: FieldInput.xaml — Mobius_UI_Common_Templates_InlineFieldInput
+     Style:  Mobius_UI_Resources_Styles_InlineFieldInput
+             Grid columns: Auto(label) | *(input) | Auto(unit) | Auto(icon)
+             InputStyle = OnDemandTextBox
+             Unit + icon overlay inside the input right side
+     ========================================================= -->
+
+<h2>Inline Template</h2>
+<p style="font: var(--font-default); color: var(--ForegroundPrimary); margin: 0 0 16px; max-width: 600px;">
+  Compact single-line layout. Label sits flush left, input fills remaining space, and unit label + status icon overlay inside the input's right edge. Input right-padding is dynamically sized to prevent text from running under the overlaid elements. Uses <code style="font-family: var(--font-monospace);">OnDemandTextBox</code> style (borderless until interaction). XAML key: <code style="font-family: var(--font-monospace);">Mobius_UI_Common_Templates_InlineFieldInput</code>.
+</p>
+
+<div class="states-list">
+
+  <!-- ===== Inline — default ===== -->
+  <!-- XAML: InlineFieldInput — PART_TextLabel left, PART_ContentTextBox fills,
+       unit + icon overlay right side inside input -->
+  <div class="mob-field mob-field--inline">
+    <label class="mob-field__label">Speed:</label>
+    <div class="mob-field__body">
+      <input class="mob-input" type="text" value="12.5" />
+      <span class="mob-field__unit">km/h</span>
+    </div>
+  </div>
+
+  <!-- ===== Inline — no label ===== -->
+  <!-- XAML: PART_TextLabel Visibility collapses when LabelText is null -->
+  <div class="mob-field mob-field--inline">
+    <div class="mob-field__body">
+      <input class="mob-input" type="text" value="45.0" />
+      <span class="mob-field__unit">deg</span>
+    </div>
+  </div>
+
+  <!-- ===== Inline — warning with icon ===== -->
+  <!-- XAML: ShowWarning — WarningSymbolExpander.IsOpened=True,
+       icon appears at Grid.Column="3" inside the input area -->
+  <div class="mob-field mob-field--inline mob-field--warning">
+    <label class="mob-field__label">Offset:</label>
+    <div class="mob-field__body">
+      <input class="mob-input is-warning" type="text" value="-500" />
+      <span class="mob-field__unit">mm</span>
+      <!-- XAML: WarningSymbolExpander > DetailsPopUp > Grid > Path (WarningSymbol) -->
+      <span class="mob-field__icon mob-field__icon--warning">
+        <svg viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M5,0L0,9.2L1.8,12h8.3L12,9.2L7,0H5z M7,10H5V8h2V10z M7,7H5V3h2V7z" />
+        </svg>
+      </span>
+    </div>
+  </div>
+
+  <!-- ===== Inline — working with icon ===== -->
+  <!-- XAML: ShowWorking — WorkingSymbol visible at Grid.Column="3" -->
+  <div class="mob-field mob-field--inline mob-field--working">
+    <label class="mob-field__label">Heading:</label>
+    <div class="mob-field__body">
+      <input class="mob-input is-working" type="text" value="270" />
+      <span class="mob-field__unit">deg</span>
+      <!-- XAML: WarningSymbolExpander > DetailsPopUp > Grid > Path (WorkingSymbol) -->
+      <span class="mob-field__icon mob-field__icon--working">
+        <svg viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M12,6c0,3.3-2.7,6-6,6S0,9.3,0,6s2.7-6,6-6S12,2.7,12,6z M2,5v1.4L4.6,9h0.8L10,4.4V3H8.6L5,6.6L3.4,5H2z" />
+        </svg>
+      </span>
+    </div>
+  </div>
+
+  <!-- ===== Inline — disabled ===== -->
+  <div class="mob-field mob-field--inline">
+    <label class="mob-field__label">Locked:</label>
+    <div class="mob-field__body">
+      <input class="mob-input" type="text" value="0.00" disabled />
+      <span class="mob-field__unit">m</span>
+    </div>
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 8: STYLE VARIANT — INVERT
+     Source: FieldInput.xaml — Mobius_UI_Resources_Styles_FieldInputInvert
+             BasedOn Mobius_UI_Resources_Styles_FieldInput
+             BorderBrush=BackgroundInvertInputOutlineBrush
+             Background=BackgroundInvertInputBrush
+     ========================================================= -->
+
+<h2>Style Variant: Invert</h2>
+<p style="font: var(--font-default); color: var(--ForegroundPrimary); margin: 0 0 16px; max-width: 600px;">
+  Swaps input background and border to the "invert" color tokens for use on panels with <code style="font-family: var(--font-monospace);">BackgroundInvert</code> backgrounds. When disabled, background goes transparent and foreground switches to <code style="font-family: var(--font-monospace);">ForegroundInvertDisabled</code>. Can combine with <code style="font-family: var(--font-monospace);">.mob-field--vertical</code> for invert-vertical. XAML key: <code style="font-family: var(--font-monospace);">Mobius_UI_Resources_Styles_FieldInputInvert</code>.
+</p>
+
+<div class="states-list">
+  <div class="invert-panel">
+
+    <!-- ===== Invert — horizontal default ===== -->
+    <!-- XAML: FieldInputInvert — invert colors on standard bg -->
+    <div class="mob-field mob-field--invert" style="margin-bottom: var(--spacing-field);">
+      <label class="mob-field__label">Distance:</label>
+      <div class="mob-field__body">
+        <input class="mob-input" type="text" value="500" />
+        <span class="mob-field__unit">ft</span>
+      </div>
+    </div>
+
+    <!-- ===== Invert — warning ===== -->
+    <div class="mob-field mob-field--invert mob-field--warning" style="margin-bottom: var(--spacing-field);">
+      <label class="mob-field__label">Speed:</label>
+      <span class="mob-field__icon mob-field__icon--warning">
+        <svg viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M5,0L0,9.2L1.8,12h8.3L12,9.2L7,0H5z M7,10H5V8h2V10z M7,7H5V3h2V7z" />
+        </svg>
+      </span>
+      <div class="mob-field__body">
+        <input class="mob-input is-warning" type="text" value="999" />
+        <span class="mob-field__unit">km/h</span>
+      </div>
+    </div>
+
+    <!-- ===== Invert — disabled ===== -->
+    <!-- XAML: IsEnabled=False trigger — Background=Transparent,
+         Foreground=ForegroundInvertDisabledBrush -->
+    <div class="mob-field mob-field--invert" style="margin-bottom: var(--spacing-field);">
+      <label class="mob-field__label">Locked:</label>
+      <div class="mob-field__body">
+        <input class="mob-input" type="text" value="0" disabled />
+        <span class="mob-field__unit">mm</span>
+      </div>
+    </div>
+
+    <!-- ===== Invert Vertical ===== -->
+    <!-- XAML: Mobius_UI_Resources_Styles_FieldInputInvertVertical -->
+    <div class="mob-field mob-field--invert mob-field--vertical">
+      <label class="mob-field__label">Zone Name:</label>
+      <div class="mob-field__body">
+        <input class="mob-input" type="text" value="Loading Bay A" />
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 9: STYLE VARIANT — ON-DEMAND
+     Source: FieldInput.xaml — Mobius_UI_Resources_Styles_OnDemandFieldInput
+             BasedOn FieldInput
+             InputStyle = Mobius_UI_Resources_Styles_OnDemandTextBox
+             SymbolSize = 20, Padding = "3,0"
+     ========================================================= -->
+
+<h2>Style Variant: On-Demand</h2>
+<p style="font: var(--font-default); color: var(--ForegroundPrimary); margin: 0 0 16px; max-width: 600px;">
+  Input appears borderless and transparent until hovered or focused, then reveals the standard input chrome. Smaller icon column (20px vs 24px) and tighter padding (3px 0). Good for data-dense views where full input borders would be visually noisy. XAML key: <code style="font-family: var(--font-monospace);">Mobius_UI_Resources_Styles_OnDemandFieldInput</code>.
+</p>
+
+<div class="states-list">
+
+  <!-- ===== On-demand — default (borderless) ===== -->
+  <!-- XAML: OnDemandTextBox — transparent bg/border until hover -->
+  <div class="mob-field mob-field--on-demand">
+    <label class="mob-field__label">Vehicle ID:</label>
+    <div class="mob-field__body">
+      <input class="mob-input" type="text" value="AV-003" />
+    </div>
+  </div>
+
+  <!-- ===== On-demand — with unit ===== -->
+  <div class="mob-field mob-field--on-demand">
+    <label class="mob-field__label">Max Speed:</label>
+    <div class="mob-field__body">
+      <input class="mob-input" type="text" value="25.0" />
+      <span class="mob-field__unit">km/h</span>
+    </div>
+  </div>
+
+  <!-- ===== On-demand — warning ===== -->
+  <div class="mob-field mob-field--on-demand mob-field--warning">
+    <label class="mob-field__label">Timeout:</label>
+    <span class="mob-field__icon mob-field__icon--warning">
+      <svg viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M5,0L0,9.2L1.8,12h8.3L12,9.2L7,0H5z M7,10H5V8h2V10z M7,7H5V3h2V7z" />
+      </svg>
+    </span>
+    <div class="mob-field__body">
+      <input class="mob-input is-warning" type="text" value="0" />
+      <span class="mob-field__unit">sec</span>
+    </div>
+  </div>
+
+  <!-- ===== On-demand — disabled ===== -->
+  <div class="mob-field mob-field--on-demand">
+    <label class="mob-field__label">Firmware:</label>
+    <div class="mob-field__body">
+      <input class="mob-input" type="text" value="v4.2.1" disabled />
+    </div>
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 10: STYLE VARIANT — LARGE TITLE
+     Source: FieldInput.xaml — Mobius_UI_Resources_Styles_FieldInputLargeTitle
+             BasedOn FieldInput
+             Template = FieldInputVertical
+             InputStyle = MultiStyle(OnDemandTextBox + TextBlock_HeadingLg)
+             InputMargin = "-10,-4,0,0", Padding = "6,2"
+             ShowUnitLabel = False
+     ========================================================= -->
+
+<h2>Style Variant: Large Title</h2>
+<p style="font: var(--font-default); color: var(--ForegroundPrimary); margin: 0 0 16px; max-width: 600px;">
+  Vertical layout with a heading-sized on-demand input (36px / Roboto Light). Combines <code style="font-family: var(--font-monospace);">OnDemandTextBox</code> + <code style="font-family: var(--font-monospace);">TextBlock_HeadingLg</code> styles. Unit label is always hidden. Negative input margins pull the text closer to the label for a tighter title-editing feel. Used for editable entity names (maps, projects, configurations). XAML key: <code style="font-family: var(--font-monospace);">Mobius_UI_Resources_Styles_FieldInputLargeTitle</code>.
+</p>
+
+<div class="states-list">
+
+  <!-- ===== Large title — default ===== -->
+  <!-- XAML: FieldInputLargeTitle — vertical layout, heading-size on-demand input -->
+  <div class="mob-field mob-field--large-title">
+    <label class="mob-field__label">Map Name:</label>
+    <div class="mob-field__body">
+      <input class="mob-input" type="text" value="Mine Site Alpha" />
+    </div>
+  </div>
+
+  <!-- ===== Large title — placeholder ===== -->
+  <div class="mob-field mob-field--large-title">
+    <label class="mob-field__label">Project Name:</label>
+    <div class="mob-field__body">
+      <input class="mob-input" type="text" placeholder="Enter project name..." />
+    </div>
+  </div>
+
+  <!-- ===== Large title — disabled ===== -->
+  <div class="mob-field mob-field--large-title">
+    <label class="mob-field__label">Configuration:</label>
+    <div class="mob-field__body">
+      <input class="mob-input" type="text" value="Default Profile" disabled />
+    </div>
+  </div>
+
+</div>
+
+
+  </main>
+
+</div>
+
+<script src="../js/nav.js"></script>
+</body>
+</html>

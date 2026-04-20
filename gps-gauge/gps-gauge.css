@@ -1,0 +1,90 @@
+/* =============================================
+   GPS GAUGE
+   Source: GPSGauge.xaml (83 lines)
+   Asi.Gauges.Client.UI
+
+   A horizontal GPS status gauge showing icon, label,
+   satellite count, and GPS mode.
+
+   Layout (from XAML ControlTemplate):
+     StackPanel Orientation="Horizontal"
+       GPS Icon: Canvas 40x24 with Path "Icon_GPS"
+       "GPS" TextBlock, Foreground=GaugeValueForegroundBrush
+       Satellite count: Border 36px circle (CornerRadius=100000)
+         BorderBrush=GaugeDataTickBrush
+         TextBlock inside with count, Foreground=GaugeValueForegroundBrush
+       GPSMode TextBlock, Foreground=GaugeForegroundBrush
+
+   Gauge colors use the "GaugeInvert" token set.
+   ============================================= */
+
+
+/* --- Root container --------------------------------------------- */
+/* XAML: StackPanel Orientation="Horizontal" — horizontal layout */
+.mob-gps-gauge {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--spacing-label-to-control);
+}
+
+
+/* --- GPS Icon --------------------------------------------------- */
+/* XAML: Canvas Width="40" Height="24" — Path "Icon_GPS"
+   Using font icon or SVG placeholder */
+.mob-gps-gauge__icon {
+  width: 40px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--GaugeInvertValueForeground);
+  fill: currentColor;
+}
+
+/* SVG inside the icon container */
+.mob-gps-gauge__icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+
+/* --- GPS label -------------------------------------------------- */
+/* XAML: TextBlock "GPS", Foreground=GaugeValueForegroundBrush */
+.mob-gps-gauge__label {
+  font: var(--font-hdrSm);
+  color: var(--GaugeInvertValueForeground);
+  flex-shrink: 0;
+}
+
+
+/* --- Satellite count circle ------------------------------------- */
+/* XAML: Border Width/Height="36" CornerRadius="100000"
+   BorderBrush=GaugeDataTickBrush, BorderThickness="1" */
+.mob-gps-gauge__sat-count {
+  width: 36px;
+  height: 36px;
+  border-radius: 100000px;
+  border: 1px solid var(--GaugeInvertDataTick);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* XAML: TextBlock inside circle — satellite count number
+   Foreground=GaugeValueForegroundBrush */
+.mob-gps-gauge__sat-value {
+  font: var(--font-hdrSm);
+  color: var(--GaugeInvertValueForeground);
+  line-height: 1;
+}
+
+
+/* --- GPS mode text ---------------------------------------------- */
+/* XAML: TextBlock GPSMode, Foreground=GaugeForegroundBrush */
+.mob-gps-gauge__mode {
+  font: var(--font-default);
+  color: var(--GaugeInvertForeground);
+}

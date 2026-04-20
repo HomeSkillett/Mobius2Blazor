@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mobius — Multiple Row Gauge</title>
+  <link id="mob-theme-link" rel="stylesheet" href="../styles/color-theme-tokens/LightTheme.css" />
+  <link rel="stylesheet" href="../styles/css/main.css" />
+  <link rel="stylesheet" href="multiple-row-gauge.css" />
+  <style>
+    body { margin: 0; }
+    h1 { font: var(--font-hdrMd); margin: 0 0 32px; color: var(--ForegroundStrong); }
+    h2 { font: var(--font-hdrSm); margin: 40px 0 16px; color: var(--ForegroundStrong); }
+    h2:first-of-type { margin-top: 0; }
+    .demo-list { display: flex; flex-direction: column; gap: var(--spacing-section-to-header); max-width: 540px; }
+    .section-divider { border: none; border-top: var(--line-size) solid var(--InnerLines); margin: 32px 0 0; }
+    .demo-caption { font: var(--font-bodySm); color: var(--ForegroundDisabled); margin-top: var(--spacing-label-to-control-sm); }
+  </style>
+</head>
+<body>
+
+<div class="mob-layout">
+
+  <!-- Sidebar Navigation -->
+  <nav class="mob-nav" id="mob-nav"></nav>
+
+  <!-- Main Content -->
+  <main class="mob-layout__content">
+
+<h1>Multiple Row Gauge</h1>
+
+
+<!-- =========================================================
+     SECTION 1: 4-COLUMN ROW GAUGE — ALL ON
+     Source: MultipleRowGauge.xaml — all items active
+     ========================================================= -->
+
+<h2>All Items Active</h2>
+
+<div class="demo-list">
+
+  <!-- XAML: MultipleRowGauge — 4 large items, "All" toggle ON -->
+  <div class="mob-multi-row-gauge">
+
+    <!-- XAML: Grid Row="0" — main row with controls + bars -->
+    <div class="mob-multi-row-gauge__main">
+
+      <!-- XAML: Grid.Column="0" — Target label + All toggle -->
+      <div class="mob-multi-row-gauge__controls">
+        <!-- XAML: TextBlock — "Target" label -->
+        <span class="mob-multi-row-gauge__target-label">Target</span>
+        <!-- XAML: SwitchToggle — "All" master toggle, Checked=True -->
+        <div class="mob-multi-row-gauge__toggle mob-multi-row-gauge__toggle--on">
+          <div class="mob-multi-row-gauge__toggle-knob"></div>
+        </div>
+        <span class="mob-multi-row-gauge__target-label">All</span>
+      </div>
+
+      <!-- XAML: PART_LargeItemsGrid — 7 columns for 4 items -->
+      <div class="mob-multi-row-gauge__items">
+
+        <!-- XAML: MultipleRowGaugeLargeItem #1 — Normal, 75% fill -->
+        <div class="mob-multi-row-gauge__item">
+          <div class="mob-multi-row-gauge__bar-track">
+            <!-- XAML: ProgressBar — vertical, fill=GaugeValueForegroundBrush -->
+            <div class="mob-multi-row-gauge__bar-fill" style="--bar-fill: 75%;"></div>
+          </div>
+          <!-- XAML: Path icon — status normal -->
+          <svg class="mob-multi-row-gauge__item-icon" viewBox="0 0 20 20">
+            <circle cx="10" cy="10" r="8" fill="none" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M7 10l2 2 4-4" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          </svg>
+          <!-- XAML: SwitchToggle #1 — ON -->
+          <div class="mob-multi-row-gauge__item-toggle mob-multi-row-gauge__item-toggle--on">
+            <div class="mob-multi-row-gauge__item-toggle-knob">1</div>
+          </div>
+        </div>
+
+        <!-- Spacer column -->
+        <div class="mob-multi-row-gauge__item-spacer"></div>
+
+        <!-- XAML: MultipleRowGaugeLargeItem #2 — Normal, 60% fill -->
+        <div class="mob-multi-row-gauge__item">
+          <div class="mob-multi-row-gauge__bar-track">
+            <div class="mob-multi-row-gauge__bar-fill" style="--bar-fill: 60%;"></div>
+          </div>
+          <svg class="mob-multi-row-gauge__item-icon" viewBox="0 0 20 20">
+            <circle cx="10" cy="10" r="8" fill="none" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M7 10l2 2 4-4" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          </svg>
+          <div class="mob-multi-row-gauge__item-toggle mob-multi-row-gauge__item-toggle--on">
+            <div class="mob-multi-row-gauge__item-toggle-knob">2</div>
+          </div>
+        </div>
+
+        <div class="mob-multi-row-gauge__item-spacer"></div>
+
+        <!-- XAML: MultipleRowGaugeLargeItem #3 — Normal, 85% fill -->
+        <div class="mob-multi-row-gauge__item">
+          <div class="mob-multi-row-gauge__bar-track">
+            <div class="mob-multi-row-gauge__bar-fill" style="--bar-fill: 85%;"></div>
+          </div>
+          <svg class="mob-multi-row-gauge__item-icon" viewBox="0 0 20 20">
+            <circle cx="10" cy="10" r="8" fill="none" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M7 10l2 2 4-4" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          </svg>
+          <div class="mob-multi-row-gauge__item-toggle mob-multi-row-gauge__item-toggle--on">
+            <div class="mob-multi-row-gauge__item-toggle-knob">3</div>
+          </div>
+        </div>
+
+        <div class="mob-multi-row-gauge__item-spacer"></div>
+
+        <!-- XAML: MultipleRowGaugeLargeItem #4 — Normal, 45% fill -->
+        <div class="mob-multi-row-gauge__item">
+          <div class="mob-multi-row-gauge__bar-track">
+            <div class="mob-multi-row-gauge__bar-fill" style="--bar-fill: 45%;"></div>
+          </div>
+          <svg class="mob-multi-row-gauge__item-icon" viewBox="0 0 20 20">
+            <circle cx="10" cy="10" r="8" fill="none" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M7 10l2 2 4-4" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          </svg>
+          <div class="mob-multi-row-gauge__item-toggle mob-multi-row-gauge__item-toggle--on">
+            <div class="mob-multi-row-gauge__item-toggle-knob">4</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- XAML: Grid Row="1" — PART_SmallItemsGrid selection row -->
+    <div class="mob-multi-row-gauge__selection-row">
+      <!-- XAML: RadioButton — Group A selected -->
+      <div class="mob-multi-row-gauge__selection-item mob-multi-row-gauge__selection-item--active">Group A</div>
+      <div class="mob-multi-row-gauge__selection-item">Group B</div>
+      <div class="mob-multi-row-gauge__selection-item">Group C</div>
+    </div>
+
+  </div>
+
+</div>
+<p class="demo-caption">All 4 items active, "All" toggle ON, Group A selected</p>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 2: MIXED STATES — WARNING + CRITICAL
+     Source: MultipleRowGauge.xaml — status variations
+     ========================================================= -->
+
+<h2>Mixed States (Warning + Critical)</h2>
+
+<div class="demo-list">
+
+  <!-- XAML: MultipleRowGauge — mixed status states -->
+  <div class="mob-multi-row-gauge">
+
+    <div class="mob-multi-row-gauge__main">
+
+      <div class="mob-multi-row-gauge__controls">
+        <span class="mob-multi-row-gauge__target-label">Target</span>
+        <!-- XAML: SwitchToggle — "All" OFF (some items disabled) -->
+        <div class="mob-multi-row-gauge__toggle">
+          <div class="mob-multi-row-gauge__toggle-knob"></div>
+        </div>
+        <span class="mob-multi-row-gauge__target-label">All</span>
+      </div>
+
+      <div class="mob-multi-row-gauge__items">
+
+        <!-- XAML: Item #1 — OK, ON, 70% -->
+        <div class="mob-multi-row-gauge__item">
+          <div class="mob-multi-row-gauge__bar-track">
+            <div class="mob-multi-row-gauge__bar-fill" style="--bar-fill: 70%;"></div>
+          </div>
+          <svg class="mob-multi-row-gauge__item-icon" viewBox="0 0 20 20">
+            <circle cx="10" cy="10" r="8" fill="none" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M7 10l2 2 4-4" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          </svg>
+          <div class="mob-multi-row-gauge__item-toggle mob-multi-row-gauge__item-toggle--on mob-multi-row-gauge__item-toggle--green">
+            <div class="mob-multi-row-gauge__item-toggle-knob">1</div>
+          </div>
+        </div>
+
+        <div class="mob-multi-row-gauge__item-spacer"></div>
+
+        <!-- XAML: Item #2 — Warning, ON, 90% -->
+        <div class="mob-multi-row-gauge__item">
+          <div class="mob-multi-row-gauge__bar-track mob-multi-row-gauge__bar-track--warning">
+            <div class="mob-multi-row-gauge__bar-fill" style="--bar-fill: 90%;"></div>
+          </div>
+          <svg class="mob-multi-row-gauge__item-icon mob-multi-row-gauge__item-icon--warning" viewBox="0 0 20 20">
+            <path d="M10 2L1 18h18L10 2zm0 4l6.5 11h-13L10 6z"/>
+            <rect x="9" y="9" width="2" height="4"/>
+            <rect x="9" y="14" width="2" height="2"/>
+          </svg>
+          <div class="mob-multi-row-gauge__item-toggle mob-multi-row-gauge__item-toggle--on">
+            <div class="mob-multi-row-gauge__item-toggle-knob">2</div>
+          </div>
+        </div>
+
+        <div class="mob-multi-row-gauge__item-spacer"></div>
+
+        <!-- XAML: Item #3 — Critical, ON, 95% -->
+        <div class="mob-multi-row-gauge__item">
+          <div class="mob-multi-row-gauge__bar-track mob-multi-row-gauge__bar-track--critical">
+            <div class="mob-multi-row-gauge__bar-fill" style="--bar-fill: 95%;"></div>
+          </div>
+          <svg class="mob-multi-row-gauge__item-icon mob-multi-row-gauge__item-icon--critical" viewBox="0 0 20 20">
+            <circle cx="10" cy="10" r="8" fill="none" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M7 7l6 6M13 7l-6 6" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          </svg>
+          <div class="mob-multi-row-gauge__item-toggle mob-multi-row-gauge__item-toggle--on">
+            <div class="mob-multi-row-gauge__item-toggle-knob">3</div>
+          </div>
+        </div>
+
+        <div class="mob-multi-row-gauge__item-spacer"></div>
+
+        <!-- XAML: Item #4 — OFF, 0% -->
+        <div class="mob-multi-row-gauge__item">
+          <div class="mob-multi-row-gauge__bar-track">
+            <div class="mob-multi-row-gauge__bar-fill" style="--bar-fill: 0%;"></div>
+          </div>
+          <svg class="mob-multi-row-gauge__item-icon" viewBox="0 0 20 20">
+            <circle cx="10" cy="10" r="8" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          </svg>
+          <!-- XAML: SwitchToggle — OFF state -->
+          <div class="mob-multi-row-gauge__item-toggle">
+            <div class="mob-multi-row-gauge__item-toggle-knob">4</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="mob-multi-row-gauge__selection-row">
+      <div class="mob-multi-row-gauge__selection-item">Group A</div>
+      <div class="mob-multi-row-gauge__selection-item mob-multi-row-gauge__selection-item--active">Group B</div>
+      <div class="mob-multi-row-gauge__selection-item">Group C</div>
+    </div>
+
+  </div>
+
+</div>
+<p class="demo-caption">Item 1: OK (green toggle), Item 2: Warning, Item 3: Critical, Item 4: OFF</p>
+
+
+  </main>
+</div>
+
+<script src="../js/nav.js"></script>
+</body>
+</html>

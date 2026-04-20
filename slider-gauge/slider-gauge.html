@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mobius — Slider Gauge</title>
+  <link id="mob-theme-link" rel="stylesheet" href="../styles/color-theme-tokens/LightTheme.css" />
+  <link rel="stylesheet" href="../styles/css/main.css" />
+  <link rel="stylesheet" href="slider-gauge.css" />
+  <style>
+    body { margin: 0; }
+    h1 { font: var(--font-hdrMd); margin: 0 0 32px; color: var(--ForegroundStrong); }
+    h2 { font: var(--font-hdrSm); margin: 40px 0 16px; color: var(--ForegroundStrong); }
+    h2:first-of-type { margin-top: 0; }
+    .demo-list { display: flex; flex-direction: column; gap: var(--spacing-section-to-header); max-width: 540px; }
+    .section-divider { border: none; border-top: var(--line-size) solid var(--InnerLines); margin: 32px 0 0; }
+    .demo-caption { font: var(--font-bodySm); color: var(--ForegroundDisabled); margin-top: var(--spacing-label-to-control-sm); }
+    .vertical-row { display: flex; gap: var(--spacing-section-to-section); height: 180px; }
+  </style>
+</head>
+<body>
+
+<div class="mob-layout">
+
+  <!-- Sidebar Navigation -->
+  <nav class="mob-nav" id="mob-nav"></nav>
+
+  <!-- Main Content -->
+  <main class="mob-layout__content">
+
+<h1>Slider Gauge</h1>
+
+
+<!-- =========================================================
+     SECTION 1: NORMAL SLIDER
+     Source: SliderGauge.xaml — ValueToSetPointState=SliderNormal
+     ========================================================= -->
+
+<h2>Normal Slider</h2>
+
+<div class="demo-list">
+
+  <!-- XAML: SliderGauge — CurrentValue=65, Min=0, Max=100,
+       StatusIndicator=OK, Label="Engine Speed" -->
+  <div class="mob-slider-gauge">
+    <!-- XAML: Grid Row="0" — LabelStatusIcon + _displayValue -->
+    <div class="mob-slider-gauge__header">
+      <div class="mob-slider-gauge__label-group">
+        <!-- XAML: StatusIcon — OK indicator -->
+        <span class="mob-slider-gauge__status-icon mob-slider-gauge__status-icon--ok"></span>
+        <!-- XAML: LabelString -->
+        <span class="mob-slider-gauge__label">Engine Speed</span>
+      </div>
+      <!-- XAML: _displayValue — current value -->
+      <span class="mob-slider-gauge__value">65</span>
+    </div>
+    <!-- XAML: Grid Rows 1-3 — track + thumb -->
+    <div class="mob-slider-gauge__track-wrapper">
+      <!-- XAML: _dataBackground — track bar -->
+      <div class="mob-slider-gauge__track"></div>
+      <!-- XAML: PART_RangeBar — critical/warning zones -->
+      <div class="mob-slider-gauge__ranges">
+        <div class="mob-slider-gauge__range mob-slider-gauge__range--critical-min" style="left: 0%; width: 10%;"></div>
+        <div class="mob-slider-gauge__range mob-slider-gauge__range--warning-min" style="left: 10%; width: 10%;"></div>
+        <div class="mob-slider-gauge__range mob-slider-gauge__range--warning-max" style="left: 85%; width: 10%;"></div>
+        <div class="mob-slider-gauge__range mob-slider-gauge__range--critical-max" style="left: 95%; width: 5%;"></div>
+      </div>
+      <!-- XAML: 5 tick marks -->
+      <div class="mob-slider-gauge__ticks">
+        <span class="mob-slider-gauge__tick"></span>
+        <span class="mob-slider-gauge__tick"></span>
+        <span class="mob-slider-gauge__tick"></span>
+        <span class="mob-slider-gauge__tick"></span>
+        <span class="mob-slider-gauge__tick"></span>
+      </div>
+      <!-- XAML: PART_ProgressBar — fill to current value -->
+      <div class="mob-slider-gauge__progress" style="--slider-progress: 65%;"></div>
+      <!-- XAML: IndicatorSlider — 26x26 Thumb circle -->
+      <div class="mob-slider-gauge__thumb" style="--slider-progress: 65%;"></div>
+    </div>
+    <!-- XAML: Grid Row="4" — min/max labels -->
+    <div class="mob-slider-gauge__footer">
+      <span class="mob-slider-gauge__min">0</span>
+      <span class="mob-slider-gauge__max">100</span>
+    </div>
+  </div>
+
+  <!-- XAML: SliderGauge — CurrentValue=30, Warning state -->
+  <div class="mob-slider-gauge">
+    <div class="mob-slider-gauge__header">
+      <div class="mob-slider-gauge__label-group">
+        <span class="mob-slider-gauge__status-icon mob-slider-gauge__status-icon--warning"></span>
+        <span class="mob-slider-gauge__label">Hydraulic Pressure</span>
+      </div>
+      <span class="mob-slider-gauge__value">30</span>
+    </div>
+    <div class="mob-slider-gauge__track-wrapper">
+      <div class="mob-slider-gauge__track"></div>
+      <div class="mob-slider-gauge__ranges">
+        <div class="mob-slider-gauge__range mob-slider-gauge__range--critical-min" style="left: 0%; width: 5%;"></div>
+        <div class="mob-slider-gauge__range mob-slider-gauge__range--warning-min" style="left: 5%; width: 20%;"></div>
+        <div class="mob-slider-gauge__range mob-slider-gauge__range--warning-max" style="left: 80%; width: 15%;"></div>
+        <div class="mob-slider-gauge__range mob-slider-gauge__range--critical-max" style="left: 95%; width: 5%;"></div>
+      </div>
+      <div class="mob-slider-gauge__ticks">
+        <span class="mob-slider-gauge__tick"></span>
+        <span class="mob-slider-gauge__tick"></span>
+        <span class="mob-slider-gauge__tick"></span>
+        <span class="mob-slider-gauge__tick"></span>
+        <span class="mob-slider-gauge__tick"></span>
+      </div>
+      <div class="mob-slider-gauge__progress" style="--slider-progress: 30%;"></div>
+      <div class="mob-slider-gauge__thumb" style="--slider-progress: 30%;"></div>
+    </div>
+    <div class="mob-slider-gauge__footer">
+      <span class="mob-slider-gauge__min">0</span>
+      <span class="mob-slider-gauge__max">200</span>
+    </div>
+  </div>
+
+</div>
+<p class="demo-caption">ValueToSetPointState=SliderNormal, with range zones</p>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 2: USER SET (with set-point indicator)
+     Source: SliderGauge.xaml — ValueToSetPointState=UserSet
+     ========================================================= -->
+
+<h2>User Set (Set-Point Indicator)</h2>
+
+<div class="demo-list">
+
+  <!-- XAML: SliderGauge — CurrentValue=72, SetPoint=80,
+       ValueToSetPointState=UserSet -->
+  <div class="mob-slider-gauge mob-slider-gauge--user-set">
+    <div class="mob-slider-gauge__header">
+      <div class="mob-slider-gauge__label-group">
+        <span class="mob-slider-gauge__status-icon mob-slider-gauge__status-icon--ok"></span>
+        <span class="mob-slider-gauge__label">Target RPM</span>
+      </div>
+      <span class="mob-slider-gauge__value">72</span>
+    </div>
+    <div class="mob-slider-gauge__track-wrapper">
+      <div class="mob-slider-gauge__track"></div>
+      <div class="mob-slider-gauge__ranges">
+        <div class="mob-slider-gauge__range mob-slider-gauge__range--critical-min" style="left: 0%; width: 5%;"></div>
+        <div class="mob-slider-gauge__range mob-slider-gauge__range--warning-min" style="left: 5%; width: 15%;"></div>
+        <div class="mob-slider-gauge__range mob-slider-gauge__range--warning-max" style="left: 85%; width: 10%;"></div>
+        <div class="mob-slider-gauge__range mob-slider-gauge__range--critical-max" style="left: 95%; width: 5%;"></div>
+      </div>
+      <div class="mob-slider-gauge__ticks">
+        <span class="mob-slider-gauge__tick"></span>
+        <span class="mob-slider-gauge__tick"></span>
+        <span class="mob-slider-gauge__tick"></span>
+        <span class="mob-slider-gauge__tick"></span>
+        <span class="mob-slider-gauge__tick"></span>
+      </div>
+      <div class="mob-slider-gauge__progress" style="--slider-progress: 72%;"></div>
+      <!-- XAML: PART_SetPointBar — set-point indicator line -->
+      <div class="mob-slider-gauge__setpoint" style="--setpoint-position: 80%;"></div>
+      <!-- XAML: Set-point value label -->
+      <span class="mob-slider-gauge__setpoint-label" style="--setpoint-position: 80%;">80</span>
+      <!-- XAML: IndicatorSlider thumb at current position -->
+      <div class="mob-slider-gauge__thumb" style="--slider-progress: 72%;"></div>
+    </div>
+    <div class="mob-slider-gauge__footer">
+      <span class="mob-slider-gauge__min">0</span>
+      <span class="mob-slider-gauge__max">100</span>
+    </div>
+  </div>
+
+</div>
+<p class="demo-caption">ValueToSetPointState=UserSet — red set-point line at target value</p>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 3: LOCKED STATES
+     Source: SliderGauge.xaml — ValueToSetPointState=Locked / LockedAndSynced
+     ========================================================= -->
+
+<h2>Locked States</h2>
+
+<div class="demo-list">
+
+  <!-- XAML: SliderGauge — ValueToSetPointState=Locked, CurrentValue=50 -->
+  <div class="mob-slider-gauge mob-slider-gauge--locked">
+    <div class="mob-slider-gauge__header">
+      <div class="mob-slider-gauge__label-group">
+        <span class="mob-slider-gauge__status-icon mob-slider-gauge__status-icon--ok"></span>
+        <span class="mob-slider-gauge__label">Throttle (Locked)</span>
+      </div>
+      <span class="mob-slider-gauge__value">50</span>
+    </div>
+    <div class="mob-slider-gauge__track-wrapper">
+      <div class="mob-slider-gauge__track"></div>
+      <div class="mob-slider-gauge__ticks">
+        <span class="mob-slider-gauge__tick"></span>
+        <span class="mob-slider-gauge__tick"></span>
+        <span class="mob-slider-gauge__tick"></span>
+        <span class="mob-slider-gauge__tick"></span>
+        <span class="mob-slider-gauge__tick"></span>
+      </div>
+      <div class="mob-slider-gauge__progress" style="--slider-progress: 50%;"></div>
+      <div class="mob-slider-gauge__thumb" style="--slider-progress: 50%;"></div>
+    </div>
+    <div class="mob-slider-gauge__footer">
+      <span class="mob-slider-gauge__min">0</span>
+      <span class="mob-slider-gauge__max">100</span>
+    </div>
+  </div>
+
+  <!-- XAML: SliderGauge — ValueToSetPointState=LockedAndSynced -->
+  <div class="mob-slider-gauge mob-slider-gauge--locked-synced">
+    <div class="mob-slider-gauge__header">
+      <div class="mob-slider-gauge__label-group">
+        <span class="mob-slider-gauge__status-icon mob-slider-gauge__status-icon--ok"></span>
+        <span class="mob-slider-gauge__label">Throttle (Synced)</span>
+      </div>
+      <span class="mob-slider-gauge__value">75</span>
+    </div>
+    <div class="mob-slider-gauge__track-wrapper">
+      <div class="mob-slider-gauge__track"></div>
+      <div class="mob-slider-gauge__ticks">
+        <span class="mob-slider-gauge__tick"></span>
+        <span class="mob-slider-gauge__tick"></span>
+        <span class="mob-slider-gauge__tick"></span>
+        <span class="mob-slider-gauge__tick"></span>
+        <span class="mob-slider-gauge__tick"></span>
+      </div>
+      <div class="mob-slider-gauge__progress" style="--slider-progress: 75%;"></div>
+      <div class="mob-slider-gauge__thumb" style="--slider-progress: 75%;"></div>
+    </div>
+    <div class="mob-slider-gauge__footer">
+      <span class="mob-slider-gauge__min">0</span>
+      <span class="mob-slider-gauge__max">100</span>
+    </div>
+  </div>
+
+  <!-- XAML: SliderGauge — ValueToSetPointState=GetSynced -->
+  <div class="mob-slider-gauge mob-slider-gauge--synced">
+    <div class="mob-slider-gauge__header">
+      <div class="mob-slider-gauge__label-group">
+        <span class="mob-slider-gauge__status-icon mob-slider-gauge__status-icon--ok"></span>
+        <span class="mob-slider-gauge__label">Throttle (Syncing)</span>
+      </div>
+      <span class="mob-slider-gauge__value">60</span>
+    </div>
+    <div class="mob-slider-gauge__track-wrapper">
+      <div class="mob-slider-gauge__track"></div>
+      <div class="mob-slider-gauge__ticks">
+        <span class="mob-slider-gauge__tick"></span>
+        <span class="mob-slider-gauge__tick"></span>
+        <span class="mob-slider-gauge__tick"></span>
+        <span class="mob-slider-gauge__tick"></span>
+        <span class="mob-slider-gauge__tick"></span>
+      </div>
+      <div class="mob-slider-gauge__progress" style="--slider-progress: 60%;"></div>
+      <div class="mob-slider-gauge__thumb" style="--slider-progress: 60%;"></div>
+    </div>
+    <div class="mob-slider-gauge__footer">
+      <span class="mob-slider-gauge__min">0</span>
+      <span class="mob-slider-gauge__max">100</span>
+    </div>
+  </div>
+
+</div>
+<p class="demo-caption">Locked (gray thumb), LockedAndSynced (green thumb), GetSynced (blue thumb)</p>
+
+
+  </main>
+</div>
+
+<script src="../js/nav.js"></script>
+</body>
+</html>

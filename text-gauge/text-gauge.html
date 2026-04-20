@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mobius — Text Gauge</title>
+  <link id="mob-theme-link" rel="stylesheet" href="../styles/color-theme-tokens/LightTheme.css" />
+  <link rel="stylesheet" href="../styles/css/main.css" />
+  <link rel="stylesheet" href="text-gauge.css" />
+  <style>
+    body { margin: 0; }
+    h1 { font: var(--font-hdrMd); margin: 0 0 32px; color: var(--ForegroundStrong); }
+    h2 { font: var(--font-hdrSm); margin: 40px 0 16px; color: var(--ForegroundStrong); }
+    h2:first-of-type { margin-top: 0; }
+    .demo-list { display: flex; flex-direction: column; gap: var(--spacing-section-to-header); max-width: 540px; }
+    .section-divider { border: none; border-top: var(--line-size) solid var(--InnerLines); margin: 32px 0 0; }
+    .demo-caption { font: var(--font-bodySm); color: var(--ForegroundDisabled); margin-top: var(--spacing-label-to-control-sm); }
+  </style>
+</head>
+<body>
+
+<div class="mob-layout">
+
+  <!-- Sidebar Navigation -->
+  <nav class="mob-nav" id="mob-nav"></nav>
+
+  <!-- Main Content -->
+  <main class="mob-layout__content">
+
+<h1>Text Gauge</h1>
+
+
+<!-- =========================================================
+     SECTION 1: TEXT GAUGE — DEFAULT (LABEL + VALUE + UNIT)
+     Source: TextGauge.xaml — Grid rows [12px][8px][*]
+     ========================================================= -->
+
+<h2>Default (Label + Value + Unit)</h2>
+
+<div class="demo-list">
+
+  <!-- XAML: TextGauge — ShowLabel=True, ShowUnits=True
+       LabelString="Engine Speed", ValueString="1,842", UnitString="RPM" -->
+  <div class="mob-text-gauge">
+    <!-- XAML: LabelStatusIcon Row="0" — label text
+         Margin="-2,-3,-2,-5", Foreground=GaugeInvertForeground -->
+    <span class="mob-text-gauge__label">Engine Speed</span>
+    <!-- XAML: Grid Row="2" — [*][Auto] -->
+    <div class="mob-text-gauge__value-row">
+      <!-- XAML: Viewbox > TextBlock FontSize="32" FontWeight="UltraLight"
+           Foreground=GaugeValueForegroundBrush, Style=HeadingLg -->
+      <span class="mob-text-gauge__value">1,842</span>
+      <!-- XAML: TextBlock VerticalAlignment="Top" Margin="3,-2,0,-2"
+           Foreground=GaugeValueForegroundBrush -->
+      <span class="mob-text-gauge__unit">RPM</span>
+    </div>
+  </div>
+  <p class="demo-caption">Default state — label + large value + unit</p>
+
+
+  <!-- XAML: TextGauge — ValueString="72.4", UnitString="°C",
+       LabelString="Coolant Temp" -->
+  <div class="mob-text-gauge">
+    <span class="mob-text-gauge__label">Coolant Temp</span>
+    <div class="mob-text-gauge__value-row">
+      <span class="mob-text-gauge__value">72.4</span>
+      <span class="mob-text-gauge__unit">°C</span>
+    </div>
+  </div>
+  <p class="demo-caption">Decimal value with temperature unit</p>
+
+
+  <!-- XAML: TextGauge — ValueString="12.8", UnitString="V",
+       LabelString="Battery" -->
+  <div class="mob-text-gauge">
+    <span class="mob-text-gauge__label">Battery</span>
+    <div class="mob-text-gauge__value-row">
+      <span class="mob-text-gauge__value">12.8</span>
+      <span class="mob-text-gauge__unit">V</span>
+    </div>
+  </div>
+  <p class="demo-caption">Voltage reading</p>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 2: TEXT GAUGE — HIDE LABEL
+     Source: TextGauge.xaml — VisualState HideLabel
+     ========================================================= -->
+
+<h2>Without Label</h2>
+
+<div class="demo-list">
+
+  <!-- XAML: TextGauge ShowLabel="False" — LabelStatusIcon collapsed -->
+  <div class="mob-text-gauge mob-text-gauge--hide-label">
+    <span class="mob-text-gauge__label">Hidden</span>
+    <div class="mob-text-gauge__value-row">
+      <span class="mob-text-gauge__value">3,200</span>
+      <span class="mob-text-gauge__unit">PSI</span>
+    </div>
+  </div>
+  <p class="demo-caption">ShowLabel="False" — label row hidden via VisualState</p>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 3: TEXT GAUGE — HIDE UNITS
+     Source: TextGauge.xaml — VisualState HideUnits
+     ========================================================= -->
+
+<h2>Without Units</h2>
+
+<div class="demo-list">
+
+  <!-- XAML: TextGauge ShowUnits="False" — Unit TextBlock collapsed -->
+  <div class="mob-text-gauge mob-text-gauge--hide-units">
+    <span class="mob-text-gauge__label">Signal Bars</span>
+    <div class="mob-text-gauge__value-row">
+      <span class="mob-text-gauge__value">4</span>
+      <span class="mob-text-gauge__unit">bars</span>
+    </div>
+  </div>
+  <p class="demo-caption">ShowUnits="False" — unit text hidden via VisualState</p>
+
+</div>
+
+
+  </main>
+
+</div>
+
+<script src="../js/nav.js"></script>
+</body>
+</html>

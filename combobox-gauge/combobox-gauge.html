@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mobius — ComboBox Gauge</title>
+  <link id="mob-theme-link" rel="stylesheet" href="../styles/color-theme-tokens/LightTheme.css" />
+  <link rel="stylesheet" href="../styles/css/main.css" />
+  <link rel="stylesheet" href="combobox-gauge.css" />
+  <style>
+    body { margin: 0; }
+    h1 { font: var(--font-hdrMd); margin: 0 0 32px; color: var(--ForegroundStrong); }
+    h2 { font: var(--font-hdrSm); margin: 40px 0 16px; color: var(--ForegroundStrong); }
+    h2:first-of-type { margin-top: 0; }
+    .demo-list { display: flex; flex-direction: column; gap: var(--spacing-section-to-header); max-width: 540px; }
+    .section-divider { border: none; border-top: var(--line-size) solid var(--InnerLines); margin: 32px 0 0; }
+    .demo-caption { font: var(--font-bodySm); color: var(--ForegroundDisabled); margin-top: var(--spacing-label-to-control-sm); }
+  </style>
+</head>
+<body>
+
+<div class="mob-layout">
+
+  <!-- Sidebar Navigation -->
+  <nav class="mob-nav" id="mob-nav"></nav>
+
+  <!-- Main Content -->
+  <main class="mob-layout__content">
+
+<h1>ComboBox Gauge</h1>
+
+
+<!-- =========================================================
+     SECTION 1: COMBOBOX GAUGE — DEFAULT (LABEL + COMBOBOX)
+     Source: ComboBoxGauge.xaml — Grid [LabelWidth][*]
+     Col 0: Label, Col 1: ComboBox
+     ========================================================= -->
+
+<h2>Default (Label + ComboBox)</h2>
+
+<div class="demo-list">
+
+  <!-- XAML: ComboBoxGauge — ShowLabel=True
+       LabelString="Gear", ComboBox with gear options -->
+  <div class="mob-combobox-gauge">
+    <!-- XAML: TextBlock Col="0" Foreground=ForegroundInvertWatermark -->
+    <span class="mob-combobox-gauge__label">Gear</span>
+    <!-- XAML: ComboBox Col="1" — uses mob-combobox styles -->
+    <select class="mob-combobox-gauge__select">
+      <option>Park</option>
+      <option>Reverse</option>
+      <option>Neutral</option>
+      <option selected>Drive</option>
+      <option>Low</option>
+    </select>
+  </div>
+  <p class="demo-caption">Default — label + dropdown, "Drive" selected</p>
+
+
+  <!-- XAML: ComboBoxGauge — LabelString="Mode" -->
+  <div class="mob-combobox-gauge">
+    <span class="mob-combobox-gauge__label">Mode</span>
+    <select class="mob-combobox-gauge__select">
+      <option selected>Autonomous</option>
+      <option>Manual</option>
+      <option>Teleop</option>
+    </select>
+  </div>
+  <p class="demo-caption">Operating mode selector</p>
+
+
+  <!-- XAML: ComboBoxGauge — LabelString="Speed Limit" -->
+  <div class="mob-combobox-gauge">
+    <span class="mob-combobox-gauge__label">Speed Limit</span>
+    <select class="mob-combobox-gauge__select">
+      <option>5 mph</option>
+      <option selected>10 mph</option>
+      <option>15 mph</option>
+      <option>25 mph</option>
+    </select>
+  </div>
+  <p class="demo-caption">Speed limit configuration</p>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 2: COMBOBOX GAUGE — HIDE LABEL
+     Source: ComboBoxGauge.xaml — ShowHideLabelStates > HideLabel
+     ========================================================= -->
+
+<h2>Without Label</h2>
+
+<div class="demo-list">
+
+  <!-- XAML: ComboBoxGauge ShowLabel="False" — label collapsed -->
+  <div class="mob-combobox-gauge mob-combobox-gauge--hide-label">
+    <span class="mob-combobox-gauge__label">Hidden</span>
+    <select class="mob-combobox-gauge__select">
+      <option selected>Autonomous</option>
+      <option>Manual</option>
+      <option>Teleop</option>
+    </select>
+  </div>
+  <p class="demo-caption">ShowLabel="False" — label hidden, combobox takes full width</p>
+
+</div>
+
+
+  </main>
+
+</div>
+
+<script src="../js/nav.js"></script>
+</body>
+</html>

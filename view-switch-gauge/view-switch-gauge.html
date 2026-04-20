@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mobius — View Switch Gauge</title>
+  <link id="mob-theme-link" rel="stylesheet" href="../styles/color-theme-tokens/LightTheme.css" />
+  <link rel="stylesheet" href="../styles/css/main.css" />
+  <link rel="stylesheet" href="view-switch-gauge.css" />
+  <style>
+    body { margin: 0; }
+    h1 { font: var(--font-hdrMd); margin: 0 0 32px; color: var(--ForegroundStrong); }
+    h2 { font: var(--font-hdrSm); margin: 40px 0 16px; color: var(--ForegroundStrong); }
+    h2:first-of-type { margin-top: 0; }
+    .demo-list { display: flex; flex-direction: column; gap: var(--spacing-section-to-header); max-width: 540px; }
+    .section-divider { border: none; border-top: var(--line-size) solid var(--InnerLines); margin: 32px 0 0; }
+    .demo-caption { font: var(--font-bodySm); color: var(--ForegroundDisabled); margin-top: var(--spacing-label-to-control-sm); }
+  </style>
+</head>
+<body>
+
+<div class="mob-layout">
+
+  <!-- Sidebar Navigation -->
+  <nav class="mob-nav" id="mob-nav"></nav>
+
+  <!-- Main Content -->
+  <main class="mob-layout__content">
+
+<h1>View Switch Gauge</h1>
+
+
+<!-- =========================================================
+     SECTION 1: 3-TAB — FIRST TAB SELECTED
+     Source: ViewSwitchGauge.xaml
+     ListBox with UniformGrid Rows=1
+     ListBoxItem uses TabRadioButton template:
+       Grid > bottom border + _normalTab bg + _selectedTabHighlightElement + label
+     ========================================================= -->
+
+<h2>Three Tabs (First Selected)</h2>
+
+<div class="demo-list">
+
+  <!-- XAML: ViewSwitchGauge — ListBox with 3 ListBoxItems
+       ItemsPanel=UniformGrid Rows=1 (equal-width) -->
+  <div class="mob-view-switch-gauge" role="tablist">
+
+    <!-- XAML: ListBoxItem IsSelected="True" — TabRadioButton template
+         _selectedTabHighlightElement visible, label=SelectionSecondary -->
+    <div class="mob-view-switch-gauge__tab mob-view-switch-gauge__tab--selected"
+         role="tab" aria-selected="true">
+      <!-- XAML: _selectedTabHighlightElement — Rectangle Height="4"
+           VerticalAlignment="Top", Fill=SelectionPrimary -->
+      <span class="mob-view-switch-gauge__highlight"></span>
+      <!-- XAML: ContentPresenter — label text centered -->
+      <span class="mob-view-switch-gauge__label">Overview</span>
+    </div>
+
+    <!-- XAML: ListBoxItem IsSelected="False" — unselected
+         Foreground=GaugeForegroundBrush, bottom border visible -->
+    <div class="mob-view-switch-gauge__tab" role="tab" aria-selected="false">
+      <span class="mob-view-switch-gauge__highlight"></span>
+      <span class="mob-view-switch-gauge__label">Details</span>
+    </div>
+
+    <!-- XAML: ListBoxItem IsSelected="False" -->
+    <div class="mob-view-switch-gauge__tab" role="tab" aria-selected="false">
+      <span class="mob-view-switch-gauge__highlight"></span>
+      <span class="mob-view-switch-gauge__label">History</span>
+    </div>
+
+  </div>
+  <p class="demo-caption">3 tabs, first selected — _selectedTabHighlightElement = 4px SelectionPrimary bar</p>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 2: 3-TAB — MIDDLE TAB SELECTED
+     Source: Same template, different SelectedIndex
+     ========================================================= -->
+
+<h2>Three Tabs (Middle Selected)</h2>
+
+<div class="demo-list">
+
+  <!-- XAML: ViewSwitchGauge SelectedIndex="1" -->
+  <div class="mob-view-switch-gauge" role="tablist">
+
+    <div class="mob-view-switch-gauge__tab" role="tab" aria-selected="false">
+      <span class="mob-view-switch-gauge__highlight"></span>
+      <span class="mob-view-switch-gauge__label">Overview</span>
+    </div>
+
+    <div class="mob-view-switch-gauge__tab mob-view-switch-gauge__tab--selected"
+         role="tab" aria-selected="true">
+      <span class="mob-view-switch-gauge__highlight"></span>
+      <span class="mob-view-switch-gauge__label">Details</span>
+    </div>
+
+    <div class="mob-view-switch-gauge__tab" role="tab" aria-selected="false">
+      <span class="mob-view-switch-gauge__highlight"></span>
+      <span class="mob-view-switch-gauge__label">History</span>
+    </div>
+
+  </div>
+  <p class="demo-caption">SelectedIndex="1" — middle tab has highlight bar + SelectionPrimary label</p>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 3: 4-TAB LAYOUT
+     Source: ViewSwitchGauge with 4 items
+     UniformGrid Rows=1 divides equally into 4 columns
+     ========================================================= -->
+
+<h2>Four Tabs</h2>
+
+<div class="demo-list">
+
+  <!-- XAML: ViewSwitchGauge with 4 ListBoxItems
+       UniformGrid auto-creates 4 equal columns -->
+  <div class="mob-view-switch-gauge" role="tablist">
+
+    <div class="mob-view-switch-gauge__tab" role="tab" aria-selected="false">
+      <span class="mob-view-switch-gauge__highlight"></span>
+      <span class="mob-view-switch-gauge__label">Status</span>
+    </div>
+
+    <div class="mob-view-switch-gauge__tab" role="tab" aria-selected="false">
+      <span class="mob-view-switch-gauge__highlight"></span>
+      <span class="mob-view-switch-gauge__label">Gauges</span>
+    </div>
+
+    <div class="mob-view-switch-gauge__tab mob-view-switch-gauge__tab--selected"
+         role="tab" aria-selected="true">
+      <span class="mob-view-switch-gauge__highlight"></span>
+      <span class="mob-view-switch-gauge__label">Alerts</span>
+    </div>
+
+    <div class="mob-view-switch-gauge__tab" role="tab" aria-selected="false">
+      <span class="mob-view-switch-gauge__highlight"></span>
+      <span class="mob-view-switch-gauge__label">Config</span>
+    </div>
+
+  </div>
+  <p class="demo-caption">4 tabs — UniformGrid Rows=1 gives equal-width columns regardless of label length</p>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 4: 2-TAB LAYOUT
+     Source: ViewSwitchGauge with 2 items — minimal config
+     ========================================================= -->
+
+<h2>Two Tabs</h2>
+
+<div class="demo-list">
+
+  <!-- XAML: ViewSwitchGauge with 2 ListBoxItems -->
+  <div class="mob-view-switch-gauge" role="tablist">
+
+    <div class="mob-view-switch-gauge__tab mob-view-switch-gauge__tab--selected"
+         role="tab" aria-selected="true">
+      <span class="mob-view-switch-gauge__highlight"></span>
+      <span class="mob-view-switch-gauge__label">Live</span>
+    </div>
+
+    <div class="mob-view-switch-gauge__tab" role="tab" aria-selected="false">
+      <span class="mob-view-switch-gauge__highlight"></span>
+      <span class="mob-view-switch-gauge__label">Recorded</span>
+    </div>
+
+  </div>
+  <p class="demo-caption">2-tab binary toggle — simplest usage of ViewSwitchGauge</p>
+
+</div>
+
+
+  </main>
+
+</div>
+
+<script src="../js/nav.js"></script>
+</body>
+</html>

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mobius — GPS Gauge</title>
+  <link id="mob-theme-link" rel="stylesheet" href="../styles/color-theme-tokens/LightTheme.css" />
+  <link rel="stylesheet" href="../styles/css/main.css" />
+  <link rel="stylesheet" href="gps-gauge.css" />
+  <style>
+    body { margin: 0; }
+    h1 { font: var(--font-hdrMd); margin: 0 0 32px; color: var(--ForegroundStrong); }
+    h2 { font: var(--font-hdrSm); margin: 40px 0 16px; color: var(--ForegroundStrong); }
+    h2:first-of-type { margin-top: 0; }
+    .demo-list { display: flex; flex-direction: column; gap: var(--spacing-section-to-header); max-width: 540px; }
+    .section-divider { border: none; border-top: var(--line-size) solid var(--InnerLines); margin: 32px 0 0; }
+    .demo-caption { font: var(--font-bodySm); color: var(--ForegroundDisabled); margin-top: var(--spacing-label-to-control-sm); }
+  </style>
+</head>
+<body>
+
+<div class="mob-layout">
+
+  <!-- Sidebar Navigation -->
+  <nav class="mob-nav" id="mob-nav"></nav>
+
+  <!-- Main Content -->
+  <main class="mob-layout__content">
+
+<h1>GPS Gauge</h1>
+
+
+<!-- =========================================================
+     SECTION 1: GPS GAUGE — DEFAULT
+     Source: GPSGauge.xaml — StackPanel Horizontal
+     Icon + "GPS" label + satellite count circle + mode text
+     ========================================================= -->
+
+<h2>Default</h2>
+
+<div class="demo-list">
+
+  <!-- XAML: GPSGauge — SatelliteCount=12, GPSMode="RTK Fixed" -->
+  <div class="mob-gps-gauge">
+    <!-- XAML: Canvas Width="40" Height="24" — Path "Icon_GPS" -->
+    <span class="mob-gps-gauge__icon" aria-hidden="true">
+      <svg viewBox="0 0 40 24">
+        <circle cx="20" cy="12" r="4" stroke="currentColor" stroke-width="1.5" fill="none"/>
+        <path d="M20 2v4M20 18v4M2 12h4M34 12h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        <circle cx="20" cy="12" r="10" stroke="currentColor" stroke-width="1" fill="none" opacity="0.4"/>
+      </svg>
+    </span>
+    <!-- XAML: TextBlock "GPS", Foreground=GaugeValueForegroundBrush -->
+    <span class="mob-gps-gauge__label">GPS</span>
+    <!-- XAML: Border Width/Height="36" CornerRadius="100000"
+         BorderBrush=GaugeDataTickBrush -->
+    <span class="mob-gps-gauge__sat-count">
+      <!-- XAML: TextBlock — satellite count, Foreground=GaugeValueForegroundBrush -->
+      <span class="mob-gps-gauge__sat-value">12</span>
+    </span>
+    <!-- XAML: TextBlock GPSMode, Foreground=GaugeForegroundBrush -->
+    <span class="mob-gps-gauge__mode">RTK Fixed</span>
+  </div>
+  <p class="demo-caption">RTK Fixed — 12 satellites, full accuracy</p>
+
+
+  <!-- XAML: GPSGauge — SatelliteCount=8, GPSMode="RTK Float" -->
+  <div class="mob-gps-gauge">
+    <span class="mob-gps-gauge__icon" aria-hidden="true">
+      <svg viewBox="0 0 40 24">
+        <circle cx="20" cy="12" r="4" stroke="currentColor" stroke-width="1.5" fill="none"/>
+        <path d="M20 2v4M20 18v4M2 12h4M34 12h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        <circle cx="20" cy="12" r="10" stroke="currentColor" stroke-width="1" fill="none" opacity="0.4"/>
+      </svg>
+    </span>
+    <span class="mob-gps-gauge__label">GPS</span>
+    <span class="mob-gps-gauge__sat-count">
+      <span class="mob-gps-gauge__sat-value">8</span>
+    </span>
+    <span class="mob-gps-gauge__mode">RTK Float</span>
+  </div>
+  <p class="demo-caption">RTK Float — 8 satellites, reduced accuracy</p>
+
+
+  <!-- XAML: GPSGauge — SatelliteCount=3, GPSMode="Standalone" -->
+  <div class="mob-gps-gauge">
+    <span class="mob-gps-gauge__icon" aria-hidden="true">
+      <svg viewBox="0 0 40 24">
+        <circle cx="20" cy="12" r="4" stroke="currentColor" stroke-width="1.5" fill="none"/>
+        <path d="M20 2v4M20 18v4M2 12h4M34 12h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        <circle cx="20" cy="12" r="10" stroke="currentColor" stroke-width="1" fill="none" opacity="0.4"/>
+      </svg>
+    </span>
+    <span class="mob-gps-gauge__label">GPS</span>
+    <span class="mob-gps-gauge__sat-count">
+      <span class="mob-gps-gauge__sat-value">3</span>
+    </span>
+    <span class="mob-gps-gauge__mode">Standalone</span>
+  </div>
+  <p class="demo-caption">Standalone — 3 satellites, basic GPS only</p>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 2: GPS GAUGE — NO SIGNAL
+     Source: GPSGauge.xaml — SatelliteCount=0, no fix
+     ========================================================= -->
+
+<h2>No Signal</h2>
+
+<div class="demo-list">
+
+  <!-- XAML: GPSGauge — SatelliteCount=0, GPSMode="No Fix" -->
+  <div class="mob-gps-gauge">
+    <span class="mob-gps-gauge__icon" aria-hidden="true">
+      <svg viewBox="0 0 40 24">
+        <circle cx="20" cy="12" r="4" stroke="currentColor" stroke-width="1.5" fill="none"/>
+        <path d="M20 2v4M20 18v4M2 12h4M34 12h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        <circle cx="20" cy="12" r="10" stroke="currentColor" stroke-width="1" fill="none" opacity="0.4"/>
+      </svg>
+    </span>
+    <span class="mob-gps-gauge__label">GPS</span>
+    <span class="mob-gps-gauge__sat-count">
+      <span class="mob-gps-gauge__sat-value">0</span>
+    </span>
+    <span class="mob-gps-gauge__mode">No Fix</span>
+  </div>
+  <p class="demo-caption">No Fix — 0 satellites, no position data</p>
+
+</div>
+
+
+  </main>
+
+</div>
+
+<script src="../js/nav.js"></script>
+</body>
+</html>

@@ -1,0 +1,79 @@
+/* =============================================
+   COMBOBOX GAUGE
+   Source: ComboBoxGauge.xaml (60 lines)
+   Asi.Gauges.Client.UI
+
+   A simple labeled combobox gauge — label on the left,
+   dropdown on the right.
+
+   Layout (from XAML ControlTemplate):
+     Grid — 2 columns: [LabelWidth] [*]
+       Col 0: TextBlock label, Foreground=ForegroundInvertWatermark
+       Col 1: ComboBox (uses existing mob-combobox styles)
+
+   States:
+     ShowHideLabelStates: ShowLabel / HideLabel
+
+   Gauge colors use the "GaugeInvert" token set.
+   ============================================= */
+
+
+/* --- Root container --------------------------------------------- */
+/* XAML: ControlTemplate Grid — 2 columns [LabelWidth][*] */
+.mob-combobox-gauge {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: var(--spacing-label-to-control);
+}
+
+
+/* --- Label (Col 0) ---------------------------------------------- */
+/* XAML: TextBlock Foreground=ForegroundInvertWatermark */
+.mob-combobox-gauge__label {
+  font: var(--font-default);
+  color: var(--GaugeInvertForeground);
+  white-space: nowrap;
+}
+
+
+/* --- ShowHideLabelStates ---------------------------------------- */
+/* XAML: VisualState ShowLabel — label visible (default) */
+/* XAML: VisualState HideLabel — label collapsed */
+.mob-combobox-gauge--hide-label .mob-combobox-gauge__label {
+  display: none;
+}
+
+/* When label hidden, combobox takes full width */
+.mob-combobox-gauge--hide-label {
+  grid-template-columns: 1fr;
+}
+
+
+/* --- ComboBox (Col 1) ------------------------------------------- */
+/* XAML: ComboBox — uses existing mob-combobox component styles
+   See: ../combobox/combobox.css for full dropdown styling */
+.mob-combobox-gauge__select {
+  font: var(--font-default);
+  color: var(--GaugeInvertValueForeground);
+  background: var(--GaugeInvertDataBackground);
+  border: 1px solid var(--GaugeInvertDataTick);
+  border-radius: var(--size-6);
+  padding: var(--size-6) var(--spacing-label-to-control);
+  width: 100%;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4l4 4 4-4' fill='none' stroke='%23767676' stroke-width='1.5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 28px;
+}
+
+.mob-combobox-gauge__select:hover {
+  border-color: var(--GaugeInvertInteraction);
+}
+
+.mob-combobox-gauge__select:focus {
+  outline: 2px solid var(--GaugeInvertInteraction);
+  outline-offset: -2px;
+}

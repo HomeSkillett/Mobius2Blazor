@@ -1,0 +1,160 @@
+/* =============================================
+   VIEW SWITCH GAUGE
+   Source: ViewSwitchGauge.xaml
+   Asi.Gauges.Client.UI
+
+   A tab bar / segmented control built from a
+   ListBox with UniformGrid Rows=1. Each tab is
+   equal width. Used to switch views in a gauge panel.
+
+   XAML ControlTemplate structure:
+     ListBox
+       ItemsPanel: UniformGrid Rows=1 (equal-width columns)
+       ListBoxItem uses TabRadioButton template:
+         Grid
+           Rectangle — bottom border (GaugeDataTickBrush, Opacity=0.8)
+           _normalTab — background with gradient opacity mask
+           _selectedTabHighlightElement — 4px top bar (SelectionPrimary)
+           ContentPresenter — label text centered
+
+   VisualStates:
+     Normal / MouseOver / Pressed (CommonStates)
+     Selected / Unselected (SelectionStates)
+
+   When selected:
+     - 4px top highlight bar appears (SelectionPrimary)
+     - Label color changes to SelectionSecondary
+   When unselected:
+     - Label uses GaugeForegroundBrush
+     - Bottom border visible, top bar hidden
+   ============================================= */
+
+
+/* --- Tab bar root ------------------------------------------------ */
+/* XAML: ListBox — Background transparent, custom template
+   ItemsPanel = UniformGrid Rows=1 */
+.mob-view-switch-gauge {
+  display: flex;
+  width: 100%;
+}
+
+
+/* --- Individual tab ---------------------------------------------- */
+/* XAML: ListBoxItem — TabRadioButton template
+   Grid with bottom border, bg fill, top highlight, label */
+.mob-view-switch-gauge__tab {
+  flex: 1 1 0%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px var(--spacing-label-to-control);
+  box-sizing: border-box;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color var(--transition-fade) ease-out;
+}
+
+
+/* --- Bottom border ----------------------------------------------- */
+/* XAML: Rectangle VerticalAlignment="Bottom" Height="1"
+   Fill=GaugeDataTickBrush, Opacity=0.8 */
+.mob-view-switch-gauge__tab::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--GaugeInvertDataTick);
+  opacity: 0.8;
+}
+
+
+/* --- Normal tab background --------------------------------------- */
+/* XAML: _normalTab — Rectangle with gradient OpacityMask
+   Background=GaugeDataBackgroundBrush, fades from top
+   LinearGradientBrush StartPoint="0,0" EndPoint="0,1":
+     Offset=0 Opacity=0.3, Offset=1 Opacity=0 */
+.mob-view-switch-gauge__tab::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    var(--GaugeInvertDataBackground) 0%,
+    transparent 100%
+  );
+  opacity: 0;
+  transition: opacity var(--transition-fade) ease-out;
+}
+
+
+/* --- Hover state ------------------------------------------------- */
+/* XAML: VisualState "MouseOver" — _normalTab opacity fades in */
+.mob-view-switch-gauge__tab:hover::before {
+  opacity: 0.3;
+}
+
+
+/* --- Pressed state ----------------------------------------------- */
+/* XAML: VisualState "Pressed" — slightly more opaque */
+.mob-view-switch-gauge__tab:active::before {
+  opacity: 0.5;
+}
+
+
+/* --- Selected top highlight bar ---------------------------------- */
+/* XAML: _selectedTabHighlightElement — Rectangle Height="4"
+   VerticalAlignment="Top", Fill=SelectionPrimary
+   Opacity=0 by default, 1 when Selected */
+.mob-view-switch-gauge__highlight {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--SelectionPrimary);
+  opacity: 0;
+  transition: opacity var(--transition-fade) ease-out;
+}
+
+
+/* --- Tab label --------------------------------------------------- */
+/* XAML: ContentPresenter — TextBlock centered
+   Foreground=GaugeForegroundBrush (default)
+   Foreground=SelectionSecondary (when selected) */
+.mob-view-switch-gauge__label {
+  font: var(--font-default);
+  color: var(--GaugeInvertForeground);
+  text-align: center;
+  position: relative;
+  z-index: 1;
+  transition: color var(--transition-fade) ease-out;
+}
+
+
+/* =================================================================
+   SELECTED STATE
+   Source: VisualState "Selected" in TabRadioButton template
+   - _selectedTabHighlightElement Opacity = 1
+   - ContentPresenter Foreground = SelectionSecondary
+   ================================================================= */
+
+.mob-view-switch-gauge__tab--selected .mob-view-switch-gauge__highlight {
+  opacity: 1;
+}
+
+.mob-view-switch-gauge__tab--selected .mob-view-switch-gauge__label {
+  color: var(--SelectionPrimary);
+}
+
+/* Selected tab hides the bottom border to avoid double-line */
+.mob-view-switch-gauge__tab--selected::after {
+  opacity: 0;
+}
+
+/* Selected tab shows persistent background fill */
+.mob-view-switch-gauge__tab--selected::before {
+  opacity: 0.15;
+}

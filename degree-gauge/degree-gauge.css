@@ -1,0 +1,355 @@
+/* =============================================
+   DEGREE GAUGE
+   Source: DegreeGauge.xaml (678 lines)
+   Asi.Gauges.Client.UI
+
+   A circular dial with a rotating needle indicator.
+   Used for compass headings, tilt angles, and
+   rotational position feedback.
+
+   XAML ControlTemplate structure:
+     Grid — 2 rows [*][Auto]
+       Row 0: ViewBox containing dial
+         > _dataBackground: full circle (GaugeDataBackgroundBrush)
+         > _dataCoverTop / _dataCoverBottom: half-circle masks
+         > 8 tick marks (4 cardinal + 4 diagonal)
+         > _positionBorder: 3px needle, rotated
+         > _labelBackground: center circle with label
+         > _displayIcon: 28x28 Path icon center
+       Row 1: value/label below dial
+
+   RotationType: Circle (360deg), Tilt (limited arc)
+   ArrowType: Front, Left, Right, None
+   SizeStates: Small=80px, Medium=120px, Large=160px, XLarge=200px
+   ============================================= */
+
+
+/* --- Root wrapper ------------------------------------------------ */
+/* XAML: Grid — 2-row layout (dial + label) */
+.mob-degree-gauge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--size-6);
+}
+
+
+/* --- Dial container ---------------------------------------------- */
+/* XAML: Viewbox Row="0" — contains entire circular dial assembly */
+.mob-degree-gauge__dial {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+}
+
+
+/* --- Data background ring ---------------------------------------- */
+/* XAML: _dataBackground — Border CornerRadius=100000
+   Background=GaugeDataBackgroundBrush, full circle track */
+.mob-degree-gauge__track {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: var(--GaugeInvertDataBackground);
+}
+
+
+/* --- Arc fill (covers to show current value) --------------------- */
+/* XAML: _dataCoverTop + _dataCoverBottom — half-circle masks that
+   reveal filled portion of the arc. CSS uses conic-gradient instead */
+.mob-degree-gauge__fill {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    var(--GaugeInvertDataForeground) var(--degree-fill, 0deg),
+    transparent var(--degree-fill, 0deg)
+  );
+}
+
+
+/* --- Tick marks -------------------------------------------------- */
+/* XAML: 8 Rectangle elements around perimeter
+   4 cardinal (0/90/180/270) + 4 diagonal (45/135/225/315)
+   Width=1, Fill=GaugeDataTickBrush */
+.mob-degree-gauge__ticks {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+}
+
+.mob-degree-gauge__tick {
+  position: absolute;
+  width: 1px;
+  height: 10px;
+  background: var(--GaugeInvertDataTick);
+  top: 0;
+  left: 50%;
+  transform-origin: 0.5px 60px;
+}
+
+/* XAML: Cardinal tick at 0deg (top) */
+.mob-degree-gauge__tick:nth-child(1) { transform: rotate(0deg); }
+/* XAML: Diagonal tick at 45deg */
+.mob-degree-gauge__tick:nth-child(2) { transform: rotate(45deg); }
+/* XAML: Cardinal tick at 90deg (right) */
+.mob-degree-gauge__tick:nth-child(3) { transform: rotate(90deg); }
+/* XAML: Diagonal tick at 135deg */
+.mob-degree-gauge__tick:nth-child(4) { transform: rotate(135deg); }
+/* XAML: Cardinal tick at 180deg (bottom) */
+.mob-degree-gauge__tick:nth-child(5) { transform: rotate(180deg); }
+/* XAML: Diagonal tick at 225deg */
+.mob-degree-gauge__tick:nth-child(6) { transform: rotate(225deg); }
+/* XAML: Cardinal tick at 270deg (left) */
+.mob-degree-gauge__tick:nth-child(7) { transform: rotate(270deg); }
+/* XAML: Diagonal tick at 315deg */
+.mob-degree-gauge__tick:nth-child(8) { transform: rotate(315deg); }
+
+
+/* --- Needle indicator -------------------------------------------- */
+/* XAML: _positionBorder — Border Width=3, rotated to current angle,
+   Background=GaugeValueForegroundBrush */
+.mob-degree-gauge__needle {
+  position: absolute;
+  width: 3px;
+  height: 50%;
+  bottom: 50%;
+  left: calc(50% - 1.5px);
+  transform-origin: 1.5px 100%;
+  transform: rotate(var(--needle-angle, 0deg));
+  background: var(--GaugeInvertValueForeground);
+  border-radius: 2px;
+  transition: transform var(--transition-fade) ease-out;
+}
+
+/* XAML: Needle tip triangle — visual pointer at the tip */
+.mob-degree-gauge__needle::before {
+  content: "";
+  position: absolute;
+  top: -4px;
+  left: -2px;
+  width: 0;
+  height: 0;
+  border-left: 3.5px solid transparent;
+  border-right: 3.5px solid transparent;
+  border-bottom: 6px solid var(--GaugeInvertValueForeground);
+}
+
+
+/* --- Center circle ----------------------------------------------- */
+/* XAML: _labelBackground — Ellipse in center of dial,
+   Background=GaugeBackgroundBrush, holds label text */
+.mob-degree-gauge__center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--GaugeInvertBackground);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+}
+
+
+/* --- Center icon ------------------------------------------------- */
+/* XAML: _displayIcon — 28x28 Path icon in center of dial */
+.mob-degree-gauge__icon {
+  width: 28px;
+  height: 28px;
+  fill: var(--GaugeInvertForeground);
+}
+
+
+/* --- Center label (inside dial) ---------------------------------- */
+/* XAML: TextBlock inside _labelBackground — small label */
+.mob-degree-gauge__center-label {
+  font: var(--font-Sm);
+  color: var(--GaugeInvertForeground);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+
+/* --- Value readout (below dial) ---------------------------------- */
+/* XAML: Grid Row="1" — value display below the circular dial */
+.mob-degree-gauge__value {
+  font: var(--font-hdrMd);
+  color: var(--GaugeInvertValueForeground);
+  text-align: center;
+}
+
+
+/* --- Unit label (below value) ------------------------------------ */
+/* XAML: TextBlock — unit/label below value */
+.mob-degree-gauge__label {
+  font: var(--font-Sm);
+  color: var(--GaugeInvertForeground);
+  text-transform: uppercase;
+  text-align: center;
+}
+
+
+/* --- Arrow indicator overlay ------------------------------------- */
+/* XAML: ArrowType — directional arrow shown on/near dial */
+.mob-degree-gauge__arrow {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  fill: var(--GaugeInvertValueForeground);
+}
+
+/* XAML: ArrowType=Front — arrow at top of dial */
+.mob-degree-gauge__arrow--front {
+  top: 4px;
+  left: calc(50% - 6px);
+}
+
+/* XAML: ArrowType=Left — arrow at left of dial */
+.mob-degree-gauge__arrow--left {
+  top: calc(50% - 6px);
+  left: 4px;
+}
+
+/* XAML: ArrowType=Right — arrow at right of dial */
+.mob-degree-gauge__arrow--right {
+  top: calc(50% - 6px);
+  right: 4px;
+}
+
+
+/* === SIZE STATES ================================================= */
+
+/* XAML: SizeStates — Small (80px) */
+.mob-degree-gauge--sm .mob-degree-gauge__dial {
+  width: 80px;
+  height: 80px;
+}
+
+.mob-degree-gauge--sm .mob-degree-gauge__tick {
+  height: 7px;
+  transform-origin: 0.5px 40px;
+}
+
+.mob-degree-gauge--sm .mob-degree-gauge__needle {
+  width: 2px;
+  left: calc(50% - 1px);
+  transform-origin: 1px 100%;
+}
+
+.mob-degree-gauge--sm .mob-degree-gauge__center {
+  width: 38px;
+  height: 38px;
+}
+
+.mob-degree-gauge--sm .mob-degree-gauge__icon {
+  width: 20px;
+  height: 20px;
+}
+
+/* XAML: SizeStates — Medium (120px, default) */
+/* No overrides needed — base styles are 120px */
+
+/* XAML: SizeStates — Large (160px) */
+.mob-degree-gauge--lg .mob-degree-gauge__dial {
+  width: 160px;
+  height: 160px;
+}
+
+.mob-degree-gauge--lg .mob-degree-gauge__tick {
+  height: 12px;
+  transform-origin: 0.5px 80px;
+}
+
+.mob-degree-gauge--lg .mob-degree-gauge__center {
+  width: 72px;
+  height: 72px;
+}
+
+/* XAML: SizeStates — XLarge (200px) */
+.mob-degree-gauge--xl .mob-degree-gauge__dial {
+  width: 200px;
+  height: 200px;
+}
+
+.mob-degree-gauge--xl .mob-degree-gauge__tick {
+  height: 14px;
+  transform-origin: 0.5px 100px;
+}
+
+.mob-degree-gauge--xl .mob-degree-gauge__needle {
+  width: 4px;
+  left: calc(50% - 2px);
+  transform-origin: 2px 100%;
+}
+
+.mob-degree-gauge--xl .mob-degree-gauge__center {
+  width: 90px;
+  height: 90px;
+}
+
+.mob-degree-gauge--xl .mob-degree-gauge__icon {
+  width: 36px;
+  height: 36px;
+}
+
+
+/* === ROTATION TYPE: TILT ========================================= */
+/* XAML: RotationType=Tilt — limited arc, only shows ~180deg range */
+.mob-degree-gauge--tilt .mob-degree-gauge__fill {
+  background: conic-gradient(
+    from 180deg,
+    transparent 0deg,
+    transparent 45deg,
+    var(--GaugeInvertDataForeground) 45deg,
+    var(--GaugeInvertDataForeground) var(--degree-fill, 135deg),
+    transparent var(--degree-fill, 135deg),
+    transparent 315deg,
+    transparent 360deg
+  );
+}
+
+
+/* === STATUS STATES =============================================== */
+
+/* XAML: StatusIndicatorStates — Warning */
+.mob-degree-gauge[data-status="warning"] .mob-degree-gauge__needle {
+  background: var(--GaugeInvertStatusWarning);
+}
+
+.mob-degree-gauge[data-status="warning"] .mob-degree-gauge__needle::before {
+  border-bottom-color: var(--GaugeInvertStatusWarning);
+}
+
+/* XAML: StatusIndicatorStates — Critical */
+.mob-degree-gauge[data-status="critical"] .mob-degree-gauge__needle {
+  background: var(--GaugeInvertStatusCritical);
+}
+
+.mob-degree-gauge[data-status="critical"] .mob-degree-gauge__needle::before {
+  border-bottom-color: var(--GaugeInvertStatusCritical);
+}
+
+/* XAML: StatusIndicatorStates — OK */
+.mob-degree-gauge[data-status="ok"] .mob-degree-gauge__fill {
+  background: conic-gradient(
+    from 0deg,
+    var(--GaugeInvertStatusOK) var(--degree-fill, 0deg),
+    transparent var(--degree-fill, 0deg)
+  );
+}
+
+/* XAML: Clockwise=False — reverses rotation direction */
+.mob-degree-gauge--ccw .mob-degree-gauge__fill {
+  transform: scaleX(-1);
+}
+
+.mob-degree-gauge--ccw .mob-degree-gauge__needle {
+  transform: rotate(calc(-1 * var(--needle-angle, 0deg)));
+}
