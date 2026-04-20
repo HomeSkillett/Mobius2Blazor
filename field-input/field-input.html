@@ -69,7 +69,7 @@
      Style:  Mobius_UI_Resources_Styles_FieldInput (default)
      ========================================================= -->
 
-<h2>Horizontal Template (Default)</h2>
+<h2>Default Template</h2>
 <p style="font: var(--font-default); color: var(--ForegroundPrimary); margin: 0 0 16px; max-width: 600px;">
   The most common layout. Four-column grid: label, status icon, text input, unit label. Label column uses <code style="font-family: var(--font-monospace);">SharedSizeGroup</code> so labels in the same form section align to the widest. Default label min-width is 130px. XAML key: <code style="font-family: var(--font-monospace);">Mobius_UI_Common_Templates_FieldInputHorizontal</code>.
 </p>
@@ -416,6 +416,95 @@
     <label class="mob-field__label">Serial Number:</label>
     <div class="mob-field__body">
       <input class="mob-input" type="text" value="SN-00482" disabled />
+    </div>
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 6b: HORIZONTAL TEMPLATE (side-by-side)
+     Source: FieldInput.xaml — Mobius_UI_Common_Templates_FieldInputHorizontal
+     Usage:  Multiple FieldInputs placed in adjacent Grid columns
+             or inside a horizontal StackPanel / WrapPanel.
+     ========================================================= -->
+
+<h2>Horizontal Template</h2>
+<p style="font: var(--font-default); color: var(--ForegroundPrimary); margin: 0 0 16px; max-width: 600px;">
+  Side-by-side layout of horizontal FieldInputs. Same default template, just placed next to each other in a row. Each field is independent; labels align within their own group. Used in wide panels or dialogs where vertical stacking would waste space.
+</p>
+
+<!-- ===== Side by side — default ===== -->
+<!-- XAML: FieldInputHorizontal fields in adjacent Grid columns -->
+<div style="display: flex; gap: var(--size-24); flex-wrap: wrap; max-width: 900px; margin-bottom: var(--spacing-field);">
+
+  <div class="mob-field" style="flex: 1; min-width: 260px;">
+    <label class="mob-field__label" style="min-width: 80px;">Speed:</label>
+    <div class="mob-field__body">
+      <input class="mob-input" type="text" value="12.5" />
+      <span class="mob-field__unit">km/h</span>
+    </div>
+  </div>
+
+  <div class="mob-field" style="flex: 1; min-width: 260px;">
+    <label class="mob-field__label" style="min-width: 80px;">Distance:</label>
+    <div class="mob-field__body">
+      <input class="mob-input" type="text" value="1,500" />
+      <span class="mob-field__unit">ft</span>
+    </div>
+  </div>
+
+</div>
+
+<div style="display: flex; gap: var(--size-24); flex-wrap: wrap; max-width: 900px; margin-bottom: var(--spacing-field);">
+
+  <div class="mob-field" style="flex: 1; min-width: 260px;">
+    <label class="mob-field__label" style="min-width: 80px;">Angle:</label>
+    <div class="mob-field__body">
+      <input class="mob-input" type="text" value="45" />
+      <span class="mob-field__unit">deg</span>
+    </div>
+  </div>
+
+  <div class="mob-field" style="flex: 1; min-width: 260px;">
+    <label class="mob-field__label" style="min-width: 80px;">Timeout:</label>
+    <div class="mob-field__body">
+      <input class="mob-input" type="text" value="30" />
+      <span class="mob-field__unit">sec</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===== Side by side — with validation states ===== -->
+<div style="display: flex; gap: var(--size-24); flex-wrap: wrap; max-width: 900px;">
+
+  <div class="mob-field mob-field--warning" style="flex: 1; min-width: 260px;">
+    <label class="mob-field__label" style="min-width: 80px;">Speed:</label>
+    <span class="mob-field__icon mob-field__icon--warning">
+      <svg viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M5,0L0,9.2L1.8,12h8.3L12,9.2L7,0H5z M7,10H5V8h2V10z M7,7H5V3h2V7z" />
+      </svg>
+    </span>
+    <div class="mob-field__body">
+      <input class="mob-input is-warning" type="text" value="999" />
+      <span class="mob-field__unit">km/h</span>
+    </div>
+  </div>
+
+  <div class="mob-field mob-field--working" style="flex: 1; min-width: 260px;">
+    <label class="mob-field__label" style="min-width: 80px;">Distance:</label>
+    <span class="mob-field__icon mob-field__icon--working">
+      <svg viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M12,6c0,3.3-2.7,6-6,6S0,9.3,0,6s2.7-6,6-6S12,2.7,12,6z M2,5v1.4L4.6,9h0.8L10,4.4V3H8.6L5,6.6L3.4,5H2z" />
+      </svg>
+    </span>
+    <div class="mob-field__body">
+      <input class="mob-input is-working" type="text" value="2,000" />
+      <span class="mob-field__unit">ft</span>
     </div>
   </div>
 
