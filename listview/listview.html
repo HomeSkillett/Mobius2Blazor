@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mobius — ListView / ListBox</title>
+  <link id="mob-theme-link" rel="stylesheet" href="../styles/color-theme-tokens/LightTheme.css" />
+  <link rel="stylesheet" href="../styles/css/main.css" />
+  <link rel="stylesheet" href="listview.css" />
+  <style>
+    body { margin: 0; }
+    h1 {
+      font: var(--font-hdrMd);
+      margin: 0 0 32px;
+      color: var(--ForegroundStrong);
+    }
+    h2 {
+      font: var(--font-hdrSm);
+      margin: 40px 0 16px;
+      color: var(--ForegroundStrong);
+    }
+    h2:first-of-type { margin-top: 0; }
+    h3 {
+      font: var(--font-default);
+      font-weight: var(--font-bold);
+      text-transform: uppercase;
+      margin: 24px 0 8px;
+      color: var(--ForegroundPrimary);
+    }
+    .demo-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 40px;
+      align-items: flex-start;
+    }
+    .demo-col {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-field);
+      min-width: 280px;
+      max-width: 360px;
+    }
+    .demo-label {
+      font: var(--font-Sm);
+      font-weight: var(--font-bold);
+      text-transform: uppercase;
+      color: var(--ForegroundPrimary);
+      margin: 0 0 4px;
+    }
+    .section-divider {
+      border: none;
+      border-top: var(--line-size) solid var(--InnerLines);
+      margin: 32px 0 0;
+    }
+    .note {
+      font: var(--font-default);
+      color: var(--ForegroundPrimary);
+      margin: 0 0 var(--spacing-section-to-header) 0;
+      max-width: 620px;
+    }
+    .note code {
+      font-family: var(--font-monospace);
+      background: var(--BackgroundPrimary);
+      padding: 1px 4px;
+      border-radius: 3px;
+    }
+    /* constrain demo lists to a fixed height so scrolling is visible */
+    .demo-list { height: 264px; }
+    .demo-list--short { height: 176px; }
+    .demo-list--auto { height: auto; }
+    /* invert demo wrapper */
+    .demo-invert-bg {
+      background: var(--BackgroundInvertStrong);
+      padding: 20px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="mob-layout">
+
+  <!-- Sidebar Navigation -->
+  <nav class="mob-nav" id="mob-nav"></nav>
+
+  <!-- Main Content -->
+  <main class="mob-layout__content">
+
+<h1>ListView / ListBox</h1>
+
+<p class="note">
+  Scrollable selection lists used throughout Mobius for master lists, settings panels,
+  vehicle lists, and anywhere users pick from a visible collection. Distinct from
+  <code>ItemsControl</code> (non-selectable repeater) and <code>ComboBox</code>
+  (dropdown selector).
+</p>
+
+
+<!-- ============================================================
+     LISTBOX — DEFAULT
+     XAML: Mobius_UI_Resources_Templates_ListBox
+           Mobius_UI_Resources_Templates_ListBoxItem
+     ============================================================ -->
+<h2>ListBox (Default)</h2>
+
+<p class="note">
+  Vertical scrollable list with right-edge border. Items show a left selection bar
+  on select, hover overlay at 30% opacity. Min-height 44px (touch target).
+  <code>.mob-listbox</code> + <code>.mob-listbox__item</code>
+</p>
+
+<div class="demo-grid">
+
+  <!-- Default -->
+  <div class="demo-col">
+    <span class="demo-label">Default</span>
+    <!-- XAML: ListBox -->
+    <div class="mob-listbox demo-list">
+      <!-- XAML: ListBoxItem -->
+      <div class="mob-listbox__item" tabindex="0">Vehicle 01 — Haul Truck</div>
+      <div class="mob-listbox__item is-selected" tabindex="0">Vehicle 02 — Excavator</div>
+      <div class="mob-listbox__item" tabindex="0">Vehicle 03 — Water Cart</div>
+      <div class="mob-listbox__item" tabindex="0">Vehicle 04 — Drill Rig</div>
+      <div class="mob-listbox__item" tabindex="0">Vehicle 05 — Haul Truck</div>
+      <div class="mob-listbox__item" tabindex="0">Vehicle 06 — Compactor</div>
+      <div class="mob-listbox__item" tabindex="0">Vehicle 07 — Grader</div>
+      <div class="mob-listbox__item" tabindex="0">Vehicle 08 — Haul Truck</div>
+    </div>
+  </div>
+
+  <!-- With disabled items -->
+  <div class="demo-col">
+    <span class="demo-label">With Disabled Items</span>
+    <!-- XAML: ListBox -->
+    <div class="mob-listbox demo-list">
+      <div class="mob-listbox__item" tabindex="0">Path A — Crusher Loop</div>
+      <div class="mob-listbox__item is-selected" tabindex="0">Path B — Stockpile Run</div>
+      <div class="mob-listbox__item is-disabled">Path C — Offline</div>
+      <div class="mob-listbox__item" tabindex="0">Path D — Pit Haul</div>
+      <div class="mob-listbox__item is-disabled">Path E — Maintenance</div>
+      <div class="mob-listbox__item" tabindex="0">Path F — Ramp Access</div>
+    </div>
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- ============================================================
+     LISTBOX — FULL BORDER
+     XAML: Mobius_UI_Resources_Templates_ListBoxFullBorder
+     ============================================================ -->
+<h2>ListBox — Full Border</h2>
+
+<p class="note">
+  Same as default but wrapped in an input-style border with white background.
+  Used in form contexts.
+  <code>.mob-listbox.mob-listbox--full</code>
+</p>
+
+<div class="demo-grid">
+
+  <div class="demo-col">
+    <span class="demo-label">Full Border</span>
+    <!-- XAML: ListBox Style="ListBoxFullBorder" -->
+    <div class="mob-listbox mob-listbox--full demo-list--short">
+      <div class="mob-listbox__item" tabindex="0">Trigger — Geofence Entry</div>
+      <div class="mob-listbox__item is-selected" tabindex="0">Trigger — Speed Limit</div>
+      <div class="mob-listbox__item" tabindex="0">Trigger — Obstacle Detected</div>
+      <div class="mob-listbox__item" tabindex="0">Trigger — Path Deviation</div>
+    </div>
+  </div>
+
+  <div class="demo-col">
+    <span class="demo-label">Full Border — Wide Items</span>
+    <!-- XAML: ListBox Style="ListBoxFullBorderWideItems" -->
+    <div class="mob-listbox mob-listbox--full demo-list--short">
+      <div class="mob-listbox__item mob-listbox__item--wide" tabindex="0">Mode: Autonomous</div>
+      <div class="mob-listbox__item mob-listbox__item--wide is-selected" tabindex="0">Mode: Tele-Remote</div>
+      <div class="mob-listbox__item mob-listbox__item--wide" tabindex="0">Mode: Manual</div>
+      <div class="mob-listbox__item mob-listbox__item--wide" tabindex="0">Mode: Standby</div>
+    </div>
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- ============================================================
+     LISTBOX — WITH CHECKBOX
+     XAML: Mobius_UI_Resources_Templates_ListBoxItemWithCheckbox
+     ============================================================ -->
+<h2>ListBox — Multi-Select with Checkbox</h2>
+
+<p class="note">
+  Multi-select variant. Each item has a checkbox, a 4px left selection bar,
+  and a 10% background tint when selected. Selection foreground uses
+  <code>ForegroundStrong</code> instead of <code>SelectionForeground</code>.
+  <code>.mob-listbox__item--checkbox</code>
+</p>
+
+<div class="demo-grid">
+
+  <div class="demo-col">
+    <span class="demo-label">Multi-Select</span>
+    <div class="mob-listbox demo-list">
+      <!-- XAML: ListBoxItem Template="ListBoxItemWithCheckbox" -->
+      <div class="mob-listbox__item--checkbox is-selected" tabindex="0">
+        <input type="checkbox" class="mob-listbox__checkbox" checked />
+        <span class="mob-listbox__content">Notification — Speed Warning</span>
+      </div>
+      <div class="mob-listbox__item--checkbox" tabindex="0">
+        <input type="checkbox" class="mob-listbox__checkbox" />
+        <span class="mob-listbox__content">Notification — Obstacle Alert</span>
+      </div>
+      <div class="mob-listbox__item--checkbox is-selected" tabindex="0">
+        <input type="checkbox" class="mob-listbox__checkbox" checked />
+        <span class="mob-listbox__content">Notification — Path Deviation</span>
+      </div>
+      <div class="mob-listbox__item--checkbox" tabindex="0">
+        <input type="checkbox" class="mob-listbox__checkbox" />
+        <span class="mob-listbox__content">Notification — Geofence Breach</span>
+      </div>
+      <div class="mob-listbox__item--checkbox is-disabled" tabindex="-1">
+        <input type="checkbox" class="mob-listbox__checkbox" disabled />
+        <span class="mob-listbox__content">Notification — System (locked)</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- ============================================================
+     LISTVIEW — DEFAULT
+     XAML: Mobius_UI_Resources_Templates_ListView
+           Mobius_UI_Resources_Templates_ListViewItem
+     ============================================================ -->
+<h2>ListView</h2>
+
+<p class="note">
+  Full-row selection fill (vs ListBox's left-bar-only selection).
+  Supports drag-reorder in WPF. Right-edge border like ListBox.
+  <code>.mob-listview</code> + <code>.mob-listview__item</code>
+</p>
+
+<div class="demo-grid">
+
+  <div class="demo-col">
+    <span class="demo-label">Default ListView</span>
+    <!-- XAML: ListView -->
+    <div class="mob-listview demo-list">
+      <!-- XAML: ListViewItem -->
+      <div class="mob-listview__item" tabindex="0">Crusher Loop — Active</div>
+      <div class="mob-listview__item is-selected" tabindex="0">Stockpile Run — Selected</div>
+      <div class="mob-listview__item" tabindex="0">Pit Haul North — Idle</div>
+      <div class="mob-listview__item" tabindex="0">Ramp Access — Active</div>
+      <div class="mob-listview__item" tabindex="0">Dump Zone A — Active</div>
+      <div class="mob-listview__item is-disabled">Maintenance Loop — Offline</div>
+      <div class="mob-listview__item" tabindex="0">Pit Haul South — Idle</div>
+    </div>
+  </div>
+
+  <div class="demo-col">
+    <span class="demo-label">ListView — No Scroll</span>
+    <!-- XAML: ListView Template="ListViewNoScroll" -->
+    <div class="mob-listview mob-listview--no-scroll demo-list--auto">
+      <div class="mob-listview__item" tabindex="0">Action 1 — Honk Horn</div>
+      <div class="mob-listview__item is-selected" tabindex="0">Action 2 — Flash Lights</div>
+      <div class="mob-listview__item" tabindex="0">Action 3 — Slow to 5 kph</div>
+    </div>
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- ============================================================
+     HORIZONTAL VARIANTS
+     XAML: Mobius_UI_Resources_Templates_ListBoxItemHorizontal
+           Mobius_UI_Resources_Templates_ListBoxItemDotHorizontal
+           Mobius_UI_Resources_Templates_ColorChipListBoxItem
+     ============================================================ -->
+<h2>Horizontal Variants</h2>
+
+<p class="note">
+  Horizontal layouts for inline selection: text links, pagination dots, and color swatches.
+</p>
+
+<div class="demo-grid">
+
+  <!-- Horizontal text links -->
+  <div class="demo-col">
+    <span class="demo-label">Horizontal Text</span>
+    <!-- XAML: ListBox Template="ListBoxHorizontal", ItemTemplate="ListBoxItemHorizontal" -->
+    <div class="mob-listbox--horizontal">
+      <div class="mob-listbox__item--horizontal" tabindex="0">All</div>
+      <div class="mob-listbox__item--horizontal is-selected" tabindex="0">Active</div>
+      <div class="mob-listbox__item--horizontal" tabindex="0">Idle</div>
+      <div class="mob-listbox__item--horizontal is-disabled">Offline</div>
+    </div>
+  </div>
+
+  <!-- Dot selector -->
+  <div class="demo-col">
+    <span class="demo-label">Dot Selector</span>
+    <!-- XAML: ListBox Template="ListBoxHorizontal", ItemTemplate="ListBoxItemDotHorizontal" -->
+    <div class="mob-listbox--horizontal">
+      <div class="mob-listbox__item--dot" tabindex="0"><span class="mob-listbox__dot"></span></div>
+      <div class="mob-listbox__item--dot is-selected" tabindex="0"><span class="mob-listbox__dot"></span></div>
+      <div class="mob-listbox__item--dot" tabindex="0"><span class="mob-listbox__dot"></span></div>
+      <div class="mob-listbox__item--dot" tabindex="0"><span class="mob-listbox__dot"></span></div>
+      <div class="mob-listbox__item--dot" tabindex="0"><span class="mob-listbox__dot"></span></div>
+    </div>
+  </div>
+
+  <!-- Color chips -->
+  <div class="demo-col">
+    <span class="demo-label">Color Chip Selector</span>
+    <!-- XAML: ListBox Template="ListBoxHorizontal", ItemTemplate="ColorChipListBoxItem" -->
+    <div class="mob-listbox--horizontal" style="gap: 8px;">
+      <div class="mob-listbox__item--color-chip" tabindex="0">
+        <span class="mob-listbox__chip" style="background-color: #e74c3c;"></span>
+      </div>
+      <div class="mob-listbox__item--color-chip is-selected" tabindex="0">
+        <span class="mob-listbox__chip" style="background-color: #3498db;"></span>
+      </div>
+      <div class="mob-listbox__item--color-chip" tabindex="0">
+        <span class="mob-listbox__chip" style="background-color: #2ecc71;"></span>
+      </div>
+      <div class="mob-listbox__item--color-chip" tabindex="0">
+        <span class="mob-listbox__chip" style="background-color: #f39c12;"></span>
+      </div>
+      <div class="mob-listbox__item--color-chip" tabindex="0">
+        <span class="mob-listbox__chip" style="background-color: #9b59b6;"></span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- ============================================================
+     INVERT VARIANTS
+     XAML: Mobius_UI_Resources_Styles_ListBoxInvert
+           Mobius_UI_Resources_Styles_ListViewItemInvert
+     ============================================================ -->
+<h2>Invert Variants</h2>
+
+<p class="note">
+  Inverted color scheme for dark panel contexts. Uses
+  <code>ForegroundInvertPrimary</code> / <code>BackgroundInvertPrimary</code>.
+</p>
+
+<div class="demo-grid">
+
+  <div class="demo-col">
+    <span class="demo-label">ListBox Invert</span>
+    <div class="demo-invert-bg">
+      <!-- XAML: ListBox Style="ListBoxInvert" -->
+      <div class="mob-listbox mob-listbox--invert demo-list--short">
+        <div class="mob-listbox__item mob-listbox__item--invert" tabindex="0">Sensor A — LiDAR</div>
+        <div class="mob-listbox__item mob-listbox__item--invert is-selected" tabindex="0">Sensor B — Radar</div>
+        <div class="mob-listbox__item mob-listbox__item--invert" tabindex="0">Sensor C — Camera</div>
+        <div class="mob-listbox__item mob-listbox__item--invert" tabindex="0">Sensor D — GPS</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="demo-col">
+    <span class="demo-label">ListView Invert</span>
+    <div class="demo-invert-bg">
+      <!-- XAML: ListView ItemContainerStyle="ListViewItemInvert" -->
+      <div class="mob-listview demo-list--short">
+        <div class="mob-listview__item mob-listview__item--invert" tabindex="0">Zone Alpha</div>
+        <div class="mob-listview__item mob-listview__item--invert is-selected" tabindex="0">Zone Bravo</div>
+        <div class="mob-listview__item mob-listview__item--invert" tabindex="0">Zone Charlie</div>
+        <div class="mob-listview__item mob-listview__item--invert" tabindex="0">Zone Delta</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- ============================================================
+     XAML MAPPING REFERENCE
+     ============================================================ -->
+<h2>XAML → HTML Mapping</h2>
+
+<p class="note">Quick reference for developers converting XAML to Blazor markup.</p>
+
+<div style="overflow-x: auto; max-width: 700px;">
+<table style="width: 100%; border-collapse: collapse; font: var(--font-default); color: var(--ForegroundPrimary);">
+  <thead>
+    <tr style="border-bottom: 2px solid var(--InnerLines); text-align: left;">
+      <th style="padding: 8px 12px;">XAML Style / Template</th>
+      <th style="padding: 8px 12px;">CSS Class</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="border-bottom: 1px solid var(--InnerLines);">
+      <td style="padding: 8px 12px; font-family: var(--font-monospace); font-size: var(--size-Sm);">ListBox (default)</td>
+      <td style="padding: 8px 12px; font-family: var(--font-monospace); font-size: var(--size-Sm);">.mob-listbox</td>
+    </tr>
+    <tr style="border-bottom: 1px solid var(--InnerLines);">
+      <td style="padding: 8px 12px; font-family: var(--font-monospace); font-size: var(--size-Sm);">ListBoxFullBorder</td>
+      <td style="padding: 8px 12px; font-family: var(--font-monospace); font-size: var(--size-Sm);">.mob-listbox.mob-listbox--full</td>
+    </tr>
+    <tr style="border-bottom: 1px solid var(--InnerLines);">
+      <td style="padding: 8px 12px; font-family: var(--font-monospace); font-size: var(--size-Sm);">ListBoxInvert</td>
+      <td style="padding: 8px 12px; font-family: var(--font-monospace); font-size: var(--size-Sm);">.mob-listbox.mob-listbox--invert</td>
+    </tr>
+    <tr style="border-bottom: 1px solid var(--InnerLines);">
+      <td style="padding: 8px 12px; font-family: var(--font-monospace); font-size: var(--size-Sm);">ListBoxItem (default)</td>
+      <td style="padding: 8px 12px; font-family: var(--font-monospace); font-size: var(--size-Sm);">.mob-listbox__item</td>
+    </tr>
+    <tr style="border-bottom: 1px solid var(--InnerLines);">
+      <td style="padding: 8px 12px; font-family: var(--font-monospace); font-size: var(--size-Sm);">ListBoxItemWide</td>
+      <td style="padding: 8px 12px; font-family: var(--font-monospace); font-size: var(--size-Sm);">.mob-listbox__item.mob-listbox__item--wide</td>
+    </tr>
+    <tr style="border-bottom: 1px solid var(--InnerLines);">
+      <td style="padding: 8px 12px; font-family: var(--font-monospace); font-size: var(--size-Sm);">ListBoxItemInvert</td>
+      <td style="padding: 8px 12px; font-family: var(--font-monospace); font-size: var(--size-Sm);">.mob-listbox__item.mob-listbox__item--invert</td>
+    </tr>
+    <tr style="border-bottom: 1px solid var(--InnerLines);">
+      <td style="padding: 8px 12px; font-family: var(--font-monospace); font-size: var(--size-Sm);">ListBoxItemLargeInvert</td>
+      <td style="padding: 8px 12px; font-family: var(--font-monospace); font-size: var(--size-Sm);">.mob-listbox__item.mob-listbox__item--large-invert</td>
+    </tr>
+    <tr style="border-bottom: 1px solid var(--InnerLines);">
+      <td style="padding: 8px 12px; font-family: var(--font-monospace); font-size: var(--size-Sm);">ListBoxItemWithCheckbox</td>
+      <td style="padding: 8px 12px; font-family: var(--font-monospace); font-size: var(--size-Sm);">.mob-listbox__item--checkbox</td>
+    </tr>
+    <tr style="border-bottom: 1px solid var(--InnerLines);">
+      <td style="padding: 8px 12px; font-family: var(--font-monospace); font-size: var(--size-Sm);">ListBoxItemHorizontal</td>
+      <td style="padding: 8px 12px; font-family: var(--font-monospace); font-size: var(--size-Sm);">.mob-listbox__item--horizontal</td>
+    </tr>
+    <tr style="border-bottom: 1px solid var(--InnerLines);">
+      <td style="padding: 8px 12px; font-family: var(--font-monospace); font-size: var(--size-Sm);">ListBoxItemDotHorizontal</td>
+      <td style="padding: 8px 12px; font-family: var(--font-monospace); font-size: var(--size-Sm);">.mob-listbox__item--dot</td>
+    </tr>
+    <tr style="border-bottom: 1px solid var(--InnerLines);">
+      <td style="padding: 8px 12px; font-family: var(--font-monospace); font-size: var(--size-Sm);">ColorChipListBoxItem</td>
+      <td style="padding: 8px 12px; font-family: var(--font-monospace); font-size: var(--size-Sm);">.mob-listbox__item--color-chip</td>
+    </tr>
+    <tr style="border-bottom: 1px solid var(--InnerLines);">
+      <td style="padding: 8px 12px; font-family: var(--font-monospace); font-size: var(--size-Sm);">ListView (default)</td>
+      <td style="padding: 8px 12px; font-family: var(--font-monospace); font-size: var(--size-Sm);">.mob-listview</td>
+    </tr>
+    <tr style="border-bottom: 1px solid var(--InnerLines);">
+      <td style="padding: 8px 12px; font-family: var(--font-monospace); font-size: var(--size-Sm);">ListViewNoScroll</td>
+      <td style="padding: 8px 12px; font-family: var(--font-monospace); font-size: var(--size-Sm);">.mob-listview.mob-listview--no-scroll</td>
+    </tr>
+    <tr style="border-bottom: 1px solid var(--InnerLines);">
+      <td style="padding: 8px 12px; font-family: var(--font-monospace); font-size: var(--size-Sm);">ListViewItem (default)</td>
+      <td style="padding: 8px 12px; font-family: var(--font-monospace); font-size: var(--size-Sm);">.mob-listview__item</td>
+    </tr>
+    <tr style="border-bottom: 1px solid var(--InnerLines);">
+      <td style="padding: 8px 12px; font-family: var(--font-monospace); font-size: var(--size-Sm);">ListViewItemInvert</td>
+      <td style="padding: 8px 12px; font-family: var(--font-monospace); font-size: var(--size-Sm);">.mob-listview__item.mob-listview__item--invert</td>
+    </tr>
+    <tr>
+      <td style="padding: 8px 12px; font-family: var(--font-monospace); font-size: var(--size-Sm);">ListViewItemInvertFull</td>
+      <td style="padding: 8px 12px; font-family: var(--font-monospace); font-size: var(--size-Sm);">.mob-listview__item.mob-listview__item--invert-full</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+  </main>
+
+</div>
+
+<script src="../js/nav.js"></script>
+</body>
+</html>

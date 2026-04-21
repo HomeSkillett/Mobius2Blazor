@@ -150,8 +150,10 @@
     {
       title: "List & Collection Patterns",
       links: [
+        { label: "ListView / ListBox",          href: "listview/listview.html" },
         { label: "ItemsControl",                href: "items-control/items-control.html" },
         { label: "ExpanderItem + IconLabelExpander", href: "expander-item/expander-item.html" },
+        { label: "FilterBarControl", href: "filter-bar/filter-bar.html" },
         { label: "DataGrid",     href: "data-grid/data-grid.html" }
       ]
     },

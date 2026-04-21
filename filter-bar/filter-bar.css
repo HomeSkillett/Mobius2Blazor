@@ -1,0 +1,309 @@
+/*
+  filter-bar.css — Mobius FilterBarControl component styles
+  ==========================================================
+  Sources:
+    FilterBarControl.xaml   — Mobius_UI_CustomControls_Templates_FilterBar,
+                              Mobius_UI_CustomControls_Templates_VerticalFilterBar
+    FilterBarControl.cs     — FilterBarControl : Control (search toggle, category filter)
+    DefaultControls.xaml    — IconToggleButton, VerticalIconToggleButton,
+                              HorizontalListBox, HorizontalListBoxItem templates
+
+  TEMPLATES (layout):
+    .mob-filter-bar                     Horizontal (default) — 3 columns: toggle | search | categories
+    .mob-filter-bar--vertical           Vertical variant — same grid, adjusted sizing
+
+  HTML structure (horizontal — default):
+    <div class="mob-filter-bar">
+      <button class="mob-filter-bar__toggle">
+        <svg class="mob-filter-bar__search-icon">...</svg>
+      </button>
+      <div class="mob-filter-bar__search">
+        <input class="mob-filter-bar__input" />
+      </div>
+      <ul class="mob-filter-bar__categories">
+        <li class="mob-filter-bar__category is-selected">All</li>
+        <li class="mob-filter-bar__category">Sensors</li>
+      </ul>
+    </div>
+
+  HTML structure (vertical):
+    <div class="mob-filter-bar mob-filter-bar--vertical">
+      ...same children with vertical sizing adjustments...
+    </div>
+*/
+
+
+/* =============================================================
+   1. FILTER BAR CONTAINER
+   XAML: <Grid> with 3 ColumnDefinitions: Auto | Auto | *
+   Style: MinWidth=92, Foreground=ForegroundPrimaryBrush
+   ============================================================= */
+
+.mob-filter-bar {
+  display: grid;
+  grid-template-columns: auto auto 1fr;
+  align-items: center;
+  min-width: 92px;
+  color: var(--ForegroundPrimary);
+}
+
+
+/* =============================================================
+   2. SEARCH TOGGLE BUTTON
+   XAML: ToggleButton Grid.Column="0"
+         Style=Mobius_UI_Resources_Styles_IconToggleButton
+         Width={TemplateBinding MinWidth} (92px)
+         — Grid template: 4px selection-edge left | content
+         — MinHeight=TouchSize, Padding=0,3
+   ============================================================= */
+
+.mob-filter-bar__toggle {
+  /* XAML: Width={MinWidth}=92, MinHeight=TouchSize */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 92px;
+  min-height: var(--touch);
+  padding: 3px 0;
+  background: none;
+  border: none;
+  color: var(--ForegroundPrimary);
+  cursor: pointer;
+  transition:
+    color var(--transition-mouse-out) ease;
+}
+
+/* XAML: _selectionEdge — 4px left border, SelectionPrimaryBrush, ScaleX 0→1 on checked */
+.mob-filter-bar__toggle::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background-color: var(--SelectionPrimary);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 200ms ease;
+}
+
+/* XAML: CommonStates MouseOver — Foreground → MouseOverPrimary */
+.mob-filter-bar__toggle:hover {
+  color: var(--MouseOverPrimary);
+  transition-duration: var(--transition-mouse-over);
+}
+
+/* XAML: CheckStates Checked — selection edge ScaleX 0→2→1 */
+.mob-filter-bar__toggle[aria-pressed="true"]::before,
+.mob-filter-bar__toggle.is-active::before {
+  transform: scaleX(1);
+}
+
+/* XAML: CheckStates Checked — foreground stays SelectionPrimary */
+.mob-filter-bar__toggle[aria-pressed="true"],
+.mob-filter-bar__toggle.is-active {
+  color: var(--SelectionPrimary);
+}
+
+/* XAML: CommonStates Disabled — Opacity → DisabledOpacity */
+.mob-filter-bar__toggle:disabled {
+  opacity: var(--opacity-disabled);
+  cursor: default;
+}
+
+
+/* =============================================================
+   3. SEARCH ICON (SVG)
+   XAML: <Path Data="{Icon_Search}"
+         Fill="{Binding Foreground, ...FindAncestor ContentControl}" />
+   Icon_Search viewbox: 20x20
+   ============================================================= */
+
+.mob-filter-bar__search-icon {
+  width: var(--icon);
+  height: var(--icon);
+  fill: currentColor;
+}
+
+
+/* =============================================================
+   4. SEARCH EXPANDER + INPUT
+   XAML: ExpanderItem Grid.Column="1"
+         ExpansionDirection=ExpandLeft
+         IsOpened={IsSearchBoxOpen}
+     child: TouchTextBox x:Name="PART_SearchTextBox"
+         Width=220, Height=TouchSize, Margin=0,0,40,0
+         MaxLength=30
+   ============================================================= */
+
+/* XAML: ExpanderItem — container clips overflow, animates width */
+.mob-filter-bar__search {
+  overflow: hidden;
+  max-width: 0;
+  transition: max-width var(--transition-expand) ease;
+}
+
+/* XAML: IsOpened=True — expands to show input */
+.mob-filter-bar.is-search-open .mob-filter-bar__search {
+  max-width: 260px; /* 220px input + 40px right margin */
+}
+
+/* XAML: TouchTextBox — Width=220, Height=TouchSize, Margin=0,0,40,0
+         Inherits base TextBox style: Background=BackgroundInput,
+         Border=BackgroundInputOutline, Foreground=ForegroundAction */
+.mob-filter-bar__input {
+  box-sizing: border-box;
+  width: 220px;
+  min-height: var(--touch);
+  margin-right: 40px;
+  padding: var(--padding-lr-md);
+  background-color: var(--BackgroundInput);
+  border: var(--border-width) solid var(--BackgroundInputOutline);
+  color: var(--ForegroundAction);
+  font: var(--font-default);
+  transition:
+    border-color var(--transition-mouse-out) ease,
+    color var(--transition-mouse-out) ease;
+}
+
+/* XAML: Placeholder — Foreground=ForegroundWatermark */
+.mob-filter-bar__input::placeholder {
+  color: var(--ForegroundWatermark);
+  opacity: 1;
+}
+
+/* XAML: MouseOver — border + foreground → MouseOverPrimary */
+.mob-filter-bar__input:hover:not(:disabled):not(:focus) {
+  border-color: var(--MouseOverPrimary);
+  color: var(--MouseOverPrimary);
+  transition-duration: var(--transition-mouse-over);
+}
+
+/* XAML: Focused — 2px MouseOverPrimary border */
+.mob-filter-bar__input:focus {
+  border-color: var(--MouseOverPrimary);
+  color: var(--MouseOverPrimary);
+  outline: var(--border-width-focused) solid var(--MouseOverPrimary);
+  outline-offset: calc(var(--border-width) * -1);
+  transition-duration: var(--transition-focus);
+}
+
+
+/* =============================================================
+   5. CATEGORY LIST
+   XAML: ListBox Grid.Column="2"
+         Style=Mobius_UI_Resources_Styles_HorizontalListBox
+         SelectionMode=Single
+     — Template: just <ItemsPresenter />
+     — ItemsPanel: WrapPanel Orientation=Horizontal
+     — ItemContainer: HorizontalListBoxItem
+   ============================================================= */
+
+/* XAML: ListBox — Template is bare ItemsPresenter, no border/bg */
+.mob-filter-bar__categories {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* XAML: ListBoxItem — Foreground=ForegroundPrimaryBrush
+         Margin=0,0,12,0, VerticalAlignment=Center */
+.mob-filter-bar__category {
+  margin-right: 12px;
+  padding: 3px 0;
+  min-height: var(--touch);
+  display: flex;
+  align-items: center;
+  color: var(--ForegroundPrimary);
+  font: var(--font-default);
+  cursor: pointer;
+  transition:
+    color var(--transition-mouse-out) ease;
+}
+
+/* XAML: CommonStates MouseOver — Foreground → MouseOverPrimary */
+.mob-filter-bar__category:hover {
+  color: var(--MouseOverPrimary);
+  transition-duration: var(--transition-mouse-over);
+}
+
+/* XAML: Trigger IsSelected=True — Foreground → SelectionPrimaryBrush */
+.mob-filter-bar__category.is-selected {
+  color: var(--SelectionPrimary);
+}
+
+/* XAML: CommonStates Disabled — Opacity → DisabledOpacity */
+.mob-filter-bar__category.is-disabled {
+  opacity: var(--opacity-disabled);
+  cursor: default;
+}
+
+
+/* =============================================================
+   6. VERTICAL VARIANT
+   XAML: Mobius_UI_CustomControls_Templates_VerticalFilterBar
+   Style: Mobius_UI_CustomControls_Styles_VerticalFilterBar
+   Differences from horizontal:
+     — ToggleButton: Style=VerticalIconToggleButton, Height=40, Margin=0,0,0,-4
+       (4px selection edge on BOTTOM instead of left)
+     — TouchTextBox: MinWidth=220, Margin=10,8,40,8, HorizontalAlignment=Stretch
+     — ExpanderItem: HorizontalAlignment/ContentAlignment=Stretch
+   ============================================================= */
+
+.mob-filter-bar--vertical {
+  /* Grid stays the same: auto | auto | 1fr */
+}
+
+/* XAML: VerticalIconToggleButton — MinWidth=TouchSize, Height=40
+         Selection edge is 4px BOTTOM border instead of left
+         Margin=0,0,0,-4 */
+.mob-filter-bar--vertical .mob-filter-bar__toggle {
+  width: 92px;
+  height: 40px;
+  min-height: auto;
+  margin-bottom: -4px;
+}
+
+/* XAML: _selectionEdge bottom — ScaleY 0→2→1 on check, RenderTransformOrigin=1,1 */
+.mob-filter-bar--vertical .mob-filter-bar__toggle::before {
+  top: auto;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: auto;
+  height: 4px;
+  transform: scaleY(0);
+  transform-origin: center bottom;
+}
+
+.mob-filter-bar--vertical .mob-filter-bar__toggle[aria-pressed="true"]::before,
+.mob-filter-bar--vertical .mob-filter-bar__toggle.is-active::before {
+  transform: scaleY(1);
+}
+
+/* XAML: Path Margin=0,-10,0,-4 — tighten icon spacing within 40px button */
+.mob-filter-bar--vertical .mob-filter-bar__search-icon {
+  margin: -10px 0 -4px 0;
+}
+
+/* XAML: ExpanderItem HorizontalAlignment=Stretch, HorizontalContentAlignment=Stretch */
+.mob-filter-bar--vertical .mob-filter-bar__search {
+  /* Expander stretches horizontally in vertical mode */
+}
+
+/* XAML: TouchTextBox MinWidth=220, Margin=10,8,40,8, HorizontalAlignment=Stretch */
+.mob-filter-bar--vertical .mob-filter-bar__input {
+  width: auto;
+  min-width: 220px;
+  margin: 8px 40px 8px 10px;
+}
+
+/* XAML: Vertical search open — allow full stretch */
+.mob-filter-bar--vertical.is-search-open .mob-filter-bar__search {
+  max-width: none;
+  flex: 1;
+}

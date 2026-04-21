@@ -1,0 +1,502 @@
+/* listview.css — ListView / ListBox component
+   XAML source: DefaultControls.xaml lines 3922–4820
+
+   Variants:
+   - .mob-listbox             Default vertical ListBox (edge border right)
+   - .mob-listbox--full       Full input-style border
+   - .mob-listbox--invert     Inverted colors for dark panels
+   - .mob-listview            Default vertical ListView (supports drag reorder)
+   - .mob-listview--no-scroll ListView without scrollbar
+   - .mob-listbox--horizontal Horizontal wrap layout
+
+   Item variants:
+   - .mob-listbox__item                Default item (selection bar left)
+   - .mob-listbox__item--checkbox      Multi-select with checkbox
+   - .mob-listbox__item--wide          Reduced padding (20px vs 40px)
+   - .mob-listbox__item--large-invert  Larger padding (40px 10px), inverted
+   - .mob-listbox__item--invert        Inverted colors
+   - .mob-listview__item               ListView item (full-row selection fill)
+   - .mob-listview__item--invert       Inverted ListView item
+   - .mob-listbox__item--dot           Horizontal dot selector
+   - .mob-listbox__item--color-chip    Color swatch selector
+*/
+
+
+/* =============================================================
+   CONTAINER — ListBox (default)
+   XAML: Mobius_UI_Resources_Templates_ListBox
+   ============================================================= */
+
+.mob-listbox {
+  display: flex;
+  flex-direction: column;
+  background: transparent;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+  /* XAML: BorderBrush = InnerLines, rendered as right-edge border */
+  border-right: var(--line-size) solid var(--InnerLines);
+}
+
+
+/* =============================================================
+   CONTAINER — ListBox FullBorder
+   XAML: Mobius_UI_Resources_Templates_ListBoxFullBorder
+   ============================================================= */
+
+.mob-listbox--full {
+  /* XAML: BorderBrush = BackgroundInputOutline, Background = BackgroundInput */
+  border: var(--border-width) solid var(--BackgroundInputOutline);
+  border-right: var(--border-width) solid var(--BackgroundInputOutline);
+  background: var(--BackgroundInput);
+}
+
+
+/* =============================================================
+   CONTAINER — ListView
+   XAML: Mobius_UI_Resources_Templates_ListView
+   ============================================================= */
+
+.mob-listview {
+  display: flex;
+  flex-direction: column;
+  background: transparent;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+  /* XAML: BorderBrush = InnerLines, rendered as right-edge border */
+  border-right: var(--line-size) solid var(--InnerLines);
+}
+
+
+/* =============================================================
+   CONTAINER — ListView NoScroll
+   XAML: Mobius_UI_Resources_Templates_ListViewNoScroll
+   ============================================================= */
+
+.mob-listview--no-scroll {
+  overflow: visible;
+}
+
+
+/* =============================================================
+   CONTAINER — ListBox Horizontal
+   XAML: Mobius_UI_Resources_Templates_ListBoxHorizontal
+   ============================================================= */
+
+.mob-listbox--horizontal {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  border: none;
+  overflow: visible;
+}
+
+
+/* =============================================================
+   CONTAINER — Invert
+   XAML: Mobius_UI_Resources_Styles_ListBoxInvert
+   ============================================================= */
+
+.mob-listbox--invert {
+  border-right-color: var(--InnerLinesInvert);
+}
+
+
+/* =============================================================
+   ITEM — ListBoxItem (default)
+   XAML: Mobius_UI_Resources_Templates_ListBoxItem
+   Grid: [SelectionBar 10px col] [Content col]
+   ============================================================= */
+
+.mob-listbox__item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: var(--touch);
+  /* XAML: Padding="40,0" → left 40px, right 40px */
+  padding: 0 40px;
+  color: var(--ForegroundPrimary);
+  background: var(--BackgroundPrimary);
+  cursor: pointer;
+  transition:
+    color var(--transition-mouse-out) ease,
+    opacity var(--transition-mouse-out) ease;
+}
+
+/* XAML: _selectionElement — left edge bar, col 0+1 span, SelectionPrimary */
+.mob-listbox__item::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  /* XAML: ColumnDefinition Width="LabelToControlDistance" = 10px */
+  width: var(--spacing-label-to-control);
+  background: var(--SelectionPrimary);
+  opacity: 0;
+  transition: opacity 100ms ease;
+}
+
+/* XAML: _mouseOverElement — full-row overlay, MouseOverPrimary at 0.3 */
+.mob-listbox__item::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--MouseOverPrimary);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition-mouse-out) ease;
+}
+
+/* Hover state */
+/* XAML: MouseOver → _mouseOverElement Opacity 0.3 */
+.mob-listbox__item:hover::after {
+  opacity: 0.3;
+  transition-duration: var(--transition-mouse-over);
+}
+
+/* Focus state */
+/* XAML: Focused → _mouseOverElement Opacity 0.3 */
+.mob-listbox__item:focus-visible::after {
+  opacity: 0.3;
+  transition-duration: var(--transition-focus);
+}
+
+/* Selected state */
+/* XAML: Selected → _selectionElement Opacity 1.0 */
+.mob-listbox__item.is-selected::before {
+  opacity: 1;
+  transition-duration: 100ms;
+}
+
+/* XAML: Selected → _contentElement foreground → SelectionForeground */
+.mob-listbox__item.is-selected {
+  color: var(--SelectionForeground);
+  transition: color var(--transition-select) ease;
+}
+
+/* Disabled state */
+/* XAML: Disabled → _templateRoot Opacity = DisabledOpacity */
+.mob-listbox__item.is-disabled {
+  opacity: var(--opacity-disabled);
+  pointer-events: none;
+  transition-duration: var(--transition-disable);
+}
+
+
+/* =============================================================
+   ITEM — ListBoxItem Wide
+   XAML: Mobius_UI_Resources_Styles_ListBoxItemWide
+   ============================================================= */
+
+.mob-listbox__item--wide {
+  padding: 0 20px;
+}
+
+
+/* =============================================================
+   ITEM — ListBoxItem Invert
+   XAML: Mobius_UI_Resources_Styles_ListBoxItemInvert
+   ============================================================= */
+
+.mob-listbox__item--invert {
+  color: var(--ForegroundInvertPrimary);
+  background: var(--BackgroundInvertPrimary);
+}
+
+
+/* =============================================================
+   ITEM — ListBoxItem Large Invert
+   XAML: Mobius_UI_Resources_Styles_ListBoxItemLargeInvert
+   ============================================================= */
+
+.mob-listbox__item--large-invert {
+  padding: 10px 40px;
+  color: var(--ForegroundInvertPrimary);
+  background: var(--BackgroundInvertPrimary);
+}
+
+
+/* =============================================================
+   ITEM — ListViewItem
+   XAML: Mobius_UI_Resources_Templates_ListViewItem
+   Full-row selection fill (vs ListBox left-bar only)
+   ============================================================= */
+
+.mob-listview__item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: var(--touch);
+  padding: 0 40px;
+  color: var(--ForegroundPrimary);
+  background: var(--BackgroundPrimary);
+  cursor: pointer;
+  transition:
+    color var(--transition-mouse-out) ease,
+    opacity var(--transition-mouse-out) ease;
+}
+
+/* XAML: selectionElement — full-row rectangle fill, SelectionPrimary */
+.mob-listview__item::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--SelectionPrimary);
+  opacity: 0;
+  transition: opacity 100ms ease;
+}
+
+/* XAML: mouseOverElement — full-row rectangle fill, MouseOverPrimary at 0.3 */
+.mob-listview__item::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--MouseOverPrimary);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition-mouse-out) ease;
+}
+
+.mob-listview__item:hover::after {
+  opacity: 0.3;
+  transition-duration: var(--transition-mouse-over);
+}
+
+.mob-listview__item:focus-visible::after {
+  opacity: 0.3;
+  transition-duration: var(--transition-focus);
+}
+
+.mob-listview__item.is-selected::before {
+  opacity: 1;
+  transition-duration: 100ms;
+}
+
+.mob-listview__item.is-disabled {
+  opacity: var(--opacity-disabled);
+  pointer-events: none;
+  transition-duration: var(--transition-disable);
+}
+
+/* Content sits above the pseudo-element overlays */
+.mob-listbox__item > *,
+.mob-listview__item > * {
+  position: relative;
+  z-index: 1;
+}
+
+
+/* =============================================================
+   ITEM — ListViewItem Invert
+   XAML: Mobius_UI_Resources_Styles_ListViewItemInvert
+   ============================================================= */
+
+.mob-listview__item--invert {
+  color: var(--ForegroundInvertPrimary);
+  background: var(--BackgroundInvertPrimary);
+}
+
+
+/* =============================================================
+   ITEM — ListViewItem Invert Full (no padding)
+   XAML: Mobius_UI_Resources_Styles_ListViewItemInvertFull
+   ============================================================= */
+
+.mob-listview__item--invert-full {
+  color: var(--ForegroundInvertPrimary);
+  background: var(--BackgroundInvertPrimary);
+  padding: 0;
+}
+
+
+/* =============================================================
+   ITEM — ListBoxItem with Checkbox
+   XAML: Mobius_UI_Resources_Templates_ListBoxItemWithCheckbox
+   Grid: [4px selectionBar] [checkbox col] [content col]
+   ============================================================= */
+
+.mob-listbox__item--checkbox {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: var(--touch);
+  padding: 0;
+  color: var(--ForegroundPrimary);
+  background: var(--BackgroundPrimary);
+  cursor: pointer;
+  transition:
+    color var(--transition-mouse-out) ease,
+    opacity var(--transition-mouse-out) ease;
+}
+
+/* XAML: _selectionElement — 4px wide left bar */
+.mob-listbox__item--checkbox::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 4px;
+  background: var(--SelectionPrimary);
+  opacity: 0;
+  transition: opacity 100ms ease;
+}
+
+/* XAML: _selectionElementMinor — full-row tint at 0.1 */
+.mob-listbox__item--checkbox::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--MouseOverPrimary);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition-mouse-out) ease;
+}
+
+.mob-listbox__item--checkbox:hover::after {
+  opacity: 0.3;
+  transition-duration: var(--transition-mouse-over);
+}
+
+.mob-listbox__item--checkbox.is-selected::before {
+  opacity: 1;
+}
+
+/* XAML: Selected → _selectionElementMinor Opacity 0.1 */
+.mob-listbox__item--checkbox.is-selected::after {
+  opacity: 0.1;
+}
+
+/* XAML: Selected → _contentElement foreground → ForegroundStrong */
+.mob-listbox__item--checkbox.is-selected {
+  color: var(--ForegroundStrong);
+}
+
+.mob-listbox__item--checkbox.is-disabled {
+  opacity: var(--opacity-disabled);
+  pointer-events: none;
+}
+
+/* Checkbox positioning — XAML: Margin="40,0,0,0" on checkbox column */
+.mob-listbox__item--checkbox > .mob-listbox__checkbox {
+  position: relative;
+  z-index: 1;
+  margin-left: 40px;
+  margin-right: 4px;
+  flex-shrink: 0;
+}
+
+.mob-listbox__item--checkbox > .mob-listbox__content {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+
+/* =============================================================
+   ITEM — Horizontal ListBoxItem (text link style)
+   XAML: Mobius_UI_Resources_Templates_ListBoxItemHorizontal
+   ============================================================= */
+
+.mob-listbox__item--horizontal {
+  display: inline-flex;
+  align-items: center;
+  margin-right: 12px;
+  color: var(--ForegroundPrimary);
+  cursor: pointer;
+  transition: color var(--transition-mouse-out) ease;
+}
+
+.mob-listbox__item--horizontal:hover {
+  color: var(--MouseOverPrimary);
+  transition-duration: var(--transition-mouse-over);
+}
+
+.mob-listbox__item--horizontal:focus-visible {
+  color: var(--MouseOverPrimary);
+  transition-duration: var(--transition-focus);
+}
+
+.mob-listbox__item--horizontal.is-selected {
+  color: var(--SelectionPrimary);
+}
+
+.mob-listbox__item--horizontal.is-disabled {
+  opacity: var(--opacity-disabled);
+  pointer-events: none;
+}
+
+
+/* =============================================================
+   ITEM — Dot Horizontal (pagination-style dots)
+   XAML: Mobius_UI_Resources_Templates_ListBoxItemDotHorizontal
+   ============================================================= */
+
+.mob-listbox__item--dot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+}
+
+/* XAML: baseDot — 16x16 circle, 1px stroke SelectionSecondary */
+.mob-listbox__dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 1px solid var(--SelectionSecondary);
+  background: transparent;
+  position: relative;
+  transition: background var(--transition-mouse-out) ease;
+}
+
+/* Hover — XAML: mouseOverDot at 0.5 opacity */
+.mob-listbox__item--dot:hover .mob-listbox__dot {
+  background: color-mix(in srgb, var(--MouseOverPrimary) 50%, transparent);
+  transition-duration: var(--transition-mouse-over);
+}
+
+/* Selected — XAML: selectionDot fills SelectionSecondary */
+.mob-listbox__item--dot.is-selected .mob-listbox__dot {
+  background: var(--SelectionSecondary);
+}
+
+
+/* =============================================================
+   ITEM — Color Chip (swatch selector)
+   XAML: Mobius_UI_Resources_Templates_ColorChipListBoxItem
+   ============================================================= */
+
+.mob-listbox__item--color-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+/* The swatch itself — colored via inline background-color */
+.mob-listbox__chip {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  position: relative;
+  /* XAML: border = MouseOverPrimary 10px, hidden until hover */
+  outline: 0 solid transparent;
+  transition: outline var(--transition-mouse-out) ease;
+}
+
+.mob-listbox__item--color-chip:hover .mob-listbox__chip {
+  outline: 3px solid var(--MouseOverPrimary);
+  transition-duration: var(--transition-mouse-over);
+}
+
+/* XAML: Selected → selectionRing 3px stroke SelectionPrimary */
+.mob-listbox__item--color-chip.is-selected .mob-listbox__chip {
+  outline: 3px solid var(--SelectionPrimary);
+}
