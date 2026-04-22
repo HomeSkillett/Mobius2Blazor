@@ -178,7 +178,6 @@
   padding: 0;
   cursor: pointer;
   color: var(--ForegroundPrimary);                 /* style line 292 */
-  overflow: hidden;
 }
 
 
@@ -395,6 +394,53 @@
 
 .mob-globalnav__window-btn--close:hover {
   color: var(--InformationForegroundAlt);           /* line 2810 */
+}
+
+
+/* =============================================================
+   TOOLTIP — NotificationToggleButton.ToolTip
+   XAML: MainWindow.xaml lines 168-193
+         StackPanel with TextBlock_Sm (11px) style
+         Content: Title, New count, Critical/Warning/Info counts, Dismissed
+   XAML: ToolTipService.ShowOnDisabled=True (line 290)
+   ============================================================= */
+
+.mob-globalnav__alert-btn .mob-globalnav__tooltip {
+  position: absolute;
+  top: 100%;                                        /* below the button */
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: var(--spacing-4);                     /* 4px gap below button */
+  padding: var(--spacing-8);                        /* 8px padding */
+  background: var(--BackgroundInvertStrong);         /* WPF tooltip dark bg */
+  color: var(--ForegroundInvertPrimary);             /* light text on dark bg */
+  font: var(--font-Sm);                             /* TextBlock_Sm = 11px */
+  white-space: pre-line;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 200ms ease, visibility 200ms ease;
+  z-index: 200;
+  border: 1px solid var(--InnerLines);
+  min-width: 140px;
+}
+
+/* XAML: ToolTip title — first line, bold */
+.mob-globalnav__tooltip-title {
+  font-weight: var(--font-bold);
+  margin-bottom: var(--spacing-4);
+  display: block;
+}
+
+/* XAML: ToolTip detail lines */
+.mob-globalnav__tooltip-line {
+  display: block;
+}
+
+/* Show on hover — matches ToolTipService behavior */
+.mob-globalnav__alert-btn:hover .mob-globalnav__tooltip {
+  opacity: 1;
+  visibility: visible;
 }
 
 
