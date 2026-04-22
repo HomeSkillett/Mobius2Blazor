@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mobius — ModeBar</title>
+  <link id="mob-theme-link" rel="stylesheet" href="../styles/color-theme-tokens/LightTheme.css" />
+  <link rel="stylesheet" href="../styles/css/main.css" />
+  <link rel="stylesheet" href="mode-bar.css" />
+  <style>
+    body { margin: 0; }
+    h1 {
+      font: var(--font-hdrMd);
+      margin: 0 0 32px;
+      color: var(--ForegroundStrong);
+    }
+    h2 {
+      font: var(--font-hdrSm);
+      margin: 40px 0 16px;
+      color: var(--ForegroundStrong);
+    }
+    h2:first-of-type { margin-top: 0; }
+    h3 {
+      font: var(--font-default);
+      font-weight: var(--font-bold);
+      margin: 24px 0 12px;
+      color: var(--ForegroundStrong);
+    }
+    .section-divider {
+      border: none;
+      border-top: var(--line-size) solid var(--InnerLines);
+      margin: 32px 0 0;
+    }
+    .demo-row {
+      display: flex;
+      gap: 40px;
+      align-items: flex-start;
+    }
+    .demo-label {
+      font: var(--font-metaSm);
+      color: var(--ForegroundPrimary);
+      margin-bottom: var(--spacing-label-to-control-sm);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .demo-frame {
+      background: var(--BackgroundPrimary);
+      border: var(--border-width) solid var(--InnerLines);
+      display: inline-block;
+    }
+  </style>
+</head>
+<body>
+
+<div class="mob-layout">
+
+  <!-- Sidebar Navigation -->
+  <nav class="mob-nav" id="mob-nav"></nav>
+
+  <!-- Main Content -->
+  <main class="mob-layout__content">
+
+<h1>ModeBar (BrandedModeBar)</h1>
+
+
+<!-- =========================================================
+     SECTION 1: COLLAPSED STATE (Expanded=False)
+     Source: DefaultControls.xaml — ModeBar template (lines 6240-6791)
+             MainWindow.xaml — ModeBarTabControl (line 69)
+             ASIBrand.xaml — BrandedModeBarWidth: 70px
+     ========================================================= -->
+
+<h2>Collapsed State (Expanded=False)</h2>
+<p class="demo-label">Default collapsed view. Labels hidden. Width: 70px.</p>
+
+<div class="demo-frame" style="height: 680px;">
+
+  <!-- XAML: Grid Background=BackgroundStrongBrush — outermost ModeBar container -->
+  <aside class="mob-modebar" aria-label="Main navigation">
+
+    <!-- XAML: VisualBrush "Mobius_UI_Resources_VisualBrushes_Logo" — ASI brand logo area -->
+    <!-- XAML: Border Width=BrandedModeBarWidth, Height=100, Background=#FF002B45 -->
+    <!-- XAML: Outer Border Width=70, Height=100 -->
+    <div class="mob-modebar__brand">
+      <!-- XAML: Inner Border Margin="10,0", Background=#FF002B45 -->
+      <div class="mob-modebar__brand-inner">
+        <!-- XAML: Path Margin="10,0,10,8", Fill=#FF009FDA, VerticalAlignment=Bottom -->
+        <span class="mob-modebar__logo mob-icon">&#xE555;</span>
+      </div>
+    </div>
+
+    <!-- XAML: StackPanel x:Name="ModePanel" — main mode navigation list area -->
+    <nav class="mob-modebar__modes">
+
+      <!-- XAML: ToggleButton x:Name="HamburgerButton" — Menu expand/collapse toggle -->
+      <!-- XAML: Width=70, Style=SimpleIconButton, IsChecked=ShowLabels -->
+      <!-- Font: Mobius-System-Icons "Menu" U+E521 -->
+      <button class="mob-modebar__hamburger" aria-label="Toggle menu labels" title="Menu">
+        <span class="mob-icon" aria-hidden="true">&#xE521;</span>
+      </button>
+
+      <!-- XAML: ListView — Mode items list -->
+      <!-- XAML: ItemContainerStyle with _selectionEdge (4px left border), _contentSite -->
+      <ul class="mob-modebar__list" role="tablist" aria-orientation="vertical">
+
+        <!-- XAML: ListBoxItem — CommandAndControlVM -->
+        <!-- XAML: IconKey="Icon_Command", LabelKey="LocalizedText.ModeBarCommandAndControlModeIconToolTip" -->
+        <!-- Font: Mobius-System-Icons "Command" U+E750 -->
+        <li class="mob-modebar__item is-selected" role="tab" aria-selected="true" title="Command">
+          <span class="mob-modebar__selection-edge"></span>
+          <span class="mob-modebar__icon-wrap">
+            <span class="mob-icon" aria-hidden="true">&#xE750;</span>
+          </span>
+          <span class="mob-modebar__label">Command</span>
+        </li>
+
+        <!-- XAML: ListBoxItem — MapBuilderModeVM -->
+        <!-- XAML: IconKey="Icon_Map", LabelKey="LocalizedText.ModeBarMapBuilderModeIconToolTip" -->
+        <!-- Font: Mobius-System-Icons "Map" U+E923 -->
+        <li class="mob-modebar__item" role="tab" aria-selected="false" title="Maps">
+          <span class="mob-modebar__selection-edge"></span>
+          <span class="mob-modebar__icon-wrap">
+            <span class="mob-icon" aria-hidden="true">&#xE923;</span>
+          </span>
+          <span class="mob-modebar__label">Maps</span>
+        </li>
+
+        <!-- XAML: ListBoxItem — PathBuilderModeVM -->
+        <!-- XAML: IconKey="Icon_PathBuilder", LabelKey (Path builder) -->
+        <!-- Font: Mobius-System-Icons "PathBuilder" U+E92F -->
+        <li class="mob-modebar__item" role="tab" aria-selected="false" title="Path builder">
+          <span class="mob-modebar__selection-edge"></span>
+          <span class="mob-modebar__icon-wrap">
+            <span class="mob-icon" aria-hidden="true">&#xE92F;</span>
+          </span>
+          <span class="mob-modebar__label">Path builder</span>
+        </li>
+
+        <!-- XAML: ListBoxItem — DiagnosticModeVM -->
+        <!-- XAML: IconKey="Icon_DiagnosticsAdorned", LabelKey="LocalizedText.ModeBarDiagnosticsModeIconToolTip" -->
+        <!-- XAML: StatusIcon — StatusIndicator=OK (green checkmark badge) -->
+        <!-- XAML: DiagnosticModeVM.StatusIndicator returns OK when no assets have issues -->
+        <!-- Font: Mobius-System-Icons "DiagnosticsAdorned" U+EC03 -->
+        <li class="mob-modebar__item has-status" role="tab" aria-selected="false" title="Diagnostics">
+          <span class="mob-modebar__selection-edge"></span>
+          <span class="mob-modebar__icon-wrap">
+            <span class="mob-icon" aria-hidden="true">&#xEC03;</span>
+            <span class="mob-modebar__status-badge mob-modebar__status-badge--ok" aria-label="OK">&#xE447;</span>
+          </span>
+          <span class="mob-modebar__label">Diagnostics</span>
+        </li>
+
+        <!-- XAML: ListBoxItem — ConfigurationVM (Settings) -->
+        <!-- XAML: IconKey="Icon_Settings", LabelKey="LocalizedText.ModeBarVehicleSetupModeIconToolTip" -->
+        <!-- Font: Mobius-System-Icons "Settings" U+E50D -->
+        <li class="mob-modebar__item" role="tab" aria-selected="false" title="Settings">
+          <span class="mob-modebar__selection-edge"></span>
+          <span class="mob-modebar__icon-wrap">
+            <span class="mob-icon" aria-hidden="true">&#xE50D;</span>
+          </span>
+          <span class="mob-modebar__label">Settings</span>
+        </li>
+
+      </ul>
+    </nav>
+
+    <!-- XAML: StackPanel x:Name="ActionPanel" — bottom utility actions -->
+    <!-- XAML: VerticalAlignment=Bottom, Margin="0,50,0,0" -->
+    <div class="mob-modebar__actions">
+
+      <!-- XAML: DefaultModeBarActionProvider — Server action (Ordering: 2) -->
+      <!-- XAML: IconKey="Icon_Server", LabelKey="LocalizedText.ModeBarServerMode.ServerWebPage" -->
+      <!-- Font: Mobius-System-Icons "Server" U+E768 -->
+      <button class="mob-modebar__action-btn" title="Server">
+        <span class="mob-icon" aria-hidden="true">&#xE768;</span>
+        <span class="mob-modebar__label">Server</span>
+      </button>
+
+      <!-- XAML: DefaultModeBarActionProvider — Help action (Ordering: 1) -->
+      <!-- XAML: IconKey="Icon_Status_Unknown", LabelKey="LocalizedText.ModeBarHelp" -->
+      <!-- Font: Mobius-System-Icons "Status_Unknown" U+E44C -->
+      <button class="mob-modebar__action-btn" title="Help">
+        <span class="mob-icon" aria-hidden="true">&#xE44C;</span>
+        <span class="mob-modebar__label">Help</span>
+      </button>
+
+      <!-- XAML: ToggleButton — Context Help ("Click for help") -->
+      <!-- XAML: Icon=Icon_Status_Help, LabelString="Click for help" -->
+      <!-- Font: Mobius-System-Icons "Contextual_Help" U+E534 -->
+      <button class="mob-modebar__action-btn" title="Click for help">
+        <span class="mob-icon" aria-hidden="true">&#xE534;</span>
+        <span class="mob-modebar__label">Click for help</span>
+      </button>
+
+      <!-- XAML: ToggleButton — About Mobius -->
+      <!-- XAML: Icon=Icon_Status_Info, LabelString="About Mobius" -->
+      <!-- Font: Mobius-System-Icons "Status_Info" U+E550 -->
+      <button class="mob-modebar__action-btn" title="About Mobius">
+        <span class="mob-icon" aria-hidden="true">&#xE550;</span>
+        <span class="mob-modebar__label">About Mobius</span>
+      </button>
+
+    </div>
+
+  </aside>
+
+</div>
+
+
+<hr class="section-divider">
+
+
+<!-- =========================================================
+     SECTION 2: EXPANDED STATE (Expanded=True)
+     Source: Same template — HamburgerButton.IsChecked=True
+             IconLabelExpander ShowLabel=True
+     ========================================================= -->
+
+<h2>Expanded State (Expanded=True)</h2>
+<p class="demo-label">Labels visible. HamburgerButton IsChecked=True. ShowLabels=True.</p>
+
+<div class="demo-frame" style="height: 680px;">
+
+  <!-- XAML: Same ModeBar, but with ShowLabels=True expanding the width -->
+  <aside class="mob-modebar is-expanded" aria-label="Main navigation">
+
+    <div class="mob-modebar__brand">
+      <div class="mob-modebar__brand-inner">
+        <span class="mob-modebar__logo mob-icon">&#xE555;</span>
+      </div>
+    </div>
+
+    <nav class="mob-modebar__modes">
+
+      <button class="mob-modebar__hamburger" aria-label="Toggle menu labels" title="Menu">
+        <span class="mob-icon" aria-hidden="true">&#xE521;</span>
+      </button>
+
+      <ul class="mob-modebar__list" role="tablist" aria-orientation="vertical">
+
+        <!-- XAML: IconLabelExpander ShowLabel=True — label becomes visible -->
+        <!-- XAML: OffsetMargin="25,15,0,0" on label positioning -->
+
+        <li class="mob-modebar__item is-selected" role="tab" aria-selected="true" title="Command">
+          <span class="mob-modebar__selection-edge"></span>
+          <span class="mob-modebar__icon-wrap">
+            <span class="mob-icon" aria-hidden="true">&#xE750;</span>
+          </span>
+          <span class="mob-modebar__label">Command</span>
+        </li>
+
+        <li class="mob-modebar__item" role="tab" aria-selected="false" title="Maps">
+          <span class="mob-modebar__selection-edge"></span>
+          <span class="mob-modebar__icon-wrap">
+            <span class="mob-icon" aria-hidden="true">&#xE923;</span>
+          </span>
+          <span class="mob-modebar__label">Maps</span>
+        </li>
+
+        <li class="mob-modebar__item" role="tab" aria-selected="false" title="Path builder">
+          <span class="mob-modebar__selection-edge"></span>
+          <span class="mob-modebar__icon-wrap">
+            <span class="mob-icon" aria-hidden="true">&#xE92F;</span>
+          </span>
+          <span class="mob-modebar__label">Path builder</span>
+        </li>
+
+        <li class="mob-modebar__item has-status" role="tab" aria-selected="false" title="Diagnostics">
+          <span class="mob-modebar__selection-edge"></span>
+          <span class="mob-modebar__icon-wrap">
+            <span class="mob-icon" aria-hidden="true">&#xEC03;</span>
+            <span class="mob-modebar__status-badge mob-modebar__status-badge--ok" aria-label="OK">&#xE447;</span>
+          </span>
+          <span class="mob-modebar__label">Diagnostics</span>
+        </li>
+
+        <li class="mob-modebar__item" role="tab" aria-selected="false" title="Settings">
+          <span class="mob-modebar__selection-edge"></span>
+          <span class="mob-modebar__icon-wrap">
+            <span class="mob-icon" aria-hidden="true">&#xE50D;</span>
+          </span>
+          <span class="mob-modebar__label">Settings</span>
+        </li>
+
+      </ul>
+    </nav>
+
+    <div class="mob-modebar__actions">
+      <button class="mob-modebar__action-btn" title="Server">
+        <span class="mob-icon" aria-hidden="true">&#xE768;</span>
+        <span class="mob-modebar__label">Server</span>
+      </button>
+      <button class="mob-modebar__action-btn" title="Help">
+        <span class="mob-icon" aria-hidden="true">&#xE44C;</span>
+        <span class="mob-modebar__label">Help</span>
+      </button>
+      <button class="mob-modebar__action-btn" title="Click for help">
+        <span class="mob-icon" aria-hidden="true">&#xE534;</span>
+        <span class="mob-modebar__label">Click for help</span>
+      </button>
+      <button class="mob-modebar__action-btn" title="About Mobius">
+        <span class="mob-icon" aria-hidden="true">&#xE550;</span>
+        <span class="mob-modebar__label">About Mobius</span>
+      </button>
+    </div>
+
+  </aside>
+
+</div>
+
+
+<hr class="section-divider">
+
+
+<!-- =========================================================
+     SECTION 3: INTERACTION STATES (ListBoxItem visual states)
+     Source: DefaultControls.xaml — ItemContainerStyle (lines 6328-6547)
+             VisualStateGroups: CommonStates, SelectionStates, FocusedStates
+     ========================================================= -->
+
+<h2>Nav Item Interaction States</h2>
+
+<div class="demo-row">
+
+  <!-- Default / Normal -->
+  <div>
+    <p class="demo-label">Default</p>
+    <div class="demo-frame" style="width: 70px;">
+      <!-- XAML: VisualState "Normal" — Foreground=ForegroundPrimary, Opacity=1.0 -->
+      <div class="mob-modebar__item-demo">
+        <span class="mob-modebar__selection-edge"></span>
+        <span class="mob-modebar__icon-wrap">
+          <span class="mob-icon">&#xE750;</span>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hover / MouseOver -->
+  <div>
+    <p class="demo-label">Hover</p>
+    <div class="demo-frame" style="width: 70px;">
+      <!-- XAML: VisualState "MouseOver" — Foreground=MouseOverPrimary, duration=160ms -->
+      <div class="mob-modebar__item-demo is-hover">
+        <span class="mob-modebar__selection-edge"></span>
+        <span class="mob-modebar__icon-wrap">
+          <span class="mob-icon">&#xE750;</span>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Selected -->
+  <div>
+    <p class="demo-label">Selected</p>
+    <div class="demo-frame" style="width: 70px;">
+      <!-- XAML: VisualState "Selected" — _selectionEdge ScaleX=1.0, Height=TouchSize -->
+      <!-- XAML: _selectedForeground = SelectionPrimaryBrush -->
+      <div class="mob-modebar__item-demo is-selected">
+        <span class="mob-modebar__selection-edge"></span>
+        <span class="mob-modebar__icon-wrap">
+          <span class="mob-icon">&#xE750;</span>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Focused -->
+  <div>
+    <p class="demo-label">Focused</p>
+    <div class="demo-frame" style="width: 70px;">
+      <!-- XAML: VisualState "Focused" — Foreground=MouseOverPrimary, duration=160ms -->
+      <div class="mob-modebar__item-demo is-focused">
+        <span class="mob-modebar__selection-edge"></span>
+        <span class="mob-modebar__icon-wrap">
+          <span class="mob-icon">&#xE750;</span>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Disabled -->
+  <div>
+    <p class="demo-label">Disabled</p>
+    <div class="demo-frame" style="width: 70px;">
+      <!-- XAML: VisualState "Disabled" — Opacity=DisabledOpacity (0.35), duration=100ms -->
+      <div class="mob-modebar__item-demo is-disabled">
+        <span class="mob-modebar__selection-edge"></span>
+        <span class="mob-modebar__icon-wrap">
+          <span class="mob-icon">&#xE750;</span>
+        </span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+<hr class="section-divider">
+
+
+<!-- =========================================================
+     SECTION 4: ADORNER ICON VARIANTS
+     Two layered font characters: base icon + status overlay
+     Base: Adorn_DiagnosticsAdorned U+EC03, 20px
+     Overlay: 12px, offset left+12px down+15px from base
+     ========================================================= -->
+
+<h2>Adorner Icon Variants</h2>
+<p class="demo-label">Two layered font characters. Base icon 20px + status overlay 12px, offset 12px right / 15px down.</p>
+
+<div class="demo-row">
+
+  <!-- No adorner — base icon only -->
+  <div>
+    <p class="demo-label">None</p>
+    <div class="demo-frame" style="width: 70px;">
+      <div class="mob-modebar__item-demo">
+        <span class="mob-modebar__selection-edge"></span>
+        <span class="mob-modebar__icon-wrap">
+          <span class="mob-icon">&#xEC03;</span>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Status_Critical U+E412 — InformationRed -->
+  <div>
+    <p class="demo-label">Critical (Red)</p>
+    <div class="demo-frame" style="width: 70px;">
+      <div class="mob-modebar__item-demo">
+        <span class="mob-modebar__selection-edge"></span>
+        <span class="mob-modebar__icon-wrap">
+          <span class="mob-icon">&#xEC03;</span>
+          <span class="mob-modebar__status-badge mob-modebar__status-badge--critical">&#xE412;</span>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Status_Warning U+E410 — InformationOrange -->
+  <div>
+    <p class="demo-label">Warning (Orange)</p>
+    <div class="demo-frame" style="width: 70px;">
+      <div class="mob-modebar__item-demo">
+        <span class="mob-modebar__selection-edge"></span>
+        <span class="mob-modebar__icon-wrap">
+          <span class="mob-icon">&#xEC03;</span>
+          <span class="mob-modebar__status-badge mob-modebar__status-badge--warning">&#xE410;</span>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Status_Caution U+E414 — InformationYellow -->
+  <div>
+    <p class="demo-label">Caution (Yellow)</p>
+    <div class="demo-frame" style="width: 70px;">
+      <div class="mob-modebar__item-demo">
+        <span class="mob-modebar__selection-edge"></span>
+        <span class="mob-modebar__icon-wrap">
+          <span class="mob-icon">&#xEC03;</span>
+          <span class="mob-modebar__status-badge mob-modebar__status-badge--caution">&#xE414;</span>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Status_Okay U+E447 — InformationGreen -->
+  <div>
+    <p class="demo-label">OK (Green)</p>
+    <div class="demo-frame" style="width: 70px;">
+      <div class="mob-modebar__item-demo">
+        <span class="mob-modebar__selection-edge"></span>
+        <span class="mob-modebar__icon-wrap">
+          <span class="mob-icon">&#xEC03;</span>
+          <span class="mob-modebar__status-badge mob-modebar__status-badge--ok">&#xE447;</span>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Status_Unknown U+E44C — ForegroundPrimary -->
+  <div>
+    <p class="demo-label">Unknown</p>
+    <div class="demo-frame" style="width: 70px;">
+      <div class="mob-modebar__item-demo">
+        <span class="mob-modebar__selection-edge"></span>
+        <span class="mob-modebar__icon-wrap">
+          <span class="mob-icon">&#xEC03;</span>
+          <span class="mob-modebar__status-badge mob-modebar__status-badge--unknown">&#xE44C;</span>
+        </span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+<hr class="section-divider">
+
+
+<!-- =========================================================
+     SECTION 5: INTERACTIVE DEMO
+     Demonstrates expand/collapse toggle and selection behavior
+     ========================================================= -->
+
+<h2>Interactive Demo</h2>
+<p class="demo-label">Click hamburger to toggle expanded. Click items to select. Hover for state transitions.</p>
+
+<div class="demo-frame" style="height: 680px;">
+
+  <aside class="mob-modebar" aria-label="Main navigation">
+
+    <div class="mob-modebar__brand">
+      <div class="mob-modebar__brand-inner">
+        <span class="mob-modebar__logo mob-icon">&#xE555;</span>
+      </div>
+    </div>
+
+    <nav class="mob-modebar__modes">
+      <button class="mob-modebar__hamburger" aria-label="Toggle menu labels" title="Menu">
+        <span class="mob-icon" aria-hidden="true">&#xE521;</span>
+      </button>
+
+      <ul class="mob-modebar__list" role="tablist" aria-orientation="vertical">
+        <li class="mob-modebar__item is-selected" role="tab" aria-selected="true" data-label="Command">
+          <span class="mob-modebar__selection-edge"></span>
+          <span class="mob-modebar__icon-wrap"><span class="mob-icon">&#xE750;</span></span>
+          <span class="mob-modebar__label">Command</span>
+        </li>
+        <li class="mob-modebar__item" role="tab" aria-selected="false" data-label="Maps">
+          <span class="mob-modebar__selection-edge"></span>
+          <span class="mob-modebar__icon-wrap"><span class="mob-icon">&#xE923;</span></span>
+          <span class="mob-modebar__label">Maps</span>
+        </li>
+        <li class="mob-modebar__item" role="tab" aria-selected="false" data-label="Path builder">
+          <span class="mob-modebar__selection-edge"></span>
+          <span class="mob-modebar__icon-wrap"><span class="mob-icon">&#xE92F;</span></span>
+          <span class="mob-modebar__label">Path builder</span>
+        </li>
+        <li class="mob-modebar__item has-status" role="tab" aria-selected="false" data-label="Diagnostics">
+          <span class="mob-modebar__selection-edge"></span>
+          <span class="mob-modebar__icon-wrap">
+            <span class="mob-icon">&#xEC03;</span>
+            <span class="mob-modebar__status-badge mob-modebar__status-badge--ok">&#xE447;</span>
+          </span>
+          <span class="mob-modebar__label">Diagnostics</span>
+        </li>
+        <li class="mob-modebar__item" role="tab" aria-selected="false" data-label="Settings">
+          <span class="mob-modebar__selection-edge"></span>
+          <span class="mob-modebar__icon-wrap"><span class="mob-icon">&#xE50D;</span></span>
+          <span class="mob-modebar__label">Settings</span>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="mob-modebar__actions">
+      <button class="mob-modebar__action-btn" title="Server">
+        <span class="mob-icon">&#xE768;</span>
+        <span class="mob-modebar__label">Server</span>
+      </button>
+      <button class="mob-modebar__action-btn" title="Help">
+        <span class="mob-icon">&#xE44C;</span>
+        <span class="mob-modebar__label">Help</span>
+      </button>
+      <button class="mob-modebar__action-btn" title="Click for help">
+        <span class="mob-icon">&#xE534;</span>
+        <span class="mob-modebar__label">Click for help</span>
+      </button>
+      <button class="mob-modebar__action-btn" title="About Mobius">
+        <span class="mob-icon">&#xE550;</span>
+        <span class="mob-modebar__label">About Mobius</span>
+      </button>
+    </div>
+
+  </aside>
+
+</div>
+
+
+  </main>
+</div>
+
+<script src="../js/nav.js"></script>
+<script>
+/* Wire up expand/collapse + item selection on ALL modebar instances */
+(function () {
+  var bars = document.querySelectorAll(".mob-modebar");
+
+  for (var b = 0; b < bars.length; b++) {
+    (function (bar) {
+      /* Hamburger toggle */
+      var hamburger = bar.querySelector(".mob-modebar__hamburger");
+      if (hamburger) {
+        hamburger.addEventListener("click", function () {
+          bar.classList.toggle("is-expanded");
+        });
+      }
+
+      /* Item selection */
+      var items = bar.querySelectorAll(".mob-modebar__item");
+      for (var i = 0; i < items.length; i++) {
+        items[i].addEventListener("click", function () {
+          for (var j = 0; j < items.length; j++) {
+            items[j].classList.remove("is-selected");
+            items[j].setAttribute("aria-selected", "false");
+          }
+          this.classList.add("is-selected");
+          this.setAttribute("aria-selected", "true");
+        });
+      }
+    })(bars[b]);
+  }
+})();
+</script>
+</body>
+</html>

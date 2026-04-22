@@ -1,0 +1,396 @@
+/*
+  mode-bar.css — ModeBar / BrandedModeBar component
+  Source: DefaultControls.xaml lines 6240-6791
+          MainWindow.xaml line 69 (ModeBarTabControl)
+          ASIBrand.xaml (brand dimensions)
+
+  XAML: Mobius_UI_Resources_Templates_MasterDetailViewModeBar
+  XAML: Mobius_UI_Resources_Styles_MasterDetailViewModeBar
+*/
+
+
+/* =============================================================
+   ICON BASE — Mobius System Icons font
+   XAML: All Path elements using IconKey resources
+   Token: --font-icons = size-icons / lh-icons "Mobius-System-Icons"
+   ============================================================= */
+
+.mob-modebar .mob-icon,
+.mob-modebar__item-demo .mob-icon {
+  font: var(--font-icons);                      /* 20px/20px "Mobius-System-Icons" */
+  color: inherit;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+
+/* =============================================================
+   MODEBAR — Root container
+   XAML: Grid Background=BackgroundStrongBrush
+   XAML: ColumnDefinition Width=Auto MinWidth=BrandedModeBarWidth(70)
+   ============================================================= */
+
+.mob-modebar {
+  display: flex;
+  flex-direction: column;
+  width: 70px;                                  /* BrandedModeBarWidth */
+  min-width: 70px;                              /* BrandedModeBarWidth */
+  height: 100%;
+  background: var(--BackgroundStrong);
+  position: relative;
+  overflow: hidden;
+  transition: width var(--transition-expand) ease;
+}
+
+/* XAML: ShowLabels=True — expanded state widens the bar */
+.mob-modebar.is-expanded {
+  width: 200px;
+}
+
+
+/* =============================================================
+   BRAND AREA — Logo header
+   XAML: VisualBrush "Mobius_UI_Resources_VisualBrushes_Logo"
+   XAML: Border Width=BrandedModeBarWidth(70), Height=100, Background=#FF002B45
+   XAML: Rectangle Height=BrandHeight(100)
+   ============================================================= */
+
+.mob-modebar__brand {
+  width: 70px;                                  /* BrandedModeBarWidth */
+  height: 100px;                                /* BrandHeight */
+  background: var(--BackgroundStrong);           /* outer border has no blue bg */
+  display: flex;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* XAML: Inner Border — Margin="10,0", Height=100, Background=#FF002B45 */
+.mob-modebar__brand-inner {
+  width: 50px;                                  /* 70 - 10 - 10 (Margin="10,0") */
+  height: 100px;
+  background: #002B45;                          /* ASIBrand.xaml: #FF002B45 */
+  position: relative;
+}
+
+/* XAML: Path Margin="10,0,10,8", Fill=#FF009FDA, VerticalAlignment=Bottom, Stretch=Uniform */
+/* Font glyph: Logo_Gear U+E555 */
+.mob-modebar .mob-modebar__logo {
+  font-size: 32px;
+  line-height: 1;
+  color: var(--InformationBlue);
+  position: absolute;
+  bottom: 8px;                                  /* XAML: Margin bottom=8 */
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+
+/* =============================================================
+   MODES AREA — Navigation section with hamburger + list
+   XAML: StackPanel x:Name="ModePanel"
+   XAML: Rectangle Height=BrandedModeBarVerticalOffsetHeight(13)
+   XAML: ListView Margin="0,50,0,0"
+   ============================================================= */
+
+.mob-modebar__modes {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  padding-top: 13px;                           /* BrandedModeBarVerticalOffsetHeight */
+}
+
+
+/* =============================================================
+   HAMBURGER BUTTON
+   XAML: ToggleButton x:Name="HamburgerButton"
+   XAML: Width=70, Style=SimpleIconButton
+   XAML: IsChecked=ShowLabels
+   ============================================================= */
+
+.mob-modebar__hamburger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 70px;                                  /* BrandedModeBarWidth */
+  height: var(--touch);                         /* TouchSize: 44px */
+  border: none;
+  background: transparent;
+  color: var(--ForegroundPrimary);
+  cursor: pointer;
+  flex-shrink: 0;
+  padding: 0;
+  transition: color var(--transition-mouse-over) ease;
+}
+
+.mob-modebar__hamburger:hover {
+  color: var(--MouseOverPrimary);
+}
+
+.mob-modebar__hamburger .mob-icon {
+  font-size: var(--size-icons);                 /* 20px */
+  line-height: 1;
+}
+
+
+/* =============================================================
+   MODE LIST
+   XAML: ListView IsSynchronizedWithCurrentItem=True
+   XAML: ItemsPanel = StackPanel Orientation=Vertical
+   ============================================================= */
+
+.mob-modebar__list {
+  list-style: none;
+  margin: 6px 0 0;                              /* XAML: ListView Margin="0,50,0,0" minus hamburger 44px */
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+
+/* =============================================================
+   MODE ITEM (ListBoxItem)
+   XAML: ItemContainerStyle — Grid with 2 columns: 4px + *
+   XAML: _selectionEdge (left) + _contentSite (right)
+   XAML: Foreground=ForegroundPrimaryBrush
+   ============================================================= */
+
+.mob-modebar__item,
+.mob-modebar__item-demo {
+  display: flex;
+  align-items: center;                           /* Vertically center label with icon-wrap */
+  position: relative;
+  padding-top: 15px;                             /* XAML: OffsetMargin="25,15,0,0" top component */
+  cursor: pointer;
+  color: var(--ForegroundPrimary);
+  transition: color var(--transition-mouse-out) ease;
+  /* Total height = 15px padding + 35px icon-wrap = 50px per item */
+}
+
+
+/* =============================================================
+   SELECTION EDGE — 4px left indicator bar
+   XAML: Border x:Name="_selectionEdge"
+   XAML: ColumnDefinition Width=4
+   XAML: Background=SelectionPrimaryBrush
+   XAML: Height animates from 0 to TouchSize on select
+   ============================================================= */
+
+.mob-modebar__selection-edge {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%) scaleX(0);
+  width: var(--border-width-selected);          /* SelectedWidth: 4px */
+  height: 0;
+  background: var(--SelectionPrimary);
+  transition:
+    height 200ms cubic-bezier(0.23, 1, 0.32, 1),
+    transform 200ms cubic-bezier(0.23, 1, 0.32, 1);
+  /* XAML: QuinticEase EaseOut on both ScaleX and Height */
+}
+
+
+/* =============================================================
+   ICON WRAPPER
+   XAML: custom:IconLabelExpander MinWidth=BrandedModeBarWidth(70)
+   XAML: Grid Height=35 containing Path + StatusIcon
+   ============================================================= */
+
+.mob-modebar__icon-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 70px;                              /* BrandedModeBarWidth */
+  height: 35px;                                 /* XAML: Grid Height=35 */
+  position: relative;
+  overflow: visible;                            /* Badge extends below icon grid */
+}
+
+.mob-modebar__icon-wrap .mob-icon {
+  font-size: var(--size-icons);                 /* 20px */
+  line-height: 1;
+}
+
+
+/* =============================================================
+   LABEL — visible only in expanded state
+   XAML: IconLabelExpander LabelString, ShowLabel=ShowLabels
+   XAML: OffsetMargin="25,15,0,0"
+   ============================================================= */
+
+.mob-modebar__label {
+  font: var(--font-default);
+  color: inherit;
+  white-space: nowrap;
+  overflow: hidden;
+  opacity: 0;
+  max-width: 0;
+  transition:
+    opacity var(--transition-expand) ease,
+    max-width var(--transition-expand) ease;
+}
+
+.mob-modebar.is-expanded .mob-modebar__label {
+  opacity: 1;
+  max-width: 120px;
+}
+
+
+/* =============================================================
+   ADORNER STATUS BADGE — layered second font character
+   Two overlapping glyphs: base icon + status overlay
+   Offset from base icon: 12px right, 15px down
+   Font glyphs: Status_Okay U+E447, Status_Critical U+E412,
+                Status_Warning U+E410, Status_Caution U+E414,
+                Status_Unknown U+E44C
+   ============================================================= */
+
+.mob-modebar__status-badge {
+  position: absolute;
+  left: calc(50% + 2px);                        /* Icon left (50%-10px) + 12px offset */
+  top: 22.5px;                                  /* Icon top (7.5px) + 15px offset */
+  width: var(--icon-sm);                        /* IconSm: 12px */
+  height: var(--icon-sm);
+  font: var(--icon-sm) / 1 var(--font-icon);   /* 12px Mobius-System-Icons */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Status_Critical U+E412, Fill=InformationRedBrush */
+.mob-modebar__status-badge--critical {
+  color: var(--InformationRed);
+}
+
+/* Status_Warning U+E410, Fill=InformationOrangeBrush */
+.mob-modebar__status-badge--warning {
+  color: var(--InformationOrange);
+}
+
+/* Status_Caution U+E414, Fill=InformationYellowBrush */
+.mob-modebar__status-badge--caution {
+  color: var(--InformationYellow);
+}
+
+/* Status_Okay U+E447, Fill=InformationGreenBrush */
+.mob-modebar__status-badge--ok {
+  color: var(--InformationGreen);
+}
+
+/* Status_Unknown U+E44C, Fill=ForegroundPrimaryBrush */
+.mob-modebar__status-badge--unknown {
+  color: var(--ForegroundPrimary);
+}
+
+
+/* =============================================================
+   INTERACTION STATES — CommonStates
+   XAML: VisualStateGroup "CommonStates"
+   ============================================================= */
+
+/* XAML: VisualState "MouseOver" — Foreground=MouseOverPrimary, duration=160ms */
+.mob-modebar__item:hover,
+.mob-modebar__item-demo.is-hover {
+  color: var(--MouseOverPrimary);
+  transition: color var(--transition-mouse-over) ease;
+}
+
+/* XAML: VisualState "Disabled" — Opacity=DisabledOpacity(0.35), duration=100ms */
+.mob-modebar__item.is-disabled,
+.mob-modebar__item-demo.is-disabled {
+  opacity: var(--opacity-disabled);
+  pointer-events: none;
+  transition: opacity var(--transition-disable) ease;
+}
+
+
+/* =============================================================
+   SELECTION STATES — SelectionStates
+   XAML: VisualStateGroup "SelectionStates"
+   ============================================================= */
+
+/* XAML: VisualState "Selected" + Trigger IsSelected=True */
+/* XAML: _selectedForeground Foreground=SelectionPrimaryBrush */
+/* XAML: _selectionEdge ScaleX animates 0 -> 2.0 -> 1.0 (bounce), Height -> TouchSize */
+.mob-modebar__item.is-selected,
+.mob-modebar__item-demo.is-selected {
+  color: var(--SelectionPrimary);
+}
+
+.mob-modebar__item.is-selected .mob-modebar__selection-edge,
+.mob-modebar__item-demo.is-selected .mob-modebar__selection-edge {
+  height: var(--touch);                         /* TouchSize: 44px */
+  transform: translateY(-50%) scaleX(1);
+}
+
+
+/* =============================================================
+   FOCUS STATES — FocusedStates
+   XAML: VisualStateGroup "FocusedStates"
+   ============================================================= */
+
+/* XAML: VisualState "Focused" — Foreground=MouseOverPrimary, duration=160ms */
+.mob-modebar__item:focus-visible,
+.mob-modebar__item-demo.is-focused {
+  color: var(--MouseOverPrimary);
+  outline: var(--border-width-focused) solid var(--SelectionPrimary);
+  outline-offset: calc(-1 * var(--border-width-focused));
+  transition: color var(--transition-focus) ease;
+}
+
+/* XAML: VisualState "Unfocused" — Foreground revert, duration=GeneralUnfocusDuration */
+.mob-modebar__item:not(:focus-visible) {
+  transition: color var(--transition-unfocus) ease;
+}
+
+
+/* =============================================================
+   ACTION PANEL — Bottom utility buttons
+   XAML: StackPanel x:Name="ActionPanel"
+   XAML: VerticalAlignment=Bottom, Margin="0,50,0,0"
+   ============================================================= */
+
+.mob-modebar__actions {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+
+/* XAML: Button Padding="10,0,0,0", Style=IconButton */
+/* XAML: Foreground=ForegroundPrimaryBrush */
+/* XAML: Border Background=BackgroundStrongBrush wrapping each button */
+.mob-modebar__action-btn {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: var(--touch);                     /* TouchSize: 44px */
+  border: none;
+  background: var(--BackgroundStrong);
+  color: var(--ForegroundPrimary);
+  cursor: pointer;
+  padding: 0;
+  transition: color var(--transition-mouse-out) ease;
+}
+
+.mob-modebar__action-btn .mob-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 70px;                              /* BrandedModeBarWidth */
+  font-size: var(--size-icons);                 /* 20px */
+  /* XAML: IconLabelExpander Margin="10,0,0,0" — icon centered in 70px column */
+}
+
+.mob-modebar__action-btn:hover {
+  color: var(--MouseOverPrimary);
+  transition: color var(--transition-mouse-over) ease;
+}
+
+.mob-modebar__action-btn .mob-modebar__label {
+  padding-left: 0;
+  /* XAML: IconLabelExpander OffsetMargin="14,0,0,0" */
+}

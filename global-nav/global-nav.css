@@ -1,0 +1,529 @@
+/*
+  global-nav.css — GlobalNav component (top-right navigation bar)
+  Source: MainWindow.xaml line 124 (top bar Grid)
+          UserDetailsAndSwitchControl.xaml (profile section)
+          UserCard.xaml (username/avatar)
+          NotificationToggleButton.xaml (alert button)
+          UserWindow.xaml (window chrome buttons)
+          DefaultControls.xaml lines 2792-2813 (window button styles)
+
+  XAML: Asi.Miscellaneous.Client.UI.MainWindow
+  XAML: Asi.Miscellaneous.Client.UI.SingleControls.UserDetailsAndSwitchControl
+  XAML: Asi.CustomControls.Client.UI.NotificationToggleButton
+  XAML: Asi.CommonControls.Client.UI.UserWindow
+*/
+
+
+/* =============================================================
+   ICON BASE — Mobius System Icons font (local to this component)
+   XAML: All icon Path elements using Icon_ resource keys
+   Token: --font-icons = size-icons / lh-icons "Mobius-System-Icons"
+   ============================================================= */
+
+.mob-globalnav .mob-icon,
+.mob-globalnav__popup .mob-icon {
+  font: var(--font-icons);                        /* 20px/20px Mobius-System-Icons */
+  color: inherit;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+
+/* =============================================================
+   ROOT CONTAINER
+   XAML: MainWindow.xaml Grid (line 124)
+         Height="50", VerticalAlignment="Top", Grid.ColumnSpan="2"
+   XAML: Grid.ColumnDefinitions: Col0=70(BrandedModeBarColumnWidth),
+         Col1=*, Col2=Auto
+   ============================================================= */
+
+.mob-globalnav {
+  display: flex;
+  align-items: stretch;
+  justify-content: flex-end;                      /* XAML: right-side Grid in Col 2 */
+  height: 50px;                                   /* MainWindow.xaml line 126 */
+  min-height: 50px;
+}
+
+
+/* =============================================================
+   PROFILE SECTION — UserDetailsAndSwitchControl
+   XAML: UserDetailsAndSwitchControl.xaml
+         Grid HAlign=Right, Background=BackgroundStepTwoBrush (line 31)
+         ColumnDefinitions: 4px | Auto | 1px (lines 35-37)
+   ============================================================= */
+
+.mob-globalnav__profile {
+  display: flex;
+  align-items: stretch;
+  background: var(--BackgroundStepTwo);            /* UserDetailsAndSwitchControl.xaml line 31 */
+  cursor: pointer;
+  position: relative;
+}
+
+
+/* -- Profile / alert separator --
+   XAML: ColumnDefinition Width="1" (line 37)
+         No child element — the 1px column inherits the Grid's
+         BackgroundStepTwoBrush, creating a subtle separator against
+         the white NotificationToggleButton background. */
+
+.mob-globalnav__separator {
+  width: var(--size-1);                            /* 1px — ColumnDefinition Width="1" (line 37) */
+  flex-shrink: 0;
+  background: var(--BackgroundStepTwo);            /* inherited from parent Grid bg (line 31) */
+}
+
+
+/* -- Connection status bar --
+   XAML: Rectangle Grid.Column="0" (line 51)
+         Width="4" (ColumnDefinition line 35)
+         Default fill: InformationYellowBrush (line 54)
+         DataTrigger Connected: InformationGreenBrush (line 59)
+         DataTrigger Disconnected: InformationRedBrush (line 57) */
+
+.mob-globalnav__connection-bar {
+  width: 4px;                                     /* ColumnDefinition Width="4" (line 35) */
+  flex-shrink: 0;
+}
+
+.mob-globalnav__connection-bar--connected {
+  background: var(--InformationGreen);             /* line 59 */
+}
+
+.mob-globalnav__connection-bar--disconnected {
+  background: var(--InformationRed);               /* line 57 */
+}
+
+.mob-globalnav__connection-bar--unknown {
+  background: var(--InformationYellow);            /* line 54, default */
+}
+
+
+/* -- Profile text stack --
+   XAML: StackPanel Grid.Column="1", Orientation=Vertical (line 39) */
+
+.mob-globalnav__profile-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;                         /* XAML: StackPanel top-aligns, but content (49.7px)
+                                                      nearly fills 50px bar — centering distributes the
+                                                      0.3px remainder evenly. Master measures 9px top,
+                                                      8px bottom (at 2x). */
+  gap: 0;                                          /* XAML: Margin.Top=6 on both children creates inter-line
+                                                      spacing, but centering + line-height: normal already
+                                                      produces correct visual density at 14px/~18.9px. */
+  min-width: 0;
+}
+
+
+/* -- Username --
+   XAML: UserCard (line 42), Margin="-4,6,0,0" (line 43)
+         UserCard.xaml Padding="24,0" (line 58)
+         The -4px Margin.Left shifts the entire UserCard grid left so its
+         own 4px connection-bar column overlaps the parent's bar.
+         The TextBlock inside UserCard still uses Padding="24,0" unmodified.
+         In our flattened HTML (single 4px bar), keep padding-left: 24px
+         so text aligns at 4+24=28px from profile left, matching sitename.
+   XAML: Foreground=ForegroundPrimaryBrush (UserCard.xaml line 59)
+   Font: inherited default (Roboto Condensed 14px) */
+
+.mob-globalnav__username {
+  font: var(--font-default);
+  font-weight: var(--font-normal);
+  line-height: normal;                             /* WPF: no explicit LineHeight — uses font metrics (~18.9px) */
+  color: var(--ForegroundPrimary);                 /* UserCard.xaml line 59 */
+  padding: 0 24px 0 24px;                         /* Padding="24,0" → L=24, R=24 (UserCard.xaml line 58) */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
+/* -- Site name --
+   XAML: TextBlock Margin="24,6,8,0" (line 47)
+         Text=ServerSiteName (line 48)
+         Font: inherited default */
+
+.mob-globalnav__sitename {
+  font: var(--font-default);
+  font-weight: var(--font-normal);
+  line-height: normal;                             /* WPF: no explicit LineHeight — uses font metrics (~18.9px) */
+  color: var(--ForegroundPrimary);
+  padding: 0 8px 0 24px;                          /* Margin: Left=24, Right=8 (line 47) */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
+/* =============================================================
+   NOTIFICATION TOGGLE BUTTON
+   XAML: NotificationToggleButton.xaml
+         Template root Grid: Width=62, Height=50 (lines 15-16)
+         Background=BackgroundStrongBrush (line 17)
+         Style Foreground=ForegroundPrimaryBrush (line 292)
+   ============================================================= */
+
+.mob-globalnav__alert-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 62px;                                    /* line 15 */
+  height: 50px;                                   /* line 16 */
+  flex-shrink: 0;
+  background: var(--BackgroundStrong);             /* line 17 */
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: var(--ForegroundPrimary);                 /* style line 292 */
+  overflow: hidden;
+}
+
+
+/* -- Left indicator bar (hover/selection) --
+   XAML: _mouseOverElement Border (line 21) — 4px, MouseOverPrimaryBrush, Opacity=0
+   XAML: _selectionElement Border (line 28) — 4px, SelectionPrimaryBrush, Opacity=0 */
+
+.mob-globalnav__alert-bar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 4px;                                     /* line 23, line 29 */
+  height: 100%;
+  opacity: 0;
+  transition: opacity var(--transition-mouse-out) ease;
+}
+
+.mob-globalnav__alert-btn:hover .mob-globalnav__alert-bar {
+  background: var(--MouseOverPrimary);             /* line 25 */
+  opacity: 1;
+  transition-duration: var(--transition-mouse-over);
+}
+
+
+/* -- Selected bar (checked state) -- */
+.mob-globalnav__alert-bar--selected {
+  background: var(--SelectionPrimary);             /* line 32 */
+  opacity: 1;
+}
+
+
+/* -- Critical bar -- */
+.mob-globalnav__alert-bar--critical {
+  background: var(--InformationRed);               /* VisualState line 237 */
+  opacity: 1;
+}
+
+
+/* -- Alert icon --
+   XAML: Canvas (line 97) — 20x20, centered, Margin="0,0,0,2"
+   XAML: Inner grid 50x50, Margin="6,0" (lines 89-91) */
+
+.mob-globalnav__alert-icon {
+  font-size: var(--size-icons);                   /* 20px — Canvas Width/Height (line 99-100) */
+  line-height: var(--lh-icons);
+  margin-bottom: 2px;                             /* Canvas Margin="0,0,0,2" (line 101) */
+}
+
+/* Hover: MouseOver path overlay
+   XAML: _notificationPathMouseOver Fill=MouseOverPrimaryBrush (line 119) */
+.mob-globalnav__alert-btn:hover .mob-globalnav__alert-icon {
+  color: var(--MouseOverPrimary);
+  transition: color var(--transition-mouse-over) ease;
+}
+
+
+/* -- Selected icon color (checked state) --
+   XAML: Checked state _notificationPath Fill=SelectionPrimary (line 268) */
+.mob-globalnav__alert-icon--selected {
+  color: var(--SelectionPrimary);
+}
+
+
+/* -- Critical icon (white, for red background) --
+   XAML: _notificationPathCritical Fill=SelectionForegroundBrush (line 154) */
+.mob-globalnav__alert-icon--critical {
+  color: var(--SelectionForeground);
+}
+
+
+/* -- Alert count --
+   XAML: Canvas _alertCountVisualElement (line 123)
+         Canvas.Left=12, Canvas.Top=12 (lines 125-126)
+   XAML: TextBlock Width=40, Height=20 (lines 131-132)
+         Foreground=ForegroundPrimaryBrush (line 133)
+   Hidden by default (NoNewAlert Opacity=0, line 220) */
+
+.mob-globalnav__alert-count {
+  position: absolute;
+  top: calc(50% - 10px + 2px);                   /* centered + Canvas.Top=12 relative to 20x20 canvas, offset by margin-bottom */
+  left: calc(50% + 2px);                          /* Canvas.Left=12 relative to 20x20 centered canvas */
+  font: var(--font-default);
+  font-weight: var(--font-normal);
+  color: var(--ForegroundPrimary);
+  opacity: 0;                                     /* NoNewAlert default (line 220) */
+  pointer-events: none;
+}
+
+/* NewAlert state: count becomes visible
+   XAML: NewAlert → _alertCountVisualElement Opacity=1.0 (line 232) */
+.mob-globalnav__alert-count--visible {
+  opacity: 1;
+}
+
+
+/* -- Critical alert background --
+   XAML: _criticalBackgroundStrongElement (line 36) — InformationRedAltBrush
+   XAML: _criticalBackgroundElement (line 47) — pulse InformationRedBrush, 600ms
+   Combined via ::before and ::after pseudo-elements */
+
+.mob-globalnav__alert-btn--critical {
+  background: var(--InformationRedAlt);            /* line 42, InformationRedAltBrush */
+}
+
+.mob-globalnav__alert-btn--critical::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--InformationRed);               /* line 56, InformationRedBrush */
+  animation: mob-globalnav-critical-pulse 600ms linear infinite; /* lines 63-80 */
+  pointer-events: none;
+}
+
+/* XAML: RepeatBehavior=Forever, Duration=600ms
+   Keyframes: 0→0.0, 300ms→1.0, 600ms→0.0 (lines 69-75) */
+@keyframes mob-globalnav-critical-pulse {
+  0%   { opacity: 0; }
+  50%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+
+/* -- Critical badge (status icon overlay) --
+   XAML: Canvas (line 156), Canvas.Left=10, Canvas.Top=14
+   XAML: Path _criticalElementPath Data=Icon_Status_CriticalSm (line 162)
+         Fill=SelectionForegroundBrush (line 163) */
+
+.mob-globalnav__alert-critical-badge {
+  position: absolute;
+  font-size: var(--icon-sm);                      /* 12px — Status_CriticalSm is 12x12 viewport */
+  line-height: 1;
+  color: var(--SelectionForeground);               /* line 163 */
+  /* Positioned relative to the 20x20 icon canvas, centered in 50x50 inner grid */
+  /* Canvas center: 31px left, 25px top. Icon offset: Left=10, Top=14 from canvas origin */
+  top: calc(50% - 10px + 14px);                   /* canvas center offset + Canvas.Top=14 */
+  left: calc(50% - 10px + 10px);                  /* canvas center offset + Canvas.Left=10 */
+  z-index: 1;
+}
+
+
+/* =============================================================
+   WINDOW CHROME BUTTONS
+   XAML: UserWindow.xaml StackPanel (line 77)
+         Height=50, HAlign=Right, VAlign=Top, Orientation=Horizontal
+         Background=BackgroundInvertStrongBrush (line 83)
+   XAML: Style=WindowControlIconButton (DefaultControls.xaml line 2792)
+         Width=50, Height=50 (lines 2794-2795)
+         Foreground=ForegroundInvertWatermarkBrush (line 2797)
+         Background(hover fill)=BackgroundInvertStrongStepOneBrush (line 2796)
+   ============================================================= */
+
+.mob-globalnav__window-controls {
+  display: flex;
+  align-items: stretch;
+  height: 50px;                                   /* line 80 */
+  background: var(--BackgroundInvertStrong);        /* line 83 */
+  flex-shrink: 0;
+}
+
+.mob-globalnav__window-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;                                    /* DefaultControls.xaml line 2794 */
+  height: 50px;                                   /* DefaultControls.xaml line 2795 */
+  flex-shrink: 0;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  background: transparent;
+  color: var(--ForegroundInvertWatermark);          /* DefaultControls.xaml line 2797 */
+  position: relative;
+  transition: color var(--transition-mouse-out) ease;
+}
+
+/* Hover: fill rectangle + foreground color change
+   XAML: _mouseOverElement Opacity=1.0 (line 1284)
+         Background=BackgroundInvertStrongStepOneBrush (line 2796)
+   XAML: IsMouseOver Trigger → Foreground=MouseOverPrimaryBrush (line 2801) */
+.mob-globalnav__window-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--BackgroundInvertStrongStepOne); /* line 2796 */
+  opacity: 0;
+  transition: opacity var(--transition-mouse-out) ease;
+}
+
+.mob-globalnav__window-btn:hover::before {
+  opacity: 1;
+  transition-duration: var(--transition-mouse-over);
+}
+
+.mob-globalnav__window-btn:hover {
+  color: var(--MouseOverPrimary);                  /* line 2801 */
+  transition-duration: var(--transition-mouse-over);
+}
+
+/* Ensure icon is above the hover fill */
+.mob-globalnav__window-btn .mob-icon {
+  position: relative;
+  z-index: 1;
+}
+
+
+/* -- Close button overrides --
+   XAML: Style=WindowControlCloseIconButton (DefaultControls.xaml line 2806)
+         Background(hover)=InformationRedBrush (line 2807)
+         Foreground(hover)=InformationForegroundAltBrush (line 2810) */
+
+.mob-globalnav__window-btn--close::before {
+  background: var(--InformationRed);               /* line 2807 */
+}
+
+.mob-globalnav__window-btn--close:hover {
+  color: var(--InformationForegroundAlt);           /* line 2810 */
+}
+
+
+/* =============================================================
+   POPUP PANEL — UserDetailsAndSwitchControl expanded
+   XAML: Popup (line 89) — Width=220, AllowsTransparency=True
+         PopupAnimation=Fade
+   XAML: Grid _gridContent (line 100) — Width=220, Margin=20
+   XAML: BoxShadow (line 105) — Margin=2, Opacity=ShadowOpacity
+   XAML: Grid (line 109) — Background=BackgroundStrongBrush
+   ============================================================= */
+
+.mob-globalnav__popup {
+  position: absolute;
+  top: 100%;                                      /* below the profile bar */
+  left: 0;                                        /* align with profile left edge */
+  width: 220px;                                   /* line 86, 102 */
+  background: var(--BackgroundStrong);             /* line 110 */
+  box-shadow: 0 2px 20px var(--ShadowElements);   /* BoxShadow approximation: CellSize=20, ShadowOpacity=0.1 */
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 300ms ease, visibility 300ms ease;
+  z-index: 100;
+}
+
+.mob-globalnav__popup--visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+
+/* -- Popup header (Online status banner) --
+   XAML: Border Grid.Row=0, Height=92 (line 129)
+         Background=SelectionSecondaryBrush (line 134)
+   XAML: StackPanel Margin="24,0", HAlign=Left, VAlign=Center (line 137) */
+
+.mob-globalnav__popup-header {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 92px;                                   /* line 129 */
+  padding: 0 24px;                                /* Margin="24,0" (line 137) */
+  background: var(--SelectionSecondary);           /* line 134 */
+}
+
+
+/* -- "Online" label --
+   XAML: TextBlock Foreground=SelectionForegroundBrush (line 142)
+         Font: inherited default (14px) */
+
+.mob-globalnav__popup-status-label {
+  font: var(--font-default);
+  font-weight: var(--font-normal);
+  color: var(--SelectionForeground);               /* line 142 */
+}
+
+
+/* -- Logged-in time --
+   XAML: TextBlock Style=HeadingMd (line 148)
+         Foreground=SelectionForegroundBrush (line 147) */
+
+.mob-globalnav__popup-time {
+  font: var(--font-hdrMd);                        /* HeadingMd = 24px */
+  color: var(--SelectionForeground);               /* line 147 */
+}
+
+
+/* -- Menu items container --
+   XAML: StackPanel Margin="0,14,0,0" (line 155) */
+
+.mob-globalnav__popup-menu {
+  padding-top: 14px;                              /* Margin.Top=14 (line 155) */
+}
+
+
+/* -- Individual menu item --
+   XAML: Button/ToggleButton Margin="24,17" (lines 161, 189, 218, 244)
+         Padding=0, HAlign=Stretch, Style=LinkButton
+   XAML: StackPanel Orientation=Horizontal (line 168, 196, 224, 252) */
+
+.mob-globalnav__popup-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 17px 24px;                             /* Margin="24,17" (XAML Thickness L,T,R,B = 24,17,24,17... wait) */
+  /* Actually XAML Margin="24,17" means Left=24, Top=17, Right=24, Bottom=17 */
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: var(--ForegroundPrimary);
+  font: var(--font-default);
+  font-weight: var(--font-normal);
+  text-align: left;
+  transition: color var(--transition-mouse-over) ease;
+}
+
+.mob-globalnav__popup-item:hover {
+  color: var(--MouseOverPrimary);
+}
+
+
+/* -- Menu item icon --
+   XAML: Path Width=24, Height=24 (lines 173-174, etc.)
+         Fill=Foreground (inherited from ContentControl ancestor)
+         Stretch=UniformToFill */
+
+.mob-globalnav__popup-item-icon {
+  font-size: 24px;                                /* Path Width/Height=24 (line 173-174) */
+  line-height: 24px;
+  flex-shrink: 0;
+  color: inherit;
+}
+
+
+/* -- Menu item label --
+   XAML: TextBlock Margin="6,0,0,0" (lines 177, 205, 233, 262) */
+
+.mob-globalnav__popup-item-label {
+  margin-left: 6px;                               /* Margin.Left=6 (line 177) */
+}
+
+
+/* -- Menu divider --
+   XAML: Border Style=EdgeBorderHorizontal (lines 184, 211, 240)
+         DefaultControls.xaml line 787:
+         Height=Size1(1px), Background=InnerLinesBrush */
+
+.mob-globalnav__popup-divider {
+  border: none;
+  border-top: var(--size-1) solid var(--InnerLines); /* Size1=1px, InnerLinesBrush */
+  margin: 0;
+}

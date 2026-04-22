@@ -64,7 +64,7 @@
   position: relative;
   z-index: 1;
   background: var(--BackgroundStrong);
-  box-shadow: 0 0 10px var(--ShadowElements);
+  box-shadow: var(--shadow-md);
   border: var(--border-width) solid var(--BackgroundInputOutline);
   max-width: 480px;
   padding: var(--size-24);
@@ -113,7 +113,7 @@
   width: 400px;
   height: 100%;
   background: var(--BackgroundStrong);
-  box-shadow: -2px 0 10px var(--ShadowElements);
+  box-shadow: var(--shadow-left);
   overflow-y: auto;
   /* XAML: TranslateTransform.X — slide animation 0.5s quintic */
   transform: translateX(100%);
@@ -195,7 +195,7 @@
   width: 720px;
   height: 100%;
   background: var(--BackgroundStrongStepOne);
-  box-shadow: -2px 0 10px var(--ShadowElements);
+  box-shadow: var(--shadow-left);
   display: flex;
   flex-direction: column;
   /* Slide animation matching panel pattern */

@@ -15,25 +15,41 @@
     Color            → --ShadowElements
     Opacity          → multiplied into rgba alpha channel
 
-  Tiers:
+  Centered (no offset — matches WPF ShadowDepth="0"):
     --shadow-none     No shadow (reset)
     --shadow-sm       BlurRadius="1"   — subtle edge definition
     --shadow-md       BlurRadius="10"  — dropdowns, popovers, cards
     --shadow-lg       BlurRadius="20"  — modals, dialogs, floating panels
     --shadow-heavy    BlurRadius="20"  — vehicle/map overlays (higher opacity)
+
+  Offset (lifted appearance — y-offset adds directionality):
+    --shadow-sm-offset   0 2px 8px   — combo-box dropdowns, small popover
+    --shadow-md-offset   0 4px 12px  — dropdown menus with subtle lift
+    --shadow-lg-offset   0 4px 24px  — dialog/modal with strong lift
+
+  Directional (side panels sliding in from edge):
+    --shadow-left        -2px 0 10px — right-anchored panels (slides from right)
 */
 
 
 /* =============================================
-   SHADOW TOKENS (custom properties)
+   SHADOW TOKENS — centered (no offset)
    ============================================= */
 
 :root {
-  --shadow-none:    none;
-  --shadow-sm:      0 0 1px var(--ShadowElements);
-  --shadow-md:      0 0 10px var(--ShadowElements);
-  --shadow-lg:      0 0 20px var(--ShadowElements);
-  --shadow-heavy:   0 0 20px rgba(0, 0, 0, 0.5);
+  --shadow-none:       none;
+  --shadow-sm:         0 0 1px var(--ShadowElements);
+  --shadow-md:         0 0 10px var(--ShadowElements);
+  --shadow-lg:         0 0 20px var(--ShadowElements);
+  --shadow-heavy:      0 0 20px rgba(0, 0, 0, 0.5);
+
+  /* Offset — lifted appearance with y-offset */
+  --shadow-sm-offset:  0 2px 8px var(--ShadowElements);
+  --shadow-md-offset:  0 4px 12px var(--ShadowElements);
+  --shadow-lg-offset:  0 4px 24px var(--ShadowElements);
+
+  /* Directional — side-panel edges */
+  --shadow-left:       -2px 0 10px var(--ShadowElements);
 }
 
 
@@ -42,11 +58,15 @@
    Apply directly to any Blazor element.
    ============================================= */
 
-.mob-shadow-none  { box-shadow: var(--shadow-none); }
-.mob-shadow-sm    { box-shadow: var(--shadow-sm); }
-.mob-shadow-md    { box-shadow: var(--shadow-md); }
-.mob-shadow-lg    { box-shadow: var(--shadow-lg); }
-.mob-shadow-heavy { box-shadow: var(--shadow-heavy); }
+.mob-shadow-none       { box-shadow: var(--shadow-none); }
+.mob-shadow-sm         { box-shadow: var(--shadow-sm); }
+.mob-shadow-md         { box-shadow: var(--shadow-md); }
+.mob-shadow-lg         { box-shadow: var(--shadow-lg); }
+.mob-shadow-heavy      { box-shadow: var(--shadow-heavy); }
+.mob-shadow-sm-offset  { box-shadow: var(--shadow-sm-offset); }
+.mob-shadow-md-offset  { box-shadow: var(--shadow-md-offset); }
+.mob-shadow-lg-offset  { box-shadow: var(--shadow-lg-offset); }
+.mob-shadow-left       { box-shadow: var(--shadow-left); }
 
 
 /* =============================================

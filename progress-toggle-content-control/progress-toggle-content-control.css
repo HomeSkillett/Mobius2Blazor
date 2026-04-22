@@ -1,0 +1,158 @@
+/* progress-toggle-content-control.css — ProgressToggleContentControl
+   Source: Asi.CustomControls.Client.UI/ProgressToggleContentControl.xaml
+           Asi.CustomControls.Client.UI/ProgressToggleContentControl.cs
+   ====================================================================== */
+
+
+/* ==============================================
+   BASE WRAPPER
+   XAML: ControlTemplate TargetType="ProgressToggleContentControl"
+         Grid Background="Transparent"
+   Contains two layers: the actual content and a
+   ProgressRadial spinner. Only one is visible at a time,
+   controlled by the Ready property.
+   ============================================== */
+.mob-progress-toggle {
+  display: grid;
+  position: relative;
+  background: transparent;
+}
+
+
+/* ==============================================
+   CONTENT LAYER
+   XAML: ContentControl x:Name="Content"
+         HorizontalContentAlignment, VerticalContentAlignment,
+         Foreground, Focusable=False
+   Defaults: visible, enabled, full opacity.
+   ============================================== */
+.mob-progress-toggle__content {
+  grid-area: 1 / 1;
+  display: flex;
+  align-items: center;
+  min-height: 0;
+  transition: opacity 300ms ease;
+}
+
+
+/* ==============================================
+   SPINNER LAYER
+   XAML: ContentControl > ProgressRadial x:Name="ProgressIndicator"
+         Width/Height=SpinnerSize (default 20),
+         Foreground=Background (InformationPurpleBrush),
+         IsAnimated=False, Visibility=Collapsed
+   Positioned on the same grid cell as content so it
+   occupies the same space.
+   ============================================== */
+.mob-progress-toggle__spinner {
+  grid-area: 1 / 1;
+  display: none;
+  align-items: center;
+}
+
+
+/* ==============================================
+   STATE: READY (default)
+   XAML: VisualState "Ready"
+         ProgressIndicator — IsAnimated=False, Visibility=Collapsed
+         Content — Visibility=Visible, IsEnabled=True, Opacity 0→1 (0.3s)
+   Content visible and interactive. Spinner hidden.
+   ============================================== */
+/* (default styles above handle this state) */
+
+
+/* ==============================================
+   STATE: INDETERMINATE
+   XAML: VisualState "Indeterminate"
+         ProgressIndicator — Visibility=Visible, IsAnimated=True
+         Content — Visibility=Hidden (keeps layout space)
+   Spinner visible and animating. Content hidden but
+   still occupies layout space.
+   ============================================== */
+.mob-progress-toggle.is-indeterminate > .mob-progress-toggle__content {
+  visibility: hidden;
+}
+
+.mob-progress-toggle.is-indeterminate > .mob-progress-toggle__spinner {
+  display: flex;
+}
+
+
+/* ==============================================
+   STATE: INDETERMINATE_COLLAPSED
+   XAML: VisualState "Indeterminate_Collapsed"
+         ProgressIndicator — Visibility=Visible, IsAnimated=True
+         Content — Visibility=Collapsed (no layout space)
+   Spinner visible. Content fully collapsed — does not
+   reserve any layout space.
+   ============================================== */
+.mob-progress-toggle.is-indeterminate-collapsed > .mob-progress-toggle__content {
+  display: none;
+}
+
+.mob-progress-toggle.is-indeterminate-collapsed > .mob-progress-toggle__spinner {
+  display: flex;
+}
+
+
+/* ==============================================
+   STATE: INDETERMINATE_DISABLED
+   XAML: VisualState "Indeterminate_Disabled"
+         ProgressIndicator — Visibility=Visible, IsAnimated=True
+         Content — IsEnabled=False (still visible, but disabled)
+   Both spinner and content visible. Content is dimmed
+   to disabled opacity and non-interactive.
+   ============================================== */
+.mob-progress-toggle.is-indeterminate-disabled > .mob-progress-toggle__content {
+  opacity: var(--opacity-disabled);
+  pointer-events: none;
+}
+
+.mob-progress-toggle.is-indeterminate-disabled > .mob-progress-toggle__spinner {
+  display: flex;
+}
+
+
+/* ==============================================
+   SPINNER SIZING
+   XAML: SpinnerSize DependencyProperty, default 20.
+         "The standard size works well in the Mode Bar,
+          Tool Bar, vehicle and user lists"
+   ============================================== */
+
+/* Default: 20px (uses --icon token = 20px) */
+.mob-progress-toggle__spinner .mob-progress-radial {
+  --radial-size: var(--icon);
+}
+
+/* Small: for compact inline contexts */
+.mob-progress-toggle--spinner-sm .mob-progress-toggle__spinner .mob-progress-radial {
+  --radial-size: var(--icon-sm);
+}
+
+/* Large: 40px — prominent loading indicators
+   XAML: ProgressRadialWithStatus Height/Width="40" */
+.mob-progress-toggle--spinner-lg .mob-progress-toggle__spinner .mob-progress-radial {
+  --radial-size: var(--icon-btn-lg);
+}
+
+
+/* ==============================================
+   CONTENT ALIGNMENT UTILITIES
+   XAML: HorizontalContentAlignment, VerticalContentAlignment
+         Default: Stretch / Center
+   ============================================== */
+.mob-progress-toggle--align-start > .mob-progress-toggle__content,
+.mob-progress-toggle--align-start > .mob-progress-toggle__spinner {
+  justify-content: flex-start;
+}
+
+.mob-progress-toggle--align-center > .mob-progress-toggle__content,
+.mob-progress-toggle--align-center > .mob-progress-toggle__spinner {
+  justify-content: center;
+}
+
+.mob-progress-toggle--align-end > .mob-progress-toggle__content,
+.mob-progress-toggle--align-end > .mob-progress-toggle__spinner {
+  justify-content: flex-end;
+}

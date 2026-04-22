@@ -49,8 +49,8 @@
 .mob-popup {
   position: absolute;
   z-index: 1000;
-  /* XAML: BoxShadow / DropShadowEffect BlurRadius="10" ShadowDepth="0" → --shadow-md */
-  box-shadow: 0 0 10px var(--ShadowElements);
+  /* XAML: BoxShadow / DropShadowEffect BlurRadius="10" ShadowDepth="0" */
+  box-shadow: var(--shadow-md);
   border: var(--border-width) solid var(--BackgroundInputOutline);
   background: var(--BackgroundStrong);
   opacity: 0;

@@ -115,7 +115,8 @@
         { label: "Status Icon",      href: "status-icon/status-icon.html" },
         { label: "Status Button",    href: "status-button/status-button.html" },
         { label: "IconLabelButton",  href: "icon-label-button/icon-label-button.html" },
-        { label: "Progress",         href: "progress/progress.html" }
+        { label: "Progress",         href: "progress/progress.html" },
+        { label: "ProgressToggleContentControl", href: "progress-toggle-content-control/progress-toggle-content-control.html" }
       ]
     },
     {
@@ -138,6 +139,13 @@
         { label: "Modal",                                href: "overlay/overlay-modal.html" },
         { label: "Side Panel",                           href: "overlay/overlay-panel.html" },
         { label: "History Inspector (ConfigurationHistory)", href: "overlay/overlay-history.html" }
+      ]
+    },
+    {
+      title: "Nav",
+      links: [
+        { label: "ModeBar",    href: "mode-bar/mode-bar.html" },
+        { label: "GlobalNav",  href: "global-nav/global-nav.html" }
       ]
     },
     {

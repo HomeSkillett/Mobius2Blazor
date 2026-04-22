@@ -41,3 +41,6 @@
 @import "../../primary-vehicle-gauge/primary-vehicle-gauge.css";
 @import "../../view-switch-gauge/view-switch-gauge.css";
 @import "../../filter-bar/filter-bar.css";
+@import "../../progress-toggle-content-control/progress-toggle-content-control.css";
+@import "../../mode-bar/mode-bar.css";
+@import "../../global-nav/global-nav.css";

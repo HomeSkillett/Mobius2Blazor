@@ -69,7 +69,7 @@
   background: var(--BackgroundStrong);
   border: var(--line-size) solid var(--InnerLines);
   border-radius: var(--corner-radius);
-  box-shadow: 0 4px 12px var(--ShadowElements);
+  box-shadow: var(--shadow-md-offset);
 }
 
 .mob-theme-menu.is-open {

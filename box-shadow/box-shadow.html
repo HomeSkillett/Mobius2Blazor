@@ -124,6 +124,54 @@
 </div>
 
 
+<h2>Offset Tiers</h2>
+<p class="demo-label">Shadows with a y-offset for a lifted, directional feel. Used on dropdowns and dialogs that sit above content rather than float beside it.</p>
+
+<div class="shadow-demo-grid">
+
+  <!-- Source: combobox.css — combo-box dropdown -->
+  <div class="shadow-demo-card mob-shadow-sm-offset">
+    <span class="shadow-demo-card__label">Small Offset</span>
+    <span class="shadow-demo-card__token"><code>--shadow-sm-offset</code></span>
+    <span class="shadow-demo-card__value">0 2px 8px var(--ShadowElements)</span>
+    <span class="xaml-note">Combo-box dropdowns, small popovers</span>
+  </div>
+
+  <!-- Source: theme-switcher.css — dropdown menu -->
+  <div class="shadow-demo-card mob-shadow-md-offset">
+    <span class="shadow-demo-card__label">Medium Offset</span>
+    <span class="shadow-demo-card__token"><code>--shadow-md-offset</code></span>
+    <span class="shadow-demo-card__value">0 4px 12px var(--ShadowElements)</span>
+    <span class="xaml-note">Dropdown menus with subtle lift</span>
+  </div>
+
+  <!-- Source: alerts.css — dialog modal -->
+  <div class="shadow-demo-card mob-shadow-lg-offset">
+    <span class="shadow-demo-card__label">Large Offset</span>
+    <span class="shadow-demo-card__token"><code>--shadow-lg-offset</code></span>
+    <span class="shadow-demo-card__value">0 4px 24px var(--ShadowElements)</span>
+    <span class="xaml-note">Dialog/modal with strong lift</span>
+  </div>
+
+</div>
+
+
+<h2>Directional</h2>
+<p class="demo-label">Edge-anchored shadows for panels that slide in from a screen edge.</p>
+
+<div class="shadow-demo-grid">
+
+  <!-- Source: overlay.css — side panel, history inspector -->
+  <div class="shadow-demo-card mob-shadow-left">
+    <span class="shadow-demo-card__label">Left</span>
+    <span class="shadow-demo-card__token"><code>--shadow-left</code></span>
+    <span class="shadow-demo-card__value">-2px 0 10px var(--ShadowElements)</span>
+    <span class="xaml-note">Right-anchored panels sliding in</span>
+  </div>
+
+</div>
+
+
 <hr class="section-divider" />
 
 
@@ -166,6 +214,27 @@
     <p class="xaml-note">Class: <code>.mob-shadow-heavy</code></p>
   </div>
 
+  <!-- Offset: dropdown with lift -->
+  <div class="shadow-context-example mob-shadow-md-offset">
+    <p class="shadow-context-example__heading">Dropdown Menu</p>
+    <p class="shadow-context-example__body">Theme switcher, context menus, and combo-box dropdowns that sit below a trigger with a visible lift.</p>
+    <p class="xaml-note">Class: <code>.mob-shadow-md-offset</code></p>
+  </div>
+
+  <!-- Offset: dialog with lift -->
+  <div class="shadow-context-example mob-shadow-lg-offset">
+    <p class="shadow-context-example__heading">Dialog / Confirm</p>
+    <p class="shadow-context-example__body">Confirmation dialogs and modal windows that float prominently above content with strong directional depth.</p>
+    <p class="xaml-note">Class: <code>.mob-shadow-lg-offset</code></p>
+  </div>
+
+  <!-- Directional: side panel -->
+  <div class="shadow-context-example mob-shadow-left">
+    <p class="shadow-context-example__heading">Side Panel</p>
+    <p class="shadow-context-example__body">Right-anchored panels (settings, history inspector) that slide in from the edge. Shadow falls left to reinforce the reveal direction.</p>
+    <p class="xaml-note">Class: <code>.mob-shadow-left</code></p>
+  </div>
+
 </div>
 
 
@@ -188,12 +257,9 @@
 
     <p class="shadow-context-example__heading" style="margin-top: var(--spacing-label-to-control-md);">Utility Classes</p>
     <p class="shadow-context-example__body">
-      Or apply as a class on any element:
-      <code>.mob-shadow-none</code>,
-      <code>.mob-shadow-sm</code>,
-      <code>.mob-shadow-md</code>,
-      <code>.mob-shadow-lg</code>,
-      <code>.mob-shadow-heavy</code>
+      Centered: <code>.mob-shadow-none</code>, <code>.mob-shadow-sm</code>, <code>.mob-shadow-md</code>, <code>.mob-shadow-lg</code>, <code>.mob-shadow-heavy</code><br/>
+      Offset: <code>.mob-shadow-sm-offset</code>, <code>.mob-shadow-md-offset</code>, <code>.mob-shadow-lg-offset</code><br/>
+      Directional: <code>.mob-shadow-left</code>
     </p>
 
     <p class="shadow-context-example__heading" style="margin-top: var(--spacing-label-to-control-md);">XAML → CSS Quick Reference</p>
@@ -201,7 +267,11 @@
       <code>BlurRadius="1"</code> → <code>var(--shadow-sm)</code><br/>
       <code>BlurRadius="10"</code> → <code>var(--shadow-md)</code><br/>
       <code>BlurRadius="20"</code> → <code>var(--shadow-lg)</code><br/>
-      <code>BlurRadius="20" + VehicleShadowOpacity</code> → <code>var(--shadow-heavy)</code>
+      <code>BlurRadius="20" + VehicleShadowOpacity</code> → <code>var(--shadow-heavy)</code><br/>
+      Combo-box dropdown → <code>var(--shadow-sm-offset)</code><br/>
+      Dropdown with y-offset → <code>var(--shadow-md-offset)</code><br/>
+      Dialog with y-offset → <code>var(--shadow-lg-offset)</code><br/>
+      Side panel edge → <code>var(--shadow-left)</code>
     </p>
   </div>
 </div>

@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mobius — GlobalNav</title>
+  <link id="mob-theme-link" rel="stylesheet" href="../styles/color-theme-tokens/LightTheme.css" />
+  <link rel="stylesheet" href="../styles/css/main.css" />
+  <link rel="stylesheet" href="global-nav.css" />
+  <style>
+    body { margin: 0; }
+    h1 {
+      font: var(--font-hdrMd);
+      margin: 0 0 32px;
+      color: var(--ForegroundStrong);
+    }
+    h2 {
+      font: var(--font-hdrSm);
+      margin: 40px 0 16px;
+      color: var(--ForegroundStrong);
+    }
+    h2:first-of-type { margin-top: 0; }
+    h3 {
+      font: var(--font-default);
+      font-weight: var(--font-bold);
+      margin: 24px 0 12px;
+      color: var(--ForegroundStrong);
+    }
+    .section-divider {
+      border: none;
+      border-top: var(--line-size) solid var(--InnerLines);
+      margin: 32px 0 0;
+    }
+    .demo-label {
+      font: var(--font-metaSm);
+      color: var(--ForegroundPrimary);
+      margin-bottom: var(--spacing-label-to-control-sm);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .demo-frame {
+      background: var(--BackgroundPrimary);
+      border: var(--border-width) solid var(--InnerLines);
+      display: inline-block;
+    }
+    .demo-spacer { height: 24px; }
+    .demo-note {
+      font: var(--font-metaSm);
+      color: var(--InformationGray);
+      margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="mob-layout">
+
+  <!-- Sidebar Navigation -->
+  <nav class="mob-nav" id="mob-nav"></nav>
+
+  <!-- Main content -->
+  <main class="mob-layout__content" style="padding: 40px;">
+    <h1>GlobalNav</h1>
+    <p style="font: var(--font-default); color: var(--ForegroundPrimary); margin: 0 0 32px;">
+      Top-right navigation bar: profile, notifications, and window chrome.
+      <br>Source: MainWindow.xaml (line 124), UserDetailsAndSwitchControl.xaml, NotificationToggleButton.xaml, UserWindow.xaml
+    </p>
+
+
+    <!-- =========================================================
+         DEMO 1: Default state (Connected, NoNewAlert)
+         ========================================================= -->
+    <h2>Default State (Connected, No Alerts)</h2>
+    <div class="demo-label">Connected / NoNewAlert / Normal window</div>
+    <div class="demo-frame">
+
+      <!-- XAML: MainWindow.Grid (line 124) — Top bar, Height=50 -->
+      <header class="mob-globalnav">
+
+        <!-- XAML: Grid (line 144) — ConnectionStatus wrapper -->
+        <!-- XAML: UserDetailsAndSwitchControl (line 149) -->
+        <div class="mob-globalnav__profile">
+          <!-- XAML: Rectangle (connection status bar, UserDetailsAndSwitchControl.xaml line 51) — 4px wide -->
+          <!-- XAML: DataTrigger Binding=State, Value=Connected → InformationGreenBrush (line 59) -->
+          <div class="mob-globalnav__connection-bar mob-globalnav__connection-bar--connected"></div>
+
+          <!-- XAML: StackPanel (line 39) — vertical stack: UserCard + ServerSiteName -->
+          <div class="mob-globalnav__profile-text">
+            <!-- XAML: UserCard (line 42), Username binding=ConnectedUsername (line 44) -->
+            <!-- XAML: UserCard.xaml Margin="-4,6,0,0" (line 43), Padding="24,0" (line 58) -->
+            <span class="mob-globalnav__username">AzureAD/Name</span>
+            <!-- XAML: TextBlock Text=ServerSiteName (line 48), Margin="24,6,8,0" (line 47) -->
+            <span class="mob-globalnav__sitename">Site Name</span>
+          </div>
+
+          <!-- XAML: Popup (line 89) — UserDetailsAndSwitchControl popup -->
+          <div class="mob-globalnav__popup">
+            <div class="mob-globalnav__popup-header">
+              <span class="mob-globalnav__popup-status-label">Online</span>
+              <span class="mob-globalnav__popup-time">2:34:12</span>
+            </div>
+            <nav class="mob-globalnav__popup-menu">
+              <button class="mob-globalnav__popup-item" type="button">
+                <span class="mob-icon mob-globalnav__popup-item-icon" aria-hidden="true">&#xE409;</span>
+                <span class="mob-globalnav__popup-item-label">Report an Issue</span>
+              </button>
+              <hr class="mob-globalnav__popup-divider" />
+              <button class="mob-globalnav__popup-item" type="button">
+                <span class="mob-icon mob-globalnav__popup-item-icon" aria-hidden="true">&#xE51A;</span>
+                <span class="mob-globalnav__popup-item-label">Change Password</span>
+              </button>
+              <hr class="mob-globalnav__popup-divider" />
+              <button class="mob-globalnav__popup-item" type="button">
+                <span class="mob-icon mob-globalnav__popup-item-icon" aria-hidden="true">&#xE522;</span>
+                <span class="mob-globalnav__popup-item-label">Sign Out</span>
+              </button>
+              <hr class="mob-globalnav__popup-divider" />
+              <button class="mob-globalnav__popup-item" type="button">
+                <span class="mob-icon mob-globalnav__popup-item-icon" aria-hidden="true">&#xE303;</span>
+                <span class="mob-globalnav__popup-item-label">Switch User</span>
+              </button>
+            </nav>
+          </div>
+
+        </div>
+
+        <!-- XAML: ColumnDefinition Width="1" (line 37) — 1px separator between profile and alert -->
+        <!-- Background inherited from parent Grid: BackgroundStepTwoBrush -->
+        <span class="mob-globalnav__separator" aria-hidden="true"></span>
+
+        <!-- XAML: NotificationToggleButton (line 156) — 62x50, Grid.Column="1" -->
+        <!-- XAML: Template=Mobius_UI_CustomControls_Templates_NotificationToggleButton -->
+        <button class="mob-globalnav__alert-btn" type="button" aria-label="Notifications">
+          <!-- XAML: _mouseOverElement Border (line 21) — 4px left, MouseOverPrimaryBrush -->
+          <span class="mob-globalnav__alert-bar"></span>
+          <!-- XAML: Grid (line 88) — 50x50 inner, Margin="6,0" -->
+          <!-- XAML: Canvas _nonCriticalVisualElements (line 97) — 20x20, centered, margin-bottom=2 -->
+          <!-- XAML: Path Data=Icon_Notifications (line 111) — U+E55D -->
+          <span class="mob-icon mob-globalnav__alert-icon" aria-hidden="true">&#xE55D;</span>
+          <!-- XAML: Canvas _alertCountVisualElement (line 123) — Canvas.Left=12, Canvas.Top=12 -->
+          <!-- XAML: TextBlock _alertCountVisualText (line 129) — Width=40, Height=20 -->
+          <span class="mob-globalnav__alert-count" aria-hidden="true"></span>
+        </button>
+
+        <!-- XAML: Rectangle Grid.Column="2" (line 195) — BackgroundInvertStrongBrush fill -->
+        <!-- XAML: UserWindow.xaml StackPanel (line 77) — window chrome, Height=50, HAlign=Right -->
+        <div class="mob-globalnav__window-controls">
+          <!-- XAML: WindowFullScreen button (line 126) — 50x50, WindowControlIconButton style -->
+          <!-- XAML: Icon=Icon_Windows10_FullScreen (line 147) — U+EA05 -->
+          <button class="mob-globalnav__window-btn" type="button" aria-label="Full screen">
+            <span class="mob-icon" aria-hidden="true">&#xEA05;</span>
+          </button>
+          <!-- XAML: WindowMinimize button (line 159) — 50x50 -->
+          <!-- XAML: Icon=Icon_Windows10_Minimize (line 168) — U+EA03 -->
+          <button class="mob-globalnav__window-btn" type="button" aria-label="Minimize">
+            <span class="mob-icon" aria-hidden="true">&#xEA03;</span>
+          </button>
+          <!-- XAML: WindowMaximize button (line 172) — 50x50 -->
+          <!-- XAML: Icon=Icon_Windows10_Maximize (line 194) — U+EA04 -->
+          <button class="mob-globalnav__window-btn" type="button" aria-label="Maximize">
+            <span class="mob-icon" aria-hidden="true">&#xEA04;</span>
+          </button>
+          <!-- XAML: WindowClose (line 205) — 50x50, ConfirmInteraction wrapper -->
+          <!-- XAML: Style=WindowControlCloseIconButton, Background(hover)=InformationRedBrush -->
+          <!-- XAML: Icon=Icon_Windows10_Close (line 225) — U+EA06 -->
+          <button class="mob-globalnav__window-btn mob-globalnav__window-btn--close" type="button" aria-label="Close">
+            <span class="mob-icon" aria-hidden="true">&#xEA06;</span>
+          </button>
+        </div>
+
+      </header>
+
+    </div>
+
+
+    <hr class="section-divider" />
+
+
+    <!-- =========================================================
+         DEMO 2: NewAlert state
+         ========================================================= -->
+    <h2>NewAlert State (with count)</h2>
+    <div class="demo-label">Connected / NewAlert / Alert count visible</div>
+    <div class="demo-frame">
+
+      <header class="mob-globalnav">
+
+        <div class="mob-globalnav__profile">
+          <div class="mob-globalnav__connection-bar mob-globalnav__connection-bar--connected"></div>
+          <div class="mob-globalnav__profile-text">
+            <span class="mob-globalnav__username">AzureAD/Name</span>
+            <span class="mob-globalnav__sitename">Site Name</span>
+          </div>
+
+          <!-- XAML: Popup (line 89) — UserDetailsAndSwitchControl popup -->
+          <div class="mob-globalnav__popup">
+            <div class="mob-globalnav__popup-header">
+              <span class="mob-globalnav__popup-status-label">Online</span>
+              <span class="mob-globalnav__popup-time">2:34:12</span>
+            </div>
+            <nav class="mob-globalnav__popup-menu">
+              <button class="mob-globalnav__popup-item" type="button">
+                <span class="mob-icon mob-globalnav__popup-item-icon" aria-hidden="true">&#xE409;</span>
+                <span class="mob-globalnav__popup-item-label">Report an Issue</span>
+              </button>
+              <hr class="mob-globalnav__popup-divider" />
+              <button class="mob-globalnav__popup-item" type="button">
+                <span class="mob-icon mob-globalnav__popup-item-icon" aria-hidden="true">&#xE51A;</span>
+                <span class="mob-globalnav__popup-item-label">Change Password</span>
+              </button>
+              <hr class="mob-globalnav__popup-divider" />
+              <button class="mob-globalnav__popup-item" type="button">
+                <span class="mob-icon mob-globalnav__popup-item-icon" aria-hidden="true">&#xE522;</span>
+                <span class="mob-globalnav__popup-item-label">Sign Out</span>
+              </button>
+              <hr class="mob-globalnav__popup-divider" />
+              <button class="mob-globalnav__popup-item" type="button">
+                <span class="mob-icon mob-globalnav__popup-item-icon" aria-hidden="true">&#xE303;</span>
+                <span class="mob-globalnav__popup-item-label">Switch User</span>
+              </button>
+            </nav>
+          </div>
+
+        </div>
+
+        <!-- XAML: AlertState=NewAlert — _alertCountVisualElement Opacity=1.0 (line 232) -->
+        <button class="mob-globalnav__alert-btn mob-globalnav__alert-btn--new-alert" type="button" aria-label="3 new notifications">
+          <span class="mob-globalnav__alert-bar"></span>
+          <span class="mob-icon mob-globalnav__alert-icon" aria-hidden="true">&#xE55D;</span>
+          <!-- XAML: UnviewedAlertCount binding (line 134) -->
+          <span class="mob-globalnav__alert-count mob-globalnav__alert-count--visible">3</span>
+        </button>
+
+        <div class="mob-globalnav__window-controls">
+          <button class="mob-globalnav__window-btn" type="button" aria-label="Full screen">
+            <span class="mob-icon" aria-hidden="true">&#xEA05;</span>
+          </button>
+          <button class="mob-globalnav__window-btn" type="button" aria-label="Minimize">
+            <span class="mob-icon" aria-hidden="true">&#xEA03;</span>
+          </button>
+          <button class="mob-globalnav__window-btn" type="button" aria-label="Maximize">
+            <span class="mob-icon" aria-hidden="true">&#xEA04;</span>
+          </button>
+          <button class="mob-globalnav__window-btn mob-globalnav__window-btn--close" type="button" aria-label="Close">
+            <span class="mob-icon" aria-hidden="true">&#xEA06;</span>
+          </button>
+        </div>
+
+      </header>
+
+    </div>
+
+
+    <hr class="section-divider" />
+
+
+    <!-- =========================================================
+         DEMO 3: NewCriticalAlert state
+         ========================================================= -->
+    <h2>Critical Alert State</h2>
+    <div class="demo-label">Connected / NewCriticalAlert / Pulsing red background</div>
+    <div class="demo-frame">
+
+      <header class="mob-globalnav">
+
+        <div class="mob-globalnav__profile">
+          <div class="mob-globalnav__connection-bar mob-globalnav__connection-bar--connected"></div>
+          <div class="mob-globalnav__profile-text">
+            <span class="mob-globalnav__username">AzureAD/Name</span>
+            <span class="mob-globalnav__sitename">Site Name</span>
+          </div>
+
+          <!-- XAML: Popup (line 89) — UserDetailsAndSwitchControl popup -->
+          <div class="mob-globalnav__popup">
+            <div class="mob-globalnav__popup-header">
+              <span class="mob-globalnav__popup-status-label">Online</span>
+              <span class="mob-globalnav__popup-time">2:34:12</span>
+            </div>
+            <nav class="mob-globalnav__popup-menu">
+              <button class="mob-globalnav__popup-item" type="button">
+                <span class="mob-icon mob-globalnav__popup-item-icon" aria-hidden="true">&#xE409;</span>
+                <span class="mob-globalnav__popup-item-label">Report an Issue</span>
+              </button>
+              <hr class="mob-globalnav__popup-divider" />
+              <button class="mob-globalnav__popup-item" type="button">
+                <span class="mob-icon mob-globalnav__popup-item-icon" aria-hidden="true">&#xE51A;</span>
+                <span class="mob-globalnav__popup-item-label">Change Password</span>
+              </button>
+              <hr class="mob-globalnav__popup-divider" />
+              <button class="mob-globalnav__popup-item" type="button">
+                <span class="mob-icon mob-globalnav__popup-item-icon" aria-hidden="true">&#xE522;</span>
+                <span class="mob-globalnav__popup-item-label">Sign Out</span>
+              </button>
+              <hr class="mob-globalnav__popup-divider" />
+              <button class="mob-globalnav__popup-item" type="button">
+                <span class="mob-icon mob-globalnav__popup-item-icon" aria-hidden="true">&#xE303;</span>
+                <span class="mob-globalnav__popup-item-label">Switch User</span>
+              </button>
+            </nav>
+          </div>
+
+        </div>
+
+        <!-- XAML: AlertState=NewCriticalAlert -->
+        <!-- XAML: _criticalBackgroundStrongElement Opacity=1.0, InformationRedAltBrush (line 42) -->
+        <!-- XAML: _criticalBackgroundElement Visibility=Visible, pulse animation (line 48) -->
+        <!-- XAML: _criticalVisualElements Opacity=1.0 (line 242) — white icon + critical glyph -->
+        <!-- XAML: _selectionElement color=InformationRed (line 237) -->
+        <button class="mob-globalnav__alert-btn mob-globalnav__alert-btn--critical" type="button" aria-label="Critical alert">
+          <span class="mob-globalnav__alert-bar mob-globalnav__alert-bar--critical"></span>
+          <!-- XAML: _criticalVisualElements Canvas (line 139) — white notification icon -->
+          <span class="mob-icon mob-globalnav__alert-icon mob-globalnav__alert-icon--critical" aria-hidden="true">&#xE55D;</span>
+          <!-- XAML: _criticalElementPath (line 160) — Icon_Status_CriticalSm overlay, Canvas.Left=10, Canvas.Top=14 -->
+          <span class="mob-icon mob-globalnav__alert-critical-badge" aria-hidden="true">&#xE441;</span>
+        </button>
+
+        <div class="mob-globalnav__window-controls">
+          <button class="mob-globalnav__window-btn" type="button" aria-label="Full screen">
+            <span class="mob-icon" aria-hidden="true">&#xEA05;</span>
+          </button>
+          <button class="mob-globalnav__window-btn" type="button" aria-label="Minimize">
+            <span class="mob-icon" aria-hidden="true">&#xEA03;</span>
+          </button>
+          <button class="mob-globalnav__window-btn" type="button" aria-label="Maximize">
+            <span class="mob-icon" aria-hidden="true">&#xEA04;</span>
+          </button>
+          <button class="mob-globalnav__window-btn mob-globalnav__window-btn--close" type="button" aria-label="Close">
+            <span class="mob-icon" aria-hidden="true">&#xEA06;</span>
+          </button>
+        </div>
+
+      </header>
+
+    </div>
+
+
+    <hr class="section-divider" />
+
+
+    <!-- =========================================================
+         DEMO 4: Checked / Selected notification button
+         ========================================================= -->
+    <h2>Alert Button — Checked (Panel Open)</h2>
+    <div class="demo-label">NotificationToggleButton IsChecked=True / SelectionPrimary left bar</div>
+    <div class="demo-frame">
+
+      <header class="mob-globalnav">
+
+        <div class="mob-globalnav__profile">
+          <div class="mob-globalnav__connection-bar mob-globalnav__connection-bar--connected"></div>
+          <div class="mob-globalnav__profile-text">
+            <span class="mob-globalnav__username">AzureAD/Name</span>
+            <span class="mob-globalnav__sitename">Site Name</span>
+          </div>
+
+          <!-- XAML: Popup (line 89) — UserDetailsAndSwitchControl popup -->
+          <div class="mob-globalnav__popup">
+            <div class="mob-globalnav__popup-header">
+              <span class="mob-globalnav__popup-status-label">Online</span>
+              <span class="mob-globalnav__popup-time">2:34:12</span>
+            </div>
+            <nav class="mob-globalnav__popup-menu">
+              <button class="mob-globalnav__popup-item" type="button">
+                <span class="mob-icon mob-globalnav__popup-item-icon" aria-hidden="true">&#xE409;</span>
+                <span class="mob-globalnav__popup-item-label">Report an Issue</span>
+              </button>
+              <hr class="mob-globalnav__popup-divider" />
+              <button class="mob-globalnav__popup-item" type="button">
+                <span class="mob-icon mob-globalnav__popup-item-icon" aria-hidden="true">&#xE51A;</span>
+                <span class="mob-globalnav__popup-item-label">Change Password</span>
+              </button>
+              <hr class="mob-globalnav__popup-divider" />
+              <button class="mob-globalnav__popup-item" type="button">
+                <span class="mob-icon mob-globalnav__popup-item-icon" aria-hidden="true">&#xE522;</span>
+                <span class="mob-globalnav__popup-item-label">Sign Out</span>
+              </button>
+              <hr class="mob-globalnav__popup-divider" />
+              <button class="mob-globalnav__popup-item" type="button">
+                <span class="mob-icon mob-globalnav__popup-item-icon" aria-hidden="true">&#xE303;</span>
+                <span class="mob-globalnav__popup-item-label">Switch User</span>
+              </button>
+            </nav>
+          </div>
+
+        </div>
+
+        <!-- XAML: CheckedStates → Checked (line 266) -->
+        <!-- XAML: _selectionElement Opacity=1.0, _notificationPath Fill=SelectionPrimary -->
+        <button class="mob-globalnav__alert-btn mob-globalnav__alert-btn--checked" type="button" aria-pressed="true" aria-label="Notifications open">
+          <span class="mob-globalnav__alert-bar mob-globalnav__alert-bar--selected"></span>
+          <span class="mob-icon mob-globalnav__alert-icon mob-globalnav__alert-icon--selected" aria-hidden="true">&#xE55D;</span>
+          <span class="mob-globalnav__alert-count" aria-hidden="true"></span>
+        </button>
+
+        <div class="mob-globalnav__window-controls">
+          <button class="mob-globalnav__window-btn" type="button" aria-label="Full screen">
+            <span class="mob-icon" aria-hidden="true">&#xEA05;</span>
+          </button>
+          <button class="mob-globalnav__window-btn" type="button" aria-label="Minimize">
+            <span class="mob-icon" aria-hidden="true">&#xEA03;</span>
+          </button>
+          <button class="mob-globalnav__window-btn" type="button" aria-label="Maximize">
+            <span class="mob-icon" aria-hidden="true">&#xEA04;</span>
+          </button>
+          <button class="mob-globalnav__window-btn mob-globalnav__window-btn--close" type="button" aria-label="Close">
+            <span class="mob-icon" aria-hidden="true">&#xEA06;</span>
+          </button>
+        </div>
+
+      </header>
+
+    </div>
+
+
+    <hr class="section-divider" />
+
+
+    <!-- =========================================================
+         DEMO 5: Connection states
+         ========================================================= -->
+    <h2>Connection Status Variants</h2>
+    <div style="display: flex; gap: 40px; flex-wrap: wrap;">
+
+      <div>
+        <div class="demo-label">Connected</div>
+        <div class="demo-frame">
+          <header class="mob-globalnav">
+            <div class="mob-globalnav__profile">
+              <!-- XAML: ConnectionState.Connected → InformationGreenBrush (line 59) -->
+              <div class="mob-globalnav__connection-bar mob-globalnav__connection-bar--connected"></div>
+              <div class="mob-globalnav__profile-text">
+                <span class="mob-globalnav__username">AzureAD/Name</span>
+                <span class="mob-globalnav__sitename">Site Name</span>
+              </div>
+            </div>
+          </header>
+        </div>
+      </div>
+
+      <div>
+        <div class="demo-label">Disconnected</div>
+        <div class="demo-frame">
+          <header class="mob-globalnav">
+            <div class="mob-globalnav__profile">
+              <!-- XAML: ConnectionState.Disconnected → InformationRedBrush (line 57) -->
+              <div class="mob-globalnav__connection-bar mob-globalnav__connection-bar--disconnected"></div>
+              <div class="mob-globalnav__profile-text">
+                <span class="mob-globalnav__username">AzureAD/Name</span>
+                <span class="mob-globalnav__sitename">Site Name</span>
+              </div>
+            </div>
+          </header>
+        </div>
+      </div>
+
+      <div>
+        <div class="demo-label">Unknown (default)</div>
+        <div class="demo-frame">
+          <header class="mob-globalnav">
+            <div class="mob-globalnav__profile">
+              <!-- XAML: default Setter → InformationYellowBrush (line 54) -->
+              <div class="mob-globalnav__connection-bar mob-globalnav__connection-bar--unknown"></div>
+              <div class="mob-globalnav__profile-text">
+                <span class="mob-globalnav__username">AzureAD/Name</span>
+                <span class="mob-globalnav__sitename">Site Name</span>
+              </div>
+            </div>
+          </header>
+        </div>
+      </div>
+
+    </div>
+
+
+    <hr class="section-divider" />
+
+
+    <!-- =========================================================
+         DEMO 6: Popup Panel
+         ========================================================= -->
+    <h2>Profile Popup Panel</h2>
+    <div class="demo-label">UserDetailsAndSwitchControl popup — 220px wide, positioned below profile</div>
+
+    <div style="position: relative; display: inline-block;">
+
+      <!-- Collapsed profile bar for context -->
+      <div class="demo-frame">
+        <header class="mob-globalnav">
+          <div class="mob-globalnav__profile">
+            <div class="mob-globalnav__connection-bar mob-globalnav__connection-bar--connected"></div>
+            <div class="mob-globalnav__profile-text">
+              <span class="mob-globalnav__username">AzureAD/Name</span>
+              <span class="mob-globalnav__sitename">Site Name</span>
+            </div>
+          </div>
+        </header>
+      </div>
+
+      <!-- XAML: Popup (line 89) — UserDetailsAndSwitchControl popup -->
+      <!-- XAML: Width=220 (line 86), AllowsTransparency=True, PopupAnimation=Fade -->
+      <!-- XAML: PlacementTarget=PopUpPlacementRect -->
+      <div class="mob-globalnav__popup mob-globalnav__popup--visible">
+        <!-- XAML: BoxShadow (line 105) — Margin=2, Opacity=ShadowOpacity -->
+        <!-- XAML: Grid (line 109) — Background=BackgroundStrongBrush, SharedSizeScope -->
+
+        <!-- XAML: Grid.RowDefinitions Row 0, Height=92 (line 129) -->
+        <!-- XAML: Border Background=SelectionSecondaryBrush (line 134) -->
+        <div class="mob-globalnav__popup-header">
+          <!-- XAML: StackPanel Margin="24,0", HAlign=Left, VAlign=Center (line 137-139) -->
+          <!-- XAML: TextBlock "Online", Foreground=SelectionForegroundBrush (line 142) -->
+          <span class="mob-globalnav__popup-status-label">Online</span>
+          <!-- XAML: TextBlock LoggedInTimeSpan, Style=HeadingMd, Foreground=SelectionForegroundBrush (line 146-149) -->
+          <span class="mob-globalnav__popup-time">2:34:12</span>
+        </div>
+
+        <!-- XAML: StackPanel Grid.Row=1, Margin="0,14,0,0" (line 154-157) -->
+        <nav class="mob-globalnav__popup-menu">
+
+          <!-- XAML: Button ReportAnIssue (line 159), Margin="24,17", Style=LinkButton -->
+          <!-- XAML: Path Data=Icon_DocumentExclamation (line 170) — NO FONT MATCH, using Report_Error U+E409 -->
+          <!-- XAML: TextBlock Margin="6,0,0,0" Text="Report an Issue" (line 176-178) -->
+          <button class="mob-globalnav__popup-item" type="button">
+            <span class="mob-icon mob-globalnav__popup-item-icon" aria-hidden="true">&#xE409;</span>
+            <span class="mob-globalnav__popup-item-label">Report an Issue</span>
+          </button>
+
+          <!-- XAML: Border Style=EdgeBorderHorizontal (line 184) — 1px, InnerLinesBrush -->
+          <hr class="mob-globalnav__popup-divider" />
+
+          <!-- XAML: ToggleButton ChangePassword (line 188), Margin="24,17", Style=LinkButton -->
+          <!-- XAML: Path Data=Icon_UserChangePassword (line 197) — Change_Password U+E51A -->
+          <!-- XAML: TextBlock Margin="6,0,0,0" Text="Change Password" (line 204-206) -->
+          <button class="mob-globalnav__popup-item" type="button">
+            <span class="mob-icon mob-globalnav__popup-item-icon" aria-hidden="true">&#xE51A;</span>
+            <span class="mob-globalnav__popup-item-label">Change Password</span>
+          </button>
+
+          <hr class="mob-globalnav__popup-divider" />
+
+          <!-- XAML: Button SignOut (line 215), Margin="24,17", Style=LinkButton -->
+          <!-- XAML: Path Data=Icon_UserLogout (line 225) — Logout U+E522 -->
+          <!-- XAML: TextBlock Margin="6,0,0,0" Text="Sign Out" (line 233-234) -->
+          <button class="mob-globalnav__popup-item" type="button">
+            <span class="mob-icon mob-globalnav__popup-item-icon" aria-hidden="true">&#xE522;</span>
+            <span class="mob-globalnav__popup-item-label">Sign Out</span>
+          </button>
+
+          <hr class="mob-globalnav__popup-divider" />
+
+          <!-- XAML: ToggleButton SwitchUser (line 244), Margin="24,17", Style=LinkButton -->
+          <!-- XAML: Visibility=CanSwitchUser (line 248) -->
+          <!-- XAML: Path Data=Icon_UserSwitch (line 254) — Switch_User U+E303 -->
+          <!-- XAML: TextBlock Margin="6,0,0,0" Text="Switch User" (line 262-263) -->
+          <button class="mob-globalnav__popup-item" type="button">
+            <span class="mob-icon mob-globalnav__popup-item-icon" aria-hidden="true">&#xE303;</span>
+            <span class="mob-globalnav__popup-item-label">Switch User</span>
+          </button>
+
+        </nav>
+      </div>
+
+    </div>
+
+    <p class="demo-note">
+      Note: Icon_DocumentExclamation (Report an Issue) has no exact match in Mobius-System-Icons.
+      Using Report_Error (U+E409) as closest candidate. Requires visual review.
+    </p>
+
+  </main>
+</div>
+
+<script src="../js/nav.js"></script>
+<script>
+  /* Demo-only: toggle popup on profile OR alert-button click (Blazor handles this in C#) */
+
+  document.querySelectorAll('.mob-globalnav').forEach(function(nav) {
+    var profile = nav.querySelector('.mob-globalnav__profile');
+    var alertBtn = nav.querySelector('.mob-globalnav__alert-btn');
+    var popup = profile ? profile.querySelector('.mob-globalnav__popup') : null;
+    if (!popup) return;
+
+    /* Click profile text area → toggle popup */
+    profile.addEventListener('click', function(e) {
+      if (popup.contains(e.target)) return;
+      popup.classList.toggle('mob-globalnav__popup--visible');
+    });
+
+    /* Click alert/flag button → toggle same popup */
+    if (alertBtn) {
+      alertBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        popup.classList.toggle('mob-globalnav__popup--visible');
+      });
+    }
+  });
+
+  /* Close popup when clicking outside the nav bar */
+  document.addEventListener('click', function(e) {
+    document.querySelectorAll('.mob-globalnav__popup--visible').forEach(function(popup) {
+      var nav = popup.closest('.mob-globalnav') || popup.closest('.mob-globalnav__profile');
+      var alertBtn = nav ? nav.querySelector('.mob-globalnav__alert-btn') : null;
+      var profile = popup.closest('.mob-globalnav__profile');
+      if (profile && !profile.contains(e.target) && !(alertBtn && alertBtn.contains(e.target))) {
+        popup.classList.remove('mob-globalnav__popup--visible');
+      }
+    });
+  });
+</script>
+</body>
+</html>
