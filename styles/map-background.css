@@ -1,0 +1,424 @@
+/* ==========================================================================
+   Map Background & Grid
+   Source: Common/Asi.Maps.Client/UI/BackgroundGridControl.xaml
+   Source: Common/Asi.Maps.Client/UI/MapContentControl.xaml
+   ========================================================================== */
+
+/* --- Map Canvas Container ---
+   XAML: MapContentControl > LayerControl (lines 364-416)
+   Stretches to fill parent. Background color from MapBackground token. */
+.map-canvas {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: var(--MapBackground); /* LightTheme.css:138 — rgba(245, 245, 245, 1) */
+}
+
+/* --- Background Grid (Single SVG Pattern Tile) ---
+   XAML: BackgroundGridControl.xaml lines 61-132
+   The grid is a SINGLE-FREQUENCY tile, NOT two separate grids.
+   The VisualBrush.Visual is a 4×4 WPF Grid (rows: 2,*,2,1 / cols: 2,*,2,1)
+   containing 6 rectangles that create:
+     - 1px lines at tile edges (opacity 0.5) — the grid lines
+     - Intersection emphasis at corners (opacity 0.75) — slightly darker crossings
+
+   For a 64px tile (1 m/px test case), the * = 64-5 = 59px:
+     Col 0: x=0 w=2 | Col 1: x=2 w=59 | Col 2: x=61 w=2 | Col 3: x=63 w=1
+     Row 0: y=0 h=2 | Row 1: y=2 h=59 | Row 2: y=61 h=2 | Row 3: y=63 h=1
+
+   Rect1 (ln 90):  Row 3, Col 0-3  → x=0 y=63 w=64 h=1  opacity=0.5  (horiz line)
+   Rect2 (ln 97):  Row 0-3, Col 3  → x=63 y=0 w=1 h=64  opacity=0.5  (vert line)
+   Rect3 (ln 105): Row 3, Col 0    → x=0 y=63 w=2 h=1   opacity=0.75 (corner BL)
+   Rect4 (ln 111): Row 0, Col 3    → x=63 y=0 w=1 h=2   opacity=0.75 (corner TR)
+   Rect5 (ln 118): Row 2-3, Col 3  → x=63 y=61 w=1 h=3  opacity=0.75 (edge BR vert)
+   Rect6 (ln 125): Row 3, Col 2-3  → x=61 y=63 w=3 h=1  opacity=0.75 (edge BR horiz)
+
+   CSS gradients can't do per-intersection opacity, so we use inline SVG
+   <pattern> defs that read var(--MapGridLines) from the active theme.
+   The data URI fallback below is light-theme only; prefer inline SVG
+   pattern refs (e.g. fill="url(#grid-tile-64)") for theme support.
+
+   MapGridLines per theme:
+     Light:    rgba(0, 0, 0, 0.063)    — LightTheme.css:139
+     Dark:     rgba(255, 255, 255, 0.063) — DarkTheme.css:139
+     Blackout: rgba(255, 255, 255, 0.063) — BlackoutTheme.css:139
+     Sunlight: rgba(0, 0, 0, 0.251)    — SunlightTheme.css:141 */
+.map-background-grid {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  /* XAML: IsHitTestVisible="False" (line 20) */
+
+  --grid-tile: 64; /* GridSizeMultiConverter: 1m/px × 8 = 64px (test case) */
+
+  /* Fallback for contexts without inline SVG pattern defs (light theme only).
+     For theme-aware rendering, use inline SVG with fill="url(#grid-tile-64)". */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64'%3E%3Crect x='0' y='62' width='64' height='2' fill='rgba(0,0,0,0.063)' opacity='0.5'/%3E%3Crect x='62' y='0' width='2' height='64' fill='rgba(0,0,0,0.063)' opacity='0.5'/%3E%3Crect x='0' y='62' width='3' height='2' fill='rgba(0,0,0,0.063)' opacity='0.75'/%3E%3Crect x='62' y='0' width='2' height='3' fill='rgba(0,0,0,0.063)' opacity='0.75'/%3E%3Crect x='62' y='59' width='2' height='5' fill='rgba(0,0,0,0.063)' opacity='0.75'/%3E%3Crect x='59' y='62' width='5' height='2' fill='rgba(0,0,0,0.063)' opacity='0.75'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 64px 64px;
+}
+
+/* --- Left-Edge Shadow Overlay ---
+   Source: MapControl.xaml lines 174-187
+   A 100px wide LinearGradientBrush (ShadowElements → transparent)
+   at 0.25 opacity, left-aligned, full height.
+   Simulates the sidebar shadow cast onto the map surface. */
+.map-left-shadow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 100px;                             /* MapControl.xaml:175 — Width="100" */
+  pointer-events: none;                     /* MapControl.xaml:178 — IsHitTestVisible="False" */
+  opacity: 0.25;                            /* MapControl.xaml:179 — Opacity="0.25" */
+  background: linear-gradient(
+    to right,
+    var(--ShadowElements),                  /* LightTheme.css:44 — rgba(0, 0, 0, 0.133) */
+    transparent                             /* MapControl.xaml:184 — Color="#00000000" */
+  );                                        /* MapControl.xaml:182-185 — StartPoint="0,0" EndPoint="1,0" */
+}
+
+
+/* ==========================================================================
+   Map Shapes — Base Styles
+   Source: Common/Asi.Maps.Client/UI/ShapeControls/*.cs
+   Source: Common/Asi.Maps.Client/UI/MapContentControl.xaml
+   Source: Common/Asi.Maps.Client/UI/ShapeStyles.xaml
+   ========================================================================== */
+
+/* --- Shape Layer Container ---
+   XAML: MapContentControl > LayerControl > ItemsControl (lines 373-411) */
+.map-shape-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* --- Base Shape ---
+   ShapeStyles.xaml: BasePath style (lines 9-16)
+   BaseMapShapeControl.cs: DrawMapShape() */
+.map-shape {
+  stroke-linejoin: bevel;  /* ShapeStyles.xaml:13 — StrokeLineJoin: Bevel */
+  stroke-linecap: butt;    /* ShapeStyles.xaml:14-15 — StartLineCap: Flat (butt is CSS equivalent) */
+  fill: none;
+  pointer-events: all;
+}
+
+/* --- Driveable Shape (Default IMapShapeVM + DrivableAreaVM) ---
+   MapContentControl.xaml: lines 128-147, 242-261
+   Outline: DriveableShapeOutline, width 1
+   Fill: DriveableShapeFill */
+.map-shape--driveable {
+  stroke: var(--DriveableShapeOutline);       /* LightTheme.css:149 — rgba(204, 204, 204, 1) */
+  stroke-width: 1px;                          /* MapContentControl.xaml:131 — ShapeOutlineWidth="1" */
+  fill: var(--DriveableShapeFill);            /* LightTheme.css:150 — rgba(153, 153, 153, 0.098) */
+}
+
+/* --- Reference Shape ---
+   MapContentControl.xaml: lines 149-178
+   ReferenceShapeControl.cs: Dashed outline, pattern fill
+   Outline: ReferenceShapeOutline, width 1, dashed [2,2]
+   Fill: Pattern brush (ReferenceShapeFill over zone pattern) */
+.map-shape--reference {
+  stroke: var(--ReferenceShapeOutline);       /* LightTheme.css:145 — rgba(204, 204, 204, 1) */
+  stroke-width: 1px;                          /* MapContentControl.xaml:155 — ShapeOutlineWidth="1" */
+  stroke-dasharray: 2 2;                      /* ReferenceShapeControl.cs: DashStyle([2], 0) */
+  fill: var(--ReferenceShapeFill);            /* LightTheme.css:146 — rgba(204, 204, 204, 0.267) */
+}
+
+/* --- Transparent Reference Shape ---
+   MapContentControl.xaml: lines 180-197
+   Outline: Transparent (no visible outline)
+   Fill: none */
+.map-shape--reference-transparent {
+  stroke: transparent;                         /* MapContentControl.xaml:183 — ShapeOutlineBrush="Transparent" */
+  fill: none;
+}
+
+/* --- Obstacle Shape ---
+   MapContentControl.xaml: lines 201-240
+   ObstacleShapeControl.cs: Conditional fill based on IsSelectable
+   Outline: ObstacleShapeOutline, width 2
+   Fill: Pattern brush (changes based on selectable state) */
+.map-shape--obstacle {
+  stroke: var(--ObstacleShapeOutline);        /* LightTheme.css:151 — rgba(221, 221, 221, 1) */
+  stroke-width: 2px;                          /* MapContentControl.xaml:208 — ShapeOutlineWidth="2" */
+  fill: var(--ObstacleShapeFill);             /* LightTheme.css:152 — rgba(245, 245, 245, 1) */
+}
+
+/* Obstacle in MapBuilder (selectable) — uses red pattern fill */
+.map-shape--obstacle-selectable {
+  stroke: var(--ObstacleShapeOutline);        /* LightTheme.css:151 */
+  stroke-width: 2px;                          /* MapContentControl.xaml:208 */
+  fill: var(--MapBuilderObstacleShapeFill);   /* LightTheme.css:156 — rgba(237, 41, 57, 0.439) */
+}
+
+/* --- AOZ Shape (Area of Operations Zone) ---
+   MapContentControl.xaml: lines 340-362
+   AozShapeControl.cs: Double-stroke (solid + dashed)
+   Background outline: MapBackground, width 6
+   Solid outline: DriveableShapeFill, width 4
+   Dashed overlay: DriveableShapeOutline, width 4, dashed [1,1] */
+.map-shape--aoz {
+  stroke: var(--DriveableShapeOutline);       /* MapContentControl.xaml:357 — AozDashBrush */
+  stroke-width: 4px;                          /* MapContentControl.xaml:358 — AozDashWidth="4" */
+  stroke-dasharray: 4 4;                      /* AozShapeControl.cs: DashStyle([1], 0) — WPF units are ×strokeWidth, so 1×4=4px */
+  fill: none;
+}
+
+/* AOZ solid underline (rendered behind the dashed layer) */
+.map-shape--aoz-solid {
+  stroke: var(--DriveableShapeFill);          /* MapContentControl.xaml:355 — AozOutlineBrush */
+  stroke-width: 4px;                          /* MapContentControl.xaml:356 — AozOutlineWidth="4" */
+  fill: none;
+}
+
+/* AOZ background halo */
+.map-shape--aoz-bg {
+  stroke: var(--MapBackground);               /* MapContentControl.xaml:344 — ShapeOutlineBrush */
+  stroke-width: 6px;                          /* MapContentControl.xaml:343 — ShapeOutlineWidth="6" */
+  fill: none;
+}
+
+/* --- Road Shape ---
+   RoadShapeControl.cs: Multi-layer rendering
+   See RoadShapeControl.cs for full breakdown */
+.map-shape--road {
+  stroke: var(--RoadShapeOutline);            /* LightTheme.css:140 — rgba(187, 187, 187, 1) */
+  stroke-width: 2px;                          /* RoadShapeControl.cs: default RoadOutlineWidth=2 */
+  fill: var(--RoadShapeFill);                 /* LightTheme.css:141 — rgba(255, 255, 255, 1) */
+}
+
+.map-shape--road-center-line {
+  stroke: var(--RoadShapeDoubleCenterLine);   /* LightTheme.css:147 — rgba(254, 209, 0, 1) */
+  stroke-width: 2px;                          /* RoadShapeControl.cs: default CenterLineWidth=2 */
+  fill: none;
+}
+
+.map-shape--road-edge {
+  stroke: var(--RoadShapeEdgeFill);           /* LightTheme.css:148 — rgba(251, 174, 49, 0.867) */
+  stroke-width: 1px;
+  fill: none;
+}
+
+/* --- Intersection Shape --- */
+.map-shape--intersection {
+  stroke: var(--IntersectionShapeOutline);    /* LightTheme.css:142 — rgba(153, 153, 153, 1) */
+  stroke-width: 1px;
+  fill: var(--IntersectionShapeFill);         /* LightTheme.css:144 — rgba(204, 204, 204, 1) */
+}
+
+/* --- Station Shape ---
+   MapContentControl.xaml: SelectablePathStation style (lines 59-61)
+   Fill: StationFill at 0.25 opacity (line 199) */
+.map-shape--station {
+  stroke: var(--StationOutline);              /* LightTheme.css:175 — rgba(255, 128, 0, 0.749) */
+  stroke-width: 1px;
+  fill: var(--StationFill);                   /* LightTheme.css:176 — rgba(255, 128, 0, 0.098) */
+}
+
+/* --- Failure Shape --- */
+.map-shape--failure {
+  stroke: var(--FailureShapeOutline);         /* LightTheme.css:153 — rgba(237, 41, 57, 1) */
+  stroke-width: 1px;
+  fill: var(--FailureShapeFill);              /* LightTheme.css:154 — rgba(204, 204, 204, 0.125) */
+}
+
+/* --- Negative Obstacle Shape --- */
+.map-shape--negative-obstacle {
+  stroke: var(--NegativeObstacleShapeOutline); /* LightTheme.css:189 — rgba(237, 41, 57, 1) */
+  stroke-width: 1px;
+  fill: var(--NegativeObstacleShapeFill);      /* LightTheme.css:190 — rgba(103, 180, 234, 1) */
+}
+
+/* --- Area Coverage Shape --- */
+.map-shape--area-coverage {
+  stroke: var(--AreaCoverageShapeOutline);    /* LightTheme.css:157 — rgba(177, 227, 62, 0.8) */
+  stroke-width: 1px;
+  fill: var(--AreaCoverageShapeFill);         /* LightTheme.css:158 — rgba(177, 227, 62, 0.467) */
+}
+
+/* --- Avoid Shape --- */
+.map-shape--avoid {
+  stroke: var(--AvoidShapeOutline);           /* LightTheme.css:181 — rgba(220, 214, 178, 1) */
+  stroke-width: 1px;
+  fill: var(--AvoidShapeFill);               /* LightTheme.css:182 — rgba(220, 214, 178, 0.467) */
+}
+
+/* --- Barrier Shape --- */
+.map-shape--barrier {
+  stroke: var(--BarrierShapeOutline);         /* LightTheme.css:183 — rgba(221, 221, 221, 1) */
+  stroke-width: 1px;
+  fill: var(--BarrierShapeFill);             /* LightTheme.css:184 — rgba(245, 245, 245, 1) */
+}
+
+/* --- Bunker Shape --- */
+.map-shape--bunker {
+  stroke: var(--BunkerShapeOutline);          /* LightTheme.css:185 — rgba(220, 214, 178, 1) */
+  stroke-width: 1px;
+  fill: var(--BunkerShapeFill);              /* LightTheme.css:186 — rgba(245, 242, 224, 0.933) */
+}
+
+/* --- Green Shape --- */
+.map-shape--green {
+  stroke: var(--GreenShapeOutline);           /* LightTheme.css:187 — rgba(146, 212, 0, 1) */
+  stroke-width: 1px;
+  fill: var(--GreenShapeFill);               /* LightTheme.css:188 — rgba(214, 239, 159, 1) */
+}
+
+/* --- Rough Shape --- */
+.map-shape--rough {
+  stroke: var(--RoughShapeOutline);           /* LightTheme.css:191 — rgba(0, 0, 0, 0.467) */
+  stroke-width: 1px;
+  fill: var(--RoughShapeFill);               /* LightTheme.css:192 — rgba(0, 0, 0, 0.2) */
+}
+
+/* --- Water Hazard Shape --- */
+.map-shape--water-hazard {
+  stroke: var(--WaterHazardShapeOutline);     /* LightTheme.css:197 — rgba(103, 180, 234, 1) */
+  stroke-width: 1px;
+  fill: var(--WaterHazardShapeFill);         /* LightTheme.css:198 — rgba(208, 241, 252, 1) */
+}
+
+/* --- Disengage Shape --- */
+.map-shape--disengage {
+  stroke: var(--DisengageShapeOutline);       /* LightTheme.css:177 — rgba(0, 126, 174, 0.749) */
+  stroke-width: 1px;
+  fill: var(--DisengageShapeFill);           /* LightTheme.css:178 — rgba(78, 182, 221, 0.267) */
+}
+
+/* --- KeepOut Shape (Two-Layer) ---
+   Source: KeepOutShapeTemplates.xaml
+   Path 1 (base): Fill=MapBuilderObstacleShapeFill, StrokeThickness=0
+   Path 2 (overlay): HardObstacle cross-hatch pattern, Stroke=MapBuilderObstacleShapeOutline, StrokeThickness=2.5x */
+.map-shape--keepout-base {
+  stroke: none;
+  fill: var(--MapBuilderObstacleShapeFill);      /* LightTheme.css:156 — rgba(237, 41, 57, 0.439) */
+}
+
+.map-shape--keepout-overlay {
+  stroke: var(--MapBuilderObstacleShapeOutline); /* LightTheme.css:155 — rgba(237, 41, 57, 1) */
+  stroke-width: 2.5px;                          /* KeepOutShapeTemplates.xaml: ShapeOutlineWidth * 2.5 */
+  stroke-linejoin: bevel;
+  stroke-linecap: butt;
+  /* fill: url(#pattern-hard-obstacle-keepout) — applied inline in SVG */
+}
+
+/* --- MapBuilder Obstacle Shape --- */
+.map-shape--mapbuilder-obstacle {
+  stroke: var(--MapBuilderObstacleShapeOutline); /* LightTheme.css:155 — rgba(237, 41, 57, 1) */
+  stroke-width: 2px;
+  fill: var(--MapBuilderObstacleShapeFill);      /* LightTheme.css:156 — rgba(237, 41, 57, 0.439) */
+}
+
+/* --- MapBuilder Barrier Shape --- */
+.map-shape--mapbuilder-barrier {
+  stroke: var(--MapBuilderBarrierShapeOutline); /* LightTheme.css:193 — rgba(237, 41, 57, 1) */
+  stroke-width: 2px;
+  fill: var(--MapBuilderBarrierShapeFill);      /* LightTheme.css:194 — rgba(237, 41, 57, 0.439) */
+}
+
+/* --- Sensed Obstacle ---
+   MapContentControl.xaml: lines 263-338
+   Not a path shape — rendered as ellipses with icon overlay. */
+.map-shape--sensed-obstacle {
+  position: relative;
+  width: 3px;   /* XAML: outer ellipse Width="3" (line 318) */
+  height: 3px;  /* XAML: outer ellipse Height="3" (line 319) */
+}
+
+.map-shape--sensed-obstacle__inner {
+  position: absolute;
+  width: 2.4px;  /* XAML: inner ellipse Width="2.4" (line 302) */
+  height: 2.4px; /* XAML: inner ellipse Height="2.4" (line 303) */
+  top: 0.3px;    /* Centered: (3 - 2.4) / 2 = 0.3 */
+  left: 0.3px;
+  border-radius: 50%;
+  background-color: var(--BackgroundStrong); /* LightTheme.css:20 — rgba(255, 255, 255, 1) */
+  opacity: 0.9;  /* XAML: Canvas Opacity="0.9" (line 299) */
+  box-shadow: 0 0 1px var(--MapGridLines);   /* XAML: DropShadowEffect BlurRadius="1" ShadowDepth="0" (lines 308-312) */
+}
+
+.map-shape--sensed-obstacle__ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 0.05px dashed var(--InformationRed); /* XAML: StrokeThickness=".05", StrokeDashArray="4.7 4.7" (lines 322-324) */
+}
+
+
+/* ==========================================================================
+   Shape States
+   ========================================================================== */
+
+/* --- Selected State ---
+   SelectShapeControl.cs: DrawDecorators()
+   Three layers: base shape + background outline + foreground outline */
+.map-shape.is-selected {
+  /* Applied via additional SVG paths or outline simulation */
+}
+
+/* Selection background halo — rendered behind foreground */
+.map-shape__selection-bg {
+  stroke: var(--MapBackground);               /* MapContentControl.xaml:138 — SelectedBackgroundBrush */
+  stroke-width: 6px;                          /* MapContentControl.xaml:139 — SelectedBackgroundWidth="6" */
+  stroke-linejoin: bevel;
+  stroke-linecap: butt;
+  fill: none;
+}
+
+/* Selection foreground highlight — rendered on top */
+.map-shape__selection-fg {
+  stroke: var(--SelectionPrimary);            /* MapContentControl.xaml:136 — SelectedForegroundBrush */
+  stroke-width: 2px;                          /* MapContentControl.xaml:137 — SelectedForegroundWidth="2" */
+  stroke-linejoin: bevel;
+  stroke-linecap: butt;
+  fill: none;
+}
+
+/* --- Locked State ---
+   MapContentControl.xaml: LockedShapeOutline style (lines 48-57) */
+.map-shape.is-locked .map-shape__selection-bg {
+  stroke: var(--MapBackground);               /* MapContentControl.xaml:49 */
+  stroke-width: 6px;                          /* MapContentControl.xaml:50 */
+}
+
+.map-shape.is-locked .map-shape__selection-fg {
+  stroke: var(--InformationOrange);           /* MapContentControl.xaml:53 — InformationOrangeBrush */
+  stroke-width: 2px;                          /* MapContentControl.xaml:56 */
+  stroke-dasharray: 3 3;                      /* MapContentControl.xaml:55 — StrokeDashArray="3 3" */
+}
+
+/* --- Filtered-Out State ---
+   MapContentControl.xaml: line 406
+   ContentPresenter Opacity via BooleanToDoubleConverter('0.175,1.0') */
+.map-shape.is-filtered-out {
+  opacity: 0.175; /* MapContentControl.xaml:406 — ConverterParameter='0.175,1.0' */
+}
+
+
+/* ==========================================================================
+   Image Layer
+   Source: Common/Asi.Maps.Client/UI/ImageLayerControl.xaml
+   ========================================================================== */
+
+/* --- Image Layer Container ---
+   XAML: ImageLayerControl > LayerControl > ItemsControl (lines 83-112) */
+.map-image-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* --- Raster Image ---
+   XAML: RasterImageShapeVM DataTemplate (lines 49-80)
+   Note: ScaleY=-1 in WPF flips the image vertically (coordinate system). */
+.map-image-layer__raster {
+  image-rendering: auto;                       /* XAML: BitmapScalingMode="Linear" (line 63) */
+  object-fit: fill;                            /* XAML: Stretch="Fill" (line 66) */
+}
+
+.map-image-layer__raster.is-filtered-out {
+  opacity: 0.175; /* XAML: line 107 — ConverterParameter='0.175,1.0' */
+}

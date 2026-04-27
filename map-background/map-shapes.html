@@ -1,0 +1,1390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mobius — Map Shape Types</title>
+  <link id="mob-theme-link" rel="stylesheet" href="../styles/color-theme-tokens/LightTheme.css" />
+  <link rel="stylesheet" href="../styles/css/main.css" />
+  <link rel="stylesheet" href="../styles/map-background.css" />
+  <style>
+    body { margin: 0; }
+    h1 {
+      font: var(--font-hdrMd);
+      margin: 0 0 32px;
+      color: var(--ForegroundStrong);
+    }
+    h2 {
+      font: var(--font-hdrSm);
+      margin: 40px 0 16px;
+      color: var(--ForegroundStrong);
+    }
+    h2:first-of-type { margin-top: 0; }
+    h3 {
+      font: var(--font-bodyMd);
+      font-weight: 600;
+      margin: 24px 0 12px;
+      color: var(--ForegroundPrimary);
+    }
+    .section-divider {
+      border: none;
+      border-top: var(--line-size) solid var(--InnerLines);
+      margin: 32px 0 0;
+    }
+    .section-note {
+      font: var(--font-bodySm);
+      color: var(--ForegroundDisabled);
+      margin-bottom: 16px;
+    }
+
+    /* Map canvas demo */
+    .map-demo {
+      width: 100%;
+      height: 400px;
+      border: var(--line-size) solid var(--InnerLines);
+      border-radius: var(--corner-radius);
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Shape card grid */
+    .shape-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: var(--spacing-field);
+    }
+    .shape-card {
+      background: var(--BackgroundSecondary);
+      border: var(--line-size) solid var(--InnerLines);
+      border-radius: var(--corner-radius);
+      padding: var(--spacing-field);
+      text-align: center;
+    }
+    .shape-card svg {
+      display: block;
+      margin: 0 auto;
+    }
+    .shape-card__label {
+      font: var(--font-bodySm);
+      color: var(--ForegroundPrimary);
+      margin-top: var(--spacing-label-to-control-sm);
+    }
+    .shape-card__token {
+      font: var(--font-bodySm);
+      color: var(--ForegroundDisabled);
+      margin-top: 2px;
+      font-family: monospace;
+      font-size: 10px;
+    }
+    .shape-card__desc {
+      font: var(--font-bodySm);
+      color: var(--ForegroundSecondary);
+      margin-top: 4px;
+      font-size: 11px;
+      line-height: 1.4;
+    }
+
+    /* State demo row */
+    .state-demo {
+      display: flex;
+      gap: var(--spacing-field);
+      flex-wrap: wrap;
+    }
+    .state-demo__item {
+      background: var(--BackgroundSecondary);
+      border: var(--line-size) solid var(--InnerLines);
+      border-radius: var(--corner-radius);
+      padding: var(--spacing-field);
+      text-align: center;
+      min-width: 180px;
+    }
+    .state-demo__label {
+      font: var(--font-bodySm);
+      color: var(--ForegroundDisabled);
+      margin-top: var(--spacing-label-to-control-sm);
+    }
+
+    /* Zoom level demo grid */
+    .zoom-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: var(--spacing-field);
+    }
+    .zoom-card {
+      background: var(--BackgroundSecondary);
+      border: var(--line-size) solid var(--InnerLines);
+      border-radius: var(--corner-radius);
+      overflow: hidden;
+    }
+    .zoom-card__canvas {
+      position: relative;
+      width: 100%;
+      height: 200px;
+      background-color: var(--MapBackground);
+      overflow: hidden;
+    }
+    .zoom-card__label {
+      font: var(--font-bodySm);
+      color: var(--ForegroundPrimary);
+      padding: var(--spacing-label-to-control-sm) var(--spacing-control-to-control);
+    }
+    .zoom-card__token {
+      font: var(--font-bodySm);
+      color: var(--ForegroundDisabled);
+      padding: 0 var(--spacing-control-to-control) var(--spacing-label-to-control-sm);
+      font-family: monospace;
+      font-size: 10px;
+    }
+
+    /* Anatomy diagram */
+    .anatomy-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--spacing-field);
+    }
+    @media (max-width: 700px) {
+      .anatomy-grid { grid-template-columns: 1fr; }
+    }
+    .anatomy-card {
+      background: var(--BackgroundSecondary);
+      border: var(--line-size) solid var(--InnerLines);
+      border-radius: var(--corner-radius);
+      padding: var(--spacing-control-to-control);
+    }
+    .anatomy-card__title {
+      font: var(--font-bodyMd);
+      font-weight: 600;
+      color: var(--ForegroundPrimary);
+      margin-bottom: 8px;
+    }
+    .anatomy-card__detail {
+      font: var(--font-bodySm);
+      color: var(--ForegroundDisabled);
+      font-family: monospace;
+      font-size: 10px;
+      margin-top: 4px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="mob-layout">
+
+  <!-- Sidebar Navigation -->
+  <nav class="mob-nav" id="mob-nav"></nav>
+
+  <!-- Main Content -->
+  <main class="mob-layout__content">
+
+
+  <!-- ============================================================
+       SVG Pattern Definitions (shared across all SVGs on this page)
+       Source: Common/Asi.Resources.Client.UI/Themes/Brushes/Brushes.xaml lines 22-112
+       Source: Common/Asi.CommonControls.Client.UI/Converters/PatternBrushMultiConverter.cs
+
+       How PatternBrushMultiConverter works:
+       1. Fills a unit square with the BACKGROUND color
+       2. Overlays the pattern geometry with the FOREGROUND color
+       3. Tiles the result at the specified viewport size
+       4. Optionally scales by MetersPerPixel
+       ============================================================ -->
+  <svg width="0" height="0" style="position: absolute;">
+    <defs>
+
+      <!-- PATTERN: Zone (Checkerboard) — Brushes.xaml:22-29
+           Viewport="0,0,4,4", Geometry: M0,0 H0.5 V0.5 H0 Z (quarter square) -->
+
+      <!-- Reference fill -->
+      <pattern id="pattern-zone-reference" patternUnits="userSpaceOnUse" width="4" height="4">
+        <rect width="4" height="4" fill="rgba(204, 204, 204, 0.15)"/>
+        <rect width="2" height="2" fill="rgba(204, 204, 204, 0.267)"/>
+      </pattern>
+
+      <!-- Station fill -->
+      <pattern id="pattern-zone-station" patternUnits="userSpaceOnUse" width="4" height="4">
+        <rect width="4" height="4" fill="rgba(255, 128, 0, 0.025)"/>
+        <rect width="2" height="2" fill="rgba(255, 128, 0, 0.098)"/>
+      </pattern>
+
+      <!-- Rough fill -->
+      <pattern id="pattern-zone-rough" patternUnits="userSpaceOnUse" width="4" height="4">
+        <rect width="4" height="4" fill="rgba(0, 0, 0, 0.2)"/>
+        <rect width="2" height="2" fill="rgba(0, 0, 0, 0.467)"/>
+      </pattern>
+
+
+      <!-- PATTERN: Obstacle (Diagonal Stripes) — Brushes.xaml:40-51
+           Viewport="0,0,8,8", RotateTransform 45deg
+           Geometry: M0,0 H1 V0.25 H0 Z (25% height bar) -->
+
+      <!-- Obstacle (not selectable) fill -->
+      <pattern id="pattern-obstacle" patternUnits="userSpaceOnUse" width="8" height="8"
+               patternTransform="rotate(45)">
+        <rect width="8" height="8" fill="rgba(245, 245, 245, 1)"/>
+        <rect width="8" height="2" fill="rgba(221, 221, 221, 1)"/>
+      </pattern>
+
+      <!-- Obstacle (selectable / MapBuilder) fill -->
+      <pattern id="pattern-obstacle-selectable" patternUnits="userSpaceOnUse" width="8" height="8"
+               patternTransform="rotate(45)">
+        <rect width="8" height="8" fill="rgba(237, 41, 57, 0.439)"/>
+        <rect width="8" height="2" fill="rgba(237, 41, 57, 1)"/>
+      </pattern>
+
+      <!-- MapBuilder Barrier fill -->
+      <pattern id="pattern-obstacle-mapbuilder-barrier" patternUnits="userSpaceOnUse" width="8" height="8"
+               patternTransform="rotate(45)">
+        <rect width="8" height="8" fill="rgba(237, 41, 57, 0.439)"/>
+        <rect width="8" height="2" fill="rgba(237, 41, 57, 1)"/>
+      </pattern>
+
+
+      <!-- PATTERN: SoftObstacle (Vertical Stripes) — Brushes.xaml:31-38
+           Viewport="0,0,4,4", Geometry: M0,0 V1 H0.5 V0 Z (left-half vertical) -->
+
+      <!-- Disengage fill -->
+      <pattern id="pattern-soft-obstacle-disengage" patternUnits="userSpaceOnUse" width="4" height="4">
+        <rect width="4" height="4" fill="rgba(78, 182, 221, 0.267)"/>
+        <rect width="2" height="4" fill="rgba(0, 126, 174, 0.749)"/>
+      </pattern>
+
+      <!-- Coverage Area fill — SoftObstacle pattern with AreaCoverage green colors
+           Source: Plugins/Agriculture/Common/CoverageShape/Asi.Maps.CoverageShape.Client/Templates.xaml
+           Pattern: BrushAndPattern_SoftObstacle (vertical stripes)
+           Background: AreaCoverageShapeFill rgba(177,227,62,0.467)
+           Foreground: AreaCoverageShapeOutline rgba(177,227,62,0.8) -->
+      <pattern id="pattern-soft-obstacle-coverage" patternUnits="userSpaceOnUse" width="4" height="4">
+        <rect width="4" height="4" fill="rgba(177, 227, 62, 0.467)"/>
+        <rect width="2" height="4" fill="rgba(177, 227, 62, 0.8)"/>
+      </pattern>
+
+      <!-- Avoid Zone fill — SoftObstacle pattern with AvoidShape colors
+           Source: Plugins/Common/AvoidShape/Asi.Maps.AvoidShape.Client/Themes/Generic.xaml
+           Pattern: BrushAndPattern_SoftObstacle (vertical stripes)
+           Background: AvoidShapeFill rgba(220,214,178,0.467)
+           Foreground: AvoidShapeOutline rgba(220,214,178,1) -->
+      <pattern id="pattern-soft-obstacle-avoid" patternUnits="userSpaceOnUse" width="4" height="4">
+        <rect width="4" height="4" fill="rgba(220, 214, 178, 0.467)"/>
+        <rect width="2" height="4" fill="rgba(220, 214, 178, 1)"/>
+      </pattern>
+
+      <!-- Barrier fill — HardObstacle cross-hatch with Barrier colors
+           Source: Plugins/Common/BarrierShape/Asi.Maps.BarrierShape.Client/Themes/Generic.xaml
+           Pattern: BrushAndPattern_HardObstacle (cross-hatch)
+           Background: BarrierShapeFill rgba(245,245,245,1)
+           Foreground: BarrierShapeOutline rgba(221,221,221,1) -->
+      <pattern id="pattern-hard-obstacle-barrier" patternUnits="userSpaceOnUse" width="8" height="8"
+               patternTransform="rotate(45)">
+        <rect width="8" height="8" fill="rgba(245, 245, 245, 1)"/>
+        <rect width="8" height="2" fill="rgba(221, 221, 221, 1)"/>
+        <rect width="2" height="8" fill="rgba(221, 221, 221, 1)"/>
+      </pattern>
+
+
+      <!-- PATTERN: HardObstacle (Cross-Hatch) — Brushes.xaml:53-64
+           Viewport="0,0,8,8", RotateTransform 45deg
+           Geometry: M0,0 H1 V0.25 H0.25 V1 H0 V0 (L-shape) -->
+
+      <!-- Water Hazard fill -->
+      <pattern id="pattern-hard-obstacle-water" patternUnits="userSpaceOnUse" width="8" height="8"
+               patternTransform="rotate(45)">
+        <rect width="8" height="8" fill="rgba(208, 241, 252, 1)"/>
+        <rect width="8" height="2" fill="rgba(103, 180, 234, 1)"/>
+        <rect width="2" height="8" fill="rgba(103, 180, 234, 1)"/>
+      </pattern>
+
+      <!-- KeepOut fill — HardObstacle cross-hatch with MapBuilderObstacle colors
+           Source: KeepOutShapeTemplates.xaml — Path2 uses BrushAndPattern_HardObstacle
+           Background: MapBuilderObstacleShapeFill rgba(237,41,57,0.439)
+           Foreground: MapBuilderObstacleShapeOutline rgba(237,41,57,1) -->
+      <pattern id="pattern-hard-obstacle-keepout" patternUnits="userSpaceOnUse" width="8" height="8"
+               patternTransform="rotate(45)">
+        <rect width="8" height="8" fill="rgba(237, 41, 57, 0.439)"/>
+        <rect width="8" height="2" fill="rgba(237, 41, 57, 1)"/>
+        <rect width="2" height="8" fill="rgba(237, 41, 57, 1)"/>
+      </pattern>
+
+
+      <!-- PATTERN: Dot Pattern (Scattered Circles) — Brushes.xaml:18
+           Viewport="0,0,720,720" with ScaleTransform 0.1 = effective 72x72 tile
+           17 circles at r=1, scattered across ~90x80 space, scaled 0.8x to fit 72x72 -->
+
+      <!-- Bunker fill -->
+      <pattern id="pattern-dot-bunker" patternUnits="userSpaceOnUse" width="72" height="72">
+        <rect width="72" height="72" fill="rgba(245, 242, 224, 0.933)"/>
+        <g fill="rgba(220, 214, 178, 1)">
+          <circle cx="4.8" cy="0.8" r="0.8"/><circle cx="14.4" cy="10.4" r="0.8"/>
+          <circle cx="37.6" cy="4" r="0.8"/><circle cx="53.6" cy="26.4" r="0.8"/>
+          <circle cx="68" cy="15.2" r="0.8"/><circle cx="62.4" cy="14.4" r="0.8"/>
+          <circle cx="30.4" cy="31.2" r="0.8"/><circle cx="12" cy="47.2" r="0.8"/>
+          <circle cx="3.2" cy="62.4" r="0.8"/><circle cx="36" cy="48.8" r="0.8"/>
+          <circle cx="50.4" cy="62.4" r="0.8"/><circle cx="64" cy="47.2" r="0.8"/>
+          <circle cx="57.6" cy="44" r="0.8"/><circle cx="32.8" cy="28.8" r="0.8"/>
+          <circle cx="0.8" cy="18.4" r="0.8"/><circle cx="20" cy="54.4" r="0.8"/>
+          <circle cx="60" cy="0.8" r="0.8"/>
+        </g>
+      </pattern>
+
+      <!-- Negative Obstacle fill -->
+      <pattern id="pattern-dot-negative" patternUnits="userSpaceOnUse" width="72" height="72">
+        <rect width="72" height="72" fill="rgba(103, 180, 234, 1)"/>
+        <g fill="rgba(237, 41, 57, 1)">
+          <circle cx="4.8" cy="0.8" r="0.8"/><circle cx="14.4" cy="10.4" r="0.8"/>
+          <circle cx="37.6" cy="4" r="0.8"/><circle cx="53.6" cy="26.4" r="0.8"/>
+          <circle cx="68" cy="15.2" r="0.8"/><circle cx="62.4" cy="14.4" r="0.8"/>
+          <circle cx="30.4" cy="31.2" r="0.8"/><circle cx="12" cy="47.2" r="0.8"/>
+          <circle cx="3.2" cy="62.4" r="0.8"/><circle cx="36" cy="48.8" r="0.8"/>
+          <circle cx="50.4" cy="62.4" r="0.8"/><circle cx="64" cy="47.2" r="0.8"/>
+          <circle cx="57.6" cy="44" r="0.8"/><circle cx="32.8" cy="28.8" r="0.8"/>
+          <circle cx="0.8" cy="18.4" r="0.8"/><circle cx="20" cy="54.4" r="0.8"/>
+          <circle cx="60" cy="0.8" r="0.8"/>
+        </g>
+      </pattern>
+
+      <!-- PATTERN: Zone (Checkerboard) with LoadDumpZone colors
+           Used by: Mining shapes (LoadShape, PaddockDump, EdgeDump, CrusherDump)
+                    Construction AutonomousLoadShape
+           Source: Brushes.xaml:22 (Zone pattern) + LightTheme LoadDumpZone tokens
+           Background: LoadDumpZoneFill rgba(220,214,178,0.498)
+           Foreground: LoadDumpZoneOutline rgba(220,214,178,1) -->
+      <pattern id="pattern-zone-loaddump" patternUnits="userSpaceOnUse" width="4" height="4">
+        <rect width="4" height="4" fill="rgba(220, 214, 178, 0.498)"/>
+        <rect width="2" height="2" fill="rgba(220, 214, 178, 1)"/>
+      </pattern>
+
+      <!-- PATTERN: AMC (Accelerated Mechanical Consolidation) — Horizontal S-wave
+           Source: Brushes.xaml:67-80, HorizontalSPattern geometry (line 19)
+           Viewport=720x720 @ ScaleTransform 0.1 = 72x72 effective tile, Opacity=0.2
+           Background: AMC Fill rgba(183,65,14,0.5) (rust/burnt orange @ 50% brush opacity)
+           Foreground: AMC Outline rgba(220,214,178,0.5) (khaki @ 50% brush opacity, 20% pattern)
+           Note: Actual HorizontalSPattern geometry is ~4000 chars of complex S-curves.
+                 Approximated here with a tiling sinuous wave fill. -->
+      <pattern id="pattern-amc" patternUnits="userSpaceOnUse" width="72" height="76">
+        <rect width="72" height="76" fill="rgba(183, 65, 14, 0.5)"/>
+        <path d="M0,19 C18,0 54,38 72,19 L72,57 C54,76 18,38 0,57 Z"
+              fill="rgba(220, 214, 178, 0.1)"/>
+      </pattern>
+
+      <!-- Safety Locked boundary fill — Obstacle diagonal stripes
+           Source: ShapeLockoutTemplates.xaml lines 81-92
+           Pattern: BrushAndPattern_Obstacle (same as obstacle stripes)
+           Background: MapBackground at 0.75 opacity
+           Foreground: InformationOrange (warning) or InformationRed (critical) -->
+      <pattern id="pattern-safety-locked-warning" patternUnits="userSpaceOnUse" width="8" height="8"
+               patternTransform="rotate(45)">
+        <rect width="8" height="8" fill="var(--MapBackground)" fill-opacity="0.75"/>
+        <rect width="8" height="2" fill="var(--InformationOrange)"/>
+      </pattern>
+      <pattern id="pattern-safety-locked-critical" patternUnits="userSpaceOnUse" width="8" height="8"
+               patternTransform="rotate(45)">
+        <rect width="8" height="8" fill="var(--MapBackground)" fill-opacity="0.75"/>
+        <rect width="8" height="2" fill="var(--InformationRed)"/>
+      </pattern>
+
+      <!-- sensed-shadow filter for SensedObstacle cards -->
+      <filter id="sensed-shadow" x="-10%" y="-10%" width="120%" height="120%">
+        <feDropShadow dx="0" dy="0" stdDeviation="1" flood-color="var(--MapGridLines)" />
+      </filter>
+
+    </defs>
+  </svg>
+
+
+<!-- SVG defs for zoom-level tiles. Each tile has the same 6-rect structure
+     from BackgroundGridControl.xaml:90-131, scaled to its tile size.
+     Formula: Rect1 x=0,y=T-1,w=T,h=1 | Rect2 x=T-1,y=0,w=1,h=T
+              Rect3 x=0,y=T-1,w=2,h=1 | Rect4 x=T-1,y=0,w=1,h=2
+              Rect5 x=T-1,y=T-3,w=1,h=3 | Rect6 x=T-3,y=T-1,w=3,h=1 -->
+<svg width="0" height="0" style="position:absolute;">
+  <defs>
+    <!-- 41px tile (0.01 m/px, subdiv=3, gridSize=1, actual=40.96) — 2px lines -->
+    <pattern id="grid-tile-41" patternUnits="userSpaceOnUse" width="41" height="41">
+      <rect x="0" y="39" width="41" height="2" fill="var(--MapGridLines)" opacity="0.5"/>
+      <rect x="39" y="0" width="2" height="41" fill="var(--MapGridLines)" opacity="0.5"/>
+      <rect x="0" y="39" width="3" height="2" fill="var(--MapGridLines)" opacity="0.75"/>
+      <rect x="39" y="0" width="2" height="3" fill="var(--MapGridLines)" opacity="0.75"/>
+      <rect x="39" y="36" width="2" height="5" fill="var(--MapGridLines)" opacity="0.75"/>
+      <rect x="36" y="39" width="5" height="2" fill="var(--MapGridLines)" opacity="0.75"/>
+    </pattern>
+    <!-- 64px tile (1 m/px, subdiv=0, gridSize=8) — 2px lines -->
+    <pattern id="grid-tile-64" patternUnits="userSpaceOnUse" width="64" height="64">
+      <rect x="0" y="62" width="64" height="2" fill="var(--MapGridLines)" opacity="0.5"/>
+      <rect x="62" y="0" width="2" height="64" fill="var(--MapGridLines)" opacity="0.5"/>
+      <rect x="0" y="62" width="3" height="2" fill="var(--MapGridLines)" opacity="0.75"/>
+      <rect x="62" y="0" width="2" height="3" fill="var(--MapGridLines)" opacity="0.75"/>
+      <rect x="62" y="59" width="2" height="5" fill="var(--MapGridLines)" opacity="0.75"/>
+      <rect x="59" y="62" width="5" height="2" fill="var(--MapGridLines)" opacity="0.75"/>
+    </pattern>
+    <!-- 48px tile (3 m/px, subdiv=2, gridSize=2) — 2px lines -->
+    <pattern id="grid-tile-48" patternUnits="userSpaceOnUse" width="48" height="48">
+      <rect x="0" y="46" width="48" height="2" fill="var(--MapGridLines)" opacity="0.5"/>
+      <rect x="46" y="0" width="2" height="48" fill="var(--MapGridLines)" opacity="0.5"/>
+      <rect x="0" y="46" width="3" height="2" fill="var(--MapGridLines)" opacity="0.75"/>
+      <rect x="46" y="0" width="2" height="3" fill="var(--MapGridLines)" opacity="0.75"/>
+      <rect x="46" y="43" width="2" height="5" fill="var(--MapGridLines)" opacity="0.75"/>
+      <rect x="43" y="46" width="5" height="2" fill="var(--MapGridLines)" opacity="0.75"/>
+    </pattern>
+  </defs>
+</svg>
+
+
+<h1>Map Shape Types</h1>
+
+
+<!-- ============================================================
+     SECTION: Common Shapes
+     Source: Common/Asi.Maps.Client/UI/MapContentControl.xaml
+     Available in all configurations.
+     ============================================================ -->
+<h2>Common Shapes</h2>
+<p class="section-note">Core shape types from MapContentControl.xaml. Available in every Mobius configuration.</p>
+
+<div class="shape-grid">
+
+  <!-- Driveable Area -->
+  <div class="shape-card">
+    <svg width="160" height="100" viewBox="0 0 160 100">
+      <rect x="10" y="10" width="140" height="80" rx="4" class="map-shape map-shape--driveable" />
+    </svg>
+    <div class="shape-card__label">Driveable Area</div>
+    <div class="shape-card__desc">Navigation polygon. Defines where autonomous vehicles are allowed to drive.</div>
+    <div class="shape-card__token">--DriveableShapeOutline / Fill</div>
+  </div>
+
+  <!-- Reference — Zone checkerboard -->
+  <div class="shape-card">
+    <svg width="160" height="100" viewBox="0 0 160 100">
+      <rect x="10" y="10" width="140" height="80" rx="4" fill="url(#pattern-zone-reference)"
+        stroke="var(--ReferenceShapeOutline)" stroke-width="1"
+        stroke-dasharray="2 2" />
+    </svg>
+    <div class="shape-card__label">Reference [TEXTURED]</div>
+    <div class="shape-card__desc">Visual-only boundary. Non-drivable reference area shown for operator context.</div>
+    <div class="shape-card__token">Zone checkerboard + dashed [2,2]</div>
+  </div>
+
+  <!-- Transparent Reference -->
+  <div class="shape-card">
+    <svg width="160" height="100" viewBox="0 0 160 100">
+      <rect x="10" y="10" width="140" height="80" rx="4" class="map-shape map-shape--reference-transparent" />
+      <rect x="10" y="10" width="140" height="80" rx="4" style="stroke: var(--ForegroundDisabled); stroke-width: 1; stroke-dasharray: 4 4; fill: none;" />
+    </svg>
+    <div class="shape-card__label">Transparent Reference</div>
+    <div class="shape-card__desc">Invisible planning boundary. Used for route calculations without rendering on the map.</div>
+    <div class="shape-card__token">Transparent outline, no fill</div>
+  </div>
+
+  <!-- Obstacle (not selectable) — Diagonal stripes -->
+  <div class="shape-card">
+    <svg width="160" height="100" viewBox="0 0 160 100">
+      <rect x="10" y="10" width="140" height="80" rx="4" fill="url(#pattern-obstacle)"
+        stroke="var(--ObstacleShapeOutline)" stroke-width="2" />
+    </svg>
+    <div class="shape-card__label">Obstacle [TEXTURED]</div>
+    <div class="shape-card__desc">Static collision zone. Physical barrier that blocks all vehicle paths. Not selectable at runtime.</div>
+    <div class="shape-card__token">Diagonal stripes (45deg)</div>
+  </div>
+
+  <!-- Obstacle (selectable) — Red diagonal stripes -->
+  <div class="shape-card">
+    <svg width="160" height="100" viewBox="0 0 160 100">
+      <rect x="10" y="10" width="140" height="80" rx="4" fill="url(#pattern-obstacle-selectable)"
+        stroke="var(--ObstacleShapeOutline)" stroke-width="2" />
+    </svg>
+    <div class="shape-card__label">Obstacle MapBuilder [TEXTURED]</div>
+    <div class="shape-card__desc">Editable obstacle. Same collision rules as Obstacle, but selectable for editing in MapBuilder.</div>
+    <div class="shape-card__token">Diagonal stripes (red, 45deg)</div>
+  </div>
+
+  <!-- Road Shape -->
+  <div class="shape-card">
+    <svg width="160" height="100" viewBox="0 0 160 100">
+      <path class="map-shape map-shape--road"
+        d="M 10,70 Q 50,20 80,50 Q 110,80 150,30" fill="none" />
+      <path class="map-shape map-shape--road-center-line"
+        d="M 10,70 Q 50,20 80,50 Q 110,80 150,30" fill="none" />
+    </svg>
+    <div class="shape-card__label">Road Shape</div>
+    <div class="shape-card__desc">Structured lane corridor with lanes, widths, and driving direction for vehicle routing.</div>
+    <div class="shape-card__token">--RoadShapeOutline / Fill</div>
+  </div>
+
+  <!-- Intersection -->
+  <div class="shape-card">
+    <svg width="160" height="100" viewBox="0 0 160 100">
+      <rect x="10" y="10" width="140" height="80" rx="4" class="map-shape map-shape--intersection" />
+    </svg>
+    <div class="shape-card__label">Intersection</div>
+    <div class="shape-card__desc">Auto-generated where roads overlap. Inherits speed limit from connected roads.</div>
+    <div class="shape-card__token">--IntersectionShapeOutline / Fill</div>
+  </div>
+
+  <!-- Failure Shape -->
+  <div class="shape-card">
+    <svg width="160" height="100" viewBox="0 0 160 100">
+      <rect x="10" y="10" width="140" height="80" rx="4" class="map-shape map-shape--failure" />
+    </svg>
+    <div class="shape-card__label">Failure Shape</div>
+    <div class="shape-card__desc">Validation error state. Highlights shapes that fail MapBuilder checks (e.g., roads too close).</div>
+    <div class="shape-card__token">--FailureShapeOutline / Fill</div>
+  </div>
+
+  <!-- AOZ — 3-layer outline -->
+  <div class="shape-card">
+    <svg width="160" height="100" viewBox="0 0 160 100">
+      <rect x="10" y="10" width="140" height="80" rx="4" class="map-shape map-shape--aoz-bg" />
+      <rect x="10" y="10" width="140" height="80" rx="4" class="map-shape map-shape--aoz-solid" />
+      <rect x="10" y="10" width="140" height="80" rx="4" class="map-shape map-shape--aoz" />
+    </svg>
+    <div class="shape-card__label">AOZ (Area of Operations)</div>
+    <div class="shape-card__desc">Operational boundary. Defines the outer perimeter vehicles must stay within.</div>
+    <div class="shape-card__token">3-layer: bg(6) + solid(4) + dashed(4)</div>
+  </div>
+
+  <!-- SensedObstacle — Point marker (not a polygon)
+       Source: MapContentControl.xaml lines 263-338
+       Three visual elements stacked:
+         1. Inner ellipse: 2.4x2.4 BackgroundStrong, opacity=0.9, DropShadow blur=1 depth=0
+         2. Outer ring: 3x3 dashed InformationRed, StrokeDashArray="4.7 4.7", StrokeThickness=0.05
+         3. EStop icon: 0.6x0.6 centered, InformationRed, Mobius-System-Icons
+       Scaled 20x for card display (3->60px, 2.4->48px, 0.6->12px) -->
+  <div class="shape-card">
+    <svg width="160" height="100" viewBox="0 0 160 100">
+      <!-- XAML: Outer ring — Ellipse Width="3" Height="3" (line 318-319) -->
+      <circle cx="80" cy="50" r="30"
+        fill="none"
+        stroke="var(--InformationRed)" stroke-width="1"
+        stroke-dasharray="4.7 4.7" />
+      <!-- XAML: Inner ellipse — Ellipse Width="2.4" Height="2.4" (line 302-303)
+           Fill=BackgroundStrong, Opacity=0.9, DropShadow BlurRadius=1 ShadowDepth=0 -->
+      <circle cx="80" cy="50" r="24"
+        fill="var(--BackgroundStrong)" fill-opacity="0.9"
+        stroke="none"
+        filter="url(#sensed-shadow)" />
+      <!-- XAML: EStop icon — TextBlock 0.6x0.6 (line 328-333)
+           FontFamily: Mobius-System-Icons, glyph, Fill=InformationRed -->
+      <text x="80" y="50"
+        text-anchor="middle" dominant-baseline="central"
+        font-family="Mobius-System-Icons" font-size="20"
+        fill="var(--InformationRed)">&#xE412;</text>
+    </svg>
+    <div class="shape-card__label">Sensed Obstacle</div>
+    <div class="shape-card__desc">Live-detected obstacle from vehicle sensors. Appears at runtime, never selectable, auto-clears when resolved.</div>
+    <div class="shape-card__token">Point marker: ellipse + dashed ring<br>+ EStop icon ()</div>
+  </div>
+
+</div>
+
+<hr class="section-divider">
+
+
+<!-- ============================================================
+     SECTION: Shared Plugin Shapes (Plugins/Common)
+     Available across all plugin configurations.
+     ============================================================ -->
+<h2>Shared Plugin Shapes</h2>
+<p class="section-note">From Plugins/Common/. Available across all plugin configurations (Station, Barrier, Avoid, Lockout).</p>
+
+<div class="shape-grid">
+
+  <!-- Station — Zone checkerboard + SpotPoint decoration
+       Shape: Plugins/Common/StationShape/Asi.Maps.StationShape.Client/Templates.xaml
+       Decoration: ShapeDecorationLayerControl.xaml:172-216 (SpottableShapeDecorationVM)
+       SpotPoint icon: 40x40 Grid, Margin=-20 (centered), QuePointOuter + QuePointInner + direction arrow -->
+  <div class="shape-card">
+    <svg width="160" height="100" viewBox="0 0 160 100">
+      <rect x="10" y="10" width="140" height="80" rx="4" fill="url(#pattern-zone-station)"
+        stroke="var(--StationOutline)" stroke-width="1" />
+      <!-- XAML: SpottableShapeDecorationVM — QuePointOuter ellipse (line 187) -->
+      <circle cx="80" cy="50" r="14"
+        fill="var(--LoadDumpZoneQuePointFill)"
+        stroke="var(--LoadDumpZoneQuePointOutline)" stroke-width="1" />
+      <!-- XAML: QuePointInner ellipse 10x10 (line 188, style line 44-49) -->
+      <circle cx="80" cy="50" r="3.5"
+        fill="var(--LoadDumpZoneQuePointDot)" />
+      <!-- XAML: QuePointDirection polygon Points="0,0 6.5,6.5 13,0" (line 203-209)
+           VerticalAlignment=Bottom, Margin=0,0,0,-12 in 40x40 grid. TransformToWorld=True flips Y.
+           Arrow: 13x6.5 scaled to 9x4.5 for r=14 circle. Gap: 4px above circle top (y=36). -->
+      <polygon points="75.5,32 80,27.5 84.5,32"
+        fill="var(--LoadDumpZoneQuePointFill)"
+        stroke="var(--LoadDumpZoneQuePointOutline)" stroke-width="1" />
+    </svg>
+    <div class="shape-card__label">Station [TEXTURED]</div>
+    <div class="shape-card__desc">Named destination. Where vehicles park, charge, refuel, or perform specific actions. Spot point decoration shows when zoomed in.</div>
+    <div class="shape-card__token">Zone checkerboard (orange)<br>+ SpotPoint (QuePoint* tokens)</div>
+  </div>
+
+  <!-- Avoid Zone — SoftObstacle vertical stripes
+       Source: Plugins/Common/AvoidShape/Asi.Maps.AvoidShape.Client/Themes/Generic.xaml
+       Pattern: BrushAndPattern_SoftObstacle -->
+  <div class="shape-card">
+    <svg width="160" height="100" viewBox="0 0 160 100">
+      <rect x="10" y="10" width="140" height="80" rx="4" fill="url(#pattern-soft-obstacle-avoid)"
+        stroke="var(--AvoidShapeOutline)" stroke-width="1" />
+    </svg>
+    <div class="shape-card__label">Avoid Zone [TEXTURED]</div>
+    <div class="shape-card__desc">Soft exclusion area. Planner reroutes vehicles around this zone when possible.</div>
+    <div class="shape-card__token">Vertical stripes (tan)<br>SoftObstacle pattern</div>
+  </div>
+
+  <!-- Barrier — HardObstacle cross-hatch
+       Source: Plugins/Common/BarrierShape/Asi.Maps.BarrierShape.Client/Themes/Generic.xaml
+       Pattern: BrushAndPattern_HardObstacle -->
+  <div class="shape-card">
+    <svg width="160" height="100" viewBox="0 0 160 100">
+      <rect x="10" y="10" width="140" height="80" rx="4" fill="url(#pattern-hard-obstacle-barrier)"
+        stroke="var(--BarrierShapeOutline)" stroke-width="1" />
+    </svg>
+    <div class="shape-card__label">Barrier [TEXTURED]</div>
+    <div class="shape-card__desc">Hard obstacle placed manually in MapBuilder. Blocks all vehicle paths with full collision mask.</div>
+    <div class="shape-card__token">Cross-hatch (gray)<br>HardObstacle pattern</div>
+  </div>
+
+  <!-- MapBuilder Barrier — Diagonal stripes (selectable variant)
+       Source: Plugins/Common/BarrierShape — MapBuilder selectable mode -->
+  <div class="shape-card">
+    <svg width="160" height="100" viewBox="0 0 160 100">
+      <rect x="10" y="10" width="140" height="80" rx="4" fill="url(#pattern-obstacle-mapbuilder-barrier)"
+        stroke="var(--MapBuilderBarrierShapeOutline)" stroke-width="2" />
+    </svg>
+    <div class="shape-card__label">MapBuilder Barrier [TEXTURED]</div>
+    <div class="shape-card__desc">Selectable barrier variant for MapBuilder editing. Red stripes indicate editable state.</div>
+    <div class="shape-card__token">Diagonal stripes (red, 45deg)</div>
+  </div>
+
+  <!-- Queue Point — Decoration overlay on queueable shapes
+       Source: ShapeDecorationLayerControl.xaml lines 82-170 (QueuePointDecorationVM)
+       Structure: 40x40 Grid (Margin=-20) centered on shape's VisualPoint
+         1. Outer ellipse: QuePointOuter style (line 34-38)
+         2. Inner dot: QuePointInner style (line 44-49) — 10x10 ellipse
+         3. Direction arrow: QuePointDirection polygon (line 157-166) — 13x6.5 triangle
+       Only visible when zoomed in (IfZoomedIn wrapper, line 71) -->
+  <div class="shape-card">
+    <svg width="160" height="100" viewBox="0 0 160 100">
+      <!-- Gray reference shape behind (to show context) -->
+      <rect x="20" y="10" width="120" height="80" rx="4"
+        fill="var(--BackgroundSecondary)" stroke="var(--InnerLines)" stroke-width="1" />
+      <!-- XAML: QuePointOuter ellipse — 40x40 scaled (line 98, style line 34-38) -->
+      <circle cx="80" cy="50" r="20"
+        fill="var(--LoadDumpZoneQuePointFill)"
+        stroke="var(--LoadDumpZoneQuePointOutline)" stroke-width="1" />
+      <!-- XAML: QuePointInner ellipse — 10x10 (line 101, style line 44-49) -->
+      <circle cx="80" cy="50" r="5"
+        fill="var(--LoadDumpZoneQuePointDot)" />
+      <!-- XAML: QuePointDirection polygon — Points="0,0 6.5,6.5 13,0" (line 157-166)
+           Arrow ABOVE circle at 1:1 XAML scale (r=20). Gap: 5.5px. -->
+      <polygon points="73.5,24.5 80,18 86.5,24.5"
+        fill="var(--LoadDumpZoneQuePointFill)"
+        stroke="var(--LoadDumpZoneQuePointOutline)" stroke-width="1" />
+    </svg>
+    <div class="shape-card__label">Queue Point</div>
+    <div class="shape-card__desc">Decoration overlay on queueable shapes. Shows vehicle queue position and heading. Only visible when zoomed in.</div>
+    <div class="shape-card__token">QuePoint* tokens (green)<br>40x40 grid, 10x10 inner dot</div>
+  </div>
+
+  <!-- Safety Locked (Warning) — Boundary overlay + circle icon
+       Source: Plugins/Common/ShapeLockout/Asi.ShapeLockout.Client/ShapeLockoutTemplates.xaml
+       Layer 1 (LockedShapeBoundaryVM): PatternBrushMultiConverter with BrushAndPattern_Obstacle
+       Layer 2 (LockedShapeVM): 68px circle + dashed ring + LockShape icon
+       CriticalState=false → InformationOrange -->
+  <div class="shape-card">
+    <svg width="160" height="100" viewBox="0 0 160 100">
+      <!-- Layer 1: LockedShapeBoundaryVM — obstacle stripe fill on shape boundary -->
+      <rect x="10" y="10" width="140" height="80" rx="4"
+        fill="url(#pattern-safety-locked-warning)"
+        stroke="var(--MapBackground)" stroke-width="6" />
+      <rect x="10" y="10" width="140" height="80" rx="4"
+        fill="none"
+        stroke="var(--InformationOrange)" stroke-width="2"
+        stroke-dasharray="3 3" stroke-linejoin="bevel" />
+      <!-- Layer 2: LockedShapeVM — 68px circle with icon -->
+      <circle cx="80" cy="50" r="24"
+        fill="var(--MapBackground)" stroke="none" />
+      <circle cx="80" cy="50" r="22"
+        fill="none"
+        stroke="var(--InformationOrange)" stroke-width="1.5"
+        stroke-dasharray="3 3" />
+      <!-- Icon_LockShape — Mobius-System-Icons glyph U+E94C -->
+      <text x="80" y="51"
+        text-anchor="middle" dominant-baseline="central"
+        font-family="Mobius-System-Icons" font-size="18"
+        fill="var(--InformationOrange)">&#xE94C;</text>
+    </svg>
+    <div class="shape-card__label">Safety Locked (Warning)</div>
+    <div class="shape-card__desc">Shape locked by another user or system. Obstacle-stripe overlay + dashed orange boundary + lock icon.</div>
+    <div class="shape-card__token">Obstacle pattern (orange)<br>CriticalState=false</div>
+  </div>
+
+  <!-- Safety Locked (Critical) — same structure, InformationRed -->
+  <div class="shape-card">
+    <svg width="160" height="100" viewBox="0 0 160 100">
+      <!-- Layer 1: LockedShapeBoundaryVM — obstacle stripe fill (critical red) -->
+      <rect x="10" y="10" width="140" height="80" rx="4"
+        fill="url(#pattern-safety-locked-critical)"
+        stroke="var(--MapBackground)" stroke-width="6" />
+      <rect x="10" y="10" width="140" height="80" rx="4"
+        fill="none"
+        stroke="var(--InformationRed)" stroke-width="2"
+        stroke-dasharray="3 3" stroke-linejoin="bevel" />
+      <!-- Layer 2: LockedShapeVM — 68px circle with icon (critical) -->
+      <circle cx="80" cy="50" r="24"
+        fill="var(--MapBackground)" stroke="none" />
+      <circle cx="80" cy="50" r="22"
+        fill="none"
+        stroke="var(--InformationRed)" stroke-width="1.5"
+        stroke-dasharray="3 3" />
+      <!-- Icon_LockShape — Mobius-System-Icons glyph U+E94C -->
+      <text x="80" y="51"
+        text-anchor="middle" dominant-baseline="central"
+        font-family="Mobius-System-Icons" font-size="18"
+        fill="var(--InformationRed)">&#xE94C;</text>
+    </svg>
+    <div class="shape-card__label">Safety Locked (Critical)</div>
+    <div class="shape-card__desc">Critical safety lock. Same structure as warning, but InformationRed signals higher severity.</div>
+    <div class="shape-card__token">Obstacle pattern (red)<br>CriticalState=true</div>
+  </div>
+
+</div>
+
+<hr class="section-divider">
+
+
+<!-- ============================================================
+     SECTION: Agriculture — Golf / Mowing
+     Source: Plugins/Agriculture/Mowing/GolfCourseShapes/
+     ============================================================ -->
+<h2>Agriculture — Golf / Mowing</h2>
+<p class="section-note">From Plugins/Agriculture/Mowing/GolfCourseShapes/. Golf-course-specific shape types with inner obstacle buffers.</p>
+
+<div class="shape-grid">
+
+  <!-- Green -->
+  <div class="shape-card">
+    <svg width="160" height="100" viewBox="0 0 160 100">
+      <rect x="10" y="10" width="140" height="80" rx="4" class="map-shape map-shape--green" />
+    </svg>
+    <div class="shape-card__label">Green</div>
+    <div class="shape-card__desc">Golf green boundary. Inner obstacle buffer protects putting surfaces from mowers.</div>
+    <div class="shape-card__token">--GreenShapeOutline / Fill</div>
+  </div>
+
+  <!-- Rough — Zone checkerboard, 2-layer -->
+  <div class="shape-card">
+    <svg width="160" height="100" viewBox="0 0 160 100">
+      <rect x="10" y="10" width="140" height="80" rx="4" fill="var(--RoughShapeFill)" stroke="none" />
+      <rect x="10" y="10" width="140" height="80" rx="4" fill="url(#pattern-zone-rough)"
+        stroke="var(--RoughShapeOutline)" stroke-width="1" />
+    </svg>
+    <div class="shape-card__label">Rough [TEXTURED]</div>
+    <div class="shape-card__desc">Golf rough mowing zone. Drivable area that requires a final cleanup pass.</div>
+    <div class="shape-card__token">Zone checkerboard (2-layer)</div>
+  </div>
+
+  <!-- Water Hazard — HardObstacle cross-hatch -->
+  <div class="shape-card">
+    <svg width="160" height="100" viewBox="0 0 160 100">
+      <rect x="10" y="10" width="140" height="80" rx="4" fill="url(#pattern-hard-obstacle-water)"
+        stroke="var(--WaterHazardShapeOutline)" stroke-width="1" />
+    </svg>
+    <div class="shape-card__label">Water Hazard [TEXTURED]</div>
+    <div class="shape-card__desc">Golf water boundary. Keeps mowers away from ponds and streams.</div>
+    <div class="shape-card__token">Cross-hatch (45deg, blue)</div>
+  </div>
+
+  <!-- Bunker — Dot pattern -->
+  <div class="shape-card">
+    <svg width="160" height="100" viewBox="0 0 160 100">
+      <rect x="10" y="10" width="140" height="80" rx="4" fill="url(#pattern-dot-bunker)"
+        stroke="var(--BunkerShapeOutline)" stroke-width="1" />
+    </svg>
+    <div class="shape-card__label">Bunker [TEXTURED]</div>
+    <div class="shape-card__desc">Golf sand trap. Inner obstacle boundary keeps mowers out of bunker areas.</div>
+    <div class="shape-card__token">Scattered dots (sand)</div>
+  </div>
+
+  <!-- KeepOut — HardObstacle cross-hatch, 2-layer
+       Source: KeepOutShapeTemplates.xaml -->
+  <div class="shape-card">
+    <svg width="160" height="100" viewBox="0 0 160 100">
+      <!-- XAML: KeepOutShapeTemplates.xaml — Path 1 (base fill, no stroke) -->
+      <rect x="10" y="10" width="140" height="80" rx="4" class="map-shape--keepout-base" />
+      <!-- XAML: KeepOutShapeTemplates.xaml — Path 2 (cross-hatch overlay + outline) -->
+      <rect x="10" y="10" width="140" height="80" rx="4" fill="url(#pattern-hard-obstacle-keepout)"
+        stroke="var(--MapBuilderObstacleShapeOutline)" stroke-width="2.5" />
+    </svg>
+    <div class="shape-card__label">KeepOut [TEXTURED]</div>
+    <div class="shape-card__desc">Absolute no-go zone. Vehicles must never enter this area.</div>
+    <div class="shape-card__token">Cross-hatch (red, 2-layer)</div>
+  </div>
+
+</div>
+
+<hr class="section-divider">
+
+
+<!-- ============================================================
+     SECTION: Agriculture — Common
+     Source: Plugins/Agriculture/Common/
+     ============================================================ -->
+<h2>Agriculture — Common</h2>
+<p class="section-note">From Plugins/Agriculture/Common/. Shared across all agriculture configurations (mowing, farming, etc.).</p>
+
+<div class="shape-grid">
+
+  <!-- Coverage Area — SoftObstacle vertical stripes
+       Source: Plugins/Agriculture/Common/CoverageShape/Asi.Maps.CoverageShape.Client/Templates.xaml
+       Pattern: BrushAndPattern_SoftObstacle
+       Background: AreaCoverageShapeFill, Foreground: AreaCoverageShapeOutline -->
+  <div class="shape-card">
+    <svg width="160" height="100" viewBox="0 0 160 100">
+      <rect x="10" y="10" width="140" height="80" rx="4" fill="url(#pattern-soft-obstacle-coverage)"
+        stroke="var(--AreaCoverageShapeOutline)" stroke-width="1" />
+    </svg>
+    <div class="shape-card__label">Coverage Area [TEXTURED]</div>
+    <div class="shape-card__desc">Systematic mowing/work zone. Defines an area the vehicle must cover completely.</div>
+    <div class="shape-card__token">Vertical stripes (green)<br>SoftObstacle pattern</div>
+  </div>
+
+  <!-- Coverage History — flat fill (no pattern)
+       Source: Plugins/Agriculture/Common/CoverageHistory/Asi.CoverageHistory.Client/CoverageHistoryTemplates.xaml
+       Fill: AreaCoverageProgressShapeFill rgba(170,170,170,0.247)
+       Outline: AreaCoverageProgressShapeOutline rgba(170,170,170,0.365)
+       Shows where a vehicle has already covered within a Coverage Area. -->
+  <div class="shape-card">
+    <svg width="160" height="100" viewBox="0 0 160 100">
+      <rect x="10" y="10" width="140" height="80" rx="4"
+        fill="var(--AreaCoverageProgressShapeFill)"
+        stroke="var(--AreaCoverageProgressShapeOutline)" stroke-width="1" />
+    </svg>
+    <div class="shape-card__label">Coverage History</div>
+    <div class="shape-card__desc">Already-covered area within a Coverage Area. Shows completed work as a faint gray overlay.</div>
+    <div class="shape-card__token">--AreaCoverageProgressShape*<br>Flat fill, no pattern</div>
+  </div>
+
+  <!-- Disengage — SoftObstacle vertical stripes
+       Source: Plugins/Agriculture/Common/DisengageShape/Asi.Maps.DisengageShape.Client/Templates.xaml -->
+  <div class="shape-card">
+    <svg width="160" height="100" viewBox="0 0 160 100">
+      <rect x="10" y="10" width="140" height="80" rx="4" fill="url(#pattern-soft-obstacle-disengage)"
+        stroke="var(--DisengageShapeOutline)" stroke-width="1" />
+    </svg>
+    <div class="shape-card__label">Disengage [TEXTURED]</div>
+    <div class="shape-card__desc">Tool-off transit zone. Vehicles can cross but must deactivate their implement.</div>
+    <div class="shape-card__token">Vertical stripes (blue)<br>SoftObstacle pattern</div>
+  </div>
+
+  <!-- Negative Obstacle — Dot pattern
+       Source: Plugins/Agriculture/Common/NegativeObstacleShape/ -->
+  <div class="shape-card">
+    <svg width="160" height="100" viewBox="0 0 160 100">
+      <rect x="10" y="10" width="140" height="80" rx="4" fill="url(#pattern-dot-negative)"
+        stroke="var(--NegativeObstacleShapeOutline)" stroke-width="1" />
+    </svg>
+    <div class="shape-card__label">Negative Obstacle [TEXTURED]</div>
+    <div class="shape-card__desc">Terrain depression. Marks ditches or drops invisible to standard sensors.</div>
+    <div class="shape-card__token">Scattered dots (red on blue)</div>
+  </div>
+
+</div>
+
+<hr class="section-divider">
+
+
+<!-- ============================================================
+     SECTION: Agriculture — MudFarming
+     Source: Plugins/Agriculture/MudFarming/AMC/
+     ============================================================ -->
+<h2>Agriculture — MudFarming</h2>
+<p class="section-note">From Plugins/Agriculture/MudFarming/. Accelerated Mechanical Consolidation for mud farming operations.</p>
+
+<div class="shape-grid">
+
+  <!-- AMC Shape — HorizontalS pattern
+       Source: Plugins/Agriculture/MudFarming/AMC/Asi.Maps.AMC.Client/Templates.xaml
+       Pattern: BrushAndPattern_AcceleratedMechanicalConsolidation (HorizontalSPattern)
+       Two-layer: bottom path = solid fill (no stroke), top path = pattern fill + outline stroke
+       Both brushes at 0.5 opacity in Brushes.xaml (line 474-475)
+       Fill: AcceleratedMechanicalConsolidationShapeFill #B7410E @ 0.5 = rgba(183,65,14,0.5)
+       Outline: AcceleratedMechanicalConsolidationShapeOutline #DCD6B2 @ 0.5 = rgba(220,214,178,0.5) -->
+  <div class="shape-card">
+    <svg width="160" height="100" viewBox="0 0 160 100">
+      <!-- Layer 1: solid fill base (no stroke) -->
+      <rect x="10" y="10" width="140" height="80" rx="4"
+        fill="var(--AcceleratedMechanicalConsolidationShapeFill)" fill-opacity="0.5" stroke="none" />
+      <!-- Layer 2: S-wave pattern overlay + outline -->
+      <rect x="10" y="10" width="140" height="80" rx="4" fill="url(#pattern-amc)"
+        stroke="var(--AcceleratedMechanicalConsolidationShapeOutline)" stroke-width="1" stroke-opacity="0.5" />
+    </svg>
+    <div class="shape-card__label">AMC [TEXTURED]</div>
+    <div class="shape-card__desc">Accelerated Mechanical Consolidation zone. Defines areas for mud drying/compaction operations.</div>
+    <div class="shape-card__token">HorizontalS pattern (rust/khaki)<br>Both brushes @ 0.5 opacity</div>
+  </div>
+
+</div>
+
+<hr class="section-divider">
+
+
+<!-- ============================================================
+     SECTION: Construction
+     Source: Plugins/Construction/
+     ============================================================ -->
+<h2>Construction</h2>
+<p class="section-note">From Plugins/Construction/. Shapes for autonomous loading, pile placement, and solar panel installation.</p>
+
+<div class="shape-grid">
+
+  <!-- AutonomousLoadShape — Zone checkerboard + caution border
+       Source: Plugins/Construction/Loading/Asi.AutonomousLoader.Client/AutonomousLoadingTemplates.xaml
+       Pattern: BrushAndPattern_Zone (checkerboard) with LoadDumpZone colors
+       Fill: LoadDumpZoneFill rgba(220,214,178,0.498)
+       Outline: LoadDumpZoneOutline rgba(220,214,178,1)
+       Caution border: solid LoadDumpZoneCautionArea (yellow) + dashed LoadDumpZoneCautionAreaAlt (gray) -->
+  <div class="shape-card">
+    <svg width="160" height="100" viewBox="0 0 160 100">
+      <rect x="10" y="10" width="140" height="80" rx="4" fill="url(#pattern-zone-loaddump)"
+        stroke="var(--LoadDumpZoneOutline)" stroke-width="1" />
+      <!-- Caution border: solid yellow under dashed gray = yellow/gray alternating stripes -->
+      <rect x="10" y="10" width="140" height="80" rx="4" fill="none"
+        stroke="var(--LoadDumpZoneCautionArea)" stroke-width="5" />
+      <rect x="10" y="10" width="140" height="80" rx="4" fill="none"
+        stroke="var(--LoadDumpZoneCautionAreaAlt)" stroke-width="5"
+        stroke-dasharray="5 5" />
+    </svg>
+    <div class="shape-card__label">Autonomous Load [TEXTURED]</div>
+    <div class="shape-card__desc">Vehicle loading zone. Zone checkerboard fill with yellow/gray caution-stripe border.</div>
+    <div class="shape-card__token">Zone checkerboard (sand)<br>+ caution border (yellow/gray)</div>
+  </div>
+
+  <!-- PileShape — SoftObstacle + green halo
+       Source: Plugins/Construction/Loading/Asi.AutonomousLoader.Client/AutonomousLoadingTemplates.xaml
+       Pattern: BrushAndPattern_SoftObstacle with AreaCoverage green colors
+       Outer halo: BackgroundStrong (white) @ 6px
+       Inner stroke: LoadDumpZoneVehicleLoadOutline (bright green) @ 2px -->
+  <div class="shape-card">
+    <svg width="160" height="100" viewBox="0 0 160 100">
+      <!-- Layer 1: white halo (BackgroundStrong @ 6px) -->
+      <rect x="10" y="10" width="140" height="80" rx="4" fill="none"
+        stroke="var(--BackgroundStrong)" stroke-width="6" />
+      <!-- Layer 2: SoftObstacle pattern fill + green stroke -->
+      <rect x="10" y="10" width="140" height="80" rx="4" fill="url(#pattern-soft-obstacle-coverage)"
+        stroke="var(--LoadDumpZoneVehicleLoadOutline)" stroke-width="2" />
+    </svg>
+    <div class="shape-card__label">Pile Shape [TEXTURED]</div>
+    <div class="shape-card__desc">Material pile boundary for autonomous loaders. White halo + green outline over vertical stripe fill.</div>
+    <div class="shape-card__token">Vertical stripes (green)<br>+ white halo (6px) + green stroke (2px)</div>
+  </div>
+
+  <!-- SolarBlockShape — flat fill + point markers
+       Source: Plugins/Construction/BehaviorTreeExamples/Asi.BehaviorTrees.Client/SolarShapes/SolarBlockTemplates.xaml
+       Fill: DriveableShapeFill (very faint gray)
+       Overlay: HolesControl renders hole markers (dots) at each panel placement point -->
+  <div class="shape-card">
+    <svg width="160" height="100" viewBox="0 0 160 100">
+      <rect x="10" y="10" width="140" height="80" rx="4" class="map-shape map-shape--driveable" />
+      <!-- Representative hole markers (HolesControl overlay) -->
+      <g fill="var(--ForegroundPrimary)" stroke="var(--SelectionPrimary)" stroke-width="0.5">
+        <circle cx="40" cy="35" r="3" /><circle cx="65" cy="35" r="3" />
+        <circle cx="90" cy="35" r="3" /><circle cx="115" cy="35" r="3" />
+        <circle cx="40" cy="55" r="3" /><circle cx="65" cy="55" r="3" />
+        <circle cx="90" cy="55" r="3" /><circle cx="115" cy="55" r="3" />
+        <circle cx="40" cy="75" r="3" /><circle cx="65" cy="75" r="3" />
+        <circle cx="90" cy="75" r="3" /><circle cx="115" cy="75" r="3" />
+      </g>
+    </svg>
+    <div class="shape-card__label">Solar Block</div>
+    <div class="shape-card__desc">Solar panel placement zone. DrivableArea fill with hole markers at each panel position. Labels visible when zoomed in.</div>
+    <div class="shape-card__token">--DriveableShapeFill<br>+ HolesControl point markers</div>
+  </div>
+
+</div>
+
+<hr class="section-divider">
+
+
+<!-- ============================================================
+     SECTION: Mining
+     Source: Plugins/Mining/Asi.HaulageOperations.Client/Drawing/
+     All shapes use DrawingElementProvider (C# code, not XAML DataTemplates).
+     Pattern: CreateTiledSquares = equivalent to Zone checkerboard.
+     ============================================================ -->
+<h2>Mining</h2>
+<p class="section-note">From Plugins/Mining/. Code-based shapes (DrawingElementProvider, not XAML). All use LoadDumpZone tokens with checkerboard fill.</p>
+
+<div class="shape-grid">
+
+  <!-- LoadShape — Zone checkerboard + caution border
+       Source: Plugins/Mining/Asi.HaulageOperations.Client/Drawing/LoadShapeDrawingElementProvider.cs
+       Pattern: CreateTiledSquares (= Zone checkerboard)
+       Fill: LoadDumpZoneFill, Outline: LoadDumpZoneOutline
+       Caution: solid yellow (LoadDumpZoneCautionArea) + dashed gray (LoadDumpZoneCautionAreaAlt) -->
+  <div class="shape-card">
+    <svg width="160" height="100" viewBox="0 0 160 100">
+      <rect x="10" y="10" width="140" height="80" rx="4" fill="url(#pattern-zone-loaddump)"
+        stroke="var(--LoadDumpZoneOutline)" stroke-width="1" />
+      <!-- Caution border -->
+      <rect x="10" y="10" width="140" height="80" rx="4" fill="none"
+        stroke="var(--LoadDumpZoneCautionArea)" stroke-width="5" />
+      <rect x="10" y="10" width="140" height="80" rx="4" fill="none"
+        stroke="var(--LoadDumpZoneCautionAreaAlt)" stroke-width="5"
+        stroke-dasharray="5 5" />
+    </svg>
+    <div class="shape-card__label">Load Shape [TEXTURED]</div>
+    <div class="shape-card__desc">Mining loading zone. Where haul trucks are loaded by excavators. Yellow/gray caution border marks the active area.</div>
+    <div class="shape-card__token">Zone checkerboard (sand)<br>+ caution border (yellow/gray)</div>
+  </div>
+
+  <!-- PaddockDump — Zone checkerboard, no caution border
+       Source: PaddockDumpDrawingElementProvider.cs
+       Simplest mining shape: just fill + checkerboard + outline -->
+  <div class="shape-card">
+    <svg width="160" height="100" viewBox="0 0 160 100">
+      <rect x="10" y="10" width="140" height="80" rx="4" fill="url(#pattern-zone-loaddump)"
+        stroke="var(--LoadDumpZoneOutline)" stroke-width="2" />
+    </svg>
+    <div class="shape-card__label">Paddock Dump [TEXTURED]</div>
+    <div class="shape-card__desc">Open dump area for haul trucks. Flat paddock zone where material is deposited.</div>
+    <div class="shape-card__token">Zone checkerboard (sand)<br>Outline only, no caution border</div>
+  </div>
+
+  <!-- EdgeDump — Zone checkerboard + berm edge line
+       Source: EdgeDumpDrawingElementProvider.cs
+       Same checkerboard + outline, plus a berm edge polyline
+       Edge: LoadDumpZoneBermEdgeFill rgba(251,174,49,0.867) (amber), 5px -->
+  <div class="shape-card">
+    <svg width="160" height="100" viewBox="0 0 160 100">
+      <rect x="10" y="10" width="140" height="80" rx="4" fill="url(#pattern-zone-loaddump)"
+        stroke="var(--LoadDumpZoneOutline)" stroke-width="2" />
+      <!-- Berm edge indicator (amber line on one side) -->
+      <line x1="150" y1="15" x2="150" y2="85"
+        stroke="var(--LoadDumpZoneBermEdgeFill)" stroke-width="5"
+        stroke-linecap="square" />
+    </svg>
+    <div class="shape-card__label">Edge Dump [TEXTURED]</div>
+    <div class="shape-card__desc">Dump zone at a pit edge. Amber berm edge line marks the tip-head boundary.</div>
+    <div class="shape-card__token">Zone checkerboard (sand)<br>+ berm edge (amber, 5px)</div>
+  </div>
+
+  <!-- CrusherDump — Zone checkerboard + berm edge(s)
+       Source: CrusherDumpAreaDrawingElementProvider.cs
+       Same as EdgeDump but can have 1-2 crusher edge lines, 4m wide -->
+  <div class="shape-card">
+    <svg width="160" height="100" viewBox="0 0 160 100">
+      <rect x="10" y="10" width="140" height="80" rx="4" fill="url(#pattern-zone-loaddump)"
+        stroke="var(--LoadDumpZoneOutline)" stroke-width="2" />
+      <!-- Crusher edge indicators (amber lines, can be 1-2 edges) -->
+      <line x1="150" y1="15" x2="150" y2="85"
+        stroke="var(--LoadDumpZoneBermEdgeFill)" stroke-width="5"
+        stroke-linecap="square" />
+      <line x1="10" y1="15" x2="10" y2="85"
+        stroke="var(--LoadDumpZoneBermEdgeFill)" stroke-width="5"
+        stroke-linecap="square" />
+    </svg>
+    <div class="shape-card__label">Crusher Dump [TEXTURED]</div>
+    <div class="shape-card__desc">Dump zone at a crusher hopper. Amber edge lines mark the crusher feed boundaries (1-2 edges).</div>
+    <div class="shape-card__token">Zone checkerboard (sand)<br>+ crusher edges (amber, 4m)</div>
+  </div>
+
+</div>
+
+<hr class="section-divider">
+
+
+<!-- ============================================================
+     SECTION: Convoy
+     Source: Plugins/Convoy/Assigner/Asi.Convoy.Client/
+     ============================================================ -->
+<h2>Convoy</h2>
+<p class="section-note">From Plugins/Convoy/. Spacing shapes for autonomous vehicle convoy operations.</p>
+
+<div class="shape-grid">
+
+  <!-- ConvoySpacingShape — flat fill with dashed border
+       Source: Plugins/Convoy/Assigner/Asi.Convoy.Client/AssetTemplates.xaml
+       Fill: ConvoySpacingShapeFill rgba(220,213,180,1) @ SolidColorBrush Opacity=0.25 = rgba(220,213,180,0.25)
+       Outline: same ConvoySpacingShapeFillBrush, stroke=2
+       Dashed inner border: ConvoySpacingDashWidth=4, same brush -->
+  <div class="shape-card">
+    <svg width="160" height="100" viewBox="0 0 160 100">
+      <rect x="10" y="10" width="140" height="80" rx="4"
+        fill="var(--ConvoySpacingShapeFill)" fill-opacity="0.25"
+        stroke="var(--ConvoySpacingShapeFill)" stroke-width="2" />
+      <!-- Dashed inner border (ConvoySpacingDashWidth=4) -->
+      <rect x="14" y="14" width="132" height="72" rx="2" fill="none"
+        stroke="var(--ConvoySpacingShapeFill)" stroke-width="2"
+        stroke-dasharray="4 4" />
+    </svg>
+    <div class="shape-card__label">Convoy Spacing</div>
+    <div class="shape-card__desc">Vehicle spacing boundary in a convoy formation. Dashed inner border marks the safe following distance.</div>
+    <div class="shape-card__token">--ConvoySpacingShapeFill @ 0.25<br>+ dashed inner border (4px dash)</div>
+  </div>
+
+</div>
+
+<hr class="section-divider">
+
+
+<!-- ============================================================
+     SECTION: PileDriving
+     Source: Plugins/PileDriving/Asi.PileDriving.Client/
+     ============================================================ -->
+<h2>Pile Driving</h2>
+<p class="section-note">From Plugins/PileDriving/. Shape for autonomous pile driving operations.</p>
+
+<div class="shape-grid">
+
+  <!-- PileDrivingShape — flat fill + pile point markers
+       Source: Plugins/PileDriving/Asi.PileDriving.Client/PileDrivingTemplates.xaml
+       Fill: DriveableShapeFill (very faint gray)
+       Overlay: PilePointsControl renders pile point markers at each driving position -->
+  <div class="shape-card">
+    <svg width="160" height="100" viewBox="0 0 160 100">
+      <rect x="10" y="10" width="140" height="80" rx="4" class="map-shape map-shape--driveable" />
+      <!-- Representative pile point markers (PilePointsControl overlay) -->
+      <g fill="var(--ForegroundPrimary)" stroke="var(--SelectionPrimary)" stroke-width="0.5">
+        <rect x="35" y="30" width="6" height="6" /><rect x="60" y="30" width="6" height="6" />
+        <rect x="85" y="30" width="6" height="6" /><rect x="110" y="30" width="6" height="6" />
+        <rect x="35" y="50" width="6" height="6" /><rect x="60" y="50" width="6" height="6" />
+        <rect x="85" y="50" width="6" height="6" /><rect x="110" y="50" width="6" height="6" />
+        <rect x="35" y="70" width="6" height="6" /><rect x="60" y="70" width="6" height="6" />
+        <rect x="85" y="70" width="6" height="6" /><rect x="110" y="70" width="6" height="6" />
+      </g>
+    </svg>
+    <div class="shape-card__label">Pile Driving</div>
+    <div class="shape-card__desc">Pile driving work zone. DrivableArea fill with square pile point markers at each driving position.</div>
+    <div class="shape-card__token">--DriveableShapeFill<br>+ PilePointsControl markers</div>
+  </div>
+
+</div>
+
+<hr class="section-divider">
+
+
+<!-- ============================================================
+     SECTION: Shape States
+     ============================================================ -->
+<h2>Shape States</h2>
+<p class="section-note">Selection, locked, and filtered-out states applied to shapes.</p>
+
+<div class="state-demo">
+
+  <div class="state-demo__item">
+    <svg width="140" height="90" viewBox="0 0 140 90">
+      <polygon class="map-shape map-shape--driveable"
+        points="20,70 40,15 100,10 120,50 110,80 30,75" />
+    </svg>
+    <div class="state-demo__label">Default</div>
+    <div class="shape-card__desc">Normal rendering. Shape shows its base fill and outline.</div>
+  </div>
+
+  <!-- Selected — 3 layers -->
+  <div class="state-demo__item">
+    <svg width="140" height="90" viewBox="0 0 140 90">
+      <polygon class="map-shape__selection-bg"
+        points="20,70 40,15 100,10 120,50 110,80 30,75" />
+      <polygon class="map-shape__selection-fg"
+        points="20,70 40,15 100,10 120,50 110,80 30,75" />
+      <polygon class="map-shape map-shape--driveable"
+        points="20,70 40,15 100,10 120,50 110,80 30,75" />
+    </svg>
+    <div class="state-demo__label">Selected</div>
+    <div class="shape-card__desc">Active selection. Highlight ring drawn behind the shape (bg + fg layers).</div>
+  </div>
+
+  <!-- Locked — dashed orange -->
+  <div class="state-demo__item">
+    <svg width="140" height="90" viewBox="0 0 140 90">
+      <polygon
+        style="stroke: var(--MapBackground); stroke-width: 6px; fill: none; stroke-linejoin: bevel; stroke-linecap: butt;"
+        points="20,70 40,15 100,10 120,50 110,80 30,75" />
+      <polygon
+        style="stroke: var(--InformationOrange); stroke-width: 2px; fill: none; stroke-dasharray: 3 3; stroke-linejoin: bevel; stroke-linecap: butt;"
+        points="20,70 40,15 100,10 120,50 110,80 30,75" />
+      <polygon class="map-shape map-shape--driveable"
+        points="20,70 40,15 100,10 120,50 110,80 30,75" />
+    </svg>
+    <div class="state-demo__label">Locked</div>
+    <div class="shape-card__desc">Editing locked by another user. Dashed orange outline, no lock icon.</div>
+  </div>
+
+  <!-- Filtered out -->
+  <div class="state-demo__item">
+    <svg width="140" height="90" viewBox="0 0 140 90">
+      <polygon class="map-shape map-shape--driveable" style="opacity: 0.175;"
+        points="20,70 40,15 100,10 120,50 110,80 30,75" />
+    </svg>
+    <div class="state-demo__label">Filtered Out (0.175)</div>
+    <div class="shape-card__desc">Hidden by active layer filter. Reduced to 17.5% opacity.</div>
+  </div>
+
+</div>
+
+<hr class="section-divider">
+
+
+<!-- ============================================================
+     SECTION: AOZ Layer Breakdown
+     ============================================================ -->
+<h2>AOZ Shape — Layer Breakdown</h2>
+<p class="section-note">Three stacked strokes: MapBackground bg (6px) > DriveableShapeFill solid (4px) > DriveableShapeOutline dashed [1,1] (4px)</p>
+
+<div class="state-demo">
+
+  <div class="state-demo__item">
+    <svg width="200" height="120" viewBox="0 0 200 120">
+      <polygon class="map-shape map-shape--aoz-bg"
+        points="20,100 50,15 150,12 180,60 170,105 40,98" />
+    </svg>
+    <div class="state-demo__label">Layer 1: Background (6px)</div>
+  </div>
+
+  <div class="state-demo__item">
+    <svg width="200" height="120" viewBox="0 0 200 120">
+      <polygon class="map-shape map-shape--aoz-bg"
+        points="20,100 50,15 150,12 180,60 170,105 40,98" />
+      <polygon class="map-shape map-shape--aoz-solid"
+        points="20,100 50,15 150,12 180,60 170,105 40,98" />
+    </svg>
+    <div class="state-demo__label">Layer 2: + Solid (4px)</div>
+  </div>
+
+  <div class="state-demo__item">
+    <svg width="200" height="120" viewBox="0 0 200 120">
+      <polygon class="map-shape map-shape--aoz-bg"
+        points="20,100 50,15 150,12 180,60 170,105 40,98" />
+      <polygon class="map-shape map-shape--aoz-solid"
+        points="20,100 50,15 150,12 180,60 170,105 40,98" />
+      <polygon class="map-shape map-shape--aoz"
+        points="20,100 50,15 150,12 180,60 170,105 40,98" />
+    </svg>
+    <div class="state-demo__label">Layer 3: + Dashed [1,1] (4px)</div>
+  </div>
+
+</div>
+
+<hr class="section-divider">
+
+
+<!-- ============================================================
+     SECTION: Composite Map Demo
+     ============================================================ -->
+<h2>Composite Map (All Layers)</h2>
+<p class="section-note">Background grid + textured shapes layered together as they'd appear in the running app.</p>
+
+<div class="map-demo">
+  <div class="map-canvas">
+    <svg style="position:absolute;inset:0;width:100%;height:100%;">
+      <rect width="100%" height="100%" fill="url(#grid-tile-64)"/>
+    </svg>
+
+    <svg class="map-shape-layer" style="position: absolute; inset: 0; width: 100%; height: 100%;" viewBox="0 0 800 400">
+
+      <!-- Reference shape (large boundary) — Zone checkerboard -->
+      <polygon fill="url(#pattern-zone-reference)"
+        stroke="var(--ReferenceShapeOutline)" stroke-width="1"
+        stroke-dasharray="2 2" stroke-linejoin="bevel" stroke-linecap="butt"
+        points="50,350 80,50 400,20 720,60 750,300 600,380 200,370" />
+
+      <!-- Driveable area — flat fill -->
+      <polygon class="map-shape map-shape--driveable"
+        points="120,320 140,90 380,60 680,90 700,280 560,340 220,330" />
+
+      <!-- Road -->
+      <path class="map-shape map-shape--road" style="stroke-width: 20px;"
+        d="M 50,200 Q 200,150 400,180 Q 600,210 750,160" />
+      <path class="map-shape map-shape--road-center-line" style="stroke-width: 2px; stroke-dasharray: 8 4;"
+        d="M 50,200 Q 200,150 400,180 Q 600,210 750,160" />
+
+      <!-- Obstacle — diagonal stripe pattern -->
+      <polygon fill="url(#pattern-obstacle)"
+        stroke="var(--ObstacleShapeOutline)" stroke-width="2"
+        stroke-linejoin="bevel" stroke-linecap="butt"
+        points="500,120 530,100 570,105 580,140 550,160 510,150" />
+
+      <!-- Station — Zone checkerboard + SpotPoint decoration -->
+      <polygon fill="url(#pattern-zone-station)"
+        stroke="var(--StationOutline)" stroke-width="1"
+        stroke-linejoin="bevel" stroke-linecap="butt"
+        points="200,240 220,210 260,205 280,230 270,260 220,265" />
+      <!-- SpotPoint decoration centered on station -->
+      <circle cx="240" cy="237" r="8"
+        fill="var(--LoadDumpZoneQuePointFill)"
+        stroke="var(--LoadDumpZoneQuePointOutline)" stroke-width="0.5" />
+      <circle cx="240" cy="237" r="2.5"
+        fill="var(--LoadDumpZoneQuePointDot)" />
+      <!-- Arrow: 5.2x2.6 (scaled 0.4x from 13x6.5). Gap: 2.2px above circle top (y=229). -->
+      <polygon points="237.4,226.8 240,224.2 242.6,226.8"
+        fill="var(--LoadDumpZoneQuePointFill)"
+        stroke="var(--LoadDumpZoneQuePointOutline)" stroke-width="0.5" />
+
+      <!-- Green — flat fill -->
+      <ellipse class="map-shape map-shape--green"
+        cx="450" cy="290" rx="50" ry="35" />
+
+      <!-- Water hazard — cross-hatch -->
+      <ellipse fill="url(#pattern-hard-obstacle-water)"
+        stroke="var(--WaterHazardShapeOutline)" stroke-width="1"
+        stroke-linejoin="bevel" stroke-linecap="butt"
+        cx="340" cy="310" rx="30" ry="20" />
+
+      <!-- AOZ (selected) -->
+      <polygon class="map-shape map-shape--aoz-bg"
+        points="600,180 620,140 680,130 710,170 700,220 640,230" />
+      <polygon class="map-shape map-shape--aoz-solid"
+        points="600,180 620,140 680,130 710,170 700,220 640,230" />
+      <polygon class="map-shape map-shape--aoz"
+        points="600,180 620,140 680,130 710,170 700,220 640,230" />
+      <polygon class="map-shape__selection-bg"
+        points="600,180 620,140 680,130 710,170 700,220 640,230" />
+      <polygon class="map-shape__selection-fg"
+        points="600,180 620,140 680,130 710,170 700,220 640,230" />
+
+      <!-- Bunker — dot pattern -->
+      <ellipse fill="url(#pattern-dot-bunker)"
+        stroke="var(--BunkerShapeOutline)" stroke-width="1"
+        stroke-linejoin="bevel" stroke-linecap="butt"
+        cx="170" cy="150" rx="30" ry="20" />
+
+      <!-- Avoid zone — flat fill -->
+      <polygon class="map-shape map-shape--avoid"
+        points="380,120 400,100 440,105 445,140 400,150" />
+
+      <!-- Negative obstacle — dot pattern -->
+      <polygon fill="url(#pattern-dot-negative)"
+        stroke="var(--NegativeObstacleShapeOutline)" stroke-width="1"
+        stroke-linejoin="bevel" stroke-linecap="butt"
+        points="280,120 300,100 340,105 345,140 300,150" />
+
+      <!-- KeepOut — cross-hatch, 2-layer (KeepOutShapeTemplates.xaml) -->
+      <polygon fill="var(--MapBuilderObstacleShapeFill)"
+        stroke="none"
+        points="140,270 155,240 185,235 200,260 190,285 150,280" />
+      <polygon fill="url(#pattern-hard-obstacle-keepout)"
+        stroke="var(--MapBuilderObstacleShapeOutline)" stroke-width="2.5"
+        stroke-linejoin="bevel" stroke-linecap="butt"
+        points="140,270 155,240 185,235 200,260 190,285 150,280" />
+
+      <!-- Sensed Obstacle — point marker (MapContentControl.xaml:263-338) -->
+      <circle cx="420" cy="220" r="12"
+        fill="none" stroke="var(--InformationRed)" stroke-width="0.5"
+        stroke-dasharray="4.7 4.7" />
+      <circle cx="420" cy="220" r="9.6"
+        fill="var(--BackgroundStrong)" fill-opacity="0.9" stroke="none" />
+      <text x="420" y="220"
+        text-anchor="middle" dominant-baseline="central"
+        font-family="Mobius-System-Icons" font-size="8"
+        fill="var(--InformationRed)">&#xE412;</text>
+
+    </svg>
+  </div>
+</div>
+
+
+  </main>
+
+</div>
+
+<script src="../js/nav.js"></script>
+</body>
+</html>

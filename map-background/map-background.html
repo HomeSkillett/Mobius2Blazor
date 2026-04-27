@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mobius — Map Components</title>
+  <link id="mob-theme-link" rel="stylesheet" href="../styles/color-theme-tokens/LightTheme.css" />
+  <link rel="stylesheet" href="../styles/css/main.css" />
+  <style>
+    body { margin: 0; }
+    h1 {
+      font: var(--font-hdrMd);
+      margin: 0 0 16px;
+      color: var(--ForegroundStrong);
+    }
+    p {
+      font: var(--font-bodyMd);
+      color: var(--ForegroundPrimary);
+      margin: 0 0 32px;
+    }
+    .hub-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px;
+    }
+    .hub-card {
+      display: block;
+      padding: 24px;
+      border: 1px solid var(--BorderDefault);
+      border-radius: 8px;
+      background: var(--BackgroundDefault);
+      text-decoration: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .hub-card:hover {
+      border-color: var(--BorderStrong);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+    .hub-card__title {
+      font: var(--font-hdrSm);
+      color: var(--ForegroundStrong);
+      margin: 0 0 8px;
+    }
+    .hub-card__desc {
+      font: var(--font-bodySm);
+      color: var(--ForegroundSecondary);
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+
+<nav class="mob-nav" id="mob-nav"></nav>
+
+<main class="mob-main">
+  <h1>Map Components</h1>
+  <p>Background layers, textures, and shape types used on the Mobius map canvas.</p>
+
+  <div class="hub-grid">
+
+    <!-- Background Grid -->
+    <a class="hub-card" href="background-grid.html">
+      <h2 class="hub-card__title">Background Grid</h2>
+      <p class="hub-card__desc">64px tile grid, zoom levels, left-edge shadow, and theme-aware line rendering.</p>
+    </a>
+
+    <!-- Pattern Textures -->
+    <a class="hub-card" href="pattern-textures.html">
+      <h2 class="hub-card__title">Pattern Textures</h2>
+      <p class="hub-card__desc">SVG fill patterns for zones, obstacles, soft/hard obstacles, keep-out areas, and dots.</p>
+    </a>
+
+    <!-- Map Shape Types -->
+    <a class="hub-card" href="map-shapes.html">
+      <h2 class="hub-card__title">Map Shape Types</h2>
+      <p class="hub-card__desc">Shape cards, state variants, AOZ breakdown, and composite map demo.</p>
+    </a>
+
+  </div>
+</main>
+
+<script src="../js/nav.js"></script>
+</body>
+</html>

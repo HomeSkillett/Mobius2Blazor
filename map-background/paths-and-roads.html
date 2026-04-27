@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mobius — Paths &amp; Roads</title>
+  <link id="mob-theme-link" rel="stylesheet" href="../styles/color-theme-tokens/LightTheme.css" />
+  <link rel="stylesheet" href="../styles/css/main.css" />
+  <link rel="stylesheet" href="../styles/fonts/font-imports.css" />
+  <style>
+    body { margin: 0; }
+    h1 {
+      font: var(--font-hdrMd);
+      margin: 0 0 32px;
+      color: var(--ForegroundStrong);
+    }
+    h2 {
+      font: var(--font-hdrSm);
+      margin: 40px 0 16px;
+      color: var(--ForegroundStrong);
+    }
+    h2:first-of-type { margin-top: 0; }
+    h3 {
+      font: var(--font-bodyMd);
+      font-weight: 600;
+      margin: 24px 0 12px;
+      color: var(--ForegroundPrimary);
+    }
+    .section-divider {
+      border: none;
+      border-top: var(--line-size) solid var(--InnerLines);
+      margin: 32px 0 0;
+    }
+    .section-note {
+      font: var(--font-bodySm);
+      color: var(--ForegroundDisabled);
+      margin-bottom: 16px;
+    }
+
+    /* ── Color swatch grid ── */
+    .swatch-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: var(--spacing-field);
+    }
+    .swatch-card {
+      background: var(--BackgroundSecondary);
+      border: var(--line-size) solid var(--InnerLines);
+      border-radius: var(--corner-radius);
+      padding: var(--spacing-field);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .swatch-card__color {
+      width: 48px;
+      height: 48px;
+      border-radius: 6px;
+      border: 1px solid var(--InnerLines);
+      flex-shrink: 0;
+    }
+    .swatch-card__info {
+      min-width: 0;
+    }
+    .swatch-card__label {
+      font: var(--font-bodySm);
+      font-weight: 600;
+      color: var(--ForegroundPrimary);
+    }
+    .swatch-card__token {
+      font-family: monospace;
+      font-size: 10px;
+      color: var(--ForegroundDisabled);
+      margin-top: 2px;
+      word-break: break-all;
+    }
+    .swatch-card__desc {
+      font: var(--font-bodySm);
+      color: var(--ForegroundSecondary);
+      margin-top: 4px;
+      font-size: 11px;
+      line-height: 1.4;
+    }
+
+    /* ── SVG demo canvases ── */
+    .demo-canvas {
+      background: var(--MapBackground);
+      border: var(--line-size) solid var(--InnerLines);
+      border-radius: var(--corner-radius);
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+
+    /* ── Anatomy cards ── */
+    .anatomy-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--spacing-field);
+    }
+    @media (max-width: 700px) {
+      .anatomy-grid { grid-template-columns: 1fr; }
+    }
+    .anatomy-card {
+      background: var(--BackgroundSecondary);
+      border: var(--line-size) solid var(--InnerLines);
+      border-radius: var(--corner-radius);
+      padding: var(--spacing-control-to-control);
+    }
+    .anatomy-card__title {
+      font: var(--font-bodyMd);
+      font-weight: 600;
+      color: var(--ForegroundPrimary);
+      margin-bottom: 8px;
+    }
+    .anatomy-card__detail {
+      font: var(--font-bodySm);
+      color: var(--ForegroundDisabled);
+      font-family: monospace;
+      font-size: 10px;
+      margin-top: 4px;
+    }
+
+    /* ── State row (horizontal cards) ── */
+    .state-demo {
+      display: flex;
+      gap: var(--spacing-field);
+      flex-wrap: wrap;
+    }
+    .state-demo__item {
+      background: var(--BackgroundSecondary);
+      border: var(--line-size) solid var(--InnerLines);
+      border-radius: var(--corner-radius);
+      padding: var(--spacing-field);
+      text-align: center;
+      min-width: 160px;
+      flex: 1;
+    }
+    .state-demo__label {
+      font: var(--font-bodySm);
+      color: var(--ForegroundPrimary);
+      margin-top: var(--spacing-label-to-control-sm);
+      font-weight: 600;
+    }
+    .state-demo__token {
+      font-family: monospace;
+      font-size: 10px;
+      color: var(--ForegroundDisabled);
+      margin-top: 2px;
+    }
+    .state-demo__desc {
+      font: var(--font-bodySm);
+      color: var(--ForegroundSecondary);
+      margin-top: 4px;
+      font-size: 11px;
+    }
+
+    /* ── Spec table ── */
+    .spec-table {
+      width: 100%;
+      border-collapse: collapse;
+      font: var(--font-bodySm);
+      margin-bottom: 16px;
+    }
+    .spec-table th {
+      text-align: left;
+      font-weight: 600;
+      color: var(--ForegroundPrimary);
+      padding: 6px 12px;
+      border-bottom: 2px solid var(--InnerLines);
+    }
+    .spec-table td {
+      padding: 6px 12px;
+      color: var(--ForegroundSecondary);
+      border-bottom: 1px solid var(--InnerLines);
+    }
+    .spec-table code {
+      font-family: monospace;
+      font-size: 10px;
+      color: var(--ForegroundDisabled);
+    }
+  </style>
+</head>
+<body>
+
+<div class="mob-layout">
+
+  <!-- Sidebar Navigation -->
+  <nav class="mob-nav" id="mob-nav"></nav>
+
+  <!-- Main Content -->
+  <main class="mob-layout__content">
+
+
+<!-- ════════════════════════════════════════════════════════════════
+     1. PAGE HEADER
+     ════════════════════════════════════════════════════════════════ -->
+<h1>Paths &amp; Roads</h1>
+<p class="section-note">
+  Visual reference for path rendering, assignment states, path points, road shapes, and connection lines
+  as defined in the Mobius WPF codebase. All colors map to CSS tokens from LightTheme.css.
+</p>
+
+
+<!-- ════════════════════════════════════════════════════════════════
+     2. PATH BUILDER — EDIT MODE COLORS
+     Source: LightTheme.xaml → LightTheme.css lines 220-229
+     Source: PathBuilderLayerControl.xaml line 173-182
+     ════════════════════════════════════════════════════════════════ -->
+<h2>Path Builder (Edit Mode)</h2>
+<p class="section-note">
+  Colors used when a path is being created or edited in the PathBuilder tool.
+  Paths render as a two-layer stroke: outer outline + inner fill, with round caps and joins.
+  Source: PathBuilderLayerControl.xaml, LightWeightPathDrawingControl.xaml.cs
+</p>
+
+<!-- SVG demo of path builder states -->
+<div class="demo-canvas">
+  <svg viewBox="0 0 700 200" xmlns="http://www.w3.org/2000/svg" style="display:block;">
+    <!-- Map background -->
+    <rect width="700" height="200" fill="var(--MapBackground)" />
+
+    <!-- Normal path -->
+    <!-- XAML: PathBuilderLayerControl.xaml — OutsideBrush=PathNormalOutlineBrush, InsideBrush=BackgroundStrongBrush -->
+    <polyline points="40,100 100,60 160,100 220,60"
+      stroke="var(--PathNormalOutline)" stroke-width="12" fill="none"
+      stroke-linecap="round" stroke-linejoin="round" />
+    <polyline points="40,100 100,60 160,100 220,60"
+      stroke="var(--BackgroundStrong)" stroke-width="8" fill="none"
+      stroke-linecap="round" stroke-linejoin="round" />
+    <!-- Control nodes -->
+    <circle cx="40"  cy="100" r="6" fill="var(--BackgroundStrong)" stroke="var(--PathNormalOutline)" stroke-width="2" />
+    <circle cx="100" cy="60"  r="6" fill="var(--BackgroundStrong)" stroke="var(--PathNormalOutline)" stroke-width="2" />
+    <circle cx="160" cy="100" r="6" fill="var(--BackgroundStrong)" stroke="var(--PathNormalOutline)" stroke-width="2" />
+    <circle cx="220" cy="60"  r="6" fill="var(--BackgroundStrong)" stroke="var(--PathNormalOutline)" stroke-width="2" />
+    <text x="130" y="150" text-anchor="middle" font-family="Roboto, sans-serif" font-size="11" fill="var(--ForegroundSecondary)">Normal</text>
+
+    <!-- Selected path -->
+    <polyline points="280,100 340,60 400,100 460,60"
+      stroke="var(--PathSelectedOutline)" stroke-width="12" fill="none"
+      stroke-linecap="round" stroke-linejoin="round" />
+    <polyline points="280,100 340,60 400,100 460,60"
+      stroke="var(--BackgroundStrong)" stroke-width="8" fill="none"
+      stroke-linecap="round" stroke-linejoin="round" />
+    <circle cx="280" cy="100" r="6" fill="var(--BackgroundStrong)" stroke="var(--PathSelectedOutline)" stroke-width="2" />
+    <circle cx="340" cy="60"  r="6" fill="var(--BackgroundStrong)" stroke="var(--PathSelectedOutline)" stroke-width="2" />
+    <circle cx="400" cy="100" r="6" fill="var(--BackgroundStrong)" stroke="var(--PathSelectedOutline)" stroke-width="2" />
+    <circle cx="460" cy="60"  r="6" fill="var(--BackgroundStrong)" stroke="var(--PathSelectedOutline)" stroke-width="2" />
+    <text x="370" y="150" text-anchor="middle" font-family="Roboto, sans-serif" font-size="11" fill="var(--ForegroundSecondary)">Selected</text>
+
+    <!-- Error / Undrivable path -->
+    <polyline points="520,100 580,60 640,100 660,80"
+      stroke="var(--PathErrorOutline)" stroke-width="12" fill="none"
+      stroke-linecap="round" stroke-linejoin="round" />
+    <polyline points="520,100 580,60 640,100 660,80"
+      stroke="var(--BackgroundStrong)" stroke-width="8" fill="none"
+      stroke-linecap="round" stroke-linejoin="round" />
+    <circle cx="520" cy="100" r="6" fill="var(--BackgroundStrong)" stroke="var(--PathErrorOutline)" stroke-width="2" />
+    <circle cx="580" cy="60"  r="6" fill="var(--BackgroundStrong)" stroke="var(--PathErrorOutline)" stroke-width="2" />
+    <circle cx="640" cy="100" r="6" fill="var(--BackgroundStrong)" stroke="var(--PathErrorOutline)" stroke-width="2" />
+    <circle cx="660" cy="80"  r="6" fill="var(--BackgroundStrong)" stroke="var(--PathErrorOutline)" stroke-width="2" />
+    <text x="590" y="150" text-anchor="middle" font-family="Roboto, sans-serif" font-size="11" fill="var(--ForegroundSecondary)">Error / Undrivable</text>
+  </svg>
+</div>
+
+<h3>Path Builder Color Tokens</h3>
+<div class="swatch-grid">
+  <div class="swatch-card">
+    <div class="swatch-card__color" style="background: var(--PathNormalOutline);"></div>
+    <div class="swatch-card__info">
+      <div class="swatch-card__label">Normal Outline</div>
+      <div class="swatch-card__token">--PathNormalOutline</div>
+      <div class="swatch-card__desc">Default path outline in edit mode</div>
+    </div>
+  </div>
+  <div class="swatch-card">
+    <div class="swatch-card__color" style="background: var(--PathNormalFill);"></div>
+    <div class="swatch-card__info">
+      <div class="swatch-card__label">Normal Fill</div>
+      <div class="swatch-card__token">--PathNormalFill</div>
+      <div class="swatch-card__desc">Semi-transparent gray fill (46.7% opacity)</div>
+    </div>
+  </div>
+  <div class="swatch-card">
+    <div class="swatch-card__color" style="background: var(--PathSelectedOutline);"></div>
+    <div class="swatch-card__info">
+      <div class="swatch-card__label">Selected Outline</div>
+      <div class="swatch-card__token">--PathSelectedOutline</div>
+      <div class="swatch-card__desc">Cyan outline when path is selected</div>
+    </div>
+  </div>
+  <div class="swatch-card">
+    <div class="swatch-card__color" style="background: var(--PathSelectedFill);"></div>
+    <div class="swatch-card__info">
+      <div class="swatch-card__label">Selected Fill</div>
+      <div class="swatch-card__token">--PathSelectedFill</div>
+      <div class="swatch-card__desc">Semi-transparent cyan fill (46.7% opacity)</div>
+    </div>
+  </div>
+  <div class="swatch-card">
+    <div class="swatch-card__color" style="background: var(--PathErrorOutline);"></div>
+    <div class="swatch-card__info">
+      <div class="swatch-card__label">Error Outline</div>
+      <div class="swatch-card__token">--PathErrorOutline</div>
+      <div class="swatch-card__desc">Red outline for undrivable segments</div>
+    </div>
+  </div>
+  <div class="swatch-card">
+    <div class="swatch-card__color" style="background: var(--PathErrorFill);"></div>
+    <div class="swatch-card__info">
+      <div class="swatch-card__label">Error Fill</div>
+      <div class="swatch-card__token">--PathErrorFill</div>
+      <div class="swatch-card__desc">Semi-transparent red fill (46.7% opacity)</div>
+    </div>
+  </div>
+  <div class="swatch-card">
+    <div class="swatch-card__color" style="background: var(--PathReverse);"></div>
+    <div class="swatch-card__info">
+      <div class="swatch-card__label">Reverse</div>
+      <div class="swatch-card__token">--PathReverse</div>
+      <div class="swatch-card__desc">Gray for reverse-direction segments</div>
+    </div>
+  </div>
+  <div class="swatch-card">
+    <div class="swatch-card__color" style="background: var(--PathHistory);"></div>
+    <div class="swatch-card__info">
+      <div class="swatch-card__label">History</div>
+      <div class="swatch-card__token">--PathHistory</div>
+      <div class="swatch-card__desc">Black at 20% opacity for historical paths</div>
+    </div>
+  </div>
+  <div class="swatch-card">
+    <div class="swatch-card__color" style="background: var(--PathAction);"></div>
+    <div class="swatch-card__info">
+      <div class="swatch-card__label">Action</div>
+      <div class="swatch-card__token">--PathAction</div>
+      <div class="swatch-card__desc">Dark gray for action markers on path</div>
+    </div>
+  </div>
+</div>
+
+<h3>Path Builder Stroke Anatomy</h3>
+<p class="section-note">
+  Source: PathBuilderLayerControl.xaml lines 173-182, LightWeightPathDrawingControl.xaml.cs
+</p>
+<div class="anatomy-grid">
+  <div class="anatomy-card">
+    <div class="anatomy-card__title">Outer Stroke (Outline)</div>
+    <div class="anatomy-card__detail">OutsideWidth = 12px</div>
+    <div class="anatomy-card__detail">LineCap = Round, LineJoin = Round</div>
+    <div class="anatomy-card__detail">Brush: PathNormalOutlineBrush (or Selected/Error)</div>
+  </div>
+  <div class="anatomy-card">
+    <div class="anatomy-card__title">Inner Stroke (Fill)</div>
+    <div class="anatomy-card__detail">InsideWidth = 8px</div>
+    <div class="anatomy-card__detail">LineCap = Round, LineJoin = Round</div>
+    <div class="anatomy-card__detail">Brush: BackgroundStrongBrush (white)</div>
+  </div>
+  <div class="anatomy-card">
+    <div class="anatomy-card__title">Control Node (Circle)</div>
+    <div class="anatomy-card__detail">CircleRadius = 6px</div>
+    <div class="anatomy-card__detail">CircleWidth = 2px (pen thickness)</div>
+    <div class="anatomy-card__detail">Fill: BackgroundStrongBrush, Stroke: varies by drivability</div>
+  </div>
+  <div class="anatomy-card">
+    <div class="anatomy-card__title">Rendering Layers</div>
+    <div class="anatomy-card__detail">1. Outer stroke at 12px (colored outline)</div>
+    <div class="anatomy-card__detail">2. Inner stroke at 8px (white fill)</div>
+    <div class="anatomy-card__detail">3. Control nodes at each ControlNode point</div>
+  </div>
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- ════════════════════════════════════════════════════════════════
+     3. PATH ASSIGNMENT STATES
+     Source: LightTheme.xaml → LightTheme.css lines 200-218
+     Source: AssignmentRenderingControl.xaml.cs
+     Source: IObjective.cs — AssignmentStatus enum
+     ════════════════════════════════════════════════════════════════ -->
+<h2>Path Assignment States</h2>
+<p class="section-note">
+  When a path is assigned to a vehicle, it renders in one of four assignment states
+  based on the AssignmentStatus enum (IObjective.cs). Each state has outline, fill,
+  and connection colors with selected/not-selected variants.
+</p>
+
+<!-- SVG demo: all four assignment states -->
+<div class="demo-canvas">
+  <svg viewBox="0 0 700 220" xmlns="http://www.w3.org/2000/svg" style="display:block;">
+    <rect width="700" height="220" fill="var(--MapBackground)" />
+
+    <!-- Planning (purple) -->
+    <polyline points="30,70 80,40 130,70 170,50"
+      stroke="var(--PathAssignment_Planning_Outline)" stroke-width="8" fill="none"
+      stroke-linecap="round" stroke-linejoin="round" />
+    <polyline points="30,70 80,40 130,70 170,50"
+      stroke="var(--PathAssignment_Planning_Fill)" stroke-width="4" fill="none"
+      stroke-linecap="round" stroke-linejoin="round" />
+    <!-- Connection line -->
+    <line x1="170" y1="50" x2="170" y2="120"
+      stroke="var(--PathAssignment_Planning_Connection_Outline)" stroke-width="2"
+      stroke-dasharray="4 4" />
+    <text x="100" y="105" text-anchor="middle" font-family="Roboto, sans-serif" font-size="11" fill="var(--ForegroundSecondary)">Planning</text>
+    <text x="100" y="120" text-anchor="middle" font-family="Roboto, sans-serif" font-size="9" fill="var(--ForegroundDisabled)">Purple</text>
+
+    <!-- Planned - Not Selected (dim green) -->
+    <polyline points="210,70 260,40 310,70 350,50"
+      stroke="var(--PathAssignment_Planned_NotSelected_Outline)" stroke-width="4" fill="none"
+      stroke-linecap="round" stroke-linejoin="round" />
+    <polyline points="210,70 260,40 310,70 350,50"
+      stroke="var(--PathAssignment_Planned_NotSelected_Fill)" stroke-width="2" fill="none"
+      stroke-linecap="round" stroke-linejoin="round" />
+    <text x="280" y="105" text-anchor="middle" font-family="Roboto, sans-serif" font-size="11" fill="var(--ForegroundSecondary)">Planned</text>
+    <text x="280" y="120" text-anchor="middle" font-family="Roboto, sans-serif" font-size="9" fill="var(--ForegroundDisabled)">Green (dim = not selected)</text>
+
+    <!-- Planned - Selected (bright green) -->
+    <polyline points="210,160 260,130 310,160 350,140"
+      stroke="var(--PathAssignment_Planned_Selected_Outline)" stroke-width="8" fill="none"
+      stroke-linecap="round" stroke-linejoin="round" />
+    <polyline points="210,160 260,130 310,160 350,140"
+      stroke="var(--PathAssignment_Planned_Selected_Fill)" stroke-width="4" fill="none"
+      stroke-linecap="round" stroke-linejoin="round" />
+    <text x="280" y="195" text-anchor="middle" font-family="Roboto, sans-serif" font-size="11" fill="var(--ForegroundSecondary)">Planned (Selected)</text>
+    <text x="280" y="210" text-anchor="middle" font-family="Roboto, sans-serif" font-size="9" fill="var(--ForegroundDisabled)">Green (bright = selected)</text>
+
+    <!-- Executing - Not Selected (dim yellow) -->
+    <polyline points="400,70 450,40 500,70 540,50"
+      stroke="var(--PathAssignment_Executing_NotSelected_Outline)" stroke-width="5" fill="none"
+      stroke-linecap="round" stroke-linejoin="round" />
+    <polyline points="400,70 450,40 500,70 540,50"
+      stroke="var(--PathAssignment_Executing_NotSelected_Fill)" stroke-width="2.5" fill="none"
+      stroke-linecap="round" stroke-linejoin="round" />
+    <text x="470" y="105" text-anchor="middle" font-family="Roboto, sans-serif" font-size="11" fill="var(--ForegroundSecondary)">Executing</text>
+    <text x="470" y="120" text-anchor="middle" font-family="Roboto, sans-serif" font-size="9" fill="var(--ForegroundDisabled)">Yellow (dim = not selected)</text>
+
+    <!-- Error (red) -->
+    <polyline points="590,70 630,40 660,70 680,55"
+      stroke="var(--PathAssignment_Error_Outline)" stroke-width="8" fill="none"
+      stroke-linecap="round" stroke-linejoin="round" />
+    <polyline points="590,70 630,40 660,70 680,55"
+      stroke="var(--PathAssignment_Error_Fill)" stroke-width="4" fill="none"
+      stroke-linecap="round" stroke-linejoin="round" />
+    <line x1="680" y1="55" x2="680" y2="90"
+      stroke="var(--PathAssignment_Error_Connection_Outline)" stroke-width="2"
+      stroke-dasharray="4 4" />
+    <text x="635" y="105" text-anchor="middle" font-family="Roboto, sans-serif" font-size="11" fill="var(--ForegroundSecondary)">Error</text>
+    <text x="635" y="120" text-anchor="middle" font-family="Roboto, sans-serif" font-size="9" fill="var(--ForegroundDisabled)">Red</text>
+  </svg>
+</div>
+
+<h3>Assignment State: Planning</h3>
+<p class="section-note">AssignmentStatus.Planning — path is being computed by the planner. Always renders at full opacity (no selected/not-selected variant).</p>
+<div class="swatch-grid">
+  <div class="swatch-card">
+    <div class="swatch-card__color" style="background: var(--PathAssignment_Planning_Outline);"></div>
+    <div class="swatch-card__info">
+      <div class="swatch-card__label">Planning Outline</div>
+      <div class="swatch-card__token">--PathAssignment_Planning_Outline</div>
+      <div class="swatch-card__desc">Light purple, rgba(192, 157, 243, 1)</div>
+    </div>
+  </div>
+  <div class="swatch-card">
+    <div class="swatch-card__color" style="background: var(--PathAssignment_Planning_Fill);"></div>
+    <div class="swatch-card__info">
+      <div class="swatch-card__label">Planning Fill</div>
+      <div class="swatch-card__token">--PathAssignment_Planning_Fill</div>
+      <div class="swatch-card__desc">Light purple at 46.7% opacity</div>
+    </div>
+  </div>
+  <div class="swatch-card">
+    <div class="swatch-card__color" style="background: var(--PathAssignment_Planning_Connection_Outline);"></div>
+    <div class="swatch-card__info">
+      <div class="swatch-card__label">Planning Connection</div>
+      <div class="swatch-card__token">--PathAssignment_Planning_Connection_Outline</div>
+      <div class="swatch-card__desc">Darker purple for connection lines between segments</div>
+    </div>
+  </div>
+</div>
+
+<h3>Assignment State: Planned</h3>
+<p class="section-note">AssignmentStatus.Planned — plan is complete, waiting to execute. Has selected and not-selected variants.</p>
+<div class="swatch-grid">
+  <div class="swatch-card">
+    <div class="swatch-card__color" style="background: var(--PathAssignment_Planned_NotSelected_Outline);"></div>
+    <div class="swatch-card__info">
+      <div class="swatch-card__label">Planned (Not Selected) Outline</div>
+      <div class="swatch-card__token">--PathAssignment_Planned_NotSelected_Outline</div>
+      <div class="swatch-card__desc">Green at 33.3% opacity</div>
+    </div>
+  </div>
+  <div class="swatch-card">
+    <div class="swatch-card__color" style="background: var(--PathAssignment_Planned_NotSelected_Fill);"></div>
+    <div class="swatch-card__info">
+      <div class="swatch-card__label">Planned (Not Selected) Fill</div>
+      <div class="swatch-card__token">--PathAssignment_Planned_NotSelected_Fill</div>
+      <div class="swatch-card__desc">Green at 13.3% opacity</div>
+    </div>
+  </div>
+  <div class="swatch-card">
+    <div class="swatch-card__color" style="background: var(--PathAssignment_Planned_Selected_Outline);"></div>
+    <div class="swatch-card__info">
+      <div class="swatch-card__label">Planned (Selected) Outline</div>
+      <div class="swatch-card__token">--PathAssignment_Planned_Selected_Outline</div>
+      <div class="swatch-card__desc">Full-opacity green, rgba(153, 209, 53, 1)</div>
+    </div>
+  </div>
+  <div class="swatch-card">
+    <div class="swatch-card__color" style="background: var(--PathAssignment_Planned_Selected_Fill);"></div>
+    <div class="swatch-card__info">
+      <div class="swatch-card__label">Planned (Selected) Fill</div>
+      <div class="swatch-card__token">--PathAssignment_Planned_Selected_Fill</div>
+      <div class="swatch-card__desc">Green at 46.7% opacity</div>
+    </div>
+  </div>
+  <div class="swatch-card">
+    <div class="swatch-card__color" style="background: var(--PathAssignment_Planned_Connection_NotSelected_Outline);"></div>
+    <div class="swatch-card__info">
+      <div class="swatch-card__label">Planned Connection (Not Selected)</div>
+      <div class="swatch-card__token">--PathAssignment_Planned_Connection_NotSelected_Outline</div>
+      <div class="swatch-card__desc">Olive green at 33.3% opacity</div>
+    </div>
+  </div>
+  <div class="swatch-card">
+    <div class="swatch-card__color" style="background: var(--PathAssignment_Planned_Connection_Selected_Outline);"></div>
+    <div class="swatch-card__info">
+      <div class="swatch-card__label">Planned Connection (Selected)</div>
+      <div class="swatch-card__token">--PathAssignment_Planned_Connection_Selected_Outline</div>
+      <div class="swatch-card__desc">Full-opacity olive green</div>
+    </div>
+  </div>
+</div>
+
+<h3>Assignment State: Executing</h3>
+<p class="section-note">AssignmentStatus.Executing — vehicle is actively driving the path. Has selected and not-selected variants.</p>
+<div class="swatch-grid">
+  <div class="swatch-card">
+    <div class="swatch-card__color" style="background: var(--PathAssignment_Executing_NotSelected_Outline);"></div>
+    <div class="swatch-card__info">
+      <div class="swatch-card__label">Executing (Not Selected) Outline</div>
+      <div class="swatch-card__token">--PathAssignment_Executing_NotSelected_Outline</div>
+      <div class="swatch-card__desc">Yellow at 33.3% opacity</div>
+    </div>
+  </div>
+  <div class="swatch-card">
+    <div class="swatch-card__color" style="background: var(--PathAssignment_Executing_NotSelected_Fill);"></div>
+    <div class="swatch-card__info">
+      <div class="swatch-card__label">Executing (Not Selected) Fill</div>
+      <div class="swatch-card__token">--PathAssignment_Executing_NotSelected_Fill</div>
+      <div class="swatch-card__desc">Yellow at 13.3% opacity</div>
+    </div>
+  </div>
+  <div class="swatch-card">
+    <div class="swatch-card__color" style="background: var(--PathAssignment_Executing_Selected_Outline);"></div>
+    <div class="swatch-card__info">
+      <div class="swatch-card__label">Executing (Selected) Outline</div>
+      <div class="swatch-card__token">--PathAssignment_Executing_Selected_Outline</div>
+      <div class="swatch-card__desc">Full-opacity yellow, rgba(254, 209, 0, 1)</div>
+    </div>
+  </div>
+  <div class="swatch-card">
+    <div class="swatch-card__color" style="background: var(--PathAssignment_Executing_Selected_Fill);"></div>
+    <div class="swatch-card__info">
+      <div class="swatch-card__label">Executing (Selected) Fill</div>
+      <div class="swatch-card__token">--PathAssignment_Executing_Selected_Fill</div>
+      <div class="swatch-card__desc">Yellow at 46.7% opacity</div>
+    </div>
+  </div>
+  <div class="swatch-card">
+    <div class="swatch-card__color" style="background: var(--PathAssignment_Executing_Connection_NotSelected_Outline);"></div>
+    <div class="swatch-card__info">
+      <div class="swatch-card__label">Executing Connection (Not Selected)</div>
+      <div class="swatch-card__token">--PathAssignment_Executing_Connection_NotSelected_Outline</div>
+      <div class="swatch-card__desc">Orange at 33.3% opacity</div>
+    </div>
+  </div>
+  <div class="swatch-card">
+    <div class="swatch-card__color" style="background: var(--PathAssignment_Executing_Connection_Selected_Outline);"></div>
+    <div class="swatch-card__info">
+      <div class="swatch-card__label">Executing Connection (Selected)</div>
+      <div class="swatch-card__token">--PathAssignment_Executing_Connection_Selected_Outline</div>
+      <div class="swatch-card__desc">Full-opacity orange</div>
+    </div>
+  </div>
+</div>
+
+<h3>Assignment State: Error</h3>
+<p class="section-note">AssignmentStatus.PlanFailed or ExecutionFailed — assignment has encountered an error. No selected/not-selected variant; always renders at full opacity.</p>
+<div class="swatch-grid">
+  <div class="swatch-card">
+    <div class="swatch-card__color" style="background: var(--PathAssignment_Error_Outline);"></div>
+    <div class="swatch-card__info">
+      <div class="swatch-card__label">Error Outline</div>
+      <div class="swatch-card__token">--PathAssignment_Error_Outline</div>
+      <div class="swatch-card__desc">Bright red, rgba(237, 41, 57, 1)</div>
+    </div>
+  </div>
+  <div class="swatch-card">
+    <div class="swatch-card__color" style="background: var(--PathAssignment_Error_Fill);"></div>
+    <div class="swatch-card__info">
+      <div class="swatch-card__label">Error Fill</div>
+      <div class="swatch-card__token">--PathAssignment_Error_Fill</div>
+      <div class="swatch-card__desc">Red at 46.7% opacity</div>
+    </div>
+  </div>
+  <div class="swatch-card">
+    <div class="swatch-card__color" style="background: var(--PathAssignment_Error_Connection_Outline);"></div>
+    <div class="swatch-card__info">
+      <div class="swatch-card__label">Error Connection</div>
+      <div class="swatch-card__token">--PathAssignment_Error_Connection_Outline</div>
+      <div class="swatch-card__desc">Dark red for connection lines, rgba(180, 25, 44, 1)</div>
+    </div>
+  </div>
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- ════════════════════════════════════════════════════════════════
+     4. ASSIGNMENT STROKE WIDTHS
+     Source: AssignmentRenderingControl.xaml.cs lines 132-174
+     ════════════════════════════════════════════════════════════════ -->
+<h2>Assignment Stroke Widths</h2>
+<p class="section-note">
+  Path assignment width varies by selection state and execution status.
+  All values are in world units (scaled by map zoom). Source: AssignmentRenderingControl.xaml.cs
+</p>
+
+<table class="spec-table">
+  <thead>
+    <tr>
+      <th>State</th>
+      <th>Width (world units)</th>
+      <th>Source</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Not Selected, Not Executing</td>
+      <td>1.75</td>
+      <td><code>NotSelectedNotExecutingWidth — line 134</code></td>
+    </tr>
+    <tr>
+      <td>Not Selected, Executing</td>
+      <td>2.25</td>
+      <td><code>NotSelectedIsExecutingWidth — line 138</code></td>
+    </tr>
+    <tr>
+      <td>Selected, Not Executing</td>
+      <td>3.50</td>
+      <td><code>IsSelectedNotExecutingWidth — line 142</code></td>
+    </tr>
+    <tr>
+      <td>Selected, Executing</td>
+      <td>4.00</td>
+      <td><code>IsSelectedIsExecutingWidth — line 146</code></td>
+    </tr>
+    <tr>
+      <td>Actions Active, Not Selected</td>
+      <td>2.00</td>
+      <td><code>ActionsAreActivePathNotSelectedWidth — line 150</code></td>
+    </tr>
+    <tr>
+      <td>Actions Active, Selected</td>
+      <td>4.50</td>
+      <td><code>ActionsAreActivePathIsSelectedWidth — line 154</code></td>
+    </tr>
+  </tbody>
+</table>
+
+
+<hr class="section-divider" />
+
+
+<!-- ════════════════════════════════════════════════════════════════
+     5. PATH POINTS
+     Source: AssignmentRenderingControl.xaml.cs lines 156-174
+     Source: LightWeightPathDrawingControl.xaml.cs lines 286-294
+     ════════════════════════════════════════════════════════════════ -->
+<h2>Path Points</h2>
+<p class="section-note">
+  Points are rendered at control nodes, action markers, endpoints, and connection points.
+  All are circles (ellipses) drawn via DrawEllipse(). Source: AssignmentRenderingControl.xaml.cs
+</p>
+
+<!-- SVG demo: point types -->
+<div class="demo-canvas">
+  <svg viewBox="0 0 700 200" xmlns="http://www.w3.org/2000/svg" style="display:block;">
+    <rect width="700" height="200" fill="var(--MapBackground)" />
+
+    <!-- Control Node -->
+    <circle cx="80" cy="80" r="6" fill="var(--BackgroundStrong)" stroke="var(--PathNormalOutline)" stroke-width="2" />
+    <text x="80" y="120" text-anchor="middle" font-family="Roboto, sans-serif" font-size="11" font-weight="600" fill="var(--ForegroundPrimary)">Control Node</text>
+    <text x="80" y="135" text-anchor="middle" font-family="monospace" font-size="9" fill="var(--ForegroundDisabled)">r=6, stroke=2</text>
+    <text x="80" y="148" text-anchor="middle" font-family="monospace" font-size="9" fill="var(--ForegroundDisabled)">PathBuilderLayerControl.xaml:173</text>
+
+    <!-- Action Marker -->
+    <circle cx="230" cy="80" r="4" fill="var(--PathAction)" stroke="var(--PathAction)" stroke-width="2" />
+    <text x="230" y="120" text-anchor="middle" font-family="Roboto, sans-serif" font-size="11" font-weight="600" fill="var(--ForegroundPrimary)">Action Marker</text>
+    <text x="230" y="135" text-anchor="middle" font-family="monospace" font-size="9" fill="var(--ForegroundDisabled)">CircleActionRadius=2.0</text>
+    <text x="230" y="148" text-anchor="middle" font-family="monospace" font-size="9" fill="var(--ForegroundDisabled)">AssignmentRenderingControl:158</text>
+
+    <!-- Last Point (Endpoint) -->
+    <circle cx="400" cy="80" r="12" fill="none" stroke="var(--PathAssignment_Executing_Selected_Outline)" stroke-width="2" />
+    <circle cx="400" cy="80" r="5" fill="var(--PathAssignment_Executing_Selected_Outline)" stroke="none" />
+    <text x="400" y="120" text-anchor="middle" font-family="Roboto, sans-serif" font-size="11" font-weight="600" fill="var(--ForegroundPrimary)">Last Point (Endpoint)</text>
+    <text x="400" y="135" text-anchor="middle" font-family="monospace" font-size="9" fill="var(--ForegroundDisabled)">Inner r=5, Outer r=12</text>
+    <text x="400" y="148" text-anchor="middle" font-family="monospace" font-size="9" fill="var(--ForegroundDisabled)">AssignmentRenderingControl:162-166</text>
+
+    <!-- Connection Point -->
+    <circle cx="590" cy="80" r="20" fill="none" stroke="var(--PathAssignment_Planning_Connection_Outline)" stroke-width="1.5" stroke-dasharray="4 3" />
+    <circle cx="590" cy="80" r="12" fill="var(--PathAssignment_Planning_Connection_Outline)" fill-opacity="0.3" stroke="var(--PathAssignment_Planning_Connection_Outline)" stroke-width="2" />
+    <text x="590" y="120" text-anchor="middle" font-family="Roboto, sans-serif" font-size="11" font-weight="600" fill="var(--ForegroundPrimary)">Connection Point</text>
+    <text x="590" y="135" text-anchor="middle" font-family="monospace" font-size="9" fill="var(--ForegroundDisabled)">Inner r=12, Outer r=20</text>
+    <text x="590" y="148" text-anchor="middle" font-family="monospace" font-size="9" fill="var(--ForegroundDisabled)">AssignmentRenderingControl:170-174</text>
+  </svg>
+</div>
+
+<h3>Point Dimensions</h3>
+<table class="spec-table">
+  <thead>
+    <tr>
+      <th>Point Type</th>
+      <th>Radius (world units)</th>
+      <th>Description</th>
+      <th>Source</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Control Node</td>
+      <td>6 (radius), 2 (pen)</td>
+      <td>Circle at each editable node in PathBuilder. Fill = BackgroundStrong, stroke = outline color.</td>
+      <td><code>PathBuilderLayerControl.xaml:173-174</code></td>
+    </tr>
+    <tr>
+      <td>Action Marker</td>
+      <td>2.0</td>
+      <td>Small dot at action points along an assigned path. Uses PathAction brush.</td>
+      <td><code>CircleActionRadius — line 158</code></td>
+    </tr>
+    <tr>
+      <td>Last Point (Inner)</td>
+      <td>5.0</td>
+      <td>Filled inner circle at the assignment endpoint.</td>
+      <td><code>LastPointInnerRadius — line 162</code></td>
+    </tr>
+    <tr>
+      <td>Last Point (Outer)</td>
+      <td>12.0</td>
+      <td>Outer ring at the assignment endpoint. Creates a target/bullseye effect.</td>
+      <td><code>LastPointOuterRadius — line 166</code></td>
+    </tr>
+    <tr>
+      <td>Connection Point (Inner)</td>
+      <td>12.0</td>
+      <td>Filled circle at connection segment endpoints.</td>
+      <td><code>ConnectionPointInnerRadius — line 170</code></td>
+    </tr>
+    <tr>
+      <td>Connection Point (Outer)</td>
+      <td>20.0</td>
+      <td>Outer boundary circle at connection endpoints.</td>
+      <td><code>ConnectionPointOuterRadius — line 174</code></td>
+    </tr>
+  </tbody>
+</table>
+
+
+<hr class="section-divider" />
+
+
+<!-- ════════════════════════════════════════════════════════════════
+     6. ROAD SHAPES
+     Source: LightTheme.css lines 140-148
+     Source: RoadShapeControl.xaml
+     ════════════════════════════════════════════════════════════════ -->
+<h2>Road Shapes</h2>
+<p class="section-note">
+  Roads are drawn as filled polygons with outline, center lines, and edge fills.
+  Intersections are separate shapes. Source: RoadShapeControl.xaml, LightTheme.css lines 140-148
+</p>
+
+<!-- SVG demo: road shape -->
+<div class="demo-canvas">
+  <svg viewBox="0 0 700 200" xmlns="http://www.w3.org/2000/svg" style="display:block;">
+    <rect width="700" height="200" fill="var(--MapBackground)" />
+
+    <!-- Road segment -->
+    <!-- Outer edge fill -->
+    <rect x="40" y="60" width="300" height="80" rx="4"
+      fill="var(--RoadShapeEdgeFill)" stroke="none" />
+    <!-- Inner road fill -->
+    <rect x="42" y="62" width="296" height="76" rx="3"
+      fill="var(--RoadShapeFill)" stroke="var(--RoadShapeOutline)" stroke-width="2" />
+    <!-- Center line (yellow double line) -->
+    <line x1="50" y1="100" x2="330" y2="100"
+      stroke="var(--RoadShapeDoubleCenterLine)" stroke-width="2" />
+
+    <text x="190" y="155" text-anchor="middle" font-family="Roboto, sans-serif" font-size="11" font-weight="600" fill="var(--ForegroundPrimary)">Road Segment</text>
+
+    <!-- Intersection -->
+    <rect x="420" y="50" width="100" height="100" rx="4"
+      fill="var(--IntersectionShapeFill)" stroke="var(--IntersectionShapeOutline)" stroke-width="1" />
+    <rect x="424" y="54" width="92" height="92" rx="2"
+      fill="none" stroke="var(--IntersectionShapeInnerBorder)" stroke-width="1" />
+
+    <text x="470" y="175" text-anchor="middle" font-family="Roboto, sans-serif" font-size="11" font-weight="600" fill="var(--ForegroundPrimary)">Intersection</text>
+  </svg>
+</div>
+
+<h3>Road Shape Tokens</h3>
+<div class="swatch-grid">
+  <div class="swatch-card">
+    <div class="swatch-card__color" style="background: var(--RoadShapeFill);"></div>
+    <div class="swatch-card__info">
+      <div class="swatch-card__label">Road Fill</div>
+      <div class="swatch-card__token">--RoadShapeFill</div>
+      <div class="swatch-card__desc">White, the road surface</div>
+    </div>
+  </div>
+  <div class="swatch-card">
+    <div class="swatch-card__color" style="background: var(--RoadShapeOutline);"></div>
+    <div class="swatch-card__info">
+      <div class="swatch-card__label">Road Outline</div>
+      <div class="swatch-card__token">--RoadShapeOutline</div>
+      <div class="swatch-card__desc">Light gray road border, 2px width</div>
+    </div>
+  </div>
+  <div class="swatch-card">
+    <div class="swatch-card__color" style="background: var(--RoadShapeDoubleCenterLine);"></div>
+    <div class="swatch-card__info">
+      <div class="swatch-card__label">Center Line</div>
+      <div class="swatch-card__token">--RoadShapeDoubleCenterLine</div>
+      <div class="swatch-card__desc">Bright yellow double center line, 2px width</div>
+    </div>
+  </div>
+  <div class="swatch-card">
+    <div class="swatch-card__color" style="background: var(--RoadShapeEdgeFill);"></div>
+    <div class="swatch-card__info">
+      <div class="swatch-card__label">Edge Fill</div>
+      <div class="swatch-card__token">--RoadShapeEdgeFill</div>
+      <div class="swatch-card__desc">Amber edge/shoulder fill, 86.7% opacity, 1px</div>
+    </div>
+  </div>
+  <div class="swatch-card">
+    <div class="swatch-card__color" style="background: var(--IntersectionShapeFill);"></div>
+    <div class="swatch-card__info">
+      <div class="swatch-card__label">Intersection Fill</div>
+      <div class="swatch-card__token">--IntersectionShapeFill</div>
+      <div class="swatch-card__desc">Light gray intersection surface</div>
+    </div>
+  </div>
+  <div class="swatch-card">
+    <div class="swatch-card__color" style="background: var(--IntersectionShapeOutline);"></div>
+    <div class="swatch-card__info">
+      <div class="swatch-card__label">Intersection Outline</div>
+      <div class="swatch-card__token">--IntersectionShapeOutline</div>
+      <div class="swatch-card__desc">Medium gray intersection border, 1px</div>
+    </div>
+  </div>
+  <div class="swatch-card">
+    <div class="swatch-card__color" style="background: var(--IntersectionShapeInnerBorder);"></div>
+    <div class="swatch-card__info">
+      <div class="swatch-card__label">Intersection Inner Border</div>
+      <div class="swatch-card__token">--IntersectionShapeInnerBorder</div>
+      <div class="swatch-card__desc">White inner border ring inside intersection</div>
+    </div>
+  </div>
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- ════════════════════════════════════════════════════════════════
+     7. ROAD GRADES
+     Source: LightTheme.css lines 300-303
+     ════════════════════════════════════════════════════════════════ -->
+<h2>Road Grades</h2>
+<p class="section-note">
+  Visual indicators for road slope/grade. Source: LightTheme.css lines 300-303
+</p>
+
+<div class="swatch-grid">
+  <div class="swatch-card">
+    <div class="swatch-card__color" style="background: var(--RoadGradesTriangleFill); border: 2px solid var(--RoadGradesTriangleBorder);"></div>
+    <div class="swatch-card__info">
+      <div class="swatch-card__label">Grade Triangle</div>
+      <div class="swatch-card__token">--RoadGradesTriangleBorder / --RoadGradesTriangleFill</div>
+      <div class="swatch-card__desc">Gray triangle indicator for road grade. Border 30.2%, Fill 10.2% opacity.</div>
+    </div>
+  </div>
+  <div class="swatch-card">
+    <div class="swatch-card__color" style="background: var(--RoadGradesUniversalDownHillWedge);"></div>
+    <div class="swatch-card__info">
+      <div class="swatch-card__label">Downhill Wedge</div>
+      <div class="swatch-card__token">--RoadGradesUniversalDownHillWedge</div>
+      <div class="swatch-card__desc">Black wedge indicating downhill direction</div>
+    </div>
+  </div>
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- ════════════════════════════════════════════════════════════════
+     8. ASSIGNMENT STATUS ENUM REFERENCE
+     Source: IObjective.cs
+     ════════════════════════════════════════════════════════════════ -->
+<h2>AssignmentStatus Enum</h2>
+<p class="section-note">
+  The C# enum that drives path color selection. Source: Asi.Interfaces.Shared/Objectives/IObjective.cs
+</p>
+
+<table class="spec-table">
+  <thead>
+    <tr>
+      <th>Enum Value</th>
+      <th>Color Family</th>
+      <th>Meaning</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>Planning</code></td>
+      <td>Purple</td>
+      <td>Path is being computed by the planner</td>
+    </tr>
+    <tr>
+      <td><code>Planned</code></td>
+      <td>Green</td>
+      <td>Plan complete, waiting to execute</td>
+    </tr>
+    <tr>
+      <td><code>PlanFailed</code></td>
+      <td>Red (Error)</td>
+      <td>Planning failed</td>
+    </tr>
+    <tr>
+      <td><code>Executing</code></td>
+      <td>Yellow</td>
+      <td>Vehicle is actively driving the path</td>
+    </tr>
+    <tr>
+      <td><code>ExecutionFailed</code></td>
+      <td>Red (Error)</td>
+      <td>Execution encountered an error</td>
+    </tr>
+    <tr>
+      <td><code>Completed</code></td>
+      <td>—</td>
+      <td>Assignment finished (not rendered on map)</td>
+    </tr>
+    <tr>
+      <td><code>Cleared</code></td>
+      <td>—</td>
+      <td>Assignment cleared/removed</td>
+    </tr>
+  </tbody>
+</table>
+
+
+  </main>
+
+</div>
+
+<script src="../js/nav.js"></script>
+</body>
+</html>

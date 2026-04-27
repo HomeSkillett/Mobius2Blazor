@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mobius — Pattern Textures</title>
+  <link id="mob-theme-link" rel="stylesheet" href="../styles/color-theme-tokens/LightTheme.css" />
+  <link rel="stylesheet" href="../styles/css/main.css" />
+  <link rel="stylesheet" href="../styles/map-background.css" />
+  <style>
+    body { margin: 0; }
+    h1 {
+      font: var(--font-hdrMd);
+      margin: 0 0 32px;
+      color: var(--ForegroundStrong);
+    }
+    h2 {
+      font: var(--font-hdrSm);
+      margin: 40px 0 16px;
+      color: var(--ForegroundStrong);
+    }
+    h2:first-of-type { margin-top: 0; }
+    h3 {
+      font: var(--font-bodyMd);
+      font-weight: 600;
+      margin: 24px 0 12px;
+      color: var(--ForegroundPrimary);
+    }
+    .section-divider {
+      border: none;
+      border-top: var(--line-size) solid var(--InnerLines);
+      margin: 32px 0 0;
+    }
+    .section-note {
+      font: var(--font-bodySm);
+      color: var(--ForegroundDisabled);
+      margin-bottom: 16px;
+    }
+
+    /* Shape card grid */
+    .shape-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: var(--spacing-field);
+    }
+    .shape-card {
+      background: var(--BackgroundSecondary);
+      border: var(--line-size) solid var(--InnerLines);
+      border-radius: var(--corner-radius);
+      padding: var(--spacing-field);
+      text-align: center;
+    }
+    .shape-card svg {
+      display: block;
+      margin: 0 auto;
+    }
+    .shape-card__label {
+      font: var(--font-bodySm);
+      color: var(--ForegroundPrimary);
+      margin-top: var(--spacing-label-to-control-sm);
+    }
+    .shape-card__token {
+      font: var(--font-bodySm);
+      color: var(--ForegroundDisabled);
+      margin-top: 2px;
+      font-family: monospace;
+      font-size: 10px;
+    }
+    .shape-card__desc {
+      font: var(--font-bodySm);
+      color: var(--ForegroundSecondary);
+      margin-top: 4px;
+      font-size: 11px;
+      line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+
+<div class="mob-layout">
+
+  <!-- Sidebar Navigation -->
+  <nav class="mob-nav" id="mob-nav"></nav>
+
+  <!-- Main Content -->
+  <main class="mob-layout__content">
+
+
+  <!-- ============================================================
+       SVG Pattern Definitions (shared across all SVGs on this page)
+       Source: Common/Asi.Resources.Client.UI/Themes/Brushes/Brushes.xaml lines 22-112
+       Source: Common/Asi.CommonControls.Client.UI/Converters/PatternBrushMultiConverter.cs
+
+       How PatternBrushMultiConverter works:
+       1. Fills a unit square with the BACKGROUND color
+       2. Overlays the pattern geometry with the FOREGROUND color
+       3. Tiles the result at the specified viewport size
+       4. Optionally scales by MetersPerPixel
+       ============================================================ -->
+  <svg width="0" height="0" style="position: absolute;">
+    <defs>
+
+      <!-- PATTERN: Zone (Checkerboard) — Brushes.xaml:22-29
+           Viewport="0,0,4,4", Geometry: M0,0 H0.5 V0.5 H0 Z (quarter square) -->
+
+      <!-- Reference fill -->
+      <pattern id="pattern-zone-reference" patternUnits="userSpaceOnUse" width="4" height="4">
+        <rect width="4" height="4" fill="rgba(204, 204, 204, 0.15)"/>
+        <rect width="2" height="2" fill="rgba(204, 204, 204, 0.267)"/>
+      </pattern>
+
+      <!-- Station fill -->
+      <pattern id="pattern-zone-station" patternUnits="userSpaceOnUse" width="4" height="4">
+        <rect width="4" height="4" fill="rgba(255, 128, 0, 0.025)"/>
+        <rect width="2" height="2" fill="rgba(255, 128, 0, 0.098)"/>
+      </pattern>
+
+      <!-- Rough fill -->
+      <pattern id="pattern-zone-rough" patternUnits="userSpaceOnUse" width="4" height="4">
+        <rect width="4" height="4" fill="rgba(0, 0, 0, 0.2)"/>
+        <rect width="2" height="2" fill="rgba(0, 0, 0, 0.467)"/>
+      </pattern>
+
+
+      <!-- PATTERN: Obstacle (Diagonal Stripes) — Brushes.xaml:40-51
+           Viewport="0,0,8,8", RotateTransform 45deg
+           Geometry: M0,0 H1 V0.25 H0 Z (25% height bar) -->
+
+      <!-- Obstacle (not selectable) fill -->
+      <pattern id="pattern-obstacle" patternUnits="userSpaceOnUse" width="8" height="8"
+               patternTransform="rotate(45)">
+        <rect width="8" height="8" fill="rgba(245, 245, 245, 1)"/>
+        <rect width="8" height="2" fill="rgba(221, 221, 221, 1)"/>
+      </pattern>
+
+      <!-- Obstacle (selectable / MapBuilder) fill -->
+      <pattern id="pattern-obstacle-selectable" patternUnits="userSpaceOnUse" width="8" height="8"
+               patternTransform="rotate(45)">
+        <rect width="8" height="8" fill="rgba(237, 41, 57, 0.439)"/>
+        <rect width="8" height="2" fill="rgba(237, 41, 57, 1)"/>
+      </pattern>
+
+      <!-- MapBuilder Barrier fill -->
+      <pattern id="pattern-obstacle-mapbuilder-barrier" patternUnits="userSpaceOnUse" width="8" height="8"
+               patternTransform="rotate(45)">
+        <rect width="8" height="8" fill="rgba(237, 41, 57, 0.439)"/>
+        <rect width="8" height="2" fill="rgba(237, 41, 57, 1)"/>
+      </pattern>
+
+
+      <!-- PATTERN: SoftObstacle (Vertical Stripes) — Brushes.xaml:31-38
+           Viewport="0,0,4,4", Geometry: M0,0 V1 H0.5 V0 Z (left-half vertical) -->
+
+      <!-- Disengage fill -->
+      <pattern id="pattern-soft-obstacle-disengage" patternUnits="userSpaceOnUse" width="4" height="4">
+        <rect width="4" height="4" fill="rgba(78, 182, 221, 0.267)"/>
+        <rect width="2" height="4" fill="rgba(0, 126, 174, 0.749)"/>
+      </pattern>
+
+
+      <!-- PATTERN: HardObstacle (Cross-Hatch) — Brushes.xaml:53-64
+           Viewport="0,0,8,8", RotateTransform 45deg
+           Geometry: M0,0 H1 V0.25 H0.25 V1 H0 V0 (L-shape) -->
+
+      <!-- Water Hazard fill -->
+      <pattern id="pattern-hard-obstacle-water" patternUnits="userSpaceOnUse" width="8" height="8"
+               patternTransform="rotate(45)">
+        <rect width="8" height="8" fill="rgba(208, 241, 252, 1)"/>
+        <rect width="8" height="2" fill="rgba(103, 180, 234, 1)"/>
+        <rect width="2" height="8" fill="rgba(103, 180, 234, 1)"/>
+      </pattern>
+
+      <!-- KeepOut fill — HardObstacle cross-hatch with MapBuilderObstacle colors
+           Source: KeepOutShapeTemplates.xaml — Path2 uses BrushAndPattern_HardObstacle
+           Background: MapBuilderObstacleShapeFill rgba(237,41,57,0.439)
+           Foreground: MapBuilderObstacleShapeOutline rgba(237,41,57,1) -->
+      <pattern id="pattern-hard-obstacle-keepout" patternUnits="userSpaceOnUse" width="8" height="8"
+               patternTransform="rotate(45)">
+        <rect width="8" height="8" fill="rgba(237, 41, 57, 0.439)"/>
+        <rect width="8" height="2" fill="rgba(237, 41, 57, 1)"/>
+        <rect width="2" height="8" fill="rgba(237, 41, 57, 1)"/>
+      </pattern>
+
+
+      <!-- PATTERN: Dot Pattern (Scattered Circles) — Brushes.xaml:18
+           Viewport="0,0,720,720" with ScaleTransform 0.1 = effective 72x72 tile
+           17 circles at r=1, scattered across ~90x80 space, scaled 0.8x to fit 72x72 -->
+
+      <!-- Bunker fill -->
+      <pattern id="pattern-dot-bunker" patternUnits="userSpaceOnUse" width="72" height="72">
+        <rect width="72" height="72" fill="rgba(245, 242, 224, 0.933)"/>
+        <g fill="rgba(220, 214, 178, 1)">
+          <circle cx="4.8" cy="0.8" r="0.8"/><circle cx="14.4" cy="10.4" r="0.8"/>
+          <circle cx="37.6" cy="4" r="0.8"/><circle cx="53.6" cy="26.4" r="0.8"/>
+          <circle cx="68" cy="15.2" r="0.8"/><circle cx="62.4" cy="14.4" r="0.8"/>
+          <circle cx="30.4" cy="31.2" r="0.8"/><circle cx="12" cy="47.2" r="0.8"/>
+          <circle cx="3.2" cy="62.4" r="0.8"/><circle cx="36" cy="48.8" r="0.8"/>
+          <circle cx="50.4" cy="62.4" r="0.8"/><circle cx="64" cy="47.2" r="0.8"/>
+          <circle cx="57.6" cy="44" r="0.8"/><circle cx="32.8" cy="28.8" r="0.8"/>
+          <circle cx="0.8" cy="18.4" r="0.8"/><circle cx="20" cy="54.4" r="0.8"/>
+          <circle cx="60" cy="0.8" r="0.8"/>
+        </g>
+      </pattern>
+
+      <!-- Negative Obstacle fill -->
+      <pattern id="pattern-dot-negative" patternUnits="userSpaceOnUse" width="72" height="72">
+        <rect width="72" height="72" fill="rgba(103, 180, 234, 1)"/>
+        <g fill="rgba(237, 41, 57, 1)">
+          <circle cx="4.8" cy="0.8" r="0.8"/><circle cx="14.4" cy="10.4" r="0.8"/>
+          <circle cx="37.6" cy="4" r="0.8"/><circle cx="53.6" cy="26.4" r="0.8"/>
+          <circle cx="68" cy="15.2" r="0.8"/><circle cx="62.4" cy="14.4" r="0.8"/>
+          <circle cx="30.4" cy="31.2" r="0.8"/><circle cx="12" cy="47.2" r="0.8"/>
+          <circle cx="3.2" cy="62.4" r="0.8"/><circle cx="36" cy="48.8" r="0.8"/>
+          <circle cx="50.4" cy="62.4" r="0.8"/><circle cx="64" cy="47.2" r="0.8"/>
+          <circle cx="57.6" cy="44" r="0.8"/><circle cx="32.8" cy="28.8" r="0.8"/>
+          <circle cx="0.8" cy="18.4" r="0.8"/><circle cx="20" cy="54.4" r="0.8"/>
+          <circle cx="60" cy="0.8" r="0.8"/>
+        </g>
+      </pattern>
+
+    </defs>
+  </svg>
+
+
+<h1>Pattern Textures</h1>
+
+
+<!-- ============================================================
+     SECTION 2: Pattern Textures (Isolated)
+     Source: Brushes.xaml lines 22-112
+     ============================================================ -->
+<h2>Pattern Textures</h2>
+<p class="section-note">Six distinct fill patterns from Brushes.xaml. Composited by PatternBrushMultiConverter: background color + foreground pattern geometry.</p>
+
+<div class="shape-grid">
+
+  <div class="shape-card">
+    <svg width="160" height="100" viewBox="0 0 160 100">
+      <rect x="10" y="10" width="140" height="80" rx="4"
+            fill="url(#pattern-zone-reference)" stroke="var(--ReferenceShapeOutline)" stroke-width="1"/>
+    </svg>
+    <div class="shape-card__label">Zone (Checkerboard)</div>
+    <div class="shape-card__desc">Base pattern for reference and boundary areas. Subtle checkerboard distinguishes non-drivable regions from open map.</div>
+    <div class="shape-card__token">4x4 tile, quarter-square<br>Brushes.xaml:22</div>
+  </div>
+
+  <div class="shape-card">
+    <svg width="160" height="100" viewBox="0 0 160 100">
+      <rect x="10" y="10" width="140" height="80" rx="4"
+            fill="url(#pattern-obstacle)" stroke="var(--ObstacleShapeOutline)" stroke-width="2"/>
+    </svg>
+    <div class="shape-card__label">Obstacle (Diagonal Stripes)</div>
+    <div class="shape-card__desc">Collision zone pattern. Marks physical barriers vehicles cannot traverse.</div>
+    <div class="shape-card__token">8x8 tile, rotated 45deg<br>Brushes.xaml:40</div>
+  </div>
+
+  <div class="shape-card">
+    <svg width="160" height="100" viewBox="0 0 160 100">
+      <rect x="10" y="10" width="140" height="80" rx="4"
+            fill="url(#pattern-soft-obstacle-disengage)" stroke="var(--DisengageShapeOutline)" stroke-width="1"/>
+    </svg>
+    <div class="shape-card__label">SoftObstacle (Vertical Stripes)</div>
+    <div class="shape-card__desc">Tool-disengage area pattern. Vehicles can cross but must deactivate equipment.</div>
+    <div class="shape-card__token">4x4 tile, half-width bar<br>Brushes.xaml:31</div>
+  </div>
+
+  <div class="shape-card">
+    <svg width="160" height="100" viewBox="0 0 160 100">
+      <rect x="10" y="10" width="140" height="80" rx="4"
+            fill="url(#pattern-hard-obstacle-water)" stroke="var(--WaterHazardShapeOutline)" stroke-width="1"/>
+    </svg>
+    <div class="shape-card__label">HardObstacle (Cross-Hatch)</div>
+    <div class="shape-card__desc">No-go boundary pattern. Marks zones with an inner obstacle buffer (water, keep-out).</div>
+    <div class="shape-card__token">8x8 tile, L-shape @ 45deg<br>Brushes.xaml:53</div>
+  </div>
+
+  <div class="shape-card">
+    <svg width="160" height="100" viewBox="0 0 160 100">
+      <rect x="10" y="10" width="140" height="80" rx="4"
+            fill="url(#pattern-dot-bunker)" stroke="var(--BunkerShapeOutline)" stroke-width="1"/>
+    </svg>
+    <div class="shape-card__label">Dot Pattern (Bunker)</div>
+    <div class="shape-card__desc">Sand trap texture for golf courses. Vehicles avoid the inner boundary.</div>
+    <div class="shape-card__token">72x72 tile, 17 scattered dots<br>Brushes.xaml:82</div>
+  </div>
+
+  <div class="shape-card">
+    <svg width="160" height="100" viewBox="0 0 160 100">
+      <rect x="10" y="10" width="140" height="80" rx="4"
+            fill="url(#pattern-dot-negative)" stroke="var(--NegativeObstacleShapeOutline)" stroke-width="1"/>
+    </svg>
+    <div class="shape-card__label">Dot Pattern (Negative)</div>
+    <div class="shape-card__desc">Terrain depression marker. Flags ditches or drops invisible to standard sensors.</div>
+    <div class="shape-card__token">72x72 tile, 17 scattered dots<br>Brushes.xaml:98</div>
+  </div>
+
+</div>
+
+
+  </main>
+
+</div>
+
+<script src="../js/nav.js"></script>
+</body>
+</html>

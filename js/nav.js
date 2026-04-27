@@ -142,17 +142,13 @@
       ]
     },
     {
-      title: "Nav",
-      links: [
-        { label: "ModeBar",    href: "mode-bar/mode-bar.html" },
-        { label: "GlobalNav",  href: "global-nav/global-nav.html" }
-      ]
-    },
-    {
       title: "Navigation",
       links: [
+        { label: "ModeBar",    href: "mode-bar/mode-bar.html" },
+        { label: "GlobalNav",  href: "global-nav/global-nav.html" },
         { label: "TabControl",  href: "tab-control/tab-control.html" },
-        { label: "MasterDetailControl",  href: "master-detail-control/master-detail-control.html" }
+        { label: "MasterDetailControl",  href: "master-detail-control/master-detail-control.html" },
+        { label: "Vehicle Settings Header",  href: "vehicle-settings-header/vehicle-settings-header.html" }
       ]
     },
     {
@@ -193,6 +189,15 @@
         { label: "PrimaryTractorGauge",   href: "primary-tractor-gauge/primary-tractor-gauge.html" },
         { label: "PrimaryVehicleGauge",   href: "primary-vehicle-gauge/primary-vehicle-gauge.html" },
         { label: "ViewSwitchGauge",       href: "view-switch-gauge/view-switch-gauge.html" }
+      ]
+    },
+    {
+      title: "Map",
+      links: [
+        { label: "Background Grid",     href: "map-background/background-grid.html" },
+        { label: "Pattern Textures",    href: "map-background/pattern-textures.html" },
+        { label: "Map Shape Types",     href: "map-background/map-shapes.html" },
+        { label: "Paths & Roads",       href: "map-background/paths-and-roads.html" }
       ]
     }
   ];

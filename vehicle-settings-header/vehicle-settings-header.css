@@ -1,0 +1,308 @@
+/* vehicle-settings-header.css — Vehicle Settings Header
+   Source: VehicleSetupConfigurationControl.xaml (lines 111–265)
+           VehicleInformationControl.xaml (lines 1–193)
+           ActivityStateCircle.xaml (ResourceDictionary)
+   ====================================================================== */
+
+
+/* ==============================================
+   OUTER WRAPPER
+   XAML: VehicleSetupConfigurationControl → Grid Row 0
+         Border Background=BackgroundStrongStepOneBrush
+   ============================================== */
+.mob-vehicle-settings-header {
+  background: var(--BackgroundStrongStepOne);
+}
+
+
+/* ==============================================
+   INNER WRAPPER (top offset + section margin)
+   XAML: Border Margin="0,52,0,0"
+         → Border Margin=ModeSectionTitleMargin (36,0,0,33)
+   ============================================== */
+.mob-vehicle-settings-header__inner {
+  padding-top: 52px; /* VehicleSetupConfigurationControl.xaml line 122 */
+  padding-left: 36px; /* ModeSectionTitleMargin left — spacingTokens --margin-mode-section-title */
+  padding-bottom: 33px; /* ModeSectionTitleMargin bottom — spacingTokens --margin-mode-section-title */
+  padding-right: 0;
+}
+
+
+/* ==============================================
+   VEHICLE INFO CARD
+   XAML: Grid MinWidth=100, Background=BackgroundInvertStepOneBrush, ClipToBounds
+         → VehicleInformationControl
+           → Border Height=100
+   ============================================== */
+.mob-vehicle-info {
+  min-width: 100px; /* VehicleSetupConfigurationControl.xaml line 126 */
+  background: var(--BackgroundInvertStepOne);
+  overflow: hidden; /* XAML ClipToBounds=True, line 128 */
+}
+
+/* XAML: VehicleInformationControl → Border Height=100 */
+.mob-vehicle-info__row {
+  display: flex;
+  align-items: stretch;
+  height: 100px; /* VehicleInformationControl.xaml line 21 */
+  background: var(--BackgroundStrongStepOne); /* BackgroundBrush passed from parent, line 133 */
+}
+
+
+/* ==============================================
+   ACTIVITY STATE CIRCLE (vehicle icon area)
+   XAML: Border Margin=4 CornerRadius=100000 (DockPanel.Dock=Left)
+         → Grid
+           → Viewbox Margin=4 → ActivityStateCircle 240×240
+           → Viewbox Margin=8 → ContentControl (Asset.Icon)
+   ============================================== */
+.mob-vehicle-info__icon-area {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 4px; /* VehicleInformationControl.xaml line 26 — --spacing-label-to-control-sm */
+  border-radius: 50%; /* XAML CornerRadius=100000, line 30 */
+  cursor: pointer;
+  transition: background var(--transition-mouse-out) ease;
+}
+
+.mob-vehicle-info__icon-area:hover {
+  background: transparent; /* SelectionBrush=Transparent passed from parent, line 134 */
+}
+
+/* The circle container — holds both ring and icon
+   XAML math: Row=100px → Icon Border Margin=4 → content 92px
+              → Viewbox Margin=4 → ActivityStateCircle scales to 84px
+   Circle = 84px, centered in 92px via margin: 4px (Viewbox 1 margin) */
+.mob-activity-circle {
+  position: relative;
+  width: 84px; /* 240px circle scaled: (100 - 4*2 - 4*2) = 84px — lines 21, 26, 45 */
+  height: 84px;
+  margin: 4px; /* Viewbox Margin=4, line 45 */
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+/* XAML: ActivityStateCircle → Border background=MapBackgroundBrush CornerRadius=100000 */
+.mob-activity-circle__bg {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: var(--MapBackground);
+}
+
+/* XAML: ContentControl → Border Background=Foreground (bound), Opacity=0.5 */
+.mob-activity-circle__fill {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  opacity: 0.5; /* ActivityStateCircle.xaml line 31 */
+}
+
+/* XAML: Border BorderBrush=Foreground, BorderThickness=TemplateBinding (20px at 240px scale) */
+/* 20/240 = 0.0833 × 84px rendered = 7px border */
+.mob-activity-circle__ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border-style: solid;
+  border-width: 7px; /* 20/240 × 84 = 7px — VehicleInformationControl.xaml line 50 */
+}
+
+/* XAML: Viewbox Margin=8 → Grid RotateTransform Angle=-135 → ContentControl (Asset.Icon)
+   Viewbox 2 Margin=8 in 92px Grid → 76px icon area
+   Relative to 84px circle: (8-4)=4px inset from circle edge → 76px icon */
+.mob-activity-circle__icon {
+  position: absolute;
+  inset: 4px; /* (Viewbox2 Margin=8 - Viewbox1 Margin=4) = 4px from circle edge, lines 45/54 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: rotate(-135deg); /* VehicleInformationControl.xaml line 57 */
+}
+
+.mob-activity-circle__icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* --- Activity State color variants ---
+   ActivityStateCircle.xaml VisualStateGroup "ActivityStates" */
+
+/* Critical (E-stop) — VehicleEStopOutline: rgba(237,41,57,1) */
+.mob-activity-circle--critical .mob-activity-circle__fill,
+.mob-activity-circle--critical .mob-activity-circle__ring {
+  border-color: var(--VehicleEStopOutline);
+}
+.mob-activity-circle--critical .mob-activity-circle__fill {
+  background: var(--VehicleEStopOutline);
+}
+
+/* Warning — VehicleConditionalStopOutline: rgba(255,128,0,1) */
+.mob-activity-circle--warning .mob-activity-circle__fill,
+.mob-activity-circle--warning .mob-activity-circle__ring {
+  border-color: var(--VehicleConditionalStopOutline);
+}
+.mob-activity-circle--warning .mob-activity-circle__fill {
+  background: var(--VehicleConditionalStopOutline);
+}
+
+/* Normal — VehicleSelectionOutline: rgba(0,159,218,1) */
+.mob-activity-circle--normal .mob-activity-circle__fill,
+.mob-activity-circle--normal .mob-activity-circle__ring {
+  border-color: var(--VehicleSelectionOutline);
+}
+.mob-activity-circle--normal .mob-activity-circle__fill {
+  background: var(--VehicleSelectionOutline);
+}
+
+/* Thinking — InformationPurple: rgba(196,153,247,1) */
+.mob-activity-circle--thinking .mob-activity-circle__fill,
+.mob-activity-circle--thinking .mob-activity-circle__ring {
+  border-color: var(--InformationPurple);
+}
+.mob-activity-circle--thinking .mob-activity-circle__fill {
+  background: var(--InformationPurple);
+}
+
+/* Inactive — VehicleSelectionOutline (same as Normal) */
+.mob-activity-circle--inactive .mob-activity-circle__fill,
+.mob-activity-circle--inactive .mob-activity-circle__ring {
+  border-color: var(--VehicleSelectionOutline);
+}
+.mob-activity-circle--inactive .mob-activity-circle__fill {
+  background: var(--VehicleSelectionOutline);
+}
+
+/* Off — VehicleNoHeadingOutline: rgba(112,112,112,1) */
+.mob-activity-circle--off .mob-activity-circle__fill,
+.mob-activity-circle--off .mob-activity-circle__ring {
+  border-color: var(--VehicleNoHeadingOutline);
+}
+.mob-activity-circle--off .mob-activity-circle__fill {
+  background: var(--VehicleNoHeadingOutline);
+}
+
+/* Hidden — fully transparent */
+.mob-activity-circle--hidden {
+  opacity: 0;
+}
+
+
+/* ==============================================
+   ASSET INFORMATION (name + status labels + linked)
+   XAML: StackPanel VerticalAlignment=Center DockPanel.Dock=Left
+   ============================================== */
+.mob-vehicle-info__details {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0; /* allow text truncation */
+  flex: 1 1 auto;
+}
+
+
+/* ==============================================
+   VEHICLE NAME
+   XAML: TextBlock x:Name="AssetNameTextBlock"
+         Style=HeadingLg, Margin.Horizontal=12, FontWeight=Normal
+         LineHeight=36, MaxHeight=72 (2 lines), TextTrimming, TextWrapping
+   ============================================== */
+.mob-vehicle-info__name {
+  font: var(--font-hdrLg); /* 36px/40px Roboto — HeadingLg style */
+  line-height: 36px; /* XAML override LineHeight=36, VehicleInformationControl.xaml line 80 */
+  font-weight: var(--font-normal); /* XAML FontWeight=Normal, line 77 */
+  color: var(--ForegroundPrimary); /* ForegroundBrush → ForegroundPrimaryBrush, line 132 */
+  margin: 0 var(--size-12); /* Margin.Horizontal=12, lines 76 */
+  max-height: 72px; /* VehicleInformationControl.xaml line 73 — 2 lines of 36px */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-wrap: break-word;
+}
+
+
+/* ==============================================
+   STATUS ROW (ModeState + VehicleStatus + VehicleStatusToolTip)
+   XAML: StackPanel Orientation=Horizontal Margin="0,5"
+   ============================================== */
+.mob-vehicle-info__status-row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 5px; /* VehicleInformationControl.xaml line 98 */
+}
+
+
+/* ==============================================
+   STATUS LABEL (shared style for all three TextBlocks)
+   XAML: TextBlock Style=HeadingSm, Margin.Horizontal=12
+         LineHeight=18, MaxHeight=24, TextTrimming, TextWrapping
+   ============================================== */
+.mob-vehicle-info__status {
+  font: var(--font-hdrSm); /* 18px/22px Roboto — HeadingSm style */
+  font-weight: var(--font-light); /* Typography.xaml HeadingSm line 61: FontWeight=Light (300) */
+  line-height: 18px; /* XAML override LineHeight=18, lines 108/122/139 */
+  color: var(--ForegroundPrimary); /* ForegroundBrush, line 110/127/144 */
+  margin: 0 var(--size-12); /* Margin.Horizontal=12, lines 105/122/139 */
+  max-height: 24px; /* lines 102/119/136 — --size-24 */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+/* ==============================================
+   LINKED ASSET ROW
+   XAML: Grid Margin=0, MaxHeight=24
+         Visibility=BooleanToVisibleOrCollapsed(HasLinkedAsset)
+         → Path Icon_Link 12×12 Margin="14,0,6,0"
+         → TextBlock LinkedAssetNames
+   ============================================== */
+.mob-vehicle-info__linked {
+  display: flex;
+  align-items: center;
+  max-height: var(--size-24); /* VehicleInformationControl.xaml line 157 */
+}
+
+/* XAML: Path Width=12 Height=12 Margin="14,0,6,0" Data=Icon_Link Fill=ForegroundBrush
+   NOTE: Icon_Link is a PathGeometry resource (Icons.xaml line 200), not a font glyph.
+   Rendered as inline SVG in HTML. */
+.mob-vehicle-info__link-icon {
+  flex: 0 0 var(--icon-sm); /* 12px — VehicleInformationControl.xaml line 167 */
+  width: var(--icon-sm);
+  height: var(--icon-sm);
+  margin: 0 6px 0 14px; /* XAML Margin="14,0,6,0" → CSS top right bottom left, line 168 */
+}
+
+.mob-vehicle-info__link-text {
+  font: var(--font-default); /* 14px/20px Roboto Condensed */
+  line-height: 18px; /* XAML LineHeight=18, VehicleInformationControl.xaml line 183 */
+  color: var(--ForegroundPrimary); /* ForegroundBrush, line 181 */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+/* ==============================================
+   VEHICLE PROFILE TOGGLE ROW
+   XAML: Grid Height=TouchSize (44px)
+         Visibility=MultiBooleanAndToVisibility
+         → ExpanderItem → ToggleButton (collapsed state)
+           Content="Vehicle profile..."
+           Style=LinkButton
+   ============================================== */
+.mob-vehicle-profile-row {
+  height: var(--touch); /* TouchSize=44px — VehicleSetupConfigurationControl.xaml line 140 */
+  display: flex;
+  align-items: center;
+}
+
+/* Reuses the existing mob-btn-link pattern from buttons.css
+   XAML: Style=Mobius_UI_Resources_Styles_LinkButton
+         Content="LocalizedText.VehicleSetupConfigurationControl.VehicleProfile" */
+.mob-vehicle-profile-row .mob-btn-link {
+  font: var(--font-default);
+  padding: 0;
+}

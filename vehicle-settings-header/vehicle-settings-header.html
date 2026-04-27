@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mobius — Vehicle Settings Header</title>
+  <link id="mob-theme-link" rel="stylesheet" href="../styles/color-theme-tokens/LightTheme.css" />
+  <link rel="stylesheet" href="../styles/css/main.css" />
+  <link rel="stylesheet" href="../buttons/buttons.css" />
+  <link rel="stylesheet" href="vehicle-settings-header.css" />
+  <style>
+    body { margin: 0; }
+    h1 {
+      font: var(--font-hdrMd);
+      margin: 0 0 32px;
+      color: var(--ForegroundStrong);
+    }
+    h2 {
+      font: var(--font-hdrSm);
+      margin: 40px 0 16px;
+      color: var(--ForegroundStrong);
+    }
+    h2:first-of-type { margin-top: 0; }
+    .section-divider {
+      border: none;
+      border-top: var(--line-size) solid var(--InnerLines);
+      margin: 32px 0 0;
+    }
+    .note {
+      font: var(--font-default);
+      color: var(--ForegroundPrimary);
+      margin: 0 0 var(--spacing-section-to-header) 0;
+      max-width: 640px;
+    }
+    .note code {
+      font-family: var(--font-monospace);
+      background: var(--BackgroundPrimary);
+      padding: 1px 4px;
+      border-radius: 3px;
+    }
+
+    /* Page-level demo wrapper */
+    .demo-frame {
+      border: var(--line-size) solid var(--InnerLines);
+    }
+
+    /* State variant demos stacked */
+    .demo-states {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-section-to-section);
+    }
+    .state-label {
+      font: var(--font-default);
+      font-weight: var(--font-bold);
+      color: var(--ForegroundStrong);
+      margin-bottom: 8px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="mob-layout">
+
+  <!-- Sidebar Navigation -->
+  <nav class="mob-nav" id="mob-nav"></nav>
+
+  <!-- Main Content -->
+  <main class="mob-layout__content">
+
+    <h1>Vehicle Settings Header</h1>
+    <p class="note">
+      Top region of the Vehicle Setup/Configuration view. Contains the vehicle
+      <code>ActivityStateCircle</code>, asset name, mode/status labels, linked asset
+      row, and the "Vehicle profile…" toggle.
+      Source: <code>VehicleSetupConfigurationControl.xaml</code> (lines 111–265),
+      <code>VehicleInformationControl.xaml</code>,
+      <code>ActivityStateCircle.xaml</code>.
+    </p>
+
+
+    <!-- ============================================
+         SECTION: Default / Critical (E-stop) state
+         Matches the screenshot: red ring, "Autonomous", "E-stop"
+         ============================================ -->
+    <h2>Default — Critical (E-stop)</h2>
+    <p class="note">
+      Matches the running WPF app screenshot. ActivityState = Critical,
+      ModeState = "Autonomous", VehicleStatus = "E-stop".
+    </p>
+
+    <div class="demo-frame">
+      <!-- XAML: VehicleSetupConfigurationControl → Grid Row 0 → Border (BackgroundStrongStepOne) -->
+      <div class="mob-vehicle-settings-header">
+        <!-- XAML: Border Margin="0,52,0,0" → Border Margin=ModeSectionTitleMargin -->
+        <div class="mob-vehicle-settings-header__inner">
+          <!-- XAML: StackPanel VerticalAlignment=Bottom -->
+
+          <!-- XAML: Grid MinWidth=100 Background=BackgroundInvertStepOneBrush ClipToBounds -->
+          <div class="mob-vehicle-info">
+            <!-- XAML: VehicleInformationControl → Border Height=100 → DockPanel "TheDoc" -->
+            <div class="mob-vehicle-info__row">
+
+              <!-- XAML: Border Margin=4 CornerRadius=100000 DockPanel.Dock=Left -->
+              <div class="mob-vehicle-info__icon-area">
+                <!-- XAML: Grid → Viewbox → ActivityStateCircle 240×240 + Viewbox → ContentControl (Asset.Icon) -->
+                <div class="mob-activity-circle mob-activity-circle--critical">
+                  <!-- XAML: ActivityStateCircle → Border background=MapBackgroundBrush -->
+                  <div class="mob-activity-circle__bg"></div>
+                  <!-- XAML: ContentControl → Border Background=Foreground Opacity=0.5 -->
+                  <div class="mob-activity-circle__fill"></div>
+                  <!-- XAML: Border BorderBrush=Foreground BorderThickness=20 (scaled from 240→88) -->
+                  <div class="mob-activity-circle__ring"></div>
+                  <!-- XAML: Viewbox Margin=8 → Grid RotateTransform=-135 → ContentControl (Asset.Icon) -->
+                  <div class="mob-activity-circle__icon">
+                    <!-- XAML: ContentControl Content=Asset.Icon — JohnDeere FairwayMower SVG -->
+                    <img src="../assets/Vehicle%20Icons/Vehicle%3DJohnDeere-FairwayMower.svg" alt="FairwayMower">
+                  </div>
+                </div>
+              </div>
+
+              <!-- XAML: StackPanel VerticalAlignment=Center DockPanel.Dock=Left -->
+              <div class="mob-vehicle-info__details">
+                <!-- XAML: TextBlock x:Name="AssetNameTextBlock" Style=HeadingLg -->
+                <div class="mob-vehicle-info__name">FairwayMowerSim_0</div>
+
+                <!-- XAML: StackPanel Orientation=Horizontal Margin="0,5" -->
+                <div class="mob-vehicle-info__status-row">
+                  <!-- XAML: TextBlock Text=Asset.ModeState Style=HeadingSm -->
+                  <span class="mob-vehicle-info__status">Autonomous</span>
+                  <!-- XAML: TextBlock Text=Asset.VehicleStatus Style=HeadingSm -->
+                  <span class="mob-vehicle-info__status">E-stop</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- XAML: Grid Height=TouchSize Visibility=MultiBooleanAndToVisibility -->
+          <!-- XAML: ExpanderItem → ToggleButton Style=LinkButton Content="Vehicle profile..." -->
+          <div class="mob-vehicle-profile-row">
+            <button class="mob-btn-link" type="button">Vehicle profile...</button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+
+    <hr class="section-divider">
+
+
+    <!-- ============================================
+         SECTION: All ActivityState variants
+         ============================================ -->
+    <h2>ActivityState Variants</h2>
+    <p class="note">
+      Each variant shows a different <code>ActivityState</code> color on the circle ring.
+      Colors are mapped from <code>ActivityStateCircle.xaml</code> VisualStateGroup.
+    </p>
+
+    <div class="demo-states">
+
+      <!-- Normal -->
+      <div>
+        <div class="state-label">Normal (VehicleSelectionOutline)</div>
+        <div class="demo-frame">
+          <div class="mob-vehicle-settings-header">
+            <div class="mob-vehicle-settings-header__inner">
+              <div class="mob-vehicle-info">
+                <div class="mob-vehicle-info__row">
+                  <div class="mob-vehicle-info__icon-area">
+                    <div class="mob-activity-circle mob-activity-circle--normal">
+                      <div class="mob-activity-circle__bg"></div>
+                      <div class="mob-activity-circle__fill"></div>
+                      <div class="mob-activity-circle__ring"></div>
+                      <div class="mob-activity-circle__icon">
+                        <img src="../assets/Vehicle%20Icons/Vehicle%3DJohnDeere-FairwayMower.svg" alt="FairwayMower">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="mob-vehicle-info__details">
+                    <div class="mob-vehicle-info__name">FairwayMowerSim_0</div>
+                    <div class="mob-vehicle-info__status-row">
+                      <span class="mob-vehicle-info__status">Autonomous</span>
+                      <span class="mob-vehicle-info__status">Driving</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="mob-vehicle-profile-row">
+                <button class="mob-btn-link" type="button">Vehicle profile...</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Warning -->
+      <div>
+        <div class="state-label">Warning (VehicleConditionalStopOutline)</div>
+        <div class="demo-frame">
+          <div class="mob-vehicle-settings-header">
+            <div class="mob-vehicle-settings-header__inner">
+              <div class="mob-vehicle-info">
+                <div class="mob-vehicle-info__row">
+                  <div class="mob-vehicle-info__icon-area">
+                    <div class="mob-activity-circle mob-activity-circle--warning">
+                      <div class="mob-activity-circle__bg"></div>
+                      <div class="mob-activity-circle__fill"></div>
+                      <div class="mob-activity-circle__ring"></div>
+                      <div class="mob-activity-circle__icon">
+                        <img src="../assets/Vehicle%20Icons/Vehicle%3DJohnDeere-FairwayMower.svg" alt="FairwayMower">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="mob-vehicle-info__details">
+                    <div class="mob-vehicle-info__name">HaulTruck_12</div>
+                    <div class="mob-vehicle-info__status-row">
+                      <span class="mob-vehicle-info__status">Manual</span>
+                      <span class="mob-vehicle-info__status">Conditional Stop</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="mob-vehicle-profile-row">
+                <button class="mob-btn-link" type="button">Vehicle profile...</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Thinking -->
+      <div>
+        <div class="state-label">Thinking (InformationPurple)</div>
+        <div class="demo-frame">
+          <div class="mob-vehicle-settings-header">
+            <div class="mob-vehicle-settings-header__inner">
+              <div class="mob-vehicle-info">
+                <div class="mob-vehicle-info__row">
+                  <div class="mob-vehicle-info__icon-area">
+                    <div class="mob-activity-circle mob-activity-circle--thinking">
+                      <div class="mob-activity-circle__bg"></div>
+                      <div class="mob-activity-circle__fill"></div>
+                      <div class="mob-activity-circle__ring"></div>
+                      <div class="mob-activity-circle__icon">
+                        <img src="../assets/Vehicle%20Icons/Vehicle%3DJohnDeere-FairwayMower.svg" alt="FairwayMower">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="mob-vehicle-info__details">
+                    <div class="mob-vehicle-info__name">SprinklerBot_3</div>
+                    <div class="mob-vehicle-info__status-row">
+                      <span class="mob-vehicle-info__status">Powering On</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="mob-vehicle-profile-row">
+                <button class="mob-btn-link" type="button">Vehicle profile...</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Off -->
+      <div>
+        <div class="state-label">Off (VehicleNoHeadingOutline)</div>
+        <div class="demo-frame">
+          <div class="mob-vehicle-settings-header">
+            <div class="mob-vehicle-settings-header__inner">
+              <div class="mob-vehicle-info">
+                <div class="mob-vehicle-info__row">
+                  <div class="mob-vehicle-info__icon-area">
+                    <div class="mob-activity-circle mob-activity-circle--off">
+                      <div class="mob-activity-circle__bg"></div>
+                      <div class="mob-activity-circle__fill"></div>
+                      <div class="mob-activity-circle__ring"></div>
+                      <div class="mob-activity-circle__icon">
+                        <img src="../assets/Vehicle%20Icons/Vehicle%3DJohnDeere-FairwayMower.svg" alt="FairwayMower">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="mob-vehicle-info__details">
+                    <div class="mob-vehicle-info__name">Mower_7_Offline</div>
+                    <div class="mob-vehicle-info__status-row">
+                      <span class="mob-vehicle-info__status">Off</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="mob-vehicle-profile-row">
+                <button class="mob-btn-link" type="button">Vehicle profile...</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- With linked asset -->
+      <div>
+        <div class="state-label">Normal + Linked Asset Row</div>
+        <div class="demo-frame">
+          <div class="mob-vehicle-settings-header">
+            <div class="mob-vehicle-settings-header__inner">
+              <div class="mob-vehicle-info">
+                <div class="mob-vehicle-info__row">
+                  <div class="mob-vehicle-info__icon-area">
+                    <div class="mob-activity-circle mob-activity-circle--normal">
+                      <div class="mob-activity-circle__bg"></div>
+                      <div class="mob-activity-circle__fill"></div>
+                      <div class="mob-activity-circle__ring"></div>
+                      <div class="mob-activity-circle__icon">
+                        <img src="../assets/Vehicle%20Icons/Vehicle%3DJohnDeere-FairwayMower.svg" alt="FairwayMower">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="mob-vehicle-info__details">
+                    <div class="mob-vehicle-info__name">HaulTruck_5</div>
+                    <div class="mob-vehicle-info__status-row">
+                      <span class="mob-vehicle-info__status">Autonomous</span>
+                      <span class="mob-vehicle-info__status">Driving</span>
+                    </div>
+                    <!-- XAML: Grid Visibility=BooleanToVisibleOrCollapsed(HasLinkedAsset) -->
+                    <div class="mob-vehicle-info__linked">
+                      <!-- XAML: Path Data=Icon_Link 12×12 Margin="14,0,6,0" — SVG path, not font glyph -->
+                      <svg class="mob-vehicle-info__link-icon" viewBox="0 0 20 20" width="12" height="12" fill="var(--ForegroundPrimary)">
+                        <path d="M18.8,1.2C18.1,0.4,17.1,0,16,0s-2.1,0.4-2.8,1.2l-2.5,2.5C9.9,4.4,9.5,5.4,9.5,6.5c0,0.7,0.2,1.4,0.6,2l-1.6,1.6C7,9.2,4.9,9.4,3.7,10.7l-2.5,2.5C0.4,13.9,0,14.9,0,16s0.4,2.1,1.2,2.8C1.9,19.6,2.9,20,4,20s2.1-0.4,2.8-1.2l2.5-2.5c0.8-0.8,1.2-1.8,1.2-2.8c0-0.7-0.2-1.4-0.6-2l1.5-1.5c0.6,0.4,1.3,0.6,2,0.6c1.1,0,2.1-0.4,2.8-1.2l2.5-2.5C19.6,6.1,20,5.1,20,4S19.6,1.9,18.8,1.2z M8.5,13.5c0,0.5-0.2,1-0.6,1.4l-2.5,2.5c-0.8,0.8-2.1,0.8-2.8,0C2.2,17,2,16.5,2,16s0.2-1,0.6-1.4l2.5-2.5c0.4-0.4,0.9-0.6,1.4-0.6c0.2,0,0.3,0,0.5,0.1l-0.2,0.2c-0.4,0.4-0.4,1,0,1.4c0.2,0.2,0.4,0.3,0.7,0.3s0.5-0.1,0.7-0.3L8.4,13C8.5,13.1,8.5,13.3,8.5,13.5z M17.4,5.4l-2.5,2.5c-0.5,0.5-1.3,0.7-1.9,0.5l0.2-0.2c0.4-0.4,0.4-1,0-1.4s-1-0.4-1.4,0L11.6,7c-0.1-0.2-0.1-0.3-0.1-0.5c0-0.5,0.2-1,0.6-1.4l2.5-2.5C15,2.2,15.5,2,16,2s1,0.2,1.4,0.6S18,3.5,18,4S17.8,5,17.4,5.4z"/>
+                      </svg>
+                      <!-- XAML: TextBlock Text=Asset.AssetLinksVM.LinkedAssetNames -->
+                      <span class="mob-vehicle-info__link-text">Implement_Sprayer_1</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="mob-vehicle-profile-row">
+                <button class="mob-btn-link" type="button">Vehicle profile...</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+
+    <hr class="section-divider">
+
+
+    <!-- ============================================
+         SECTION: Long name truncation
+         ============================================ -->
+    <h2>Long Name — Truncation</h2>
+    <p class="note">
+      XAML: <code>MaxHeight="72"</code> (2 lines at 36px line-height),
+      <code>TextTrimming="CharacterEllipsis"</code>, <code>TextWrapping="Wrap"</code>.
+    </p>
+
+    <div class="demo-frame">
+      <div class="mob-vehicle-settings-header">
+        <div class="mob-vehicle-settings-header__inner">
+          <div class="mob-vehicle-info">
+            <div class="mob-vehicle-info__row">
+              <div class="mob-vehicle-info__icon-area">
+                <div class="mob-activity-circle mob-activity-circle--normal">
+                  <div class="mob-activity-circle__bg"></div>
+                  <div class="mob-activity-circle__fill"></div>
+                  <div class="mob-activity-circle__ring"></div>
+                  <div class="mob-activity-circle__icon">
+                    <svg viewBox="0 0 20 20" fill="currentColor" width="100%" height="100%">
+                      <rect x="4" y="3" width="12" height="14" rx="2" fill="var(--ForegroundPrimary)" opacity="0.5"/>
+                      <rect x="6" y="6" width="8" height="6" rx="1" fill="var(--BackgroundStrong)"/>
+                      <circle cx="7" cy="16" r="1.5" fill="var(--ForegroundPrimary)"/>
+                      <circle cx="13" cy="16" r="1.5" fill="var(--ForegroundPrimary)"/>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+              <div class="mob-vehicle-info__details">
+                <div class="mob-vehicle-info__name">VeryLongVehicleName_FairwayMowerSimulator_ExtendedModel_42</div>
+                <div class="mob-vehicle-info__status-row">
+                  <span class="mob-vehicle-info__status">Autonomous</span>
+                  <span class="mob-vehicle-info__status">Driving Path: North Fairway Loop Section B Extended Route</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="mob-vehicle-profile-row">
+            <button class="mob-btn-link" type="button">Vehicle profile...</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+</div>
+
+<script src="../js/nav.js"></script>
+</body>
+</html>

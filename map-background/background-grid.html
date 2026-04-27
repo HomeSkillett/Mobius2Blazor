@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mobius — Background Grid</title>
+  <link id="mob-theme-link" rel="stylesheet" href="../styles/color-theme-tokens/LightTheme.css" />
+  <link rel="stylesheet" href="../styles/css/main.css" />
+  <link rel="stylesheet" href="../styles/map-background.css" />
+  <style>
+    body { margin: 0; }
+    h1 {
+      font: var(--font-hdrMd);
+      margin: 0 0 32px;
+      color: var(--ForegroundStrong);
+    }
+    h2 {
+      font: var(--font-hdrSm);
+      margin: 40px 0 16px;
+      color: var(--ForegroundStrong);
+    }
+    h2:first-of-type { margin-top: 0; }
+    h3 {
+      font: var(--font-bodyMd);
+      font-weight: 600;
+      margin: 24px 0 12px;
+      color: var(--ForegroundPrimary);
+    }
+    .section-divider {
+      border: none;
+      border-top: var(--line-size) solid var(--InnerLines);
+      margin: 32px 0 0;
+    }
+    .section-note {
+      font: var(--font-bodySm);
+      color: var(--ForegroundDisabled);
+      margin-bottom: 16px;
+    }
+
+    /* Map canvas demo */
+    .map-demo {
+      width: 100%;
+      height: 400px;
+      border: var(--line-size) solid var(--InnerLines);
+      border-radius: var(--corner-radius);
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Shape card grid */
+    .shape-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: var(--spacing-field);
+    }
+    .shape-card {
+      background: var(--BackgroundSecondary);
+      border: var(--line-size) solid var(--InnerLines);
+      border-radius: var(--corner-radius);
+      padding: var(--spacing-control-to-control);
+      text-align: center;
+    }
+    .shape-card svg {
+      display: block;
+      margin: 0 auto;
+    }
+    .shape-card__label {
+      font: var(--font-bodySm);
+      color: var(--ForegroundPrimary);
+      margin-top: var(--spacing-label-to-control-sm);
+    }
+    .shape-card__token {
+      font: var(--font-bodySm);
+      color: var(--ForegroundDisabled);
+      margin-top: 2px;
+      font-family: monospace;
+      font-size: 10px;
+    }
+
+    /* State demo row */
+    .state-demo {
+      display: flex;
+      gap: var(--spacing-field);
+      flex-wrap: wrap;
+    }
+    .state-demo__item {
+      background: var(--BackgroundSecondary);
+      border: var(--line-size) solid var(--InnerLines);
+      border-radius: var(--corner-radius);
+      padding: var(--spacing-control-to-control);
+      text-align: center;
+      min-width: 180px;
+    }
+    .state-demo__label {
+      font: var(--font-bodySm);
+      color: var(--ForegroundDisabled);
+      margin-top: var(--spacing-label-to-control-sm);
+    }
+
+    /* Zoom level demo grid */
+    .zoom-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: var(--spacing-field);
+    }
+    .zoom-card {
+      background: var(--BackgroundSecondary);
+      border: var(--line-size) solid var(--InnerLines);
+      border-radius: var(--corner-radius);
+      overflow: hidden;
+    }
+    .zoom-card__canvas {
+      position: relative;
+      width: 100%;
+      height: 200px;
+      background-color: var(--MapBackground);
+      overflow: hidden;
+    }
+    .zoom-card__label {
+      font: var(--font-bodySm);
+      color: var(--ForegroundPrimary);
+      padding: var(--spacing-label-to-control-sm) var(--spacing-control-to-control);
+    }
+    .zoom-card__token {
+      font: var(--font-bodySm);
+      color: var(--ForegroundDisabled);
+      padding: 0 var(--spacing-control-to-control) var(--spacing-label-to-control-sm);
+      font-family: monospace;
+      font-size: 10px;
+    }
+
+    /* Anatomy diagram */
+    .anatomy-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--spacing-field);
+    }
+    @media (max-width: 700px) {
+      .anatomy-grid { grid-template-columns: 1fr; }
+    }
+    .anatomy-card {
+      background: var(--BackgroundSecondary);
+      border: var(--line-size) solid var(--InnerLines);
+      border-radius: var(--corner-radius);
+      padding: var(--spacing-control-to-control);
+    }
+    .anatomy-card__title {
+      font: var(--font-bodyMd);
+      font-weight: 600;
+      color: var(--ForegroundPrimary);
+      margin-bottom: 8px;
+    }
+    .anatomy-card__detail {
+      font: var(--font-bodySm);
+      color: var(--ForegroundDisabled);
+      font-family: monospace;
+      font-size: 10px;
+      margin-top: 4px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="mob-layout">
+
+  <!-- Sidebar Navigation -->
+  <nav class="mob-nav" id="mob-nav"></nav>
+
+  <!-- Main Content -->
+  <main class="mob-layout__content">
+
+
+  <!-- SVG defs for zoom-level tiles. Each tile has the same 6-rect structure
+       from BackgroundGridControl.xaml:90-131, scaled to its tile size.
+       Formula: Rect1 x=0,y=T-1,w=T,h=1 | Rect2 x=T-1,y=0,w=1,h=T
+                Rect3 x=0,y=T-1,w=2,h=1 | Rect4 x=T-1,y=0,w=1,h=2
+                Rect5 x=T-1,y=T-3,w=1,h=3 | Rect6 x=T-3,y=T-1,w=3,h=1 -->
+  <svg width="0" height="0" style="position:absolute;">
+    <defs>
+      <!-- 41px tile (0.01 m/px, subdiv=3, gridSize=1, actual=40.96) — 2px lines -->
+      <pattern id="grid-tile-41" patternUnits="userSpaceOnUse" width="41" height="41">
+        <rect x="0" y="39" width="41" height="2" fill="var(--MapGridLines)" opacity="0.5"/>
+        <rect x="39" y="0" width="2" height="41" fill="var(--MapGridLines)" opacity="0.5"/>
+        <rect x="0" y="39" width="3" height="2" fill="var(--MapGridLines)" opacity="0.75"/>
+        <rect x="39" y="0" width="2" height="3" fill="var(--MapGridLines)" opacity="0.75"/>
+        <rect x="39" y="36" width="2" height="5" fill="var(--MapGridLines)" opacity="0.75"/>
+        <rect x="36" y="39" width="5" height="2" fill="var(--MapGridLines)" opacity="0.75"/>
+      </pattern>
+      <!-- 64px tile (1 m/px, subdiv=0, gridSize=8) — 2px lines -->
+      <pattern id="grid-tile-64" patternUnits="userSpaceOnUse" width="64" height="64">
+        <rect x="0" y="62" width="64" height="2" fill="var(--MapGridLines)" opacity="0.5"/>
+        <rect x="62" y="0" width="2" height="64" fill="var(--MapGridLines)" opacity="0.5"/>
+        <rect x="0" y="62" width="3" height="2" fill="var(--MapGridLines)" opacity="0.75"/>
+        <rect x="62" y="0" width="2" height="3" fill="var(--MapGridLines)" opacity="0.75"/>
+        <rect x="62" y="59" width="2" height="5" fill="var(--MapGridLines)" opacity="0.75"/>
+        <rect x="59" y="62" width="5" height="2" fill="var(--MapGridLines)" opacity="0.75"/>
+      </pattern>
+      <!-- 48px tile (3 m/px, subdiv=2, gridSize=2) — 2px lines -->
+      <pattern id="grid-tile-48" patternUnits="userSpaceOnUse" width="48" height="48">
+        <rect x="0" y="46" width="48" height="2" fill="var(--MapGridLines)" opacity="0.5"/>
+        <rect x="46" y="0" width="2" height="48" fill="var(--MapGridLines)" opacity="0.5"/>
+        <rect x="0" y="46" width="3" height="2" fill="var(--MapGridLines)" opacity="0.75"/>
+        <rect x="46" y="0" width="2" height="3" fill="var(--MapGridLines)" opacity="0.75"/>
+        <rect x="46" y="43" width="2" height="5" fill="var(--MapGridLines)" opacity="0.75"/>
+        <rect x="43" y="46" width="5" height="2" fill="var(--MapGridLines)" opacity="0.75"/>
+      </pattern>
+    </defs>
+  </svg>
+
+
+<h1>Background Grid</h1>
+
+
+<!-- ============================================================
+     SECTION 1: Background Grid
+     Source: BackgroundGridControl.xaml (lines 24-137)
+     Source: MapControl.xaml (lines 35, 174-187)
+     Source: GridSizeMultiConverter.cs
+     ============================================================ -->
+<h2>Background Grid</h2>
+<p class="section-note">Three-layer system: solid MapBackground fill + tiled grid with major/minor line weights + left-edge shadow overlay. Grid tile size is dynamic via GridSizeMultiConverter(param=8).</p>
+
+
+<!-- 1A: Full composite (all three layers) -->
+<h3>Full Composite (3 layers)</h3>
+<p class="section-note">Layer 1: MapBackground solid fill (MapControl.xaml:35). Layer 2: Single-frequency tiled grid — 1px lines at 0.5 opacity with intersection emphasis at 0.75 (BackgroundGridControl.xaml:90-131). Layer 3: Left-edge shadow (MapControl.xaml:174-187). Note: the grid is intentionally very subtle — MapGridLines token at half opacity. Light theme: ~3% black. Dark/Blackout: ~3% white.</p>
+
+<div class="map-demo">
+  <!-- XAML: MapControl Background="{MapBackgroundBrush}" (MapControl.xaml:35) -->
+  <div class="map-canvas">
+    <!-- XAML: BackgroundGridControl — single SVG tile with 6 rects (lines 90-131) -->
+    <svg style="position:absolute;inset:0;width:100%;height:100%;">
+      <rect width="100%" height="100%" fill="url(#grid-tile-64)"/>
+    </svg>
+    <!-- XAML: MapControl left shadow (MapControl.xaml:174-187) -->
+    <div class="map-left-shadow"></div>
+  </div>
+</div>
+
+
+<!-- 1B: Grid tile anatomy -->
+<h3>Grid Tile Anatomy</h3>
+<p class="section-note">This is a SINGLE-FREQUENCY grid, not two grids at different spacings. The VisualBrush tile (4x4 WPF Grid: rows 2,*,2,1 / cols 2,*,2,1) contains 6 rectangles. Rects 1-2 draw 1px lines at tile edges (0.5 opacity). Rects 3-6 boost intersection corners to 0.75 opacity. When tiled, every crossing is slightly darker than the line runs.</p>
+
+<div class="anatomy-grid">
+
+  <!-- Single tile structure card -->
+  <div class="anatomy-card">
+    <div class="anatomy-card__title">Tile Structure (64px example)</div>
+    <!-- SVG showing the tile with all 6 rects at exaggerated scale -->
+    <svg width="100%" height="200" viewBox="0 0 300 200">
+      <!-- Tile background -->
+      <rect x="20" y="10" width="260" height="170" fill="var(--MapBackground)" stroke="var(--InnerLines)" stroke-width="1"/>
+
+      <!-- Column labels -->
+      <text x="30" y="8" font-size="8" fill="var(--ForegroundDisabled)" text-anchor="middle" font-family="monospace">Col0</text>
+      <text x="35" y="195" font-size="7" fill="var(--ForegroundDisabled)" text-anchor="middle" font-family="monospace">2px</text>
+      <text x="140" y="8" font-size="8" fill="var(--ForegroundDisabled)" text-anchor="middle" font-family="monospace">Col1 (*=59px)</text>
+      <text x="250" y="8" font-size="8" fill="var(--ForegroundDisabled)" text-anchor="middle" font-family="monospace">Col2</text>
+      <text x="250" y="195" font-size="7" fill="var(--ForegroundDisabled)" text-anchor="middle" font-family="monospace">2px</text>
+      <text x="272" y="8" font-size="8" fill="var(--ForegroundDisabled)" text-anchor="middle" font-family="monospace">Col3</text>
+      <text x="272" y="195" font-size="7" fill="var(--ForegroundDisabled)" text-anchor="middle" font-family="monospace">1px</text>
+
+      <!-- Row labels -->
+      <text x="14" y="20" font-size="7" fill="var(--ForegroundDisabled)" text-anchor="end" font-family="monospace">Row0 2px</text>
+      <text x="14" y="95" font-size="7" fill="var(--ForegroundDisabled)" text-anchor="end" font-family="monospace">Row1 *</text>
+      <text x="14" y="155" font-size="7" fill="var(--ForegroundDisabled)" text-anchor="end" font-family="monospace">Row2 2px</text>
+      <text x="14" y="172" font-size="7" fill="var(--ForegroundDisabled)" text-anchor="end" font-family="monospace">Row3 1px</text>
+
+      <!-- Grid cell dividers (dashed, for structure reference only) -->
+      <line x1="36" y1="10" x2="36" y2="180" stroke="var(--InnerLines)" stroke-width="0.5" stroke-dasharray="2 2"/>
+      <line x1="240" y1="10" x2="240" y2="180" stroke="var(--InnerLines)" stroke-width="0.5" stroke-dasharray="2 2"/>
+      <line x1="264" y1="10" x2="264" y2="180" stroke="var(--InnerLines)" stroke-width="0.5" stroke-dasharray="2 2"/>
+      <line x1="20" y1="26" x2="280" y2="26" stroke="var(--InnerLines)" stroke-width="0.5" stroke-dasharray="2 2"/>
+      <line x1="20" y1="148" x2="280" y2="148" stroke="var(--InnerLines)" stroke-width="0.5" stroke-dasharray="2 2"/>
+      <line x1="20" y1="164" x2="280" y2="164" stroke="var(--InnerLines)" stroke-width="0.5" stroke-dasharray="2 2"/>
+
+      <!-- Rect1: Row 3, Col 0-3 — full-width horizontal, opacity 0.5 -->
+      <rect x="20" y="164" width="260" height="8" fill="var(--MapGridLines)" opacity="0.5"/>
+      <!-- Rect2: Row 0-3, Col 3 — full-height vertical, opacity 0.5 -->
+      <rect x="264" y="10" width="8" height="170" fill="var(--MapGridLines)" opacity="0.5"/>
+
+      <!-- Rect3: Row 3, Col 0 — bottom-left corner, opacity 0.75 -->
+      <rect x="20" y="164" width="16" height="8" fill="var(--MapGridLines)" opacity="0.75"/>
+      <!-- Rect4: Row 0, Col 3 — top-right corner, opacity 0.75 -->
+      <rect x="264" y="10" width="8" height="16" fill="var(--MapGridLines)" opacity="0.75"/>
+      <!-- Rect5: Row 2-3, Col 3 — bottom of right edge, opacity 0.75 -->
+      <rect x="264" y="148" width="8" height="24" fill="var(--MapGridLines)" opacity="0.75"/>
+      <!-- Rect6: Row 3, Col 2-3 — right of bottom edge, opacity 0.75 -->
+      <rect x="240" y="164" width="32" height="8" fill="var(--MapGridLines)" opacity="0.75"/>
+
+      <!-- Annotations -->
+      <text x="150" y="160" font-size="7" fill="var(--SelectionPrimary)" text-anchor="middle" font-family="monospace">Rect1 (0.5)</text>
+      <text x="258" y="95" font-size="7" fill="var(--SelectionPrimary)" text-anchor="end" font-family="monospace" transform="rotate(-90, 258, 95)">Rect2 (0.5)</text>
+      <text x="50" y="162" font-size="7" fill="var(--InformationOrange)" text-anchor="middle" font-family="monospace">R3</text>
+      <text x="274" y="8" font-size="7" fill="var(--InformationOrange)" text-anchor="middle" font-family="monospace">R4</text>
+      <text x="258" y="145" font-size="7" fill="var(--InformationOrange)" text-anchor="end" font-family="monospace">R5</text>
+      <text x="238" y="162" font-size="7" fill="var(--InformationOrange)" text-anchor="end" font-family="monospace">R6</text>
+    </svg>
+    <div class="anatomy-card__detail">Blue = 0.5 opacity lines | Orange = 0.75 intersection emphasis</div>
+  </div>
+
+  <!-- Tiled result card -->
+  <div class="anatomy-card">
+    <div class="anatomy-card__title">Tiled Result (2x2 tiles)</div>
+    <!-- Actual SVG tiled pattern showing how adjacent tiles interact -->
+    <svg width="100%" height="200" viewBox="0 0 300 200">
+      <defs>
+        <!-- Accurate 80px tile for visibility at this diagram scale — 2px lines -->
+        <pattern id="anatomy-grid-tile" patternUnits="userSpaceOnUse" width="80" height="80">
+          <rect x="0" y="78" width="80" height="2" fill="var(--MapGridLines)" opacity="0.5"/>
+          <rect x="78" y="0" width="2" height="80" fill="var(--MapGridLines)" opacity="0.5"/>
+          <rect x="0" y="78" width="3" height="2" fill="var(--MapGridLines)" opacity="0.75"/>
+          <rect x="78" y="0" width="2" height="3" fill="var(--MapGridLines)" opacity="0.75"/>
+          <rect x="78" y="75" width="2" height="5" fill="var(--MapGridLines)" opacity="0.75"/>
+          <rect x="75" y="78" width="5" height="2" fill="var(--MapGridLines)" opacity="0.75"/>
+        </pattern>
+      </defs>
+      <rect x="10" y="10" width="280" height="170" fill="var(--MapBackground)" stroke="var(--InnerLines)" stroke-width="1"/>
+      <rect x="10" y="10" width="280" height="170" fill="url(#anatomy-grid-tile)"/>
+
+      <!-- Callout for intersection -->
+      <circle cx="90" cy="90" r="12" fill="none" stroke="var(--SelectionPrimary)" stroke-width="1" stroke-dasharray="2 2"/>
+      <line x1="102" y1="85" x2="160" y2="60" stroke="var(--SelectionPrimary)" stroke-width="0.5"/>
+      <text x="162" y="58" font-size="8" fill="var(--SelectionPrimary)" font-family="monospace">Intersection: 0.75</text>
+      <text x="162" y="68" font-size="8" fill="var(--SelectionPrimary)" font-family="monospace">(Rects 3-6 overlap)</text>
+
+      <!-- Callout for line run -->
+      <circle cx="150" cy="90" r="8" fill="none" stroke="var(--ForegroundDisabled)" stroke-width="1" stroke-dasharray="2 2"/>
+      <line x1="158" y1="90" x2="200" y2="110" stroke="var(--ForegroundDisabled)" stroke-width="0.5"/>
+      <text x="202" y="108" font-size="8" fill="var(--ForegroundDisabled)" font-family="monospace">Line run: 0.5</text>
+      <text x="202" y="118" font-size="8" fill="var(--ForegroundDisabled)" font-family="monospace">(Rects 1-2 only)</text>
+    </svg>
+    <div class="anatomy-card__detail">Single grid frequency. Intersections are ~50% darker than line runs.</div>
+  </div>
+
+</div>
+
+
+<!-- 1C: Dynamic zoom behavior -->
+<h3>Dynamic Zoom Levels</h3>
+<p class="section-note">GridSizeMultiConverter subdivides the base grid (param=8) by powers of 2, capped at level 3. Tile pixel size = unitsPerPixel x (8 / 2^subdivisionLevel). Test values from GridSizeMultiConverterTests.cs. Each card shows the same SVG pattern tile structure at different sizes.</p>
+
+<div class="zoom-grid">
+
+  <!-- Zoom level: 0.01 m/px → 41px tile -->
+  <div class="zoom-card">
+    <div class="zoom-card__canvas">
+      <svg width="100%" height="100%" style="position:absolute;inset:0;">
+        <rect width="100%" height="100%" fill="var(--MapBackground)"/>
+        <rect width="100%" height="100%" fill="url(#grid-tile-41)"/>
+      </svg>
+      <div class="map-left-shadow"></div>
+    </div>
+    <div class="zoom-card__label">Very Zoomed In (0.01 m/px)</div>
+    <div class="zoom-card__token">subdiv=3 (capped), gridSize=1, tile~41px</div>
+  </div>
+
+  <!-- Zoom level: 1 m/px → 64px tile -->
+  <div class="zoom-card">
+    <div class="zoom-card__canvas">
+      <svg width="100%" height="100%" style="position:absolute;inset:0;">
+        <rect width="100%" height="100%" fill="var(--MapBackground)"/>
+        <rect width="100%" height="100%" fill="url(#grid-tile-64)"/>
+      </svg>
+      <div class="map-left-shadow"></div>
+    </div>
+    <div class="zoom-card__label">Zoomed In (1 m/px)</div>
+    <div class="zoom-card__token">subdiv=0, gridSize=8, tile=64px</div>
+  </div>
+
+  <!-- Zoom level: 3 m/px → 48px tile -->
+  <div class="zoom-card">
+    <div class="zoom-card__canvas">
+      <svg width="100%" height="100%" style="position:absolute;inset:0;">
+        <rect width="100%" height="100%" fill="var(--MapBackground)"/>
+        <rect width="100%" height="100%" fill="url(#grid-tile-48)"/>
+      </svg>
+      <div class="map-left-shadow"></div>
+    </div>
+    <div class="zoom-card__label">Medium (3 m/px)</div>
+    <div class="zoom-card__token">subdiv=2, gridSize=2, tile=48px<br>Smallest tile at integer m/px</div>
+  </div>
+
+  <!-- Zoom level: 4 m/px → 64px tile (same as 1m/px) -->
+  <div class="zoom-card">
+    <div class="zoom-card__canvas">
+      <svg width="100%" height="100%" style="position:absolute;inset:0;">
+        <rect width="100%" height="100%" fill="var(--MapBackground)"/>
+        <rect width="100%" height="100%" fill="url(#grid-tile-64)"/>
+      </svg>
+      <div class="map-left-shadow"></div>
+    </div>
+    <div class="zoom-card__label">Zoomed Out (4 m/px)</div>
+    <div class="zoom-card__token">subdiv=2, gridSize=2, tile=64px<br>Same pixel size as 1m/px, different world scale</div>
+  </div>
+
+</div>
+
+
+<!-- 1D: Left-edge shadow isolation -->
+<h3>Left-Edge Shadow</h3>
+<p class="section-note">100px wide gradient overlay from ShadowElements to transparent at 0.25 opacity. Simulates sidebar shadow cast onto map. Source: MapControl.xaml lines 174-187.</p>
+
+<div class="map-demo" style="height: 200px;">
+  <div class="map-canvas">
+    <svg style="position:absolute;inset:0;width:100%;height:100%;">
+      <rect width="100%" height="100%" fill="url(#grid-tile-64)"/>
+    </svg>
+    <!-- XAML: MapControl.xaml:174-187 — left shadow overlay -->
+    <div class="map-left-shadow"></div>
+    <!-- Annotation: show 100px boundary -->
+    <div style="position:absolute;top:0;left:100px;bottom:0;width:1px;border-left:1px dashed var(--SelectionPrimary);opacity:0.5;pointer-events:none;"></div>
+    <div style="position:absolute;top:8px;left:108px;font:var(--font-bodySm);font-family:monospace;font-size:10px;color:var(--SelectionPrimary);opacity:0.7;pointer-events:none;">100px</div>
+  </div>
+</div>
+
+  </main>
+</div>
+<script src="../js/nav.js"></script>
+</body>
+</html>
