@@ -197,7 +197,9 @@
         { label: "Background Grid",     href: "map-background/background-grid.html" },
         { label: "Pattern Textures",    href: "map-background/pattern-textures.html" },
         { label: "Map Shape Types",     href: "map-background/map-shapes.html" },
-        { label: "Paths & Roads",       href: "map-background/paths-and-roads.html" }
+        { label: "Paths",              href: "map-background/paths.html" },
+        { label: "Roads",              href: "map-background/roads.html" },
+        { label: "Map Nav",            href: "map-background/map-nav.html" }
       ]
     }
   ];
