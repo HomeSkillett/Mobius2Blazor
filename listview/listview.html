@@ -105,8 +105,10 @@
 <h2>ListBox (Default)</h2>
 
 <p class="note">
-  Vertical scrollable list with right-edge border. Items show a left selection bar
-  on select, hover overlay at 30% opacity. Min-height 44px (touch target).
+  Vertical scrollable list with right-edge border. Full-row selection fill with
+  foreground change to <code>SelectionForeground</code> (white). Content offset
+  10px (Col 0) + 40px padding = 50px from left edge.
+  Hover overlay at 30% opacity. Min-height 44px (touch target).
   <code>.mob-listbox</code> + <code>.mob-listbox__item</code>
 </p>
 
@@ -118,14 +120,14 @@
     <!-- XAML: ListBox -->
     <div class="mob-listbox demo-list">
       <!-- XAML: ListBoxItem -->
-      <div class="mob-listbox__item" tabindex="0">Vehicle 01 — Haul Truck</div>
-      <div class="mob-listbox__item is-selected" tabindex="0">Vehicle 02 — Excavator</div>
-      <div class="mob-listbox__item" tabindex="0">Vehicle 03 — Water Cart</div>
-      <div class="mob-listbox__item" tabindex="0">Vehicle 04 — Drill Rig</div>
-      <div class="mob-listbox__item" tabindex="0">Vehicle 05 — Haul Truck</div>
-      <div class="mob-listbox__item" tabindex="0">Vehicle 06 — Compactor</div>
-      <div class="mob-listbox__item" tabindex="0">Vehicle 07 — Grader</div>
-      <div class="mob-listbox__item" tabindex="0">Vehicle 08 — Haul Truck</div>
+      <div class="mob-listbox__item" tabindex="0"><span>Vehicle 01 — Haul Truck</span></div>
+      <div class="mob-listbox__item is-selected" tabindex="0"><span>Vehicle 02 — Excavator</span></div>
+      <div class="mob-listbox__item" tabindex="0"><span>Vehicle 03 — Water Cart</span></div>
+      <div class="mob-listbox__item" tabindex="0"><span>Vehicle 04 — Drill Rig</span></div>
+      <div class="mob-listbox__item" tabindex="0"><span>Vehicle 05 — Haul Truck</span></div>
+      <div class="mob-listbox__item" tabindex="0"><span>Vehicle 06 — Compactor</span></div>
+      <div class="mob-listbox__item" tabindex="0"><span>Vehicle 07 — Grader</span></div>
+      <div class="mob-listbox__item" tabindex="0"><span>Vehicle 08 — Haul Truck</span></div>
     </div>
   </div>
 
@@ -134,12 +136,132 @@
     <span class="demo-label">With Disabled Items</span>
     <!-- XAML: ListBox -->
     <div class="mob-listbox demo-list">
-      <div class="mob-listbox__item" tabindex="0">Path A — Crusher Loop</div>
-      <div class="mob-listbox__item is-selected" tabindex="0">Path B — Stockpile Run</div>
-      <div class="mob-listbox__item is-disabled">Path C — Offline</div>
-      <div class="mob-listbox__item" tabindex="0">Path D — Pit Haul</div>
-      <div class="mob-listbox__item is-disabled">Path E — Maintenance</div>
-      <div class="mob-listbox__item" tabindex="0">Path F — Ramp Access</div>
+      <div class="mob-listbox__item" tabindex="0"><span>Path A — Crusher Loop</span></div>
+      <div class="mob-listbox__item is-selected" tabindex="0"><span>Path B — Stockpile Run</span></div>
+      <div class="mob-listbox__item is-disabled"><span>Path C — Offline</span></div>
+      <div class="mob-listbox__item" tabindex="0"><span>Path D — Pit Haul</span></div>
+      <div class="mob-listbox__item is-disabled"><span>Path E — Maintenance</span></div>
+      <div class="mob-listbox__item" tabindex="0"><span>Path F — Ramp Access</span></div>
+    </div>
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- ============================================================
+     INTERACTION STATES
+     XAML: Mobius_UI_Resources_Templates_ListBoxItem VisualStateGroups
+           Mobius_UI_Resources_Templates_ListViewItem VisualStateGroups
+     ============================================================ -->
+<h2>Interaction States</h2>
+
+<p class="note">
+  Both ListBox and ListView items share the same visual state model. Each state
+  shown as a static snapshot. In WPF, transitions are animated.
+</p>
+
+<h3>ListBox Item States</h3>
+
+<div class="demo-grid">
+
+  <div class="demo-col">
+    <span class="demo-label">Default</span>
+    <div class="mob-listbox demo-list--auto">
+      <!-- XAML: CommonStates → Normal -->
+      <div class="mob-listbox__item" tabindex="0"><span>Vehicle 01 — Haul Truck</span></div>
+    </div>
+  </div>
+
+  <div class="demo-col">
+    <span class="demo-label">Hover</span>
+    <div class="mob-listbox demo-list--auto">
+      <!-- XAML: CommonStates → MouseOver: _mouseOverElement Opacity 0.3 -->
+      <div class="mob-listbox__item is-hovered" tabindex="0"><span>Vehicle 01 — Haul Truck</span></div>
+    </div>
+  </div>
+
+  <div class="demo-col">
+    <span class="demo-label">Focused</span>
+    <div class="mob-listbox demo-list--auto">
+      <!-- XAML: FocusStates → Focused: _mouseOverElement Opacity 0.3 -->
+      <div class="mob-listbox__item is-focused" tabindex="0"><span>Vehicle 01 — Haul Truck</span></div>
+    </div>
+  </div>
+
+  <div class="demo-col">
+    <span class="demo-label">Selected</span>
+    <div class="mob-listbox demo-list--auto">
+      <!-- XAML: SelectionStates → Selected:
+           _selectionElement Opacity 1.0 (full row)
+           Foreground → SelectionForeground (white) -->
+      <div class="mob-listbox__item is-selected" tabindex="0"><span>Vehicle 01 — Haul Truck</span></div>
+    </div>
+  </div>
+
+  <div class="demo-col">
+    <span class="demo-label">Selected + Hover</span>
+    <div class="mob-listbox demo-list--auto">
+      <div class="mob-listbox__item is-selected is-hovered" tabindex="0"><span>Vehicle 01 — Haul Truck</span></div>
+    </div>
+  </div>
+
+  <div class="demo-col">
+    <span class="demo-label">Disabled</span>
+    <div class="mob-listbox demo-list--auto">
+      <!-- XAML: CommonStates → Disabled: _templateRoot Opacity = DisabledOpacity -->
+      <div class="mob-listbox__item is-disabled"><span>Vehicle 01 — Haul Truck</span></div>
+    </div>
+  </div>
+
+</div>
+
+<h3>ListView Item States</h3>
+
+<div class="demo-grid">
+
+  <div class="demo-col">
+    <span class="demo-label">Default</span>
+    <div class="mob-listview demo-list--auto">
+      <div class="mob-listview__item" tabindex="0"><span>Crusher Loop — Active</span></div>
+    </div>
+  </div>
+
+  <div class="demo-col">
+    <span class="demo-label">Hover</span>
+    <div class="mob-listview demo-list--auto">
+      <div class="mob-listview__item is-hovered" tabindex="0"><span>Crusher Loop — Active</span></div>
+    </div>
+  </div>
+
+  <div class="demo-col">
+    <span class="demo-label">Focused</span>
+    <div class="mob-listview demo-list--auto">
+      <div class="mob-listview__item is-focused" tabindex="0"><span>Crusher Loop — Active</span></div>
+    </div>
+  </div>
+
+  <div class="demo-col">
+    <span class="demo-label">Selected</span>
+    <div class="mob-listview demo-list--auto">
+      <!-- XAML: No foreground change on selected (stays ForegroundPrimary) -->
+      <div class="mob-listview__item is-selected" tabindex="0"><span>Crusher Loop — Active</span></div>
+    </div>
+  </div>
+
+  <div class="demo-col">
+    <span class="demo-label">Selected + Hover</span>
+    <div class="mob-listview demo-list--auto">
+      <div class="mob-listview__item is-selected is-hovered" tabindex="0"><span>Crusher Loop — Active</span></div>
+    </div>
+  </div>
+
+  <div class="demo-col">
+    <span class="demo-label">Disabled</span>
+    <div class="mob-listview demo-list--auto">
+      <div class="mob-listview__item is-disabled"><span>Crusher Loop — Active</span></div>
     </div>
   </div>
 
@@ -167,10 +289,10 @@
     <span class="demo-label">Full Border</span>
     <!-- XAML: ListBox Style="ListBoxFullBorder" -->
     <div class="mob-listbox mob-listbox--full demo-list--short">
-      <div class="mob-listbox__item" tabindex="0">Trigger — Geofence Entry</div>
-      <div class="mob-listbox__item is-selected" tabindex="0">Trigger — Speed Limit</div>
-      <div class="mob-listbox__item" tabindex="0">Trigger — Obstacle Detected</div>
-      <div class="mob-listbox__item" tabindex="0">Trigger — Path Deviation</div>
+      <div class="mob-listbox__item" tabindex="0"><span>Trigger — Geofence Entry</span></div>
+      <div class="mob-listbox__item is-selected" tabindex="0"><span>Trigger — Speed Limit</span></div>
+      <div class="mob-listbox__item" tabindex="0"><span>Trigger — Obstacle Detected</span></div>
+      <div class="mob-listbox__item" tabindex="0"><span>Trigger — Path Deviation</span></div>
     </div>
   </div>
 
@@ -178,10 +300,10 @@
     <span class="demo-label">Full Border — Wide Items</span>
     <!-- XAML: ListBox Style="ListBoxFullBorderWideItems" -->
     <div class="mob-listbox mob-listbox--full demo-list--short">
-      <div class="mob-listbox__item mob-listbox__item--wide" tabindex="0">Mode: Autonomous</div>
-      <div class="mob-listbox__item mob-listbox__item--wide is-selected" tabindex="0">Mode: Tele-Remote</div>
-      <div class="mob-listbox__item mob-listbox__item--wide" tabindex="0">Mode: Manual</div>
-      <div class="mob-listbox__item mob-listbox__item--wide" tabindex="0">Mode: Standby</div>
+      <div class="mob-listbox__item mob-listbox__item--wide" tabindex="0"><span>Mode: Autonomous</span></div>
+      <div class="mob-listbox__item mob-listbox__item--wide is-selected" tabindex="0"><span>Mode: Tele-Remote</span></div>
+      <div class="mob-listbox__item mob-listbox__item--wide" tabindex="0"><span>Mode: Manual</span></div>
+      <div class="mob-listbox__item mob-listbox__item--wide" tabindex="0"><span>Mode: Standby</span></div>
     </div>
   </div>
 
@@ -247,8 +369,9 @@
 <h2>ListView</h2>
 
 <p class="note">
-  Full-row selection fill (vs ListBox's left-bar-only selection).
-  Supports drag-reorder in WPF. Right-edge border like ListBox.
+  Full-row selection fill. Foreground stays <code>ForegroundPrimary</code> on
+  select (no color change, unlike ListBox). Supports drag-reorder in WPF.
+  Right-edge border like ListBox.
   <code>.mob-listview</code> + <code>.mob-listview__item</code>
 </p>
 
@@ -259,13 +382,13 @@
     <!-- XAML: ListView -->
     <div class="mob-listview demo-list">
       <!-- XAML: ListViewItem -->
-      <div class="mob-listview__item" tabindex="0">Crusher Loop — Active</div>
-      <div class="mob-listview__item is-selected" tabindex="0">Stockpile Run — Selected</div>
-      <div class="mob-listview__item" tabindex="0">Pit Haul North — Idle</div>
-      <div class="mob-listview__item" tabindex="0">Ramp Access — Active</div>
-      <div class="mob-listview__item" tabindex="0">Dump Zone A — Active</div>
-      <div class="mob-listview__item is-disabled">Maintenance Loop — Offline</div>
-      <div class="mob-listview__item" tabindex="0">Pit Haul South — Idle</div>
+      <div class="mob-listview__item" tabindex="0"><span>Crusher Loop — Active</span></div>
+      <div class="mob-listview__item is-selected" tabindex="0"><span>Stockpile Run — Selected</span></div>
+      <div class="mob-listview__item" tabindex="0"><span>Pit Haul North — Idle</span></div>
+      <div class="mob-listview__item" tabindex="0"><span>Ramp Access — Active</span></div>
+      <div class="mob-listview__item" tabindex="0"><span>Dump Zone A — Active</span></div>
+      <div class="mob-listview__item is-disabled"><span>Maintenance Loop — Offline</span></div>
+      <div class="mob-listview__item" tabindex="0"><span>Pit Haul South — Idle</span></div>
     </div>
   </div>
 
@@ -273,9 +396,9 @@
     <span class="demo-label">ListView — No Scroll</span>
     <!-- XAML: ListView Template="ListViewNoScroll" -->
     <div class="mob-listview mob-listview--no-scroll demo-list--auto">
-      <div class="mob-listview__item" tabindex="0">Action 1 — Honk Horn</div>
-      <div class="mob-listview__item is-selected" tabindex="0">Action 2 — Flash Lights</div>
-      <div class="mob-listview__item" tabindex="0">Action 3 — Slow to 5 kph</div>
+      <div class="mob-listview__item" tabindex="0"><span>Action 1 — Honk Horn</span></div>
+      <div class="mob-listview__item is-selected" tabindex="0"><span>Action 2 — Flash Lights</span></div>
+      <div class="mob-listview__item" tabindex="0"><span>Action 3 — Slow to 5 kph</span></div>
     </div>
   </div>
 
@@ -304,10 +427,10 @@
     <span class="demo-label">Horizontal Text</span>
     <!-- XAML: ListBox Template="ListBoxHorizontal", ItemTemplate="ListBoxItemHorizontal" -->
     <div class="mob-listbox--horizontal">
-      <div class="mob-listbox__item--horizontal" tabindex="0">All</div>
-      <div class="mob-listbox__item--horizontal is-selected" tabindex="0">Active</div>
-      <div class="mob-listbox__item--horizontal" tabindex="0">Idle</div>
-      <div class="mob-listbox__item--horizontal is-disabled">Offline</div>
+      <div class="mob-listbox__item--horizontal" tabindex="0"><span>All</span></div>
+      <div class="mob-listbox__item--horizontal is-selected" tabindex="0"><span>Active</span></div>
+      <div class="mob-listbox__item--horizontal" tabindex="0"><span>Idle</span></div>
+      <div class="mob-listbox__item--horizontal is-disabled"><span>Offline</span></div>
     </div>
   </div>
 
@@ -372,10 +495,10 @@
     <div class="demo-invert-bg">
       <!-- XAML: ListBox Style="ListBoxInvert" -->
       <div class="mob-listbox mob-listbox--invert demo-list--short">
-        <div class="mob-listbox__item mob-listbox__item--invert" tabindex="0">Sensor A — LiDAR</div>
-        <div class="mob-listbox__item mob-listbox__item--invert is-selected" tabindex="0">Sensor B — Radar</div>
-        <div class="mob-listbox__item mob-listbox__item--invert" tabindex="0">Sensor C — Camera</div>
-        <div class="mob-listbox__item mob-listbox__item--invert" tabindex="0">Sensor D — GPS</div>
+        <div class="mob-listbox__item mob-listbox__item--invert" tabindex="0"><span>Sensor A — LiDAR</span></div>
+        <div class="mob-listbox__item mob-listbox__item--invert is-selected" tabindex="0"><span>Sensor B — Radar</span></div>
+        <div class="mob-listbox__item mob-listbox__item--invert" tabindex="0"><span>Sensor C — Camera</span></div>
+        <div class="mob-listbox__item mob-listbox__item--invert" tabindex="0"><span>Sensor D — GPS</span></div>
       </div>
     </div>
   </div>
@@ -385,10 +508,10 @@
     <div class="demo-invert-bg">
       <!-- XAML: ListView ItemContainerStyle="ListViewItemInvert" -->
       <div class="mob-listview demo-list--short">
-        <div class="mob-listview__item mob-listview__item--invert" tabindex="0">Zone Alpha</div>
-        <div class="mob-listview__item mob-listview__item--invert is-selected" tabindex="0">Zone Bravo</div>
-        <div class="mob-listview__item mob-listview__item--invert" tabindex="0">Zone Charlie</div>
-        <div class="mob-listview__item mob-listview__item--invert" tabindex="0">Zone Delta</div>
+        <div class="mob-listview__item mob-listview__item--invert" tabindex="0"><span>Zone Alpha</span></div>
+        <div class="mob-listview__item mob-listview__item--invert is-selected" tabindex="0"><span>Zone Bravo</span></div>
+        <div class="mob-listview__item mob-listview__item--invert" tabindex="0"><span>Zone Charlie</span></div>
+        <div class="mob-listview__item mob-listview__item--invert" tabindex="0"><span>Zone Delta</span></div>
       </div>
     </div>
   </div>

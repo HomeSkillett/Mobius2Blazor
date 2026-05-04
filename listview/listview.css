@@ -34,8 +34,12 @@
   overflow-y: auto;
   overflow-x: hidden;
   position: relative;
-  /* XAML: BorderBrush = InnerLines, rendered as right-edge border */
-  border-right: var(--line-size) solid var(--InnerLines);
+  /* XAML: Mobius_UI_Resources_Styles_ListBox (keyed, line 4782)
+     BorderBrush = InnerLineDividersBrush
+     Template = EdgeBorderVertical (right edge only)
+     NOTE: Default (unkeyed) style at line 4766 uses InnerLinesBrush instead.
+     Using keyed style since that's what named references resolve to. */
+  border-right: var(--line-size) solid var(--InnerLineDividers);
 }
 
 
@@ -45,9 +49,11 @@
    ============================================================= */
 
 .mob-listbox--full {
-  /* XAML: BorderBrush = BackgroundInputOutline, Background = BackgroundInput */
+  /* XAML: Mobius_UI_Resources_Styles_ListBoxFullBorder
+     BorderBrush = BackgroundInputOutlineBrush (line 4792)
+     Background = BackgroundInputBrush (line 4793)
+     Template = EdgeBorderFull (all 4 sides) */
   border: var(--border-width) solid var(--BackgroundInputOutline);
-  border-right: var(--border-width) solid var(--BackgroundInputOutline);
   background: var(--BackgroundInput);
 }
 
@@ -64,7 +70,9 @@
   overflow-y: auto;
   overflow-x: hidden;
   position: relative;
-  /* XAML: BorderBrush = InnerLines, rendered as right-edge border */
+  /* XAML: Default ListView style (line 4813)
+     BorderBrush = InnerLinesBrush
+     Template = EdgeBorderVertical (right edge only) */
   border-right: var(--line-size) solid var(--InnerLines);
 }
 
@@ -99,14 +107,20 @@
    ============================================================= */
 
 .mob-listbox--invert {
-  border-right-color: var(--InnerLinesInvert);
+  /* XAML: Mobius_UI_Resources_Styles_ListBoxInvert (line 4787-4789)
+     Only overrides ItemContainerStyle → ListBoxItemInvert.
+     BorderBrush inherited from parent ListBox = InnerLineDividersBrush.
+     NOTE: InnerLineDividers = rgba(0,0,0,0) in LightTheme = transparent. */
+  border-right-color: var(--InnerLineDividers);
 }
 
 
 /* =============================================================
    ITEM — ListBoxItem (default)
    XAML: Mobius_UI_Resources_Templates_ListBoxItem
-   Grid: [SelectionBar 10px col] [Content col]
+   Grid: [Col 0 = LabelToControlDistance 10px] [Col 1 = Content *]
+   _selectionElement spans Grid.Column="0" Grid.ColumnSpan="2"
+   (full-row fill, not left-bar only)
    ============================================================= */
 
 .mob-listbox__item {
@@ -114,8 +128,10 @@
   display: flex;
   align-items: center;
   min-height: var(--touch);
-  /* XAML: Padding="40,0" → left 40px, right 40px */
-  padding: 0 40px;
+  /* XAML: Col 0 = 10px + Col 1 Padding="40,0"
+     Total left offset = 10px + 40px = 50px; right = 40px
+     DefaultControls.xaml line 4248 (col def), line 4681 (Padding) */
+  padding: 0 40px 0 50px;
   color: var(--ForegroundPrimary);
   background: var(--BackgroundPrimary);
   cursor: pointer;
@@ -124,15 +140,12 @@
     opacity var(--transition-mouse-out) ease;
 }
 
-/* XAML: _selectionElement — left edge bar, col 0+1 span, SelectionPrimary */
+/* XAML: _selectionElement — full-row fill, Grid.Column="0" Grid.ColumnSpan="2"
+   DefaultControls.xaml lines 4258-4263 */
 .mob-listbox__item::before {
   content: "";
   position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  /* XAML: ColumnDefinition Width="LabelToControlDistance" = 10px */
-  width: var(--spacing-label-to-control);
+  inset: 0;
   background: var(--SelectionPrimary);
   opacity: 0;
   transition: opacity 100ms ease;
@@ -151,14 +164,16 @@
 
 /* Hover state */
 /* XAML: MouseOver → _mouseOverElement Opacity 0.3 */
-.mob-listbox__item:hover::after {
+.mob-listbox__item:hover::after,
+.mob-listbox__item.is-hovered::after {
   opacity: 0.3;
   transition-duration: var(--transition-mouse-over);
 }
 
 /* Focus state */
 /* XAML: Focused → _mouseOverElement Opacity 0.3 */
-.mob-listbox__item:focus-visible::after {
+.mob-listbox__item:focus-visible::after,
+.mob-listbox__item.is-focused::after {
   opacity: 0.3;
   transition-duration: var(--transition-focus);
 }
@@ -191,7 +206,9 @@
    ============================================================= */
 
 .mob-listbox__item--wide {
-  padding: 0 20px;
+  /* XAML: Padding="20,0" + Col 0 = 10px → total left = 30px
+     DefaultControls.xaml line 4688 */
+  padding: 0 20px 0 30px;
 }
 
 
@@ -212,7 +229,9 @@
    ============================================================= */
 
 .mob-listbox__item--large-invert {
-  padding: 10px 40px;
+  /* XAML: Padding="40,10" + Col 0 = 10px → total left = 50px
+     DefaultControls.xaml line 4747 */
+  padding: 10px 40px 10px 50px;
   color: var(--ForegroundInvertPrimary);
   background: var(--BackgroundInvertPrimary);
 }
@@ -259,12 +278,14 @@
   transition: opacity var(--transition-mouse-out) ease;
 }
 
-.mob-listview__item:hover::after {
+.mob-listview__item:hover::after,
+.mob-listview__item.is-hovered::after {
   opacity: 0.3;
   transition-duration: var(--transition-mouse-over);
 }
 
-.mob-listview__item:focus-visible::after {
+.mob-listview__item:focus-visible::after,
+.mob-listview__item.is-focused::after {
   opacity: 0.3;
   transition-duration: var(--transition-focus);
 }
