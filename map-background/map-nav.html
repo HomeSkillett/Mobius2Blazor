@@ -183,13 +183,20 @@
 </p>
 
 <div class="demo-canvas" style="padding: 32px; display: flex; justify-content: center;">
-  <!-- XAML: TouchCompass.xaml — Full assembly -->
-  <svg width="144" height="260" viewBox="0 0 144 260" xmlns="http://www.w3.org/2000/svg">
+  <!-- XAML: TouchCompass.xaml — Full assembly
+       WrapPanel MaxWidth="144" wraps children horizontally.
+       Child 1: 132x132 Grid (Margin="6") = 144x144 slot → fills row, wraps to next.
+         Inside that Grid: DirectionalInputControl + compass Grid are SIBLINGS (compass overlays d-pad center).
+       Child 2-4: Three 36x36 button borders → second row.
+  -->
+  <svg width="144" height="192" viewBox="0 0 144 192" xmlns="http://www.w3.org/2000/svg">
 
-    <!-- ── DirectionalInputControl (132x132, Margin="6") ── -->
-    <!-- XAML: TouchCompass.xaml line 23-25 — Grid Width="132" Height="132" Margin="6" -->
-    <g transform="translate(6, 0)">
+    <!-- ══ ROW 1: 132x132 Grid with Margin="6" ══ -->
+    <!-- XAML: TouchCompass.xaml line 22-96 — Grid contains DirectionalInputControl + compass as siblings -->
 
+    <!-- ── DirectionalInputControl (child 1 of 132x132 Grid) ── -->
+    <!-- XAML: TouchCompass.xaml line 28 — DirectionalInputControl fills the 132x132 grid -->
+    <g transform="translate(6, 6)">
       <!-- Outer ring: Border Margin="15" CornerRadius="100000" Opacity="0.2" -->
       <!-- XAML: DirectionalInputControl.xaml line 20-24 -->
       <circle cx="66" cy="66" r="51" fill="var(--BackgroundInputOutline)" opacity="0.2"
@@ -199,100 +206,78 @@
       <!-- XAML: DirectionalInputControl.xaml line 31-39 -->
       <path d="M 43,5 C43,5 43,33 43,33 43,33 89,33 89,33 89,33 89,5 89,5 89,5 81,0 81,0 81,0 51,0 51,0 51,0 43,5 43,5 z"
             fill="var(--BackgroundStepTwo)" stroke="var(--BackgroundOutline)" stroke-width="1" />
-
       <!-- Right pad -->
       <!-- XAML: DirectionalInputControl.xaml line 42-50 -->
       <path d="M 127,43 C127,43 99,43 99,43 99,43 99,89 99,89 99,89 127,89 127,89 127,89 132,81 132,81 132,81 132,51 132,51 132,51 127,43 127,43 z"
             fill="var(--BackgroundStepTwo)" stroke="var(--BackgroundOutline)" stroke-width="1" />
-
       <!-- Left pad -->
       <!-- XAML: DirectionalInputControl.xaml line 53-61 -->
       <path d="M 5,43 C5,43 33,43 33,43 33,43 33,89 33,89 33,89 5,89 5,89 5,89 0,81 0,81 0,81 0,51 0,51 0,51 5,43 5,43 z"
             fill="var(--BackgroundStepTwo)" stroke="var(--BackgroundOutline)" stroke-width="1" />
-
       <!-- Down pad -->
       <!-- XAML: DirectionalInputControl.xaml line 64-72 -->
       <path d="M 43,127 C43,127 43,99 43,99 43,99 89,99 89,99 89,99 89,127 89,127 89,127 81,132 81,132 81,132 51,132 51,132 51,132 43,127 43,127 z"
             fill="var(--BackgroundStepTwo)" stroke="var(--BackgroundOutline)" stroke-width="1" />
 
       <!-- Arrow icons (ForegroundPrimary) -->
-      <!-- XAML: DirectionalInputControl.xaml lines 104-105 — Up arrow, Margin="0,-9,0,9" -->
       <g transform="translate(60, 2)">
         <path d="M0,7.5V9h1.3L6,4.4L10.6,9H12V7.6l-6-6L0,7.5z" fill="var(--ForegroundPrimary)" />
       </g>
-      <!-- XAML: DirectionalInputControl.xaml lines 124-125 — Down arrow, Margin="0,8,0,-8" -->
       <g transform="translate(60, 119)">
         <path d="M12,4.5V3h-1.3L6,7.6L1.4,3H0v1.4l6,6L12,4.5z" fill="var(--ForegroundPrimary)" />
       </g>
-      <!-- XAML: DirectionalInputControl.xaml lines 144-145 — Left arrow, Margin="-8,0,8,0" -->
       <g transform="translate(2, 60)">
         <path d="M7.5,12H9v-1.3L4.4,6L9,1.4V0H7.6l-6,6L7.5,12z" fill="var(--ForegroundPrimary)" />
       </g>
-      <!-- XAML: DirectionalInputControl.xaml lines 164-165 — Right arrow, Margin="7,0,-7,0" -->
       <g transform="translate(119, 60)">
         <path d="M4.5,0H3v1.3L7.6,6L3,10.6V12h1.4l6-6L4.5,0z" fill="var(--ForegroundPrimary)" />
       </g>
     </g>
 
-    <!-- ── Compass (82x82, centered in 144-wide WrapPanel) ── -->
-    <!-- XAML: TouchCompass.xaml line 37-38 — Grid Width="82" Height="82" -->
-    <g transform="translate(31, 138)">
+    <!-- ── Compass (child 2 of 132x132 Grid — OVERLAYS d-pad center) ── -->
+    <!-- XAML: TouchCompass.xaml line 35-95 — Grid Width="82" Height="82" HAlign=Center VAlign=Center -->
+    <!-- Position: 82x82 centered in 132x132 = offset (25,25), plus grid margin 6 = (31,31) -->
+    <g transform="translate(31, 31)">
 
       <!-- Compass border circle -->
-      <!-- XAML: TouchCompass.xaml line 44-47 — Border Background=BackgroundStrongBrush, BorderBrush=BackgroundOutlineBrush, CornerRadius="100000" -->
+      <!-- XAML: TouchCompass.xaml line 43-48 -->
       <circle cx="41" cy="41" r="41" fill="var(--BackgroundStrong)"
               stroke="var(--BackgroundOutline)" stroke-width="1" />
 
-      <!-- Compass rose (60x60 centered in 82x82) -->
-      <!-- XAML: TouchCompass.xaml line 50-55 — Path Width="60" Height="60" Fill=InnerLinesBrush -->
-      <g transform="translate(11, 11)">
-        <svg width="60" height="60" viewBox="0 0 700 700">
-          <path d="M 286.45,70.45 C286.45,70.45 265.45,76.45 265.45,76.45 265.45,76.45 249,15 249,15 249,15 270,9 270,9 270,9 286.45,70.45 286.45,70.45 z
-                   M 450.99,684.99 C450.99,684.99 434.45,623.54 434.45,623.54 434.45,623.54 413.45,629.54 413.45,629.54 413.45,629.54 429.99,690.99 429.99,690.99 429.99,690.99 450.99,684.99 450.99,684.99 z
-                   M 434.45,70.45 C434.45,70.45 413.45,76.45 413.45,76.45 413.45,76.45 429.99,15 429.99,15 429.99,15 450.99,9 450.99,9 450.99,9 434.45,70.45 434.45,70.45 z
-                   M 286.45,629.54 C286.45,629.54 265.45,623.54 265.45,623.54 265.45,623.54 249,684.99 249,684.99 249,684.99 270,690.99 270,690.99 270,690.99 286.45,629.54 286.45,629.54 z
-                   M 70.45,413.45 C70.45,413.45 76.45,434.45 76.45,434.45 76.45,434.45 15,450.99 15,450.99 15,450.99 9,429.99 9,429.99 9,429.99 70.45,413.45 70.45,413.45 z
-                   M 629.54,286.45 C629.54,286.45 623.54,265.45 623.54,265.45 623.54,265.45 684.99,249 684.99,249 684.99,249 690.99,270 690.99,270 690.99,270 629.54,286.45 629.54,286.45 z
-                   M 70.45,286.45 C70.45,286.45 76.45,265.45 76.45,265.45 76.45,265.45 15,249 15,249 15,249 9,270 9,270 9,270 70.45,286.45 70.45,286.45 z
-                   M 629.54,413.45 C629.54,413.45 623.54,434.45 623.54,434.45 623.54,434.45 684.99,450.99 684.99,450.99 684.99,450.99 690.99,429.99 690.99,429.99 690.99,429.99 629.54,413.45 629.54,413.45 z
-                   M 170,120 C170,120 155,135 155,135 155,135 110,90 110,90 110,90 125,75 125,75 125,75 170,120 170,120 z
-                   M 530,580 C530,580 545,565 545,565 545,565 590,610 590,610 590,610 575,625 575,625 575,625 530,580 530,580 z
-                   M 120,530 C120,530 135,545 135,545 135,545 90,590 90,590 90,590 75,575 75,575 75,575 120,530 120,530 z
-                   M 580,170 C580,170 565,155 565,155 565,155 610,110 610,110 610,110 625,125 625,125 625,125 580,170 580,170 z"
-                fill="var(--InnerLines)" />
-        </svg>
-      </g>
+      <!-- Compass rose (60x60 centered in 82x82, Stretch="Fill") -->
+      <!-- XAML: TouchCompass.xaml line 49-57 -->
+      <svg x="11" y="11" width="60" height="60" viewBox="0 0 700 700" preserveAspectRatio="none">
+        <path d="M 286.45,70.45 C286.45,70.45 265.45,76.45 265.45,76.45 265.45,76.45 249,15 249,15 249,15 270,9 270,9 270,9 286.45,70.45 286.45,70.45 zM 450.99,684.99 C450.99,684.99 429.99,690.99 429.99,690.99 429.99,690.99 413.54,629.54 413.54,629.54 413.54,629.54 434.54,623.54 434.54,623.54 434.54,623.54 450.99,684.99 450.99,684.99 zM 215.81,97.09 C215.81,97.09 197.81,107.09 197.81,107.09 197.81,107.09 166,52 166,52 166,52 184,42 184,42 184,42 215.81,97.09 215.81,97.09 zM 534,648 C534,648 516,658 516,658 516,658 484.18,602.90 484.18,602.90 484.18,602.90 502.18,592.90 502.18,592.90 502.18,592.90 534,648 534,648 zM 155.00,140.00 C155.00,140.00 140.00,155.00 140.00,155.00 140.00,155.00 95.00,110.00 95.00,110.00 95.00,110.00 110.00,95.00 110.00,95.00 110.00,95.00 155.00,140.00 155.00,140.00 zM 605,590 C605,590 590,605 590,605 590,605 544.99,559.99 544.99,559.99 544.99,559.99 559.99,544.99 559.99,544.99 559.99,544.99 605,590 605,590 zM 107.09,197.81 C107.09,197.81 97.09,215.81 97.09,215.81 97.09,215.81 42,184 42,184 42,184 52,166 52,166 52,166 107.09,197.81 107.09,197.81 zM 658,516 C658,516 648,534 648,534 648,534 592.90,502.18 592.90,502.18 592.90,502.18 602.90,484.18 602.90,484.18 602.90,484.18 658,516 658,516 zM 70.45,413.54 C70.45,413.54 76.45,434.54 76.45,434.54 76.45,434.54 14.99,450.99 14.99,450.99 14.99,450.99 8.99,429.99 8.99,429.99 8.99,429.99 70.45,413.54 70.45,413.54 zM 685,249 C685,249 691,270 691,270 691,270 629.54,286.45 629.54,286.45 629.54,286.45 623.54,265.45 623.54,265.45 623.54,265.45 685,249 685,249 zM 96.18,483.18 C96.18,483.18 107.18,503.18 107.18,503.18 107.18,503.18 52,535 52,535 52,535 41,515 41,515 41,515 96.18,483.18 96.18,483.18 zM 648,165 C648,165 659,185 659,185 659,185 603.81,216.81 603.81,216.81 603.81,216.81 592.81,196.81 592.81,196.81 592.81,196.81 648,165 648,165 zM 140.00,544.99 C140.00,544.99 155.00,559.99 155.00,559.99 155.00,559.99 110.00,605 110.00,605 110.00,605 95.00,590 95.00,590 95.00,590 140.00,544.99 140.00,544.99 zM 590,95.00 C590,95.00 605,110.00 605,110.00 605,110.00 559.99,155.00 559.99,155.00 559.99,155.00 544.99,140.00 544.99,140.00 544.99,140.00 590,95.00 590,95.00 zM 196.81,592.81 C196.81,592.81 216.81,603.81 216.81,603.81 216.81,603.81 185,659 185,659 185,659 165,648 165,648 165,648 196.81,592.81 196.81,592.81 zM 515,41 C515,41 535,52 535,52 535,52 503.18,107.18 503.18,107.18 503.18,107.18 483.18,96.18 483.18,96.18 483.18,96.18 515,41 515,41 zM 265.45,623.54 C265.45,623.54 286.45,629.54 286.45,629.54 286.45,629.54 270.00,691.00 270.00,691.00 270.00,691.00 249.00,685.00 249.00,685.00 249.00,685.00 265.45,623.54 265.45,623.54 zM 430,9 C430,9 451.00,15 451.00,15 451.00,15 434.54,76.45 434.54,76.45 434.54,76.45 413.54,70.45 413.54,70.45 413.54,70.45 430,9 430,9 zM 339,636.36 C339,636.36 361,636.36 361,636.36 361,636.36 361,700 361,700 361,700 339,700 339,700 339,700 339,636.36 339,636.36 zM 339,0 C339,0 361,0 361,0 361,0 361,63.63 361,63.63 361,63.63 339,63.63 339,63.63 339,63.63 339,0 339,0 zM 76.45,265.45 C76.45,265.45 70.45,286.45 70.45,286.45 70.45,286.45 9,270 9,270 9,270 15,249 15,249 15,249 76.45,265.45 76.45,265.45 zM 690.99,429.99 C690.99,429.99 684.99,450.99 684.99,450.99 684.99,450.99 623.54,434.54 623.54,434.54 623.54,434.54 629.54,413.54 629.54,413.54 629.54,413.54 690.99,429.99 690.99,429.99 zM 63.63,339.39 C63.63,339.39 63.63,360.60 63.63,360.60 63.63,360.60 0,360.60 0,360.60 0,360.60 0,339.39 0,339.39 0,339.39 63.63,339.39 63.63,339.39 zM 700,339.39 C700,339.39 700,360.60 700,360.60 700,360.60 636.36,360.60 636.36,360.60 636.36,360.60 636.36,339.39 636.36,339.39 636.36,339.39 700,339.39 700,339.39 z"
+              fill="var(--InnerLines)" />
+      </svg>
 
-      <!-- Compass needle (90x90, Canvas Margin="-4") -->
-      <!-- XAML: TouchCompass.xaml line 60-62 — Canvas Width="90" Height="90" Margin="-4" -->
+      <!-- Compass needle (90x90, Canvas Margin="-4" overflows 82x82 border) -->
+      <!-- XAML: TouchCompass.xaml line 59-93 -->
       <g transform="translate(-4, -4)">
-        <!-- Inner needle canvas: Canvas.Left="36" Width="18" Height="90" -->
-        <!-- XAML: TouchCompass.xaml line 71-73 -->
         <g transform="translate(36, 0)">
-          <!-- North pointer (red triangle) -->
-          <!-- XAML: TouchCompass.xaml line 76-81 — Canvas.Left="5.40" Width="7.20" Height="26.10" Fill=InformationRedBrush -->
-          <path d="M 12.60,22.5 C12.60,22.5 9,0 9,0 9,0 5.40,22.5 5.40,22.5 5.40,22.5 9,26.10 9,26.10 9,26.10 12.60,22.5 12.60,22.5 z"
-                fill="var(--InformationRed)" />
-
-          <!-- Needle body (circle + pin) -->
-          <!-- XAML: TouchCompass.xaml line 85-90 — Canvas.Left="0" Canvas.Top="24.82" Width="18" Height="65.17" Fill=ForegroundPrimaryBrush -->
-          <path d="M 3.59,45 C3.59,42.01 6.01,39.59 9,39.59 11.98,39.59 14.39,42.01 14.39,45 14.39,47.98 11.98,50.40 9,50.40 6.01,50.40 3.59,47.98 3.59,45 z
-                   M 9.90,36.04 C9.60,36.01 9.30,36 9,36 8.69,36 8.39,36.01 8.09,36.04 8.09,36.04 8.83,28.63 8.83,28.63 8.83,28.63 5.02,24.82 5.02,24.82 5.02,24.82 2.85,38.42 2.85,38.42 1.09,40.06 0,42.40 0,45 0,47.59 1.09,49.93 2.85,51.57 2.85,51.57 9,90 9,90 9,90 15.14,51.57 15.14,51.57 16.90,49.93 18,47.59 18,45 18,42.40 16.90,40.06 15.14,38.42 15.14,38.42 12.97,24.82 12.97,24.82 12.97,24.82 9.16,28.63 9.16,28.63 9.16,28.63 9.90,36.04 9.90,36.04 z"
-                fill="var(--ForegroundPrimary)" />
+          <!-- Red tip: Stretch="Fill" -->
+          <svg x="5.40" y="0" width="7.20" height="26.10" viewBox="5.40 0 7.20 26.10" preserveAspectRatio="none">
+            <path d="M 12.60,22.5 C12.60,22.5 9,0 9,0 9,0 5.40,22.5 5.40,22.5 5.40,22.5 9,26.10 9,26.10 9,26.10 12.60,22.5 12.60,22.5 z"
+                  fill="var(--InformationRed)" />
+          </svg>
+          <!-- Needle body: Stretch="Fill" -->
+          <svg x="0" y="24.82" width="18" height="65.17" viewBox="0 24.82 18 65.18" preserveAspectRatio="none">
+            <path d="M 3.59,45 C3.59,42.01 6.01,39.59 9,39.59 11.98,39.59 14.39,42.01 14.39,45 14.39,47.98 11.98,50.40 9,50.40 6.01,50.40 3.59,47.98 3.59,45 zM 9.90,36.04 C9.60,36.01 9.30,36 9,36 8.69,36 8.39,36.01 8.09,36.04 8.09,36.04 8.83,28.63 8.83,28.63 8.83,28.63 5.02,24.82 5.02,24.82 5.02,24.82 2.85,38.42 2.85,38.42 1.09,40.06 0,42.40 0,45 0,47.59 1.09,49.93 2.85,51.57 2.85,51.57 9,90 9,90 9,90 15.14,51.57 15.14,51.57 16.90,49.93 18,47.59 18,45 18,42.40 16.90,40.06 15.14,38.42 15.14,38.42 12.97,24.82 12.97,24.82 12.97,24.82 9.16,28.63 9.16,28.63 9.16,28.63 9.90,36.04 9.90,36.04 z"
+                  fill="var(--ForegroundPrimary)" />
+          </svg>
         </g>
       </g>
     </g>
 
-    <!-- ── Button row (Locate, ZoomOut, ZoomIn) ── -->
-    <!-- XAML: TouchCompass.xaml lines 98-173 — Three 36x36 circular borders -->
-    <g transform="translate(6, 224)">
-
-      <!-- Locate button -->
-      <!-- XAML: TouchCompass.xaml line 98-119 — Width="36" Height="36" Margin="6" -->
+    <!-- ══ ROW 2: Three 36x36 circular buttons ══ -->
+    <!-- XAML: TouchCompass.xaml lines 97-177 — Wrap to second row at y=144 -->
+    <!-- Locate/ZoomOut: Margin="6" → content at y=150. ZoomIn: Margin="8,0,0,0" → content at y=144. -->
+    <g transform="translate(6, 150)">
+      <!-- Locate button — Margin="6" -->
+      <!-- XAML: TouchCompass.xaml line 97-122 -->
       <g transform="translate(0, 0)">
         <circle cx="18" cy="18" r="18" fill="var(--BackgroundStrong)"
                 stroke="var(--BackgroundOutline)" stroke-width="1" />
-        <!-- XAML: TouchCompass.xaml line 119 — Icon_Locate, Margin="1" -->
         <g transform="translate(9, 9)">
           <svg width="20" height="20" viewBox="0 0 20 20">
             <path d="M10,0C4.5,0,0,4.5,0,10s4.5,10,10,10s10-4.5,10-10S15.5,0,10,0z M11,18.9V15H9v3.9c-4.2-0.5-7.5-3.8-7.9-7.9H5V9H1.1C1.5,4.8,4.8,1.5,9,1.1V5h2V1.1c4.2,0.5,7.5,3.8,7.9,7.9H15v2h3.9C18.5,15.2,15.2,18.5,11,18.9z"
@@ -300,13 +285,11 @@
           </svg>
         </g>
       </g>
-
-      <!-- Zoom Out button -->
-      <!-- XAML: TouchCompass.xaml line 125-146 — Width="36" Height="36" Margin="6" -->
+      <!-- Zoom Out button — Margin="6" -->
+      <!-- XAML: TouchCompass.xaml line 124-149 -->
       <g transform="translate(48, 0)">
         <circle cx="18" cy="18" r="18" fill="var(--BackgroundStrong)"
                 stroke="var(--BackgroundOutline)" stroke-width="1" />
-        <!-- XAML: TouchCompass.xaml line 146 — Icon_Math_Minus, Margin="1" -->
         <g transform="translate(9, 9)">
           <svg width="20" height="20" viewBox="0 0 20 20">
             <path d="M2,11V9h16v2H2z"
@@ -314,13 +297,11 @@
           </svg>
         </g>
       </g>
-
-      <!-- Zoom In button -->
-      <!-- XAML: TouchCompass.xaml line 152-173 — Width="36" Height="36" Margin="8,0,0,0" -->
-      <g transform="translate(96, 0)">
+      <!-- Zoom In button — Margin="8,0,0,0" -->
+      <!-- XAML: TouchCompass.xaml line 151-177 -->
+      <g transform="translate(92, -6)">
         <circle cx="18" cy="18" r="18" fill="var(--BackgroundStrong)"
                 stroke="var(--BackgroundOutline)" stroke-width="1" />
-        <!-- XAML: TouchCompass.xaml line 173 — Icon_Math_Plus, Margin="1" -->
         <g transform="translate(9, 9)">
           <svg width="20" height="20" viewBox="0 0 20 20">
             <path d="M18,9h-7V2H9v7H2v2h7v7h2v-7h7V9z"
@@ -363,10 +344,10 @@
 
   <!-- Exploded view: needle body -->
   <div style="text-align: center;">
-    <svg width="36" height="130" viewBox="0 0 18 65.17" xmlns="http://www.w3.org/2000/svg">
-      <!-- XAML: TouchCompass.xaml line 85-90 — Width="18" Height="65.17" -->
-      <path d="M 3.59,45 C3.59,42.01 6.01,39.59 9,39.59 11.98,39.59 14.39,42.01 14.39,45 14.39,47.98 11.98,50.40 9,50.40 6.01,50.40 3.59,47.98 3.59,45 z
-               M 9.90,36.04 C9.60,36.01 9.30,36 9,36 8.69,36 8.39,36.01 8.09,36.04 8.09,36.04 8.83,28.63 8.83,28.63 8.83,28.63 5.02,24.82 5.02,24.82 5.02,24.82 2.85,38.42 2.85,38.42 1.09,40.06 0,42.40 0,45 0,47.59 1.09,49.93 2.85,51.57 2.85,51.57 9,90 9,90 9,90 15.14,51.57 15.14,51.57 16.90,49.93 18,47.59 18,45 18,42.40 16.90,40.06 15.14,38.42 15.14,38.42 12.97,24.82 12.97,24.82 12.97,24.82 9.16,28.63 9.16,28.63 9.16,28.63 9.90,36.04 9.90,36.04 z"
+    <svg width="36" height="130" viewBox="0 24.82 18 65.18" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- XAML: TouchCompass.xaml line 84-92 — Width="18" Height="65.17" Stretch="Fill" -->
+      <!-- viewBox matches geometry bounds: y starts at 24.82, height=65.18 (90-24.82) -->
+      <path d="M 3.59,45 C3.59,42.01 6.01,39.59 9,39.59 11.98,39.59 14.39,42.01 14.39,45 14.39,47.98 11.98,50.40 9,50.40 6.01,50.40 3.59,47.98 3.59,45 zM 9.90,36.04 C9.60,36.01 9.30,36 9,36 8.69,36 8.39,36.01 8.09,36.04 8.09,36.04 8.83,28.63 8.83,28.63 8.83,28.63 5.02,24.82 5.02,24.82 5.02,24.82 2.85,38.42 2.85,38.42 1.09,40.06 0,42.40 0,45 0,47.59 1.09,49.93 2.85,51.57 2.85,51.57 9,90 9,90 9,90 15.14,51.57 15.14,51.57 16.90,49.93 18,47.59 18,45 18,42.40 16.90,40.06 15.14,38.42 15.14,38.42 12.97,24.82 12.97,24.82 12.97,24.82 9.16,28.63 9.16,28.63 9.16,28.63 9.90,36.04 9.90,36.04 z"
             fill="var(--ForegroundPrimary)" />
     </svg>
     <div style="font: var(--font-bodySm); color: var(--ForegroundDisabled); margin-top: 8px;">
@@ -379,16 +360,21 @@
   <!-- Assembled needle in compass -->
   <div style="text-align: center;">
     <svg width="90" height="90" viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
-      <!-- XAML: TouchCompass.xaml line 44-47 — compass background circle -->
+      <!-- XAML: TouchCompass.xaml line 43-47 — compass background circle -->
       <circle cx="45" cy="45" r="41" fill="var(--BackgroundStrong)"
               stroke="var(--BackgroundOutline)" stroke-width="1" />
-      <!-- Needle canvas -->
+      <!-- Needle canvas — uses nested <svg> with viewBox to replicate Stretch="Fill" -->
       <g transform="translate(36, 0)">
-        <path d="M 12.60,22.5 C12.60,22.5 9,0 9,0 9,0 5.40,22.5 5.40,22.5 5.40,22.5 9,26.10 9,26.10 9,26.10 12.60,22.5 12.60,22.5 z"
-              fill="var(--InformationRed)" />
-        <path d="M 3.59,45 C3.59,42.01 6.01,39.59 9,39.59 11.98,39.59 14.39,42.01 14.39,45 14.39,47.98 11.98,50.40 9,50.40 6.01,50.40 3.59,47.98 3.59,45 z
-                 M 9.90,36.04 C9.60,36.01 9.30,36 9,36 8.69,36 8.39,36.01 8.09,36.04 8.09,36.04 8.83,28.63 8.83,28.63 8.83,28.63 5.02,24.82 5.02,24.82 5.02,24.82 2.85,38.42 2.85,38.42 1.09,40.06 0,42.40 0,45 0,47.59 1.09,49.93 2.85,51.57 2.85,51.57 9,90 9,90 9,90 15.14,51.57 15.14,51.57 16.90,49.93 18,47.59 18,45 18,42.40 16.90,40.06 15.14,38.42 15.14,38.42 12.97,24.82 12.97,24.82 12.97,24.82 9.16,28.63 9.16,28.63 9.16,28.63 9.90,36.04 9.90,36.04 z"
-              fill="var(--ForegroundPrimary)" />
+        <!-- Red tip: Stretch="Fill" -->
+        <svg x="5.40" y="0" width="7.20" height="26.10" viewBox="5.40 0 7.20 26.10" preserveAspectRatio="none">
+          <path d="M 12.60,22.5 C12.60,22.5 9,0 9,0 9,0 5.40,22.5 5.40,22.5 5.40,22.5 9,26.10 9,26.10 9,26.10 12.60,22.5 12.60,22.5 z"
+                fill="var(--InformationRed)" />
+        </svg>
+        <!-- Needle body: Stretch="Fill" -->
+        <svg x="0" y="24.82" width="18" height="65.17" viewBox="0 24.82 18 65.18" preserveAspectRatio="none">
+          <path d="M 3.59,45 C3.59,42.01 6.01,39.59 9,39.59 11.98,39.59 14.39,42.01 14.39,45 14.39,47.98 11.98,50.40 9,50.40 6.01,50.40 3.59,47.98 3.59,45 zM 9.90,36.04 C9.60,36.01 9.30,36 9,36 8.69,36 8.39,36.01 8.09,36.04 8.09,36.04 8.83,28.63 8.83,28.63 8.83,28.63 5.02,24.82 5.02,24.82 5.02,24.82 2.85,38.42 2.85,38.42 1.09,40.06 0,42.40 0,45 0,47.59 1.09,49.93 2.85,51.57 2.85,51.57 9,90 9,90 9,90 15.14,51.57 15.14,51.57 16.90,49.93 18,47.59 18,45 18,42.40 16.90,40.06 15.14,38.42 15.14,38.42 12.97,24.82 12.97,24.82 12.97,24.82 9.16,28.63 9.16,28.63 9.16,28.63 9.90,36.04 9.90,36.04 z"
+                fill="var(--ForegroundPrimary)" />
+        </svg>
       </g>
     </svg>
     <div style="font: var(--font-bodySm); color: var(--ForegroundDisabled); margin-top: 8px;">
@@ -416,7 +402,8 @@
     <div class="anatomy-card__detail">Height: 60 &mdash; TouchCompass.xaml line 51</div>
     <div class="anatomy-card__detail">ViewBox: 0 0 700 700</div>
     <div class="anatomy-card__detail">Fill: InnerLinesBrush &mdash; line 55</div>
-    <div class="anatomy-card__detail">12 tick marks (cardinal + ordinal)</div>
+    <div class="anatomy-card__detail">Stretch: Fill &mdash; line 56</div>
+    <div class="anatomy-card__detail">24 tick marks (cardinal + ordinal + intermediate)</div>
   </div>
   <div class="anatomy-card">
     <div class="anatomy-card__title">North Pointer (Red Triangle)</div>
@@ -425,6 +412,7 @@
     <div class="anatomy-card__detail">Canvas.Left: 5.40 &mdash; line 76</div>
     <div class="anatomy-card__detail">Canvas.Top: 0 &mdash; line 77</div>
     <div class="anatomy-card__detail">Fill: InformationRedBrush &mdash; line 81</div>
+    <div class="anatomy-card__detail">Stretch: Fill &mdash; line 82</div>
   </div>
   <div class="anatomy-card">
     <div class="anatomy-card__title">Needle Body (Circle + Pin)</div>
@@ -433,6 +421,7 @@
     <div class="anatomy-card__detail">Canvas.Left: 0 &mdash; line 85</div>
     <div class="anatomy-card__detail">Canvas.Top: 24.82 &mdash; line 86</div>
     <div class="anatomy-card__detail">Fill: ForegroundPrimaryBrush &mdash; line 90</div>
+    <div class="anatomy-card__detail">Stretch: Fill &mdash; line 91</div>
   </div>
   <div class="anatomy-card">
     <div class="anatomy-card__title">Needle Canvas</div>

@@ -448,7 +448,7 @@
       <rect x="10" y="10" width="140" height="80" rx="4" class="map-shape map-shape--driveable" />
     </svg>
     <div class="shape-card__label">Driveable Area</div>
-    <div class="shape-card__desc">Navigation polygon. Defines where autonomous vehicles are allowed to drive.</div>
+    <div class="shape-card__desc">Navigation polygon. Defines where autonomous vehicles are allowed to drive. --DriveableShapeFill + --DriveableShapeOutline.</div>
     <div class="shape-card__token">--DriveableShapeOutline / Fill</div>
   </div>
 
@@ -460,7 +460,7 @@
         stroke-dasharray="2 2" />
     </svg>
     <div class="shape-card__label">Reference [TEXTURED]</div>
-    <div class="shape-card__desc">Visual-only boundary. Non-drivable reference area shown for operator context.</div>
+    <div class="shape-card__desc">Visual-only boundary. Non-drivable reference area shown for operator context. Zone checkerboard --ReferenceShapeFill, dashed --ReferenceShapeOutline.</div>
     <div class="shape-card__token">Zone checkerboard + dashed [2,2]</div>
   </div>
 
@@ -471,7 +471,7 @@
       <rect x="10" y="10" width="140" height="80" rx="4" style="stroke: var(--ForegroundDisabled); stroke-width: 1; stroke-dasharray: 4 4; fill: none;" />
     </svg>
     <div class="shape-card__label">Transparent Reference</div>
-    <div class="shape-card__desc">Invisible planning boundary. Used for route calculations without rendering on the map.</div>
+    <div class="shape-card__desc">Invisible planning boundary. Used for route calculations without rendering on the map. Transparent fill, dashed --ForegroundDisabled outline.</div>
     <div class="shape-card__token">Transparent outline, no fill</div>
   </div>
 
@@ -482,7 +482,7 @@
         stroke="var(--ObstacleShapeOutline)" stroke-width="2" />
     </svg>
     <div class="shape-card__label">Obstacle [TEXTURED]</div>
-    <div class="shape-card__desc">Static collision zone. Physical barrier that blocks all vehicle paths. Not selectable at runtime.</div>
+    <div class="shape-card__desc">Static collision zone. Physical barrier that blocks all vehicle paths. Not selectable at runtime. Diagonal stripes --ObstacleShapeOutline on --ObstacleShapeFill.</div>
     <div class="shape-card__token">Diagonal stripes (45deg)</div>
   </div>
 
@@ -493,7 +493,7 @@
         stroke="var(--ObstacleShapeOutline)" stroke-width="2" />
     </svg>
     <div class="shape-card__label">Obstacle MapBuilder [TEXTURED]</div>
-    <div class="shape-card__desc">Editable obstacle. Same collision rules as Obstacle, but selectable for editing in MapBuilder.</div>
+    <div class="shape-card__desc">Editable obstacle. Same collision rules as Obstacle, but selectable for editing in MapBuilder. Diagonal stripes --MapBuilderObstacleShapeOutline on --MapBuilderObstacleShapeFill.</div>
     <div class="shape-card__token">Diagonal stripes (red, 45deg)</div>
   </div>
 
@@ -506,7 +506,7 @@
         d="M 10,70 Q 50,20 80,50 Q 110,80 150,30" fill="none" />
     </svg>
     <div class="shape-card__label">Road Shape</div>
-    <div class="shape-card__desc">Structured lane corridor with lanes, widths, and driving direction for vehicle routing.</div>
+    <div class="shape-card__desc">Structured lane corridor with lanes, widths, and driving direction for vehicle routing. --RoadShapeFill, --RoadShapeOutline, --RoadShapeCenterLine.</div>
     <div class="shape-card__token">--RoadShapeOutline / Fill</div>
   </div>
 
@@ -516,7 +516,7 @@
       <rect x="10" y="10" width="140" height="80" rx="4" class="map-shape map-shape--intersection" />
     </svg>
     <div class="shape-card__label">Intersection</div>
-    <div class="shape-card__desc">Auto-generated where roads overlap. Inherits speed limit from connected roads.</div>
+    <div class="shape-card__desc">Auto-generated where roads overlap. Inherits speed limit from connected roads. --IntersectionShapeFill + --IntersectionShapeOutline.</div>
     <div class="shape-card__token">--IntersectionShapeOutline / Fill</div>
   </div>
 
@@ -526,7 +526,7 @@
       <rect x="10" y="10" width="140" height="80" rx="4" class="map-shape map-shape--failure" />
     </svg>
     <div class="shape-card__label">Failure Shape</div>
-    <div class="shape-card__desc">Validation error state. Highlights shapes that fail MapBuilder checks (e.g., roads too close).</div>
+    <div class="shape-card__desc">Validation error state. Highlights shapes that fail MapBuilder checks (e.g., roads too close). --FailureShapeOutline + --FailureShapeFill.</div>
     <div class="shape-card__token">--FailureShapeOutline / Fill</div>
   </div>
 
@@ -538,7 +538,7 @@
       <rect x="10" y="10" width="140" height="80" rx="4" class="map-shape map-shape--aoz" />
     </svg>
     <div class="shape-card__label">AOZ (Area of Operations)</div>
-    <div class="shape-card__desc">Operational boundary. Defines the outer perimeter vehicles must stay within.</div>
+    <div class="shape-card__desc">Operational boundary. Defines the outer perimeter vehicles must stay within. 3-layer outline: --MapBackground (6px) + --DriveableShapeFill (4px) + dashed --DriveableShapeOutline (4px).</div>
     <div class="shape-card__token">3-layer: bg(6) + solid(4) + dashed(4)</div>
   </div>
 
@@ -570,7 +570,7 @@
         fill="var(--InformationRed)">&#xE412;</text>
     </svg>
     <div class="shape-card__label">Sensed Obstacle</div>
-    <div class="shape-card__desc">Live-detected obstacle from vehicle sensors. Appears at runtime, never selectable, auto-clears when resolved.</div>
+    <div class="shape-card__desc">Live-detected obstacle from vehicle sensors. Appears at runtime, never selectable, auto-clears when resolved. --BackgroundStrong circle, dashed --InformationRed ring, --InformationRed EStop icon.</div>
     <div class="shape-card__token">Point marker: ellipse + dashed ring<br>+ EStop icon ()</div>
   </div>
 
@@ -611,7 +611,7 @@
         stroke="var(--LoadDumpZoneQuePointOutline)" stroke-width="1" />
     </svg>
     <div class="shape-card__label">Station [TEXTURED]</div>
-    <div class="shape-card__desc">Named destination. Where vehicles park, charge, refuel, or perform specific actions. Spot point decoration shows when zoomed in.</div>
+    <div class="shape-card__desc">Named destination. Where vehicles park, charge, refuel, or perform specific actions. Spot point decoration shows when zoomed in. Zone checkerboard --StationFill, --StationOutline, --LoadDumpZoneQuePointOutline spot point.</div>
     <div class="shape-card__token">Zone checkerboard (orange)<br>+ SpotPoint (QuePoint* tokens)</div>
   </div>
 
@@ -624,7 +624,7 @@
         stroke="var(--AvoidShapeOutline)" stroke-width="1" />
     </svg>
     <div class="shape-card__label">Avoid Zone [TEXTURED]</div>
-    <div class="shape-card__desc">Soft exclusion area. Planner reroutes vehicles around this zone when possible.</div>
+    <div class="shape-card__desc">Soft exclusion area. Planner reroutes vehicles around this zone when possible. Vertical stripes --AvoidShapeFill + --AvoidShapeOutline.</div>
     <div class="shape-card__token">Vertical stripes (tan)<br>SoftObstacle pattern</div>
   </div>
 
@@ -637,7 +637,7 @@
         stroke="var(--BarrierShapeOutline)" stroke-width="1" />
     </svg>
     <div class="shape-card__label">Barrier [TEXTURED]</div>
-    <div class="shape-card__desc">Hard obstacle placed manually in MapBuilder. Blocks all vehicle paths with full collision mask.</div>
+    <div class="shape-card__desc">Hard obstacle placed manually in MapBuilder. Blocks all vehicle paths with full collision mask. Cross-hatch --BarrierShapeOutline on --BarrierShapeFill.</div>
     <div class="shape-card__token">Cross-hatch (gray)<br>HardObstacle pattern</div>
   </div>
 
@@ -649,7 +649,7 @@
         stroke="var(--MapBuilderBarrierShapeOutline)" stroke-width="2" />
     </svg>
     <div class="shape-card__label">MapBuilder Barrier [TEXTURED]</div>
-    <div class="shape-card__desc">Selectable barrier variant for MapBuilder editing. Red stripes indicate editable state.</div>
+    <div class="shape-card__desc">Selectable barrier variant for MapBuilder editing. Diagonal stripes --MapBuilderBarrierShapeFill + --MapBuilderBarrierShapeOutline.</div>
     <div class="shape-card__token">Diagonal stripes (red, 45deg)</div>
   </div>
 
@@ -679,7 +679,7 @@
         stroke="var(--LoadDumpZoneQuePointOutline)" stroke-width="1" />
     </svg>
     <div class="shape-card__label">Queue Point</div>
-    <div class="shape-card__desc">Decoration overlay on queueable shapes. Shows vehicle queue position and heading. Only visible when zoomed in.</div>
+    <div class="shape-card__desc">Decoration overlay on queueable shapes. Shows vehicle queue position and heading. Only visible when zoomed in. --LoadDumpZoneQuePointFill circle, --LoadDumpZoneQuePointOutline ring, --LoadDumpZoneQuePointDot inner dot.</div>
     <div class="shape-card__token">QuePoint* tokens (green)<br>40x40 grid, 10x10 inner dot</div>
   </div>
 
@@ -712,7 +712,7 @@
         fill="var(--InformationOrange)">&#xE94C;</text>
     </svg>
     <div class="shape-card__label">Safety Locked (Warning)</div>
-    <div class="shape-card__desc">Shape locked by another user or system. Obstacle-stripe overlay + dashed orange boundary + lock icon.</div>
+    <div class="shape-card__desc">Shape locked by another user or system. Diagonal stripe overlay --InformationOrange on --MapBackground, dashed --InformationOrange boundary + lock icon.</div>
     <div class="shape-card__token">Obstacle pattern (orange)<br>CriticalState=false</div>
   </div>
 
@@ -741,7 +741,7 @@
         fill="var(--InformationRed)">&#xE94C;</text>
     </svg>
     <div class="shape-card__label">Safety Locked (Critical)</div>
-    <div class="shape-card__desc">Critical safety lock. Same structure as warning, but InformationRed signals higher severity.</div>
+    <div class="shape-card__desc">Critical safety lock. Same structure as warning but --InformationRed. Diagonal stripe overlay --InformationRed on --MapBackground, dashed --InformationRed boundary + lock icon.</div>
     <div class="shape-card__token">Obstacle pattern (red)<br>CriticalState=true</div>
   </div>
 
@@ -765,7 +765,7 @@
       <rect x="10" y="10" width="140" height="80" rx="4" class="map-shape map-shape--green" />
     </svg>
     <div class="shape-card__label">Green</div>
-    <div class="shape-card__desc">Golf green boundary. Inner obstacle buffer protects putting surfaces from mowers.</div>
+    <div class="shape-card__desc">Golf green boundary. Inner obstacle buffer protects putting surfaces from mowers. --GreenShapeFill + --GreenShapeOutline.</div>
     <div class="shape-card__token">--GreenShapeOutline / Fill</div>
   </div>
 
@@ -777,7 +777,7 @@
         stroke="var(--RoughShapeOutline)" stroke-width="1" />
     </svg>
     <div class="shape-card__label">Rough [TEXTURED]</div>
-    <div class="shape-card__desc">Golf rough mowing zone. Drivable area that requires a final cleanup pass.</div>
+    <div class="shape-card__desc">Golf rough mowing zone. Drivable area that requires a final cleanup pass. Zone checkerboard --RoughShapeOutline on --RoughShapeFill.</div>
     <div class="shape-card__token">Zone checkerboard (2-layer)</div>
   </div>
 
@@ -788,7 +788,7 @@
         stroke="var(--WaterHazardShapeOutline)" stroke-width="1" />
     </svg>
     <div class="shape-card__label">Water Hazard [TEXTURED]</div>
-    <div class="shape-card__desc">Golf water boundary. Keeps mowers away from ponds and streams.</div>
+    <div class="shape-card__desc">Golf water boundary. Keeps mowers away from ponds and streams. Cross-hatch --WaterHazardShapeOutline on --WaterHazardShapeFill.</div>
     <div class="shape-card__token">Cross-hatch (45deg, blue)</div>
   </div>
 
@@ -799,7 +799,7 @@
         stroke="var(--BunkerShapeOutline)" stroke-width="1" />
     </svg>
     <div class="shape-card__label">Bunker [TEXTURED]</div>
-    <div class="shape-card__desc">Golf sand trap. Inner obstacle boundary keeps mowers out of bunker areas.</div>
+    <div class="shape-card__desc">Golf sand trap. Inner obstacle boundary keeps mowers out of bunker areas. Dot pattern --BunkerShapeOutline on --BunkerShapeFill.</div>
     <div class="shape-card__token">Scattered dots (sand)</div>
   </div>
 
@@ -814,7 +814,7 @@
         stroke="var(--MapBuilderObstacleShapeOutline)" stroke-width="2.5" />
     </svg>
     <div class="shape-card__label">KeepOut [TEXTURED]</div>
-    <div class="shape-card__desc">Absolute no-go zone. Vehicles must never enter this area.</div>
+    <div class="shape-card__desc">Absolute no-go zone. Vehicles must never enter this area. Cross-hatch --MapBuilderObstacleShapeOutline on --MapBuilderObstacleShapeFill.</div>
     <div class="shape-card__token">Cross-hatch (red, 2-layer)</div>
   </div>
 
@@ -842,7 +842,7 @@
         stroke="var(--AreaCoverageShapeOutline)" stroke-width="1" />
     </svg>
     <div class="shape-card__label">Coverage Area [TEXTURED]</div>
-    <div class="shape-card__desc">Systematic mowing/work zone. Defines an area the vehicle must cover completely.</div>
+    <div class="shape-card__desc">Systematic mowing/work zone. Defines an area the vehicle must cover completely. Vertical stripes --AreaCoverageShapeFill + --AreaCoverageShapeOutline.</div>
     <div class="shape-card__token">Vertical stripes (green)<br>SoftObstacle pattern</div>
   </div>
 
@@ -858,7 +858,7 @@
         stroke="var(--AreaCoverageProgressShapeOutline)" stroke-width="1" />
     </svg>
     <div class="shape-card__label">Coverage History</div>
-    <div class="shape-card__desc">Already-covered area within a Coverage Area. Shows completed work as a faint gray overlay.</div>
+    <div class="shape-card__desc">Already-covered area within a Coverage Area. Shows completed work as a faint overlay. --AreaCoverageProgressShapeFill + --AreaCoverageProgressShapeOutline, no pattern.</div>
     <div class="shape-card__token">--AreaCoverageProgressShape*<br>Flat fill, no pattern</div>
   </div>
 
@@ -870,7 +870,7 @@
         stroke="var(--DisengageShapeOutline)" stroke-width="1" />
     </svg>
     <div class="shape-card__label">Disengage [TEXTURED]</div>
-    <div class="shape-card__desc">Tool-off transit zone. Vehicles can cross but must deactivate their implement.</div>
+    <div class="shape-card__desc">Tool-off transit zone. Vehicles can cross but must deactivate their implement. Vertical stripes --DisengageShapeFill + --DisengageShapeOutline.</div>
     <div class="shape-card__token">Vertical stripes (blue)<br>SoftObstacle pattern</div>
   </div>
 
@@ -882,7 +882,7 @@
         stroke="var(--NegativeObstacleShapeOutline)" stroke-width="1" />
     </svg>
     <div class="shape-card__label">Negative Obstacle [TEXTURED]</div>
-    <div class="shape-card__desc">Terrain depression. Marks ditches or drops invisible to standard sensors.</div>
+    <div class="shape-card__desc">Terrain depression. Marks ditches or drops invisible to standard sensors. Dot pattern --NegativeObstacleShapeOutline on --NegativeObstacleShapeFill.</div>
     <div class="shape-card__token">Scattered dots (red on blue)</div>
   </div>
 
@@ -917,7 +917,7 @@
         stroke="var(--AcceleratedMechanicalConsolidationShapeOutline)" stroke-width="1" stroke-opacity="0.5" />
     </svg>
     <div class="shape-card__label">AMC [TEXTURED]</div>
-    <div class="shape-card__desc">Accelerated Mechanical Consolidation zone. Defines areas for mud drying/compaction operations.</div>
+    <div class="shape-card__desc">Accelerated Mechanical Consolidation zone. Defines areas for mud drying/compaction operations. --AcceleratedMechanicalConsolidationShapeFill + S-wave --AcceleratedMechanicalConsolidationShapeOutline, both @ 0.5 opacity.</div>
     <div class="shape-card__token">HorizontalS pattern (rust/khaki)<br>Both brushes @ 0.5 opacity</div>
   </div>
 
@@ -953,7 +953,7 @@
         stroke-dasharray="5 5" />
     </svg>
     <div class="shape-card__label">Autonomous Load [TEXTURED]</div>
-    <div class="shape-card__desc">Vehicle loading zone. Zone checkerboard fill with yellow/gray caution-stripe border.</div>
+    <div class="shape-card__desc">Vehicle loading zone. Zone checkerboard --LoadDumpZoneFill + --LoadDumpZoneOutline, caution border --LoadDumpZoneCautionArea / --LoadDumpZoneCautionAreaAlt.</div>
     <div class="shape-card__token">Zone checkerboard (sand)<br>+ caution border (yellow/gray)</div>
   </div>
 
@@ -972,7 +972,7 @@
         stroke="var(--LoadDumpZoneVehicleLoadOutline)" stroke-width="2" />
     </svg>
     <div class="shape-card__label">Pile Shape [TEXTURED]</div>
-    <div class="shape-card__desc">Material pile boundary for autonomous loaders. White halo + green outline over vertical stripe fill.</div>
+    <div class="shape-card__desc">Material pile boundary for autonomous loaders. Vertical stripes --AreaCoverageShapeFill, --BackgroundStrong halo (6px), --LoadDumpZoneVehicleLoadOutline stroke (2px).</div>
     <div class="shape-card__token">Vertical stripes (green)<br>+ white halo (6px) + green stroke (2px)</div>
   </div>
 
@@ -994,7 +994,7 @@
       </g>
     </svg>
     <div class="shape-card__label">Solar Block</div>
-    <div class="shape-card__desc">Solar panel placement zone. DrivableArea fill with hole markers at each panel position. Labels visible when zoomed in.</div>
+    <div class="shape-card__desc">Solar panel placement zone. --DriveableShapeFill with --ForegroundPrimary hole markers at each panel position. Labels visible when zoomed in.</div>
     <div class="shape-card__token">--DriveableShapeFill<br>+ HolesControl point markers</div>
   </div>
 
@@ -1031,7 +1031,7 @@
         stroke-dasharray="5 5" />
     </svg>
     <div class="shape-card__label">Load Shape [TEXTURED]</div>
-    <div class="shape-card__desc">Mining loading zone. Where haul trucks are loaded by excavators. Yellow/gray caution border marks the active area.</div>
+    <div class="shape-card__desc">Mining loading zone. Where haul trucks are loaded by excavators. Zone checkerboard --LoadDumpZoneFill + --LoadDumpZoneOutline, caution border --LoadDumpZoneCautionArea / --LoadDumpZoneCautionAreaAlt.</div>
     <div class="shape-card__token">Zone checkerboard (sand)<br>+ caution border (yellow/gray)</div>
   </div>
 
@@ -1044,7 +1044,7 @@
         stroke="var(--LoadDumpZoneOutline)" stroke-width="2" />
     </svg>
     <div class="shape-card__label">Paddock Dump [TEXTURED]</div>
-    <div class="shape-card__desc">Open dump area for haul trucks. Flat paddock zone where material is deposited.</div>
+    <div class="shape-card__desc">Open dump area for haul trucks. Flat paddock zone where material is deposited. Zone checkerboard --LoadDumpZoneFill + --LoadDumpZoneOutline, no caution border.</div>
     <div class="shape-card__token">Zone checkerboard (sand)<br>Outline only, no caution border</div>
   </div>
 
@@ -1062,7 +1062,7 @@
         stroke-linecap="square" />
     </svg>
     <div class="shape-card__label">Edge Dump [TEXTURED]</div>
-    <div class="shape-card__desc">Dump zone at a pit edge. Amber berm edge line marks the tip-head boundary.</div>
+    <div class="shape-card__desc">Dump zone at a pit edge. Zone checkerboard --LoadDumpZoneFill + --LoadDumpZoneOutline, --LoadDumpZoneBermEdgeFill berm edge (5px).</div>
     <div class="shape-card__token">Zone checkerboard (sand)<br>+ berm edge (amber, 5px)</div>
   </div>
 
@@ -1082,7 +1082,7 @@
         stroke-linecap="square" />
     </svg>
     <div class="shape-card__label">Crusher Dump [TEXTURED]</div>
-    <div class="shape-card__desc">Dump zone at a crusher hopper. Amber edge lines mark the crusher feed boundaries (1-2 edges).</div>
+    <div class="shape-card__desc">Dump zone at a crusher hopper. Zone checkerboard --LoadDumpZoneFill + --LoadDumpZoneOutline, --LoadDumpZoneBermEdgeFill crusher edges (1-2).</div>
     <div class="shape-card__token">Zone checkerboard (sand)<br>+ crusher edges (amber, 4m)</div>
   </div>
 
@@ -1116,7 +1116,7 @@
         stroke-dasharray="4 4" />
     </svg>
     <div class="shape-card__label">Convoy Spacing</div>
-    <div class="shape-card__desc">Vehicle spacing boundary in a convoy formation. Dashed inner border marks the safe following distance.</div>
+    <div class="shape-card__desc">Vehicle spacing boundary in a convoy formation. --ConvoySpacingShapeFill @ 0.25 opacity, solid + dashed --ConvoySpacingShapeFill border.</div>
     <div class="shape-card__token">--ConvoySpacingShapeFill @ 0.25<br>+ dashed inner border (4px dash)</div>
   </div>
 
@@ -1152,7 +1152,7 @@
       </g>
     </svg>
     <div class="shape-card__label">Pile Driving</div>
-    <div class="shape-card__desc">Pile driving work zone. DrivableArea fill with square pile point markers at each driving position.</div>
+    <div class="shape-card__desc">Pile driving work zone. --DriveableShapeFill with --ForegroundPrimary square pile point markers at each driving position.</div>
     <div class="shape-card__token">--DriveableShapeFill<br>+ PilePointsControl markers</div>
   </div>
 
@@ -1205,7 +1205,7 @@
         points="20,70 40,15 100,10 120,50 110,80 30,75" />
     </svg>
     <div class="state-demo__label">Locked</div>
-    <div class="shape-card__desc">Editing locked by another user. Dashed orange outline, no lock icon.</div>
+    <div class="shape-card__desc">Editing locked by another user. Dashed --InformationOrange outline, no lock icon.</div>
   </div>
 
   <!-- Filtered out -->
