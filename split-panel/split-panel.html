@@ -344,31 +344,144 @@
 <script src="../js/theme-switcher.js"></script>
 
 <!-- Demo-only: interactive toggle behavior.
-     NOT part of component markup — simulates SplitPanel.cs toggling. -->
+     NOT part of component markup — simulates SplitPanel.cs toggling.
+
+     Animation spec from SplitPanel.cs:
+       AnimationMs = 700  (line 39)
+       EasingFunction = SmoothEase, EaseOut  (line 40)
+       AnimateColumn uses DoubleAnimation on ColumnDefinition.Width (lines 447-520)
+       Collapse target = 0px (lines 561, 373-375)
+
+     CSS grid-template-columns can't transition fr units,
+     so we animate with pixel values via requestAnimationFrame. -->
 <script>
 (function () {
   var root = document.getElementById('demo-split');
   if (!root) return;
 
+  var DURATION = 700;                                    /* SplitPanel.cs line 39 */
   var state = { first: true, second: true };
+  var animating = false;
 
-  function update() {
-    /* Root state classes for CSS visibility rules */
+  /* SmoothEase EaseOut approximation — SplitPanel.cs line 40
+     WPF SmoothEase is a sine-based ease. EaseOut = decelerate.
+     Equivalent: cubic-bezier(0.25, 0.46, 0.45, 0.94) or sine easeOut */
+  function easeOut(t) {
+    return Math.sin(t * Math.PI / 2);
+  }
+
+  function getFirstPaneWidth() {
+    var pane = root.querySelector('.split-panel__pane--first');
+    return pane ? pane.offsetWidth : 0;
+  }
+
+  function getSecondPaneWidth() {
+    var pane = root.querySelector('.split-panel__pane--second');
+    return pane ? pane.offsetWidth : 0;
+  }
+
+  function setColumns(firstW, secondW) {
+    root.style.gridTemplateColumns = firstW + 'px 2px ' + secondW + 'px';
+  }
+
+  function animateCollapse(target) {
+    if (animating) return;
+    animating = true;
+
+    var isFirst = (target === 'first');
+    var startW = isFirst ? getFirstPaneWidth() : getSecondPaneWidth();
+    var otherW = isFirst ? getSecondPaneWidth() : getFirstPaneWidth();
+    var totalW = startW + otherW;
+    var startTime = null;
+
+    /* Update state + classes immediately so toggle/tab visibility kicks in */
+    state[target] = false;
+    updateClasses();
+    updateButtons();
+
+    function step(timestamp) {
+      if (!startTime) startTime = timestamp;
+      var elapsed = timestamp - startTime;
+      var t = Math.min(elapsed / DURATION, 1);
+      var easedT = easeOut(t);
+
+      var currentW = Math.round(startW * (1 - easedT));
+      var expandedW = totalW - currentW;
+
+      if (isFirst) {
+        setColumns(currentW, expandedW);
+      } else {
+        setColumns(expandedW, currentW);
+      }
+
+      if (t < 1) {
+        requestAnimationFrame(step);
+      } else {
+        /* Snap to final CSS class-driven layout */
+        root.style.gridTemplateColumns = '';
+        animating = false;
+      }
+    }
+
+    requestAnimationFrame(step);
+  }
+
+  function animateExpand(target) {
+    if (animating) return;
+    animating = true;
+
+    var isFirst = (target === 'first');
+    var otherW = isFirst ? getSecondPaneWidth() : getFirstPaneWidth();
+    var totalW = root.offsetWidth - 2;                   /* minus 2px spacer */
+    var targetW = Math.round(totalW / 2);                /* XAML: both cols are * (equal) */
+    var startTime = null;
+
+    /* Update state + classes immediately */
+    state[target] = true;
+    updateClasses();
+    updateButtons();
+
+    /* Start from 0 */
+    if (isFirst) {
+      setColumns(0, otherW);
+    } else {
+      setColumns(otherW, 0);
+    }
+
+    function step(timestamp) {
+      if (!startTime) startTime = timestamp;
+      var elapsed = timestamp - startTime;
+      var t = Math.min(elapsed / DURATION, 1);
+      var easedT = easeOut(t);
+
+      var currentW = Math.round(targetW * easedT);
+      var shrinkW = totalW - currentW;
+
+      if (isFirst) {
+        setColumns(currentW, shrinkW);
+      } else {
+        setColumns(shrinkW, currentW);
+      }
+
+      if (t < 1) {
+        requestAnimationFrame(step);
+      } else {
+        /* Snap to final CSS class-driven layout */
+        root.style.gridTemplateColumns = '';
+        animating = false;
+      }
+    }
+
+    requestAnimationFrame(step);
+  }
+
+  function updateClasses() {
     root.classList.toggle('first-open', state.first);
     root.classList.toggle('first-collapsed', !state.first);
     root.classList.toggle('second-collapsed', !state.second);
+  }
 
-    /* Grid columns: collapsed pane → 0 */
-    /* SplitPanel.cs lines 558-562 (first collapse) / 596-599 (second collapse) */
-    if (!state.first) {
-      root.style.gridTemplateColumns = '0 2px 1fr';
-    } else if (!state.second) {
-      root.style.gridTemplateColumns = '1fr 2px 0';
-    } else {
-      root.style.gridTemplateColumns = '';              /* default: 1fr 2px 1fr from CSS */
-    }
-
-    /* Update all toggle buttons */
+  function updateButtons() {
     var btns = root.querySelectorAll('.split-panel__toggle');
     btns.forEach(function (btn) {
       var target = btn.getAttribute('data-target');
@@ -380,14 +493,19 @@
 
   root.addEventListener('click', function (e) {
     var btn = e.target.closest('.split-panel__toggle');
-    if (!btn) return;
+    if (!btn || animating) return;
     var target = btn.getAttribute('data-target');
     if (!target) return;
-    state[target] = !state[target];
-    update();
+
+    if (state[target]) {
+      animateCollapse(target);
+    } else {
+      animateExpand(target);
+    }
   });
 
-  update();
+  updateClasses();
+  updateButtons();
 })();
 </script>
 
