@@ -16,9 +16,15 @@
    - .mob-listbox__item--large-invert  Larger padding (40px 10px), inverted
    - .mob-listbox__item--invert        Inverted colors
    - .mob-listview__item               ListView item (full-row selection fill)
+   - .mob-listview__item--detailed     DetailedListItemContentControl (with command slot)
    - .mob-listview__item--invert       Inverted ListView item
    - .mob-listbox__item--dot           Horizontal dot selector
    - .mob-listbox__item--color-chip    Color swatch selector
+
+   Companion patterns:
+   - .mob-listview-actions             Wrapper for ListView + Add button
+   - .mob-listview-actions__add        IconLabelButton placement below list
+   - .mob-listview__item-delete        Delete button in item command slot
 */
 
 
@@ -306,6 +312,111 @@
 .mob-listview__item > * {
   position: relative;
   z-index: 1;
+}
+
+
+/* =============================================================
+   ITEM — DetailedListItemContentControl (with command slot)
+   XAML: DetailedListItemContentControl.xaml
+   Grid: [4px status] [20px spacer] [* content] [Auto command] [16px] [4px]
+   MinHeight=TouchSize, Default Padding="28,0,0,0"
+   ============================================================= */
+
+.mob-listview__item--detailed {
+  /* Override default listview padding to match DetailedListItem grid:
+     XAML col 0 (4px) + col 1 (20px) + Padding left (28px) = 52px left
+     XAML col 4 (16px) + col 5 (4px) = 20px right
+     Source: DetailedListItemContentControl.xaml lines 247-254, 577 */
+  padding: 0 20px 0 52px;
+  justify-content: space-between;
+}
+
+.mob-listview__item-text {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* XAML: Button in CommandContent slot
+   Width=50, Height=TouchSize, Style=ListItemIconButton
+   HorizontalAlignment=Right
+   Source: AttachmentSettings.xaml lines 64-73 */
+.mob-listview__item-delete {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* XAML: Width="50" — AttachmentSettings.xaml line 65 */
+  width: 50px;
+  height: var(--touch);
+  flex-shrink: 0;
+  border: none;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  padding: 0;
+  /* XAML: _commandContent Border Margin="-5,0,5,0"
+     Source: DetailedListItemContentControl.xaml line 99/356 */
+  margin: 0 5px 0 -5px;
+  opacity: 0.7;
+  transition: opacity var(--transition-mouse-out) ease;
+}
+
+.mob-listview__item-delete:hover {
+  opacity: 1;
+  transition-duration: var(--transition-mouse-over);
+}
+
+/* XAML: Path Data=Icon_Delete, Stretch=Uniform, Style=PathIcon
+   PathIcon default: 20x20
+   Source: Icons.xaml line 93, DefaultControls.xaml PathIcon style */
+.mob-listview__item-delete-icon {
+  font-family: 'Mobius-System-Icons', sans-serif;
+  /* XAML: PathIcon style Width=20, Height=20 */
+  font-size: 20px;
+  line-height: 1;
+}
+
+/* Selected item: command foreground → SelectionForeground
+   XAML: Trigger IsSelected=True → _commandContentElement Foreground=SelectionForegroundBrush
+   Source: DetailedListItemContentControl.xaml lines 567-569 */
+.mob-listview__item--detailed.is-selected .mob-listview__item-delete {
+  color: var(--SelectionForeground);
+}
+
+
+/* =============================================================
+   WRAPPER — ListView with Add + Delete actions
+   XAML: StackPanel containing ListView + IconLabelButton
+   ============================================================= */
+
+.mob-listview-actions {
+  display: flex;
+  flex-direction: column;
+}
+
+/* XAML: IconLabelButton below ListView
+   Height=TouchSize, Margin="52,6,0,0"
+   Background=Transparent
+   Source: AttachmentSettings.xaml lines 88-98 */
+.mob-listview-actions__add {
+  /* XAML: Margin="52,6,0,0" — AttachmentSettings.xaml line 90 */
+  margin: var(--spacing-xxs) 0 0 52px;
+  height: var(--touch);
+  display: flex;
+  align-items: center;
+}
+
+/* Invert Add button — inherits ForegroundInvertPrimary from parent context */
+.mob-listview-actions__add--invert .mob-icon-label-btn__button {
+  color: var(--ForegroundInvertPrimary);
+}
+
+.mob-listview-actions__add--invert .mob-icon-label-btn__icon {
+  color: var(--ForegroundInvertPrimary);
 }
 
 

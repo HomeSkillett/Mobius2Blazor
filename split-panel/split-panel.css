@@ -1,0 +1,308 @@
+/*
+  split-panel.css — SplitPanel (Horizontal Template)
+  Source: Common/Asi.CommonControls.Client.UI/SplitPanel.xaml
+          Common/Asi.CommonControls.Client.UI/SplitPanel.cs
+          Common/Asi.Resources.Client.UI/DefaultControls.xaml lines 2049-2127
+
+  XAML: Asi.CommonControls.Client.UI.SplitPanel
+  Template: Mobius_UI_Common_Templates_SplitPanelHorizontal
+
+  XAML Grid layout — all children share the same root Grid:
+  ┌─────────────────────────┬──┬─────────────────────────┐
+  │ Col 0 (*)               │C1│ Col 2 (*)               │
+  │ PART_FirstContent       │2 │ PART_SecondContent       │
+  │ Toggle-A Grid (overlay) │px│ Toggle-B Grid (overlay)  │
+  └─────────────────────────┴──┴─────────────────────────┘
+        Rectangle + GridSplitter both in Col 1 (overlay)
+
+  CSS Grid mirrors this: elements overlay via grid-column placement.
+*/
+
+
+/* =============================================================
+   ROOT CONTAINER
+   XAML: Grid (root) — SplitPanel.xaml line 17
+         ColumnDefinitions: *(First) | 2px(Spacer) | *(Second)
+   ============================================================= */
+
+.split-panel {
+  display: grid;
+  grid-template-columns: 1fr 2px 1fr;                     /* SplitPanel.xaml lines 19-21: Col 0=*, Col 1=2, Col 2=* */
+  grid-template-rows: 1fr;
+  height: 100%;
+  width: 100%;
+}
+
+/* First pane collapsed: Col 0 → 0 */
+/* XAML: SplitPanel.cs lines 558-562 (AnimateColumn to 0.0) */
+.split-panel.first-collapsed {
+  grid-template-columns: 0 2px 1fr;
+}
+
+/* Second pane collapsed: Col 2 → 0 */
+/* XAML: SplitPanel.cs lines 596-599 (AnimateColumn to 0.0) */
+.split-panel.second-collapsed {
+  grid-template-columns: 1fr 2px 0;
+}
+
+
+/* =============================================================
+   PANES (FirstContent / SecondContent)
+   XAML: PART_FirstContent [ContentPresenter] — SplitPanel.xaml line 23
+         PART_SecondContent [ContentPresenter] — SplitPanel.xaml line 29
+         Both HorizontalAlignment="Stretch"
+   ============================================================= */
+
+.split-panel__pane {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-width: 0;
+}
+
+.split-panel__pane--first {
+  grid-column: 1;                                        /* SplitPanel.xaml line 25 (Grid.Column="0") */
+  grid-row: 1;
+}
+
+.split-panel__pane--second {
+  grid-column: 3;                                        /* SplitPanel.xaml line 31 (Grid.Column="2") */
+  grid-row: 1;
+}
+
+
+/* =============================================================
+   SPACER (center divider)
+   XAML: Rectangle — SplitPanel.xaml lines 35-41
+         Grid.Column="1", Fill=BackgroundInvertStrongStepOneBrush
+         HAlignment=Stretch, VAlignment=Stretch
+   ============================================================= */
+
+.split-panel__spacer {
+  grid-column: 2;                                        /* SplitPanel.xaml line 36 (Grid.Column="1") */
+  grid-row: 1;
+  background: var(--BackgroundInvertStrongStepOne);       /* SplitPanel.xaml line 39 */
+  pointer-events: none;                                  /* SplitPanel.xaml line 40 (IsHitTestVisible=False) */
+}
+
+
+/* =============================================================
+   SPLITTER (resize handle)
+   XAML: PART_PanelSplitter [GridSplitter] — SplitPanel.xaml lines 42-51
+         Grid.Column="1", Margin="-2,0"
+         Background: Transparent
+   Overlays the spacer in the same column. Negative margins
+   extend the drag target beyond the 2px column.
+   ============================================================= */
+
+.split-panel__splitter {
+  grid-column: 2;                                        /* SplitPanel.xaml line 44 (Grid.Column="1") — overlays spacer */
+  grid-row: 1;
+  margin: 0 -2px;                                       /* SplitPanel.xaml line 45 (Margin="-2,0") */
+  background: transparent;                                /* SplitPanel.xaml line 50 */
+  cursor: col-resize;
+  z-index: 1;                                            /* Above spacer for drag hit area */
+}
+
+
+/* =============================================================
+   TOGGLE AREA (wrapper for tab shape + button)
+   XAML: Grid [Col 0 or Col 2] — SplitPanel.xaml lines 52-108
+         Margin="-42,0,0,0", HAlign=Right, VAlign=Top
+   Overlays the pane column via CSS Grid placement.
+   Positioned at top-right of its column.
+
+   VISIBILITY LOGIC (from XAML bindings):
+
+   Toggle-A (SplitPanel.xaml lines 58-64, MultiBinding):
+     Visible when: SecondContentIsOpen=true AND NOT disabled
+     → VISIBLE in: both-open AND first-collapsed
+     → HIDDEN in: second-collapsed
+
+   Toggle-B (SplitPanel.xaml line 114, inverted binding):
+     Visible when: SecondContentIsOpen=false
+     → VISIBLE in: second-collapsed only
+     → HIDDEN in: both-open AND first-collapsed
+   ============================================================= */
+
+.split-panel__toggle-area {
+  grid-row: 1;
+  align-self: start;                                     /* SplitPanel.xaml line 56 (VAlign=Top) */
+  justify-self: end;                                     /* SplitPanel.xaml line 55 (HAlign=Right) */
+  margin-left: -42px;                                    /* SplitPanel.xaml line 54 (Margin="-42,0,0,0") */
+  z-index: 2;                                            /* Above pane content */
+  position: relative;                                    /* Stacking context for button over tab */
+}
+
+/* Toggle-A: in Column 0, right-aligned — visible by default */
+.split-panel__toggle-area--first {
+  grid-column: 1;                                        /* SplitPanel.xaml line 53 (Grid.Column="0") */
+}
+
+/* Toggle-A: HIDDEN when second pane is collapsed */
+/* XAML: MultiBinding requires SecondContentIsOpen=true (line 60) */
+.split-panel.second-collapsed .split-panel__toggle-area--first {
+  display: none;
+}
+
+/* Toggle-B: in Column 2, HIDDEN by default */
+/* XAML: SplitPanel.xaml line 114 (Visibility inverted — only when SecondContentIsOpen=false) */
+.split-panel__toggle-area--second {
+  grid-column: 3;                                        /* SplitPanel.xaml line 110 (Grid.Column="2") */
+  display: none;
+}
+
+/* Toggle-B: visible when second pane is collapsed */
+.split-panel.second-collapsed .split-panel__toggle-area--second {
+  display: block;
+}
+
+
+/* =============================================================
+   BONUS ACTIONS
+   XAML: ContentPresenter — SplitPanel.xaml lines 80-82
+         Content=SecondContentBonusActions, HAlign=Center
+   Sits between the ExpanderItem (tab shape) and ToggleButton.
+   In the running app, these are additional action buttons
+   (hamburger, play) visible below the tab when collapsed.
+   Hidden when pane is open (only tab + button visible).
+   ============================================================= */
+
+.split-panel__bonus-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+  width: 40px;                                           /* Match tab/button width */
+}
+
+/* Hide bonus actions when pane is open — they're only
+   meaningful alongside the collapsed tab shape */
+.split-panel.first-open .split-panel__toggle-area--first .split-panel__bonus-actions {
+  display: none;
+}
+
+
+/* =============================================================
+   TAB SHAPE (decorative angled background)
+   XAML: Path — SplitPanel.xaml lines 71-78
+         Width=40, Height=120, Stretch=Fill
+         Data: M 0,0 C0,0 0,50 0,50 0,50 40,90 40,90 40,90 40,0 40,0 40,0 0,0 0,0 z
+         Fill: BackgroundInvertStrongStepOneBrush
+         IsHitTestVisible=False
+
+   Wrapped in ExpanderItem (Toggle-A only):
+     IsOpened = NOT FirstContentIsOpen (line 69)
+     → Tab visible when pane is COLLAPSED
+     → Tab hidden when pane is OPEN
+
+   Toggle-B Path (line 116) is NOT in an ExpanderItem:
+     → Always visible when Toggle-B Grid is visible
+   ============================================================= */
+
+.split-panel__tab {
+  width: 40px;                                           /* SplitPanel.xaml line 72 */
+  height: 120px;                                         /* SplitPanel.xaml line 73 */
+  background: var(--BackgroundInvertStrongStepOne);       /* SplitPanel.xaml line 75 */
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 55.6%); /* Path Data: left side at 50/90 = 55.6% */
+  pointer-events: none;                                  /* SplitPanel.xaml line 76 (IsHitTestVisible=False) */
+}
+
+/* Toggle-A tab: hidden when first pane is OPEN */
+/* XAML: ExpanderItem IsOpened = NOT FirstContentIsOpen (line 69) */
+.split-panel.first-open .split-panel__toggle-area--first .split-panel__tab {
+  display: none;
+}
+
+
+/* =============================================================
+   TOGGLE BUTTON
+   XAML: PART_TOGGLE_BUTTON_A / B — SplitPanel.xaml lines 84-107
+         Width=40, Height=50, HAlign=Right, VAlign=Top
+         Background: Transparent
+         Foreground: ForegroundInvertWatermarkBrush
+         Style: Mobius_UI_Resources_Styles_ExpandToggleButton
+   ============================================================= */
+
+.split-panel__toggle {
+  width: 40px;                                           /* SplitPanel.xaml line 86 */
+  height: 50px;                                          /* SplitPanel.xaml line 87 */
+  background: transparent;                                /* SplitPanel.xaml line 90 */
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;                                    /* Overlays the tab shape */
+  top: 0;
+  right: 0;                                              /* SplitPanel.xaml line 88 (HAlign=Right) */
+  z-index: 1;
+}
+
+
+/* =============================================================
+   TOGGLE ICON (font glyph)
+   XAML: Path — SplitPanel.xaml lines 99-105
+         Data=Icon_Arrow_PointerRight (Toggle-A) / PointerLeft (Toggle-B)
+         Width=20, Height=20, Stretch=None
+         Fill inherits from ToggleButton Foreground
+
+   CheckStates (DefaultControls.xaml lines 2113-2124):
+         Unchecked → rotation 0deg (instant)
+         Checked → rotation 180deg (instant)
+
+   Font: Mobius-System-Icons
+         Toggle-A glyph: \E00C (Arrow_PointerRight) — Icons.xaml line 58
+         Toggle-B glyph: \E00D (Arrow_PointerLeft)  — Icons.xaml line 56
+   ============================================================= */
+
+.split-panel__toggle-icon {
+  font: var(--font-icons);                               /* 20px/20px "Mobius-System-Icons" — font-tokens.css line 35 */
+  color: var(--ForegroundInvertWatermark);                /* SplitPanel.xaml line 91 — rgba(112, 112, 112, 1) */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transform-origin: center center;                       /* DefaultControls.xaml line 2064 (RenderTransformOrigin="0.5,0.5") */
+  transform: rotate(0deg);                               /* Default: Unchecked — DefaultControls.xaml line 2116 */
+}
+
+/* Checked (pane open): arrow rotated 180deg */
+/* XAML: CheckStates Checked — DefaultControls.xaml line 2121 */
+.split-panel__toggle.is-checked .split-panel__toggle-icon {
+  transform: rotate(180deg);
+}
+
+
+/* =============================================================
+   INTERACTIVE STATES — ExpandToggleButton
+   XAML: DefaultControls.xaml lines 2074-2125
+         CommonStates: Normal, MouseOver, Pressed, Disabled
+   ============================================================= */
+
+/* MouseOver: foreground → MouseOverPrimary */
+/* XAML: DefaultControls.xaml line 2084 */
+.split-panel__toggle:hover .split-panel__toggle-icon {
+  color: var(--MouseOverPrimary);                        /* rgba(12, 208, 255, 1) */
+}
+
+/* Pressed: opacity → 0.8 */
+/* XAML: DefaultControls.xaml line 2091 */
+.split-panel__toggle:active {
+  opacity: 0.8;
+}
+
+/* Disabled: opacity → DisabledOpacity (0.35) */
+/* XAML: DefaultControls.xaml line 2097 */
+.split-panel__toggle:disabled {
+  opacity: var(--opacity-disabled);                      /* 0.35 — spacingTokens.css line 121 */
+  cursor: default;
+  pointer-events: none;
+}
+
+/* Focus visible: standard Mobius focus ring */
+/* XAML: DefaultControls.xaml line 2920 (FocusVisualStyle) */
+.split-panel__toggle:focus-visible {
+  outline: 2px solid var(--MouseOverPrimary);
+  outline-offset: 2px;
+}

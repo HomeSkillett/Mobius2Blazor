@@ -166,10 +166,15 @@
    ============================================================================= */
 
 /* --- Error / Invalid --- */
-/* XAML: _validationElement — InformationRedBrush, 2px overlay */
+/* XAML: _validationElement — InformationRedBrush, 2px overlay
+   Icon: Icon_Status_CriticalSm, Fill=InformationRedBrush (from Icons.xaml) */
 .mob-input.is-invalid {
   outline: var(--border-width-focused) solid var(--InformationRed);
   outline-offset: calc(var(--border-width) * -1);
+}
+
+.mob-field--error .mob-field__icon--error svg {
+  fill: var(--InformationRed);
 }
 
 /* --- Warning --- */
@@ -593,7 +598,12 @@
   margin-right: calc(-1 * var(--size-20));
 }
 
+/* Only reserve icon column space when icon is present */
 .mob-field--on-demand .mob-field__body {
+  padding-left: 0;
+}
+
+.mob-field--on-demand .mob-field__icon + .mob-field__body {
   padding-left: var(--size-20);
 }
 

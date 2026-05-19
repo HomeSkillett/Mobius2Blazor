@@ -155,9 +155,16 @@
 <div class="states-list">
 
   <!-- ===== Error / Invalid ===== -->
-  <!-- XAML: _validationElement — InformationRedBrush border, 2px -->
-  <div class="mob-field">
+  <!-- XAML: _validationElement — InformationRedBrush border, 2px
+       Icon: Icon_Status_CriticalSm (Icons.xaml line 340), Fill=InformationRedBrush -->
+  <div class="mob-field mob-field--error">
     <label class="mob-field__label">Error:</label>
+    <!-- XAML: Icon_Status_CriticalSm — octagon with exclamation -->
+    <span class="mob-field__icon mob-field__icon--error">
+      <svg viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M3.6,0L0,3.6v4.8L3.6,12h4.8L12,8.4V3.6L8.4,0H3.6z M7,10H5V8h2V10z M7,7H5V2h2V7z" />
+      </svg>
+    </span>
     <div class="mob-field__body">
       <input class="mob-input is-invalid" type="text" value="Invalid entry" />
     </div>

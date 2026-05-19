@@ -8,6 +8,7 @@
   <link id="mob-theme-link" rel="stylesheet" href="../styles/color-theme-tokens/LightTheme.css" />
   <link rel="stylesheet" href="../styles/css/main.css" />
   <link rel="stylesheet" href="listview.css" />
+  <link rel="stylesheet" href="../icon-label-button/icon-label-button.css" />
   <style>
     body { margin: 0; }
     h1 {
@@ -409,6 +410,137 @@
 
 
 <!-- ============================================================
+     LISTVIEW — ADD + DELETE ACTIONS
+     XAML: DetailedListItemContentControl (CommandContent = delete button)
+           + IconLabelButton (sibling after ListView, Icon_Math_Plus)
+     Source: AttachmentSettings.xaml, ModeConfigurationSetup.xaml,
+             DetailedListItemContentControl.xaml
+     Pattern appears in 31+ XAML files across the codebase.
+     ============================================================ -->
+<h2>ListView — Add + Delete</h2>
+
+<p class="note">
+  Common companion pattern: a <code>ListView</code> whose items use
+  <code>DetailedListItemContentControl</code> with a delete action in
+  <code>CommandContent</code> (Col&nbsp;3), plus an <code>IconLabelButton</code>
+  placed as a sibling below the list. Both the Add and Delete buttons are
+  conditionally visible via <code>CanAddAttachment</code> /
+  <code>AllowDeleteAttachment</code> bindings.
+  Appears across attachments, sensors, roles, triggers, cameras, and more.
+</p>
+
+<div class="demo-grid">
+
+  <!-- Normal context -->
+  <div class="demo-col" style="min-width: 320px; max-width: 420px;">
+    <span class="demo-label">With Delete + Add</span>
+    <!-- XAML: StackPanel wrapping ListView + IconLabelButton -->
+    <div class="mob-listview-actions">
+
+      <!-- XAML: ListView Style=ListViewInvertFull, Template=ListViewNoScroll
+           Items use DetailedListItemContentControl -->
+      <div class="mob-listview mob-listview--no-scroll">
+
+        <!-- XAML: DetailedListItemContentControl
+             Grid cols: 4px | 20px | * | Auto (command) | 16px | 4px
+             MinHeight=TouchSize, Padding="28,0,0,0"
+             Source: DetailedListItemContentControl.xaml line 246 -->
+        <div class="mob-listview__item mob-listview__item--detailed" tabindex="0">
+          <!-- XAML: _contentElement Grid.Column="2" -->
+          <span class="mob-listview__item-text">Front Blade</span>
+          <!-- XAML: _commandContent Grid.Column="3"
+               Button Width=50, Height=TouchSize, Style=ListItemIconButton
+               Path Data=Icon_Delete
+               Source: AttachmentSettings.xaml line 64-82 -->
+          <button class="mob-listview__item-delete" type="button" title="Delete attachment">
+            <span class="mob-listview__item-delete-icon">&#xE504;</span>
+          </button>
+        </div>
+
+        <div class="mob-listview__item mob-listview__item--detailed is-selected" tabindex="0">
+          <span class="mob-listview__item-text">Rear Ripper</span>
+          <button class="mob-listview__item-delete" type="button" title="Delete attachment">
+            <span class="mob-listview__item-delete-icon">&#xE504;</span>
+          </button>
+        </div>
+
+        <div class="mob-listview__item mob-listview__item--detailed" tabindex="0">
+          <span class="mob-listview__item-text">Side Cutter</span>
+          <button class="mob-listview__item-delete" type="button" title="Delete attachment">
+            <span class="mob-listview__item-delete-icon">&#xE504;</span>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- XAML: IconLabelButton
+           Height=TouchSize, Margin="52,6,0,0"
+           Background=Transparent, Icon=Icon_Math_Plus
+           Grid cols: 22px icon | 10px spacing | * text
+           Source: AttachmentSettings.xaml line 88-98 -->
+      <div class="mob-listview-actions__add">
+        <button class="mob-icon-label-btn__button" type="button">
+          <!-- XAML: Path Data=Icon_Math_Plus, Stretch=Fill, Style=PathIcon -->
+          <span class="mob-icon-label-btn__icon" data-icon="&#xE501;"></span>
+          <!-- XAML: TextBlock Text=AddButtonText -->
+          <span class="mob-icon-label-btn__text">Add</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Invert context (settings panel) -->
+  <div class="demo-col" style="min-width: 320px; max-width: 420px;">
+    <span class="demo-label">Invert — With Delete + Add</span>
+    <div class="demo-invert-bg">
+      <!-- XAML: ExpanderItem Foreground=ForegroundInvertPrimaryBrush
+           Source: AttachmentSettings.xaml line 24-28 -->
+      <div class="mob-listview-actions mob-listview-actions--invert">
+
+        <div class="mob-listview mob-listview--no-scroll">
+
+          <div class="mob-listview__item mob-listview__item--detailed mob-listview__item--invert" tabindex="0">
+            <span class="mob-listview__item-text">Front Blade</span>
+            <button class="mob-listview__item-delete" type="button" title="Delete attachment">
+              <span class="mob-listview__item-delete-icon">&#xE504;</span>
+            </button>
+          </div>
+
+          <div class="mob-listview__item mob-listview__item--detailed mob-listview__item--invert is-selected" tabindex="0">
+            <span class="mob-listview__item-text">Rear Ripper</span>
+            <button class="mob-listview__item-delete" type="button" title="Delete attachment">
+              <span class="mob-listview__item-delete-icon">&#xE504;</span>
+            </button>
+          </div>
+
+          <div class="mob-listview__item mob-listview__item--detailed mob-listview__item--invert" tabindex="0">
+            <span class="mob-listview__item-text">Side Cutter</span>
+            <button class="mob-listview__item-delete" type="button" title="Delete attachment">
+              <span class="mob-listview__item-delete-icon">&#xE504;</span>
+            </button>
+          </div>
+
+        </div>
+
+        <div class="mob-listview-actions__add mob-listview-actions__add--invert">
+          <button class="mob-icon-label-btn__button" type="button">
+            <span class="mob-icon-label-btn__icon" data-icon="&#xE501;"></span>
+            <span class="mob-icon-label-btn__text">Add</span>
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- ============================================================
      HORIZONTAL VARIANTS
      XAML: Mobius_UI_Resources_Templates_ListBoxItemHorizontal
            Mobius_UI_Resources_Templates_ListBoxItemDotHorizontal
@@ -598,9 +730,21 @@
       <td style="padding: 8px 12px; font-family: var(--font-monospace); font-size: var(--size-Sm);">ListViewItemInvert</td>
       <td style="padding: 8px 12px; font-family: var(--font-monospace); font-size: var(--size-Sm);">.mob-listview__item.mob-listview__item--invert</td>
     </tr>
-    <tr>
+    <tr style="border-bottom: 1px solid var(--InnerLines);">
       <td style="padding: 8px 12px; font-family: var(--font-monospace); font-size: var(--size-Sm);">ListViewItemInvertFull</td>
       <td style="padding: 8px 12px; font-family: var(--font-monospace); font-size: var(--size-Sm);">.mob-listview__item.mob-listview__item--invert-full</td>
+    </tr>
+    <tr style="border-bottom: 1px solid var(--InnerLines);">
+      <td style="padding: 8px 12px; font-family: var(--font-monospace); font-size: var(--size-Sm);">DetailedListItemContentControl</td>
+      <td style="padding: 8px 12px; font-family: var(--font-monospace); font-size: var(--size-Sm);">.mob-listview__item--detailed</td>
+    </tr>
+    <tr style="border-bottom: 1px solid var(--InnerLines);">
+      <td style="padding: 8px 12px; font-family: var(--font-monospace); font-size: var(--size-Sm);">CommandContent (delete)</td>
+      <td style="padding: 8px 12px; font-family: var(--font-monospace); font-size: var(--size-Sm);">.mob-listview__item-delete</td>
+    </tr>
+    <tr>
+      <td style="padding: 8px 12px; font-family: var(--font-monospace); font-size: var(--size-Sm);">IconLabelButton (add)</td>
+      <td style="padding: 8px 12px; font-family: var(--font-monospace); font-size: var(--size-Sm);">.mob-listview-actions__add</td>
     </tr>
   </tbody>
 </table>

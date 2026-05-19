@@ -148,7 +148,8 @@
         { label: "GlobalNav",  href: "global-nav/global-nav.html" },
         { label: "TabControl",  href: "tab-control/tab-control.html" },
         { label: "MasterDetailControl",  href: "master-detail-control/master-detail-control.html" },
-        { label: "Vehicle Settings Header",  href: "vehicle-settings-header/vehicle-settings-header.html" }
+        { label: "Vehicle Settings Header",  href: "vehicle-settings-header/vehicle-settings-header.html" },
+        { label: "SplitPanel",  href: "split-panel/split-panel.html" }
       ]
     },
     {

@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mobius — SplitPanel</title>
+  <link id="mob-theme-link" rel="stylesheet" href="../styles/color-theme-tokens/LightTheme.css" />
+  <link rel="stylesheet" href="../styles/css/main.css" />
+  <link rel="stylesheet" href="split-panel.css" />
+  <style>
+    body { margin: 0; }
+    h1 {
+      font: var(--font-hdrMd);
+      margin: 0 0 32px;
+      color: var(--ForegroundStrong);
+    }
+    h2 {
+      font: var(--font-hdrSm);
+      margin: 40px 0 16px;
+      color: var(--ForegroundStrong);
+    }
+    h2:first-of-type { margin-top: 0; }
+    .section-divider {
+      border: none;
+      border-top: var(--line-size) solid var(--InnerLines);
+      margin: 32px 0 0;
+    }
+    .demo-label {
+      font: var(--font-metaSm);
+      color: var(--ForegroundPrimary);
+      margin-bottom: var(--spacing-label-to-control-sm);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .demo-frame {
+      background: var(--BackgroundPrimary);
+      border: var(--border-width) solid var(--InnerLines);
+      display: inline-flex;
+      height: 400px;
+      width: 100%;
+      max-width: 900px;
+    }
+    .demo-spacer { height: 24px; }
+    .demo-note {
+      font: var(--font-metaSm);
+      color: var(--InformationGray);
+      margin-top: 8px;
+    }
+
+    /* ========= Demo pane content styling ========= */
+    /* Simulates ResizeExpander content inside each SplitPanel pane */
+
+    .demo-pane-header {
+      height: 50px;
+      display: flex;
+      align-items: center;
+      padding: 0 23px;
+      background: var(--BackgroundInvertStepTwo);
+      flex-shrink: 0;
+    }
+    .demo-pane-header-text {
+      flex: 1;
+      font: var(--font-default);
+      color: var(--ForegroundInvertPrimary);
+    }
+    .demo-pane-toolbar {
+      height: 40px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 23px;
+      background: var(--BackgroundInvertStepTwo);
+      border-bottom: 1px solid var(--InnerLines);
+      flex-shrink: 0;
+    }
+    .demo-pane-toolbar .mob-icon {
+      font: var(--font-icons);
+      color: var(--ForegroundPrimary);
+    }
+    .demo-pane-toolbar-spacer { flex: 1; }
+    .demo-pane-body {
+      flex: 1;
+      padding: 16px 23px;
+      background: var(--BackgroundInvertStepOne);
+      overflow-y: auto;
+    }
+    .demo-pane-item {
+      padding: 8px 0;
+      font: var(--font-default);
+      color: var(--ForegroundPrimary);
+    }
+
+    /* ========= Bonus actions styling ========= */
+    /* XAML: SecondContentBonusActions — SplitPanel.xaml line 80-82
+       ContentPresenter, HAlign=Center, sits between ExpanderItem and ToggleButton */
+
+    .demo-bonus-actions {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 0;
+    }
+    .demo-bonus-btn {
+      width: 32px;
+      height: 32px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .demo-bonus-btn .mob-icon {
+      font: var(--font-icons);
+      color: var(--ForegroundInvertWatermark);
+    }
+  </style>
+</head>
+<body>
+
+<div class="mob-layout">
+
+  <!-- Sidebar Navigation -->
+  <nav class="mob-nav" id="mob-nav"></nav>
+
+  <main class="mob-layout__content" style="padding: 40px;">
+    <h1>SplitPanel (Horizontal)</h1>
+
+    <!-- =========================================================
+         INTERACTIVE DEMO — Both panes open by default
+         Click the toggle arrows to collapse/expand panes.
+         ========================================================= -->
+    <h2>Interactive demo</h2>
+    <p class="demo-label">Click the arrow toggles to collapse/expand panes</p>
+
+    <div class="demo-frame">
+
+      <!-- XAML: Grid (root) — SplitPanel.xaml line 17
+           Template: Mobius_UI_Common_Templates_SplitPanelHorizontal
+           CSS Grid mirrors XAML: grid-template-columns: 1fr 2px 1fr -->
+      <div class="split-panel first-open" id="demo-split">
+
+        <!-- =====================================================
+             FIRST PANE (Col 0) — Vehicles panel
+             XAML: PART_FirstContent — SplitPanel.xaml lines 23-28
+             Production: ModeCommandAndControl.xaml lines 327-714
+             FirstContent = StackPanel containing TitledContentControl
+             "Vehicles" + SortableGroupListView + PropertyPanels
+             ===================================================== -->
+        <div class="split-panel__pane split-panel__pane--first">
+          <div class="demo-pane-header">
+            <span class="demo-pane-header-text">Vehicles</span>
+          </div>
+          <div class="demo-pane-toolbar">
+            <!-- Filter/sort icons — ModeCommandAndControl.xaml lines 366-442 -->
+            <span class="mob-icon">&#xE063;</span><!-- Icon_MultiSelect -->
+            <span class="mob-icon">&#xE064;</span><!-- Icon_Sort_Ascending -->
+            <span class="demo-pane-toolbar-spacer"></span>
+            <span class="mob-icon">&#xE01F;</span><!-- Icon_Person -->
+          </div>
+          <div class="demo-pane-body">
+            <div class="demo-pane-item">Vehicle #1 — Active</div>
+            <div class="demo-pane-item">Vehicle #2 — Idle</div>
+            <div class="demo-pane-item">Vehicle #3 — Charging</div>
+          </div>
+        </div>
+
+        <!-- XAML: PART_SecondContent — SplitPanel.xaml lines 29-34
+             Empty in this demo. In production this holds the Map. -->
+        <div class="split-panel__pane split-panel__pane--second"></div>
+
+        <!-- =====================================================
+             SPACER + SPLITTER (Col 1)
+             XAML: Rectangle + GridSplitter — both in Col 1
+             ===================================================== -->
+        <!-- XAML: Rectangle — SplitPanel.xaml lines 35-41 -->
+        <div class="split-panel__spacer"></div>
+        <!-- XAML: PART_PanelSplitter — SplitPanel.xaml lines 42-51 -->
+        <div class="split-panel__splitter"></div>
+
+        <!-- =====================================================
+             TOGGLE-A AREA (overlays Col 0, right-aligned)
+             XAML: Grid — SplitPanel.xaml lines 52-108
+             Visible when SecondContentIsOpen=true (lines 58-64)
+             Contains: ExpanderItem (tab shape) + BonusActions + ToggleButton
+             ===================================================== -->
+        <div class="split-panel__toggle-area split-panel__toggle-area--first">
+
+          <!-- XAML: ExpanderItem — SplitPanel.xaml lines 66-79
+               IsOpened = NOT FirstContentIsOpen (line 69)
+               Tab shape hidden when first pane is open -->
+          <div class="split-panel__tab"></div>
+
+          <!-- XAML: ContentPresenter — SplitPanel.xaml lines 80-82
+               Content=SecondContentBonusActions, HAlign=Center
+               The hamburger and play icons visible in the prod collapsed state -->
+          <div class="split-panel__bonus-actions">
+            <button class="demo-bonus-btn" title="Menu">
+              <span class="mob-icon">&#xE036;</span>
+            </button>
+            <button class="demo-bonus-btn" title="Play">
+              <span class="mob-icon">&#xE044;</span>
+            </button>
+          </div>
+
+          <!-- XAML: PART_TOGGLE_BUTTON_A — SplitPanel.xaml lines 84-107
+               Width=40, Height=50, IsChecked ↔ FirstContentIsOpen -->
+          <button class="split-panel__toggle is-checked"
+                  title="Show/hide this view"
+                  aria-expanded="true"
+                  aria-label="Show/hide this view"
+                  data-target="first">
+            <span class="split-panel__toggle-icon" aria-hidden="true">&#xE00C;</span>
+          </button>
+
+        </div>
+
+        <!-- =====================================================
+             TOGGLE-B AREA (overlays Col 2, right-aligned)
+             XAML: Grid — SplitPanel.xaml lines 109-151
+             Visible when SecondContentIsOpen=false (line 114)
+             ===================================================== -->
+        <div class="split-panel__toggle-area split-panel__toggle-area--second">
+          <!-- XAML: Path (no ExpanderItem) — SplitPanel.xaml lines 116-123 -->
+          <div class="split-panel__tab"></div>
+
+          <!-- XAML: ContentPresenter — SplitPanel.xaml lines 124-126 -->
+          <div class="split-panel__bonus-actions">
+            <button class="demo-bonus-btn" title="Menu">
+              <span class="mob-icon">&#xE036;</span>
+            </button>
+          </div>
+
+          <!-- XAML: PART_TOGGLE_BUTTON_B — SplitPanel.xaml lines 128-150 -->
+          <button class="split-panel__toggle"
+                  title="Show/hide this view"
+                  aria-expanded="true"
+                  aria-label="Show/hide this view"
+                  data-target="second">
+            <span class="split-panel__toggle-icon" aria-hidden="true">&#xE00D;</span><!-- Icon_Arrow_PointerLeft (Icons.xaml line 56) -->
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+
+    <p class="demo-note">
+      Production: FirstContent = Vehicles panel (Col 0), SecondContent = Map (Col 2).
+      Toggle-A at right edge of Col 0 (SplitPanel.xaml line 53) collapses the Vehicles panel.
+      Tab shape + bonus actions appear when first pane collapses (ExpanderItem IsOpened, line 69).
+      Source: ModeCommandAndControl.xaml lines 317-951.
+    </p>
+
+    <hr class="section-divider" />
+
+    <!-- =========================================================
+         TOGGLE BUTTON INTERACTIVE STATES
+         ========================================================= -->
+    <h2>Toggle Button States</h2>
+    <p class="demo-label">Hover, pressed, disabled — DefaultControls.xaml lines 2074-2125</p>
+
+    <div style="display: flex; gap: 40px; align-items: start; flex-wrap: wrap;">
+
+      <!-- Normal (collapsed, with tab + bonus actions) -->
+      <div>
+        <p class="demo-label">Normal</p>
+        <div style="position: relative; width: 40px; height: 180px;">
+          <div class="split-panel__tab"></div>
+          <button class="split-panel__toggle" style="position: absolute;"
+                  title="Show/hide this view">
+            <span class="split-panel__toggle-icon" aria-hidden="true">&#xE00C;</span>
+          </button>
+          <div class="split-panel__bonus-actions" style="position: absolute; top: 120px; width: 100%;">
+            <button class="demo-bonus-btn" title="Menu">
+              <span class="mob-icon">&#xE036;</span>
+            </button>
+            <button class="demo-bonus-btn" title="Play">
+              <span class="mob-icon">&#xE044;</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hover (simulated) -->
+      <div>
+        <p class="demo-label">Hover</p>
+        <div style="position: relative; width: 40px; height: 120px;">
+          <div class="split-panel__tab"></div>
+          <button class="split-panel__toggle" style="position: absolute;"
+                  title="Show/hide this view">
+            <span class="split-panel__toggle-icon" aria-hidden="true"
+                  style="color: var(--MouseOverPrimary);">&#xE00C;</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Pressed (simulated) -->
+      <div>
+        <p class="demo-label">Pressed</p>
+        <div style="position: relative; width: 40px; height: 120px;">
+          <div class="split-panel__tab"></div>
+          <button class="split-panel__toggle" style="position: absolute; opacity: 0.8;"
+                  title="Show/hide this view">
+            <span class="split-panel__toggle-icon" aria-hidden="true">&#xE00C;</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Disabled -->
+      <div>
+        <p class="demo-label">Disabled</p>
+        <div style="position: relative; width: 40px; height: 120px;">
+          <div class="split-panel__tab"></div>
+          <button class="split-panel__toggle" style="position: absolute;"
+                  title="Show/hide this view" disabled>
+            <span class="split-panel__toggle-icon" aria-hidden="true">&#xE00C;</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Checked / Expanded (180deg, no tab) -->
+      <div>
+        <p class="demo-label">Checked (180&deg;)</p>
+        <div style="position: relative; width: 40px; height: 50px;">
+          <button class="split-panel__toggle is-checked" style="position: absolute;"
+                  title="Show/hide this view">
+            <span class="split-panel__toggle-icon" aria-hidden="true">&#xE00C;</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="demo-spacer"></div>
+
+  </main>
+</div>
+
+<!-- Nav + Theme Switcher (shared across components) -->
+<script src="../js/nav.js"></script>
+<script src="../js/theme-switcher.js"></script>
+
+<!-- Demo-only: interactive toggle behavior.
+     NOT part of component markup — simulates SplitPanel.cs toggling. -->
+<script>
+(function () {
+  var root = document.getElementById('demo-split');
+  if (!root) return;
+
+  var state = { first: true, second: true };
+
+  function update() {
+    /* Root state classes for CSS visibility rules */
+    root.classList.toggle('first-open', state.first);
+    root.classList.toggle('first-collapsed', !state.first);
+    root.classList.toggle('second-collapsed', !state.second);
+
+    /* Grid columns: collapsed pane → 0 */
+    /* SplitPanel.cs lines 558-562 (first collapse) / 596-599 (second collapse) */
+    if (!state.first) {
+      root.style.gridTemplateColumns = '0 2px 1fr';
+    } else if (!state.second) {
+      root.style.gridTemplateColumns = '1fr 2px 0';
+    } else {
+      root.style.gridTemplateColumns = '';              /* default: 1fr 2px 1fr from CSS */
+    }
+
+    /* Update all toggle buttons */
+    var btns = root.querySelectorAll('.split-panel__toggle');
+    btns.forEach(function (btn) {
+      var target = btn.getAttribute('data-target');
+      var isOpen = state[target];
+      btn.classList.toggle('is-checked', isOpen);
+      btn.setAttribute('aria-expanded', String(isOpen));
+    });
+  }
+
+  root.addEventListener('click', function (e) {
+    var btn = e.target.closest('.split-panel__toggle');
+    if (!btn) return;
+    var target = btn.getAttribute('data-target');
+    if (!target) return;
+    state[target] = !state[target];
+    update();
+  });
+
+  update();
+})();
+</script>
+
+</body>
+</html>
