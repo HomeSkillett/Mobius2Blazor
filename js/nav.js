@@ -102,6 +102,12 @@
       ]
     },
     {
+      title: "Spacing",
+      links: [
+        { label: "Spacing & Layout Grid", href: "spacing/spacing.html" }
+      ]
+    },
+    {
       title: "Layout",
       links: [
         { label: "Borders",       href: "docs/border-conversion-reference.html" },
