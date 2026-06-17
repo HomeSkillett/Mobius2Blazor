@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" type="image/x-icon" href="../assets/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scale & Spacing Tokens — Mobius</title>
+  <link id="mob-theme-link" rel="stylesheet" href="../styles/color-theme-tokens/LightTheme.css">
+  <link rel="stylesheet" href="../styles/css/main.css">
+  <style>
+    :root {
+      --page-max: 1100px;
+      --doc-bg: #f5f5f5;
+      --card-bg: #ffffff;
+      --border-color: #e0e0e0;
+      --muted: #666;
+      --accent: #007eae;
+      --accent-light: #e0f4fc;
+      --swatch-height: 20px;
+      --tag-radius: 4px;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { margin: 0; background: var(--doc-bg); }
+    .sp-page {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-size: 14px;
+      color: #222;
+      line-height: 1.6;
+      padding: 48px 48px 80px;
+      max-width: var(--page-max);
+    }
+    .sp-page h1 { font-size: 28px; font-weight: 700; margin-bottom: 6px; }
+    .sp-page .subtitle { font-size: 14px; color: var(--muted); margin-bottom: 48px; }
+    .sp-page h2 {
+      font-size: 18px; font-weight: 600; margin: 52px 0 4px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .sp-page h2:first-of-type { margin-top: 0; }
+    .sp-page h2 .src {
+      font-size: 11px; font-weight: 500;
+      font-family: "SF Mono", "Fira Code", monospace;
+      background: var(--accent-light); color: var(--accent);
+      padding: 2px 8px; border-radius: var(--tag-radius); letter-spacing: 0.3px;
+    }
+    .sp-page .section-desc { font-size: 13px; color: var(--muted); margin-bottom: 16px; }
+    .sp-table {
+      width: 100%; border-collapse: collapse;
+      background: var(--card-bg); border: 1px solid var(--border-color);
+      border-radius: 8px; overflow: hidden; margin-bottom: 32px; font-size: 13px;
+    }
+    .sp-table th {
+      background: #f0f0f0; font-weight: 600; font-size: 11px;
+      text-transform: uppercase; letter-spacing: 0.5px;
+      padding: 10px 14px; text-align: left; color: var(--muted);
+      border-bottom: 1px solid var(--border-color);
+    }
+    .sp-table td { padding: 9px 14px; border-bottom: 1px solid #f0f0f0; vertical-align: middle; }
+    .sp-table tr:last-child td { border-bottom: none; }
+    .sp-table .mono { font-family: "SF Mono", "Fira Code", monospace; font-size: 12px; }
+    .sp-table .val { font-weight: 600; color: #111; }
+    .sp-table .token { font-family: "SF Mono", "Fira Code", monospace; font-size: 12px; color: var(--accent); }
+    .sp-table .muted { color: var(--muted); font-size: 12px; }
+    .swatch-bar {
+      display: block; height: var(--swatch-height);
+      background: var(--accent); border-radius: 2px;
+      opacity: 0.7; min-width: 1px; flex-shrink: 0;
+    }
+    .sp-divider { border: none; border-top: 1px solid var(--border-color); margin: 40px 0 0; }
+  </style>
+</head>
+<body>
+
+<div class="mob-layout">
+  <nav class="mob-nav" id="mob-nav"></nav>
+  <main class="mob-layout__content">
+  <div class="sp-page">
+
+    <h1>Scale &amp; Spacing Tokens</h1>
+    <p class="subtitle">Foundation values from <code>SizesNew.xaml</code> and <code>Sizes.xaml</code>. These are the building blocks for all spacing decisions in Mobius.</p>
+
+    <!-- SIZE SCALE -->
+    <h2>Size Scale <span class="src">SizesNew.xaml</span></h2>
+    <p class="section-desc">8-point design scale. Use for all values under 64px. This is the replacement scale for legacy hardcoded values.</p>
+
+    <table class="sp-table">
+      <thead>
+        <tr>
+          <th>XAML Key</th>
+          <th>Value</th>
+          <th>CSS Token</th>
+          <th>Visual</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="mono">Sizes_Doubles_Size1</td>
+          <td class="val">1px</td>
+          <td class="token">--size-1</td>
+          <td><span class="swatch-bar" style="width:1px; height:16px;"></span></td>
+        </tr>
+        <tr>
+          <td class="mono">Sizes_Doubles_Size3</td>
+          <td class="val">3px</td>
+          <td class="token">--size-3</td>
+          <td><span class="swatch-bar" style="width:3px;"></span></td>
+        </tr>
+        <tr>
+          <td class="mono">Sizes_Doubles_Size6</td>
+          <td class="val">6px</td>
+          <td class="token">--size-6</td>
+          <td><span class="swatch-bar" style="width:6px;"></span></td>
+        </tr>
+        <tr>
+          <td class="mono">Sizes_Doubles_Size12</td>
+          <td class="val">12px</td>
+          <td class="token">--size-12</td>
+          <td><span class="swatch-bar" style="width:12px;"></span></td>
+        </tr>
+        <tr>
+          <td class="mono">Sizes_Doubles_Size18</td>
+          <td class="val">18px</td>
+          <td class="token">--size-18</td>
+          <td><span class="swatch-bar" style="width:18px;"></span></td>
+        </tr>
+        <tr>
+          <td class="mono">Sizes_Doubles_Size20</td>
+          <td class="val">20px</td>
+          <td class="token">--size-20</td>
+          <td><span class="swatch-bar" style="width:20px;"></span></td>
+        </tr>
+        <tr>
+          <td class="mono">Sizes_Doubles_Size24</td>
+          <td class="val">24px</td>
+          <td class="token">--size-24</td>
+          <td><span class="swatch-bar" style="width:24px;"></span></td>
+        </tr>
+        <tr>
+          <td class="mono">Sizes_Doubles_Size36</td>
+          <td class="val">36px</td>
+          <td class="token">--size-36</td>
+          <td><span class="swatch-bar" style="width:36px;"></span></td>
+        </tr>
+        <tr>
+          <td class="mono">Sizes_Doubles_Size44</td>
+          <td class="val">44px</td>
+          <td class="token">--size-44</td>
+          <td><span class="swatch-bar" style="width:44px;"></span></td>
+        </tr>
+        <tr>
+          <td class="mono">Sizes_Doubles_Size56</td>
+          <td class="val">56px</td>
+          <td class="token">--size-56</td>
+          <td><span class="swatch-bar" style="width:56px;"></span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <hr class="sp-divider">
+
+    <!-- SPACING TOKENS -->
+    <h2>Spacing Tokens <span class="src">Sizes.xaml · SizesNew.xaml</span></h2>
+    <p class="section-desc">Named semantic distances used as GridLength column/row gaps and as margin values between UI elements.</p>
+
+    <table class="sp-table">
+      <thead>
+        <tr>
+          <th>XAML Key</th>
+          <th>Value</th>
+          <th>CSS Token</th>
+          <th>Context</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="mono">Sizes_Doubles_FieldSpacing</td>
+          <td class="val">18px</td>
+          <td class="token">--spacing-field</td>
+          <td class="muted">Vertical gap between form fields</td>
+        </tr>
+        <tr>
+          <td class="mono">Sizes_Doubles_ItemSpacing</td>
+          <td class="val">1px</td>
+          <td class="token">--spacing-item</td>
+          <td class="muted">Hairline gap between list items</td>
+        </tr>
+        <tr>
+          <td class="mono">GridLengths_FieldToField</td>
+          <td class="val">14px</td>
+          <td class="token">--spacing-field-to-field</td>
+          <td class="muted">Legacy field-to-field gap</td>
+        </tr>
+        <tr>
+          <td class="mono">GridLengths_LabelToControlDistanceSmall</td>
+          <td class="val">4px</td>
+          <td class="token">--spacing-label-to-control-sm</td>
+          <td class="muted">Tight label → input gap</td>
+        </tr>
+        <tr>
+          <td class="mono">GridLengths_LabelToControlDistance</td>
+          <td class="val">10px</td>
+          <td class="token">--spacing-label-to-control</td>
+          <td class="muted">Standard label → input gap</td>
+        </tr>
+        <tr>
+          <td class="mono">GridLengths_LabelToControlDistanceMedium</td>
+          <td class="val">16px</td>
+          <td class="token">--spacing-label-to-control-md</td>
+          <td class="muted">Medium label → input gap</td>
+        </tr>
+        <tr>
+          <td class="mono">GridLengths_LabelToControlDistanceLarge</td>
+          <td class="val">24px</td>
+          <td class="token">--spacing-label-to-control-lg</td>
+          <td class="muted">Large label → input gap</td>
+        </tr>
+        <tr>
+          <td class="mono">GridLengths_SectionToHeaderDistance</td>
+          <td class="val">24px</td>
+          <td class="token">--spacing-section-to-header</td>
+          <td class="muted">Content → section header</td>
+        </tr>
+        <tr>
+          <td class="mono">GridLengths_SectionToSectionDistance</td>
+          <td class="val">40px</td>
+          <td class="token">--spacing-section-to-section</td>
+          <td class="muted">Distance between major sections</td>
+        </tr>
+        <tr>
+          <td class="mono">GridLengths_GapSmall</td>
+          <td class="val">1px</td>
+          <td class="token">--spacing-gap-sm</td>
+          <td class="muted">Divider / hairline</td>
+        </tr>
+        <tr>
+          <td class="mono">GridLengths_GapLarge</td>
+          <td class="val">10px</td>
+          <td class="token">--spacing-gap-lg</td>
+          <td class="muted">Larger gap between elements</td>
+        </tr>
+      </tbody>
+    </table>
+
+  </div>
+  </main>
+</div>
+
+<script src="../js/nav.js"></script>
+</body>
+</html>

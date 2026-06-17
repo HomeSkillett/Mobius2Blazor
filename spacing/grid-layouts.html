@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" type="image/x-icon" href="../assets/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grid Layouts — Mobius</title>
+  <link id="mob-theme-link" rel="stylesheet" href="../styles/color-theme-tokens/LightTheme.css">
+  <link rel="stylesheet" href="../styles/css/main.css">
+  <style>
+    :root {
+      --page-max: 1100px;
+      --doc-bg: #f5f5f5;
+      --card-bg: #ffffff;
+      --border-color: #e0e0e0;
+      --muted: #666;
+      --accent: #007eae;
+      --accent-light: #e0f4fc;
+      --tag-radius: 4px;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { margin: 0; background: var(--doc-bg); }
+    .sp-page {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-size: 14px; color: #222; line-height: 1.6;
+      padding: 48px 48px 80px; max-width: var(--page-max);
+    }
+    .sp-page h1 { font-size: 28px; font-weight: 700; margin-bottom: 6px; }
+    .sp-page .subtitle { font-size: 14px; color: var(--muted); margin-bottom: 48px; }
+    .sp-page h2 {
+      font-size: 18px; font-weight: 600; margin: 52px 0 4px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .sp-page h2:first-of-type { margin-top: 0; }
+    .sp-page h2 .src {
+      font-size: 11px; font-weight: 500;
+      font-family: "SF Mono", "Fira Code", monospace;
+      background: var(--accent-light); color: var(--accent);
+      padding: 2px 8px; border-radius: var(--tag-radius); letter-spacing: 0.3px;
+    }
+    .sp-page .section-desc { font-size: 13px; color: var(--muted); margin-bottom: 16px; }
+    .note {
+      font-size: 13px; color: #444; background: #fafafa;
+      border-left: 3px solid var(--accent); padding: 12px 16px;
+      margin: 8px 0 20px; border-radius: 0 4px 4px 0;
+    }
+    .note strong { color: var(--accent); }
+    .grid-diagram-wrap {
+      background: var(--card-bg); border: 1px solid var(--border-color);
+      border-radius: 8px; padding: 24px; margin-bottom: 16px;
+    }
+    .grid-diagram-title {
+      font-size: 12px; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.5px; color: var(--muted); margin-bottom: 16px;
+    }
+    .grid-diagram {
+      display: flex; gap: 0; border: 1px solid #bbb; border-radius: 4px;
+      overflow: hidden; font-size: 12px;
+      font-family: "SF Mono", "Fira Code", monospace; min-height: 60px;
+    }
+    .grid-diagram.vertical { flex-direction: column; }
+    .grid-col {
+      display: flex; flex-direction: column; justify-content: center;
+      align-items: center; padding: 12px 8px; border-right: 1px solid #bbb;
+      background: #f8f8f8; text-align: center; line-height: 1.4; min-height: 60px;
+    }
+    .grid-col:last-child { border-right: none; }
+    .grid-col.col-star { flex: 1; background: #e8f4fc; }
+    .grid-col.col-fixed { flex: 0 0 auto; background: #fafafa; }
+    .grid-col.col-auto { flex: 0 0 auto; background: #f0faf0; }
+    .grid-col.col-divider { flex: 0 0 2px; background: #bbb; padding: 0; }
+    .grid-row {
+      display: flex; align-items: center; padding: 10px 16px;
+      border-bottom: 1px solid #bbb; background: #f8f8f8; gap: 8px;
+    }
+    .grid-row:last-child { border-bottom: none; }
+    .grid-row.row-star { flex: 1; background: #e8f4fc; min-height: 40px; }
+    .grid-row.row-fixed { flex: 0 0 auto; background: #fafafa; }
+    .grid-row.row-auto { flex: 0 0 auto; background: #f0faf0; }
+    .grid-row.row-divider { flex: 0 0 2px; background: #bbb; padding: 0; min-height: 2px; }
+    .col-label { font-size: 11px; color: #444; line-height: 1.4; }
+    .col-label strong { display: block; font-size: 12px; color: #111; }
+    .grid-legend {
+      display: flex; gap: 16px; margin-bottom: 24px; flex-wrap: wrap;
+    }
+    .grid-legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #444; }
+    .grid-legend-swatch { width: 14px; height: 14px; border-radius: 2px; border: 1px solid #ccc; }
+
+    /* =====================================================
+       LAYOUT ANATOMY DIAGRAM
+       ===================================================== */
+
+    .anatomy-wrap {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 24px;
+      margin-bottom: 40px;
+    }
+    .anatomy-title {
+      font-size: 12px; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.5px; color: var(--muted); margin-bottom: 20px;
+    }
+
+    /* Key / legend */
+    .anatomy-key {
+      display: flex; flex-wrap: wrap; gap: 12px 24px;
+      margin-bottom: 24px; font-size: 12px;
+    }
+    .anatomy-key-item {
+      display: flex; align-items: center; gap: 7px; color: #333;
+    }
+    .anatomy-key-swatch {
+      width: 16px; height: 16px; border-radius: 3px;
+      border: 1px solid rgba(0,0,0,0.12); flex-shrink: 0;
+    }
+    .anatomy-key-item code {
+      font-size: 11px; color: var(--accent);
+      font-family: "SF Mono", "Fira Code", monospace;
+    }
+
+    /* Zone wrappers */
+    .anat-margin-zone {
+      background: #cce8f5;
+      padding: 40px;
+      border-radius: 6px;
+      position: relative;
+    }
+    .anat-padding-zone {
+      background: #d4f0e0;
+      padding: 27px 20px 27px 30px;
+      border-radius: 4px;
+      position: relative;
+    }
+
+    /* The grid itself */
+    .anat-grid {
+      display: grid;
+      /* explicit gutter columns/rows so we can label them */
+      grid-template-columns: 1fr 14px 1fr 14px 1fr;
+      grid-template-rows: auto 18px auto;
+      background: #fde8c8;   /* gutter color shows through explicit gaps */
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .anat-cell {
+      background: #fff;
+      min-height: 56px;
+    }
+
+    /* Column gutter columns */
+    .anat-gap-col {
+      background: #fde8c8;
+    }
+
+    /* Row gutter — spans all 5 columns */
+    .anat-gap-row {
+      grid-column: 1 / -1;
+      background: #fde8c8;
+    }
+
+    /* Measurement strip below the diagram */
+    .anatomy-measurements {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+      margin-top: 20px;
+    }
+    .anat-meas-card {
+      background: #f8f8f8;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 12px 14px;
+      font-size: 12px;
+    }
+    .anat-meas-label {
+      font-weight: 600; font-size: 11px; text-transform: uppercase;
+      letter-spacing: 0.4px; color: var(--muted); margin-bottom: 6px;
+      display: flex; align-items: center; gap: 7px;
+    }
+    .anat-meas-swatch {
+      width: 12px; height: 12px; border-radius: 2px;
+      border: 1px solid rgba(0,0,0,0.1); flex-shrink: 0;
+    }
+    .anat-meas-row {
+      display: flex; justify-content: space-between; align-items: baseline;
+      margin-top: 4px; gap: 8px;
+    }
+    .anat-meas-val { font-weight: 700; font-size: 14px; color: #111; }
+    .anat-meas-token {
+      font-family: "SF Mono", "Fira Code", monospace;
+      font-size: 11px; color: var(--accent);
+    }
+    .anat-meas-context { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  </style>
+</head>
+<body>
+
+<div class="mob-layout">
+  <nav class="mob-nav" id="mob-nav"></nav>
+  <main class="mob-layout__content">
+  <div class="sp-page">
+
+    <h1>Grid Layouts</h1>
+    <p class="subtitle">Column and row definitions sourced directly from each component's XAML template.</p>
+
+    <!-- ============================================================
+         LAYOUT ANATOMY
+         ============================================================ -->
+    <div class="anatomy-wrap">
+      <div class="anatomy-title">Layout Anatomy — outer margin · inner padding · column &amp; row gutters</div>
+
+      <div class="anatomy-key">
+        <div class="anatomy-key-item">
+          <span class="anatomy-key-swatch" style="background:#cce8f5;"></span>
+          Outer margin (40px)
+        </div>
+        <div class="anatomy-key-item">
+          <span class="anatomy-key-swatch" style="background:#d4f0e0;"></span>
+          Inner padding (27px top &amp; bottom · 30px left)
+        </div>
+        <div class="anatomy-key-item">
+          <span class="anatomy-key-swatch" style="background:#fde8c8;"></span>
+          Gutters (col 14px · row 18px)
+        </div>
+        <div class="anatomy-key-item">
+          <span class="anatomy-key-swatch" style="background:#fff; border-color:#ccc;"></span>
+          Content cells (varies — 28–30px left padding on list items)
+        </div>
+      </div>
+
+      <!-- Zone wrappers — each colored band = one spacing zone -->
+      <div class="anat-margin-zone">
+        <div class="anat-padding-zone">
+          <div class="anat-grid">
+            <!-- Row 1 -->
+            <div class="anat-cell"></div>
+            <div class="anat-gap-col"></div>
+            <div class="anat-cell"></div>
+            <div class="anat-gap-col"></div>
+            <div class="anat-cell"></div>
+            <!-- Row gutter -->
+            <div class="anat-gap-row"></div>
+            <!-- Row 2 -->
+            <div class="anat-cell"></div>
+            <div class="anat-gap-col"></div>
+            <div class="anat-cell"></div>
+            <div class="anat-gap-col"></div>
+            <div class="anat-cell"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Measurement reference cards -->
+      <div class="anatomy-measurements">
+        <div class="anat-meas-card">
+          <div class="anat-meas-label">
+            <span class="anat-meas-swatch" style="background:#cce8f5;"></span>
+            Outer Margin
+          </div>
+          <div class="anat-meas-row">
+            <span class="anat-meas-val">40px</span>
+            <span class="anat-meas-token">--spacing-section-to-section</span>
+          </div>
+          <div class="anat-meas-context">Space between the panel edge and adjacent UI regions. Also <code>--margin-mode-section-lg</code>.</div>
+        </div>
+        <div class="anat-meas-card">
+          <div class="anat-meas-label">
+            <span class="anat-meas-swatch" style="background:#d4f0e0;"></span>
+            Inner Padding
+          </div>
+          <div class="anat-meas-row">
+            <span class="anat-meas-val">27px T/B</span>
+            <span class="anat-meas-token">no named token</span>
+          </div>
+          <div class="anat-meas-context">MasterDetail list: <code>Padding="0,27"</code>. List items: <code>Padding="30,0"</code> left inset.</div>
+        </div>
+        <div class="anat-meas-card">
+          <div class="anat-meas-label">
+            <span class="anat-meas-swatch" style="background:#fde8c8;"></span>
+            Gutters
+          </div>
+          <div class="anat-meas-row">
+            <span class="anat-meas-val">14px col</span>
+            <span class="anat-meas-token">--spacing-field-to-field</span>
+          </div>
+          <div class="anat-meas-row">
+            <span class="anat-meas-val">18px row</span>
+            <span class="anat-meas-token">--spacing-field</span>
+          </div>
+          <div class="anat-meas-context">Column gap between form fields. Row gap between stacked fields.</div>
+        </div>
+      </div>
+
+    </div><!-- /anatomy-wrap -->
+
+    <div class="grid-legend">
+      <div class="grid-legend-item"><span class="grid-legend-swatch" style="background:#e8f4fc; border-color:#007eae;"></span>* (flex/fill)</div>
+      <div class="grid-legend-item"><span class="grid-legend-swatch" style="background:#fafafa;"></span>Fixed px</div>
+      <div class="grid-legend-item"><span class="grid-legend-swatch" style="background:#f0faf0;"></span>Auto (content-sized)</div>
+      <div class="grid-legend-item"><span class="grid-legend-swatch" style="background:#bbb;"></span>Divider (2px)</div>
+    </div>
+
+    <!-- ============================================================
+         FORM GRID LAYOUT
+         ============================================================ -->
+    <h2>Form Grid Layout <span class="src">InCabClientConfiguration.xaml</span></h2>
+    <p class="section-desc">The standard Mobius form pattern: a labeled FieldInput stack inside a section container. Sourced from <code>InCabClientConfiguration.xaml</code> and confirmed against <code>FieldInput.xaml</code> and <code>Sizes.xaml</code>.</p>
+
+    <div class="anatomy-wrap">
+      <div class="anatomy-title">Form Layout Anatomy — outer margin · section spacing · field row spacing · label-to-input gap</div>
+
+      <div class="anatomy-key">
+        <div class="anatomy-key-item">
+          <span class="anatomy-key-swatch" style="background:#cce8f5;"></span>
+          Outer container margin (40px left &amp; right only)
+        </div>
+        <div class="anatomy-key-item">
+          <span class="anatomy-key-swatch" style="background:#e8d5f5;"></span>
+          Section-to-section spacing (40px)
+        </div>
+        <div class="anatomy-key-item">
+          <span class="anatomy-key-swatch" style="background:#fde8c8;"></span>
+          Field row margin (5px top &amp; bottom per field = 10px between fields)
+        </div>
+        <div class="anatomy-key-item">
+          <span class="anatomy-key-swatch" style="background:#fff; border-color:#ccc;"></span>
+          Content cells (label · 24px gap · input)
+        </div>
+      </div>
+
+      <!-- Form anatomy visual -->
+      <div style="display:flex; gap:0; background:#cce8f5; border-radius:6px; padding:40px 40px 40px 40px;">
+        <div style="flex:1; display:flex; flex-direction:column; gap:0;">
+
+          <!-- Section heading -->
+          <div style="font-size:12px; font-weight:700; color:#444; letter-spacing:0.3px; padding:8px 0 4px; border-bottom:1px solid #ddd; margin-bottom:0;">
+            Section heading (HeadingSm)
+          </div>
+
+          <!-- SectionToSectionDistance spacer — shown as purple band -->
+          <div style="background:#e8d5f5; height:8px; margin:0 0 0 0;" title="SectionToSectionDistance (partial)"></div>
+
+          <!-- FieldInput row 1 -->
+          <div style="background:#fde8c8; padding:5px 0;">
+            <div style="background:#fff; border:1px solid #ddd; border-radius:3px; display:grid; grid-template-columns:180px 24px 1fr; min-height:44px; overflow:hidden;">
+              <div style="padding:0 10px; display:flex; align-items:center; font-size:12px; color:#555; border-right:1px solid #eee;">Label (180px min)</div>
+              <div style="background:#fde8c8;"></div>
+              <div style="padding:0 10px; display:flex; align-items:center; font-size:12px; color:#999; background:#fafafa;">Input field (10px L/R padding)</div>
+            </div>
+          </div>
+
+          <!-- FieldInput row 2 -->
+          <div style="background:#fde8c8; padding:5px 0;">
+            <div style="background:#fff; border:1px solid #ddd; border-radius:3px; display:grid; grid-template-columns:180px 24px 1fr; min-height:44px; overflow:hidden;">
+              <div style="padding:0 10px; display:flex; align-items:center; font-size:12px; color:#555; border-right:1px solid #eee;">Label</div>
+              <div style="background:#fde8c8;"></div>
+              <div style="padding:0 10px; display:flex; align-items:center; font-size:12px; color:#999; background:#fafafa;">Input field</div>
+            </div>
+          </div>
+
+          <!-- FieldInput row 3 -->
+          <div style="background:#fde8c8; padding:5px 0;">
+            <div style="background:#fff; border:1px solid #ddd; border-radius:3px; display:grid; grid-template-columns:180px 24px 1fr; min-height:44px; overflow:hidden;">
+              <div style="padding:0 10px; display:flex; align-items:center; font-size:12px; color:#555; border-right:1px solid #eee;">Label</div>
+              <div style="background:#fde8c8;"></div>
+              <div style="padding:0 10px; display:flex; align-items:center; font-size:12px; color:#999; background:#fafafa;">Input field</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Measurement reference cards -->
+      <div class="anatomy-measurements" style="grid-template-columns: 1fr 1fr 1fr 1fr; margin-top:20px;">
+        <div class="anat-meas-card">
+          <div class="anat-meas-label">
+            <span class="anat-meas-swatch" style="background:#cce8f5;"></span>
+            Outer Margin
+          </div>
+          <div class="anat-meas-row">
+            <span class="anat-meas-val">40px</span>
+            <span class="anat-meas-token">--spacing-section-to-section</span>
+          </div>
+          <div class="anat-meas-context">Left &amp; right only. <code>Margin="40,0"</code> on each form section grid. No top/bottom.</div>
+        </div>
+        <div class="anat-meas-card">
+          <div class="anat-meas-label">
+            <span class="anat-meas-swatch" style="background:#e8d5f5;"></span>
+            Section Spacing
+          </div>
+          <div class="anat-meas-row">
+            <span class="anat-meas-val">40px</span>
+            <span class="anat-meas-token">--spacing-section-to-section</span>
+          </div>
+          <div class="anat-meas-context"><code>SectionToSectionDistance</code> row between each form group (Sizes.xaml).</div>
+        </div>
+        <div class="anat-meas-card">
+          <div class="anat-meas-label">
+            <span class="anat-meas-swatch" style="background:#fde8c8;"></span>
+            Field Row Gap
+          </div>
+          <div class="anat-meas-row">
+            <span class="anat-meas-val">5px top &amp; bottom</span>
+          </div>
+          <div class="anat-meas-context"><code>Margin="0,5"</code> per FieldInput = 10px total between adjacent fields.</div>
+        </div>
+        <div class="anat-meas-card">
+          <div class="anat-meas-label">
+            <span class="anat-meas-swatch" style="background:#fff; border-color:#ccc;"></span>
+            Label-to-Input Gap
+          </div>
+          <div class="anat-meas-row">
+            <span class="anat-meas-val">24px</span>
+            <span class="anat-meas-token">--spacing-label-to-control-lg</span>
+          </div>
+          <div class="anat-meas-context"><code>LabelToControlDistanceLarge</code>. Label min-width: <code>FieldLabelStandardSize</code> = 180px.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Column diagram: FieldInput horizontal grid -->
+    <div class="grid-diagram-wrap" style="margin-bottom:40px;">
+      <div class="grid-diagram-title">FieldInput column structure inside a form — when building label + control manually (e.g. with ComboBox)</div>
+      <div class="grid-diagram">
+        <div class="grid-col col-auto" style="min-width:120px;">
+          <span class="col-label"><strong>Auto</strong>SharedSizeGroup:<br>LabelWidthGroup<br>Min: 180px<br>Label TextBlock</span>
+        </div>
+        <div class="grid-col col-fixed" style="min-width:50px;">
+          <span class="col-label"><strong>24px</strong>LabelToControl<br>DistanceLarge<br>gap column</span>
+        </div>
+        <div class="grid-col col-star">
+          <span class="col-label"><strong>*</strong>Input / ComboBox<br><code>Margin="0,5"</code></span>
+        </div>
+        <div class="grid-col col-auto" style="min-width:50px;">
+          <span class="col-label"><strong>Auto</strong>SharedSizeGroup:<br>UnitWidthGroup<br>Unit label</span>
+        </div>
+      </div>
+      <div class="note" style="margin-top:12px;">
+        Parent container requires <strong><code>Grid.IsSharedSizeScope="True"</code></strong> for labels to align across multiple FieldInputs.
+        FieldInput's internal text box padding: <strong><code>PaddingLeftRightMedium = 10px left/right</code></strong> (<code>Sizes.xaml</code>).
+      </div>
+    </div>
+
+    <!-- 1 ModeLayout -->
+    <div class="grid-diagram-wrap">
+      <div class="grid-diagram-title">ModeLayout — sidebar + main content <span style="font-weight:400; color:#999;">ModeLayout.xaml</span></div>
+      <div class="grid-diagram">
+        <div class="grid-col col-auto" style="min-width:120px;">
+          <span class="col-label"><strong>Auto</strong>MinWidth=60px<br>Sidebar nav</span>
+        </div>
+        <div class="grid-col col-star">
+          <span class="col-label"><strong>*</strong>Main content</span>
+        </div>
+      </div>
+      <div style="margin-top:16px;">
+        <div class="grid-diagram-title">Sidebar inner rows</div>
+        <div class="grid-diagram vertical" style="max-width:280px; min-height:180px;">
+          <div class="grid-row row-star" style="min-height:36px;">
+            <span class="col-label"><strong>*</strong> MaxHeight=113px (BrandHeightOffset) — brand area</span>
+          </div>
+          <div class="grid-row row-auto">
+            <span class="col-label"><strong>Auto</strong> — ModeCommands</span>
+          </div>
+          <div class="grid-row row-star" style="min-height:36px;">
+            <span class="col-label"><strong>*</strong> — filler</span>
+          </div>
+          <div class="grid-row row-auto">
+            <span class="col-label"><strong>Auto</strong> — LowerModeCommands</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2 MasterDetailControl -->
+    <div class="grid-diagram-wrap">
+      <div class="grid-diagram-title">MasterDetailControl — list + detail <span style="font-weight:400; color:#999;">MasterDetailControl.xaml</span></div>
+      <div class="grid-diagram">
+        <div class="grid-col col-fixed" style="min-width:130px;">
+          <span class="col-label"><strong>236px</strong>Master list<br>(MasterDetailsMasterListWidth)</span>
+        </div>
+        <div class="grid-col col-star">
+          <span class="col-label"><strong>*</strong>Detail panel</span>
+        </div>
+      </div>
+      <div class="note" style="margin-top:12px;">
+        List scroll area <strong>Padding="0,27"</strong> (27px top/bottom).
+        ListBoxItem <strong>Padding="30,0"</strong>, <strong>MinHeight=44px</strong>.
+        Add button <strong>Margin="40,0,0,0"</strong>.
+      </div>
+    </div>
+
+    <!-- 3 SplitPanel Horizontal -->
+    <div class="grid-diagram-wrap">
+      <div class="grid-diagram-title">SplitPanel — Horizontal <span style="font-weight:400; color:#999;">SplitPanel.xaml</span></div>
+      <div class="grid-diagram">
+        <div class="grid-col col-star">
+          <span class="col-label"><strong>*</strong>First content<br>MaxWidth = FirstContentMaxOpenLength</span>
+        </div>
+        <div class="grid-col col-divider"></div>
+        <div class="grid-col col-star">
+          <span class="col-label"><strong>*</strong>Second content<br>MaxWidth = SecondContentMaxOpenLength</span>
+        </div>
+      </div>
+      <p class="note" style="margin-top:12px;">Divider is <strong>2px</strong>. GridSplitter hit zone extends <strong>Margin="-2,0"</strong> (4px total). Collapse toggle: <strong>Width=40, Height=50</strong>.</p>
+    </div>
+
+    <!-- 4 SplitPanel Vertical -->
+    <div class="grid-diagram-wrap">
+      <div class="grid-diagram-title">SplitPanel — Vertical <span style="font-weight:400; color:#999;">SplitPanel.xaml</span></div>
+      <div class="grid-diagram vertical" style="max-width:320px;">
+        <div class="grid-row row-star" style="min-height:40px;">
+          <span class="col-label"><strong>*</strong> First content — MaxHeight = FirstContentMaxOpenLength</span>
+        </div>
+        <div class="grid-row row-divider"></div>
+        <div class="grid-row row-star" style="min-height:40px;">
+          <span class="col-label"><strong>*</strong> Second content — MaxHeight = SecondContentMaxOpenLength</span>
+        </div>
+      </div>
+      <p class="note" style="margin-top:12px;">Divider is <strong>2px</strong>. GridSplitter hit zone: <strong>Margin="0,-8"</strong> (16px vertical).</p>
+    </div>
+
+    <!-- 5 FieldInput -->
+    <div class="grid-diagram-wrap">
+      <div class="grid-diagram-title">FieldInput — Horizontal <span style="font-weight:400; color:#999;">FieldInput.xaml</span></div>
+      <div class="grid-diagram">
+        <div class="grid-col col-auto" style="min-width:90px;">
+          <span class="col-label"><strong>Auto</strong>SharedSizeGroup:<br>LabelWidthGroup<br>Label</span>
+        </div>
+        <div class="grid-col col-auto" style="min-width:36px;">
+          <span class="col-label"><strong>Auto</strong>SharedSizeGroup:<br>SymbolWidthGroup<br>Warning icon</span>
+        </div>
+        <div class="grid-col col-star">
+          <span class="col-label"><strong>*</strong>Input control</span>
+        </div>
+        <div class="grid-col col-auto" style="min-width:50px;">
+          <span class="col-label"><strong>Auto</strong>SharedSizeGroup:<br>UnitWidthGroup<br>Unit label</span>
+        </div>
+      </div>
+      <p class="note" style="margin-top:12px;"><strong>SharedSizeGroup</strong> alignment requires a parent container with <code>Grid.IsSharedSizeScope="True"</code>. Labels and units snap to the same column width across all FieldInputs in scope.</p>
+    </div>
+
+    <!-- 6 SimpleListItemContentControl -->
+    <div class="grid-diagram-wrap">
+      <div class="grid-diagram-title">SimpleListItemContentControl <span style="font-weight:400; color:#999;">SimpleListItemContentControl.xaml</span></div>
+      <div class="grid-diagram">
+        <div class="grid-col col-fixed" style="min-width:50px;">
+          <span class="col-label"><strong>24px</strong>Status icon /<br>selection mark</span>
+        </div>
+        <div class="grid-col col-star">
+          <span class="col-label"><strong>*</strong>Primary label +<br>subtitle</span>
+        </div>
+        <div class="grid-col col-auto" style="min-width:50px;">
+          <span class="col-label"><strong>Auto</strong>Trailing<br>metadata</span>
+        </div>
+        <div class="grid-col col-fixed" style="min-width:36px;">
+          <span class="col-label"><strong>20px</strong>Action icon<br>(chevron)</span>
+        </div>
+      </div>
+      <p class="note" style="margin-top:12px;">ListBoxItem default Padding: <strong>28,0,0,0</strong>.</p>
+    </div>
+
+    <!-- 7 DetailedListItemContentControl -->
+    <div class="grid-diagram-wrap">
+      <div class="grid-diagram-title">DetailedListItemContentControl <span style="font-weight:400; color:#999;">DetailedListItemContentControl.xaml</span></div>
+      <div class="grid-diagram">
+        <div class="grid-col col-fixed" style="min-width:30px;">
+          <span class="col-label"><strong>4px</strong>Left<br>edge</span>
+        </div>
+        <div class="grid-col col-fixed" style="min-width:40px;">
+          <span class="col-label"><strong>20px</strong>Status<br>icon</span>
+        </div>
+        <div class="grid-col col-star">
+          <span class="col-label"><strong>*</strong>Primary content<br>(title + subtitle)</span>
+        </div>
+        <div class="grid-col col-auto" style="min-width:50px;">
+          <span class="col-label"><strong>Auto</strong>Secondary<br>label/value</span>
+        </div>
+        <div class="grid-col col-fixed" style="min-width:36px;">
+          <span class="col-label"><strong>16px</strong>Right<br>icon gap</span>
+        </div>
+        <div class="grid-col col-fixed" style="min-width:30px;">
+          <span class="col-label"><strong>4px</strong>Right<br>edge</span>
+        </div>
+      </div>
+      <p class="note" style="margin-top:12px;">ListBoxItem default Padding: <strong>28,0,0,0</strong>.</p>
+    </div>
+
+    <!-- 8 UserCard -->
+    <div class="grid-diagram-wrap">
+      <div class="grid-diagram-title">UserCard <span style="font-weight:400; color:#999;">UserCard.xaml</span></div>
+      <div class="grid-diagram">
+        <div class="grid-col col-fixed" style="min-width:30px;">
+          <span class="col-label"><strong>4px</strong>Left<br>edge</span>
+        </div>
+        <div class="grid-col col-auto" style="min-width:48px;">
+          <span class="col-label"><strong>Auto</strong>Avatar /<br>status icon</span>
+        </div>
+        <div class="grid-col col-auto" style="min-width:36px;">
+          <span class="col-label"><strong>Auto</strong>Status<br>badge</span>
+        </div>
+        <div class="grid-col col-star">
+          <span class="col-label"><strong>*</strong>Name /<br>role text</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 9 NotificationItem -->
+    <div class="grid-diagram-wrap">
+      <div class="grid-diagram-title">NotificationItem <span style="font-weight:400; color:#999;">NotificationItem.xaml</span></div>
+      <div class="grid-diagram">
+        <div class="grid-col col-star">
+          <span class="col-label"><strong>*</strong>Content</span>
+        </div>
+        <div class="grid-col col-fixed" style="min-width:44px;">
+          <span class="col-label"><strong>20px</strong>Right<br>margin col</span>
+        </div>
+      </div>
+      <div style="margin-top:16px;">
+        <div class="grid-diagram-title">Rows (all Auto)</div>
+        <div class="grid-diagram vertical" style="max-width:320px;">
+          <div class="grid-row row-auto"><span class="col-label"><strong>Auto</strong> — Level + Error Code + Dismiss</span></div>
+          <div class="grid-row row-auto"><span class="col-label"><strong>Auto</strong> — Title</span></div>
+          <div class="grid-row row-auto"><span class="col-label"><strong>Auto</strong> — Message body</span></div>
+          <div class="grid-row row-auto"><span class="col-label"><strong>Auto</strong> — Special actions</span></div>
+          <div class="grid-row row-auto"><span class="col-label"><strong>Auto</strong> — Timestamp + action buttons (3* / *)</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 10 ModeCommandAndControl -->
+    <div class="grid-diagram-wrap">
+      <div class="grid-diagram-title">ModeCommandAndControl — Command header <span style="font-weight:400; color:#999;">ModeCommandAndControl.xaml</span></div>
+      <div class="grid-diagram vertical" style="max-width:320px;">
+        <div class="grid-row row-fixed" style="min-height:50px;">
+          <span class="col-label"><strong>50px</strong> — Fixed header bar (Auto/Auto/*/Auto cols inside)</span>
+        </div>
+        <div class="grid-row row-star" style="min-height:40px;">
+          <span class="col-label"><strong>*</strong> — Scrollable command list</span>
+        </div>
+      </div>
+      <p class="note" style="margin-top:12px;">Header inner grid: <strong>Auto / Auto / * / Auto</strong> (back icon / mode icon / title text / overflow). Title block: <strong>Margin="0,24,0,25"</strong>.</p>
+    </div>
+
+  </div>
+  </main>
+</div>
+
+<script src="../js/nav.js"></script>
+</body>
+</html>

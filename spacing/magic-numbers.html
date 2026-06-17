@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" type="image/x-icon" href="../assets/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hardcoded Values — Mobius</title>
+  <link id="mob-theme-link" rel="stylesheet" href="../styles/color-theme-tokens/LightTheme.css">
+  <link rel="stylesheet" href="../styles/css/main.css">
+  <style>
+    :root {
+      --page-max: 1100px;
+      --doc-bg: #f5f5f5;
+      --card-bg: #ffffff;
+      --border-color: #e0e0e0;
+      --muted: #666;
+      --accent: #007eae;
+      --accent-light: #e0f4fc;
+      --tag-radius: 4px;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { margin: 0; background: var(--doc-bg); }
+    .sp-page {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-size: 14px; color: #222; line-height: 1.6;
+      padding: 48px 48px 80px; max-width: var(--page-max);
+    }
+    .sp-page h1 { font-size: 28px; font-weight: 700; margin-bottom: 6px; }
+    .sp-page .subtitle { font-size: 14px; color: var(--muted); margin-bottom: 48px; }
+    .sp-page h2 {
+      font-size: 18px; font-weight: 600; margin: 0 0 4px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .sp-page .section-desc { font-size: 13px; color: var(--muted); margin-bottom: 16px; }
+    .sp-table {
+      width: 100%; border-collapse: collapse;
+      background: var(--card-bg); border: 1px solid var(--border-color);
+      border-radius: 8px; overflow: hidden; margin-bottom: 32px; font-size: 13px;
+    }
+    .sp-table th {
+      background: #f0f0f0; font-weight: 600; font-size: 11px;
+      text-transform: uppercase; letter-spacing: 0.5px;
+      padding: 10px 14px; text-align: left; color: var(--muted);
+      border-bottom: 1px solid var(--border-color);
+    }
+    .sp-table td { padding: 9px 14px; border-bottom: 1px solid #f0f0f0; vertical-align: middle; }
+    .sp-table tr:last-child td { border-bottom: none; }
+    .sp-table .val { font-weight: 600; color: #111; }
+    .sp-table .token { font-family: "SF Mono", "Fira Code", monospace; font-size: 12px; color: var(--accent); }
+    .sp-table .muted { color: var(--muted); font-size: 12px; }
+  </style>
+</head>
+<body>
+
+<div class="mob-layout">
+  <nav class="mob-nav" id="mob-nav"></nav>
+  <main class="mob-layout__content">
+  <div class="sp-page">
+
+    <h1>Hardcoded Values</h1>
+    <p class="subtitle">Values that appear hardcoded in component XAML without a named token. Map to the nearest token when writing CSS.</p>
+
+    <h2>Magic Numbers Reference</h2>
+    <p class="section-desc">When you encounter one of these values in XAML, use the nearest token listed here rather than hardcoding the raw number in CSS.</p>
+
+    <table class="sp-table">
+      <thead>
+        <tr>
+          <th>Value</th>
+          <th>Appears in</th>
+          <th>Nearest Token</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="val">2px</td>
+          <td class="muted">SplitPanel divider col/row</td>
+          <td class="token">--border-width</td>
+          <td class="muted">Structural divider line between panels</td>
+        </tr>
+        <tr>
+          <td class="val">4px</td>
+          <td class="muted">DetailedListItem Col 0/5, UserCard Col 0</td>
+          <td class="token">--size-3 (closest)</td>
+          <td class="muted">Edge inset — not token-mapped in master</td>
+        </tr>
+        <tr>
+          <td class="val">16px</td>
+          <td class="muted">DetailedListItem Col 4, dialog padding</td>
+          <td class="token">--spacing-label-to-control-md</td>
+          <td class="muted">Context-dependent; mid-point of size-12/size-18</td>
+        </tr>
+        <tr>
+          <td class="val">20px</td>
+          <td class="muted">NotificationItem Col 1, icon standard size</td>
+          <td class="token">--size-20 / --icon</td>
+          <td class="muted">Right-margin column or standard icon size</td>
+        </tr>
+        <tr>
+          <td class="val">24px</td>
+          <td class="muted">Various top/bottom margins</td>
+          <td class="token">--size-24 / --spacing-section-to-header</td>
+          <td class="muted">—</td>
+        </tr>
+        <tr>
+          <td class="val">27px</td>
+          <td class="muted">MasterDetail list Padding top/bottom</td>
+          <td class="muted">No exact token</td>
+          <td class="muted">Midpoint of --size-24 / --size-36; intentional visual breathing room</td>
+        </tr>
+        <tr>
+          <td class="val">30px</td>
+          <td class="muted">ListBoxItem left padding</td>
+          <td class="muted">No exact token</td>
+          <td class="muted">Between --size-24 and --size-36</td>
+        </tr>
+        <tr>
+          <td class="val">40px</td>
+          <td class="muted">Section margins, MasterList margin</td>
+          <td class="token">--spacing-section-to-section</td>
+          <td class="muted">--size-36 is nearest size scale step</td>
+        </tr>
+        <tr>
+          <td class="val">50px</td>
+          <td class="muted">CommandHeader height, WindowControl button</td>
+          <td class="token">--btn-lg (50px exact)</td>
+          <td class="muted">--touch-lg (56px) is nearest touch token</td>
+        </tr>
+        <tr>
+          <td class="val">113px</td>
+          <td class="muted">BrandHeightOffset — sidebar top row cap</td>
+          <td class="token">--margin-brand-offset</td>
+          <td class="muted">Logo height constraint; has a named token</td>
+        </tr>
+      </tbody>
+    </table>
+
+  </div>
+  </main>
+</div>
+
+<script src="../js/nav.js"></script>
+</body>
+</html>

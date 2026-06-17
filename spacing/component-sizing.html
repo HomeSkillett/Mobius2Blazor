@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" type="image/x-icon" href="../assets/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Component Sizing — Mobius</title>
+  <link id="mob-theme-link" rel="stylesheet" href="../styles/color-theme-tokens/LightTheme.css">
+  <link rel="stylesheet" href="../styles/css/main.css">
+  <style>
+    :root {
+      --page-max: 1100px;
+      --doc-bg: #f5f5f5;
+      --card-bg: #ffffff;
+      --border-color: #e0e0e0;
+      --muted: #666;
+      --accent: #007eae;
+      --accent-light: #e0f4fc;
+      --tag-radius: 4px;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { margin: 0; background: var(--doc-bg); }
+    .sp-page {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-size: 14px; color: #222; line-height: 1.6;
+      padding: 48px 48px 80px; max-width: var(--page-max);
+    }
+    .sp-page h1 { font-size: 28px; font-weight: 700; margin-bottom: 6px; }
+    .sp-page .subtitle { font-size: 14px; color: var(--muted); margin-bottom: 48px; }
+    .sp-page h2 {
+      font-size: 18px; font-weight: 600; margin: 52px 0 4px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .sp-page h2:first-of-type { margin-top: 0; }
+    .sp-page h2 .src {
+      font-size: 11px; font-weight: 500;
+      font-family: "SF Mono", "Fira Code", monospace;
+      background: var(--accent-light); color: var(--accent);
+      padding: 2px 8px; border-radius: var(--tag-radius); letter-spacing: 0.3px;
+    }
+    .sp-page .section-desc { font-size: 13px; color: var(--muted); margin-bottom: 16px; }
+    .sp-table {
+      width: 100%; border-collapse: collapse;
+      background: var(--card-bg); border: 1px solid var(--border-color);
+      border-radius: 8px; overflow: hidden; margin-bottom: 32px; font-size: 13px;
+    }
+    .sp-table th {
+      background: #f0f0f0; font-weight: 600; font-size: 11px;
+      text-transform: uppercase; letter-spacing: 0.5px;
+      padding: 10px 14px; text-align: left; color: var(--muted);
+      border-bottom: 1px solid var(--border-color);
+    }
+    .sp-table td { padding: 9px 14px; border-bottom: 1px solid #f0f0f0; vertical-align: middle; }
+    .sp-table tr:last-child td { border-bottom: none; }
+    .sp-table .mono { font-family: "SF Mono", "Fira Code", monospace; font-size: 12px; }
+    .sp-table .val { font-weight: 600; color: #111; }
+    .sp-table .token { font-family: "SF Mono", "Fira Code", monospace; font-size: 12px; color: var(--accent); }
+    .sp-table .muted { color: var(--muted); font-size: 12px; }
+    .sp-divider { border: none; border-top: 1px solid var(--border-color); margin: 40px 0 0; }
+    .size-demo-row {
+      display: flex; align-items: flex-end; gap: 20px; flex-wrap: wrap;
+      padding: 24px; background: var(--card-bg);
+      border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 24px;
+    }
+    .size-demo-item { display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; }
+    .size-demo-item .size-box {
+      background: var(--accent); opacity: 0.15;
+      border: 2px solid var(--accent); border-radius: 3px; flex-shrink: 0;
+    }
+    .size-demo-item .size-label {
+      font-size: 11px; font-family: "SF Mono", "Fira Code", monospace;
+      color: var(--muted); line-height: 1.3;
+    }
+    .size-demo-item .size-label strong { display: block; color: #111; font-size: 12px; }
+  </style>
+</head>
+<body>
+
+<div class="mob-layout">
+  <nav class="mob-nav" id="mob-nav"></nav>
+  <main class="mob-layout__content">
+  <div class="sp-page">
+
+    <h1>Component Sizing</h1>
+    <p class="subtitle">Fixed dimensions for fields, panels, touch targets, icons, and borders. Sources: <code>Sizes.xaml</code>, <code>SizesNew.xaml</code>.</p>
+
+    <!-- FIELD & PANEL SIZING -->
+    <h2>Field &amp; Panel Sizing <span class="src">Sizes.xaml · SizesNew.xaml</span></h2>
+    <p class="section-desc">Fixed dimensions that define the structural skeleton of panels, form fields, and labels.</p>
+
+    <table class="sp-table">
+      <thead>
+        <tr>
+          <th>XAML Key</th>
+          <th>Value</th>
+          <th>CSS Token</th>
+          <th>Context</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="mono">GridLengths_FieldHeight</td>
+          <td class="val">44px</td>
+          <td class="token">--field-height</td>
+          <td class="muted">Standard input height (= TouchSize)</td>
+        </tr>
+        <tr>
+          <td class="mono">Doubles_FieldRowMinHeight / GridLengths_FieldHeightLarge</td>
+          <td class="val">58px</td>
+          <td class="token">--field-height-lg</td>
+          <td class="muted">Large field / row min height</td>
+        </tr>
+        <tr>
+          <td class="mono">GridLengths_FieldLabelMinWidth</td>
+          <td class="val">130px</td>
+          <td class="token">--field-label-min-width</td>
+          <td class="muted">Min label column width</td>
+        </tr>
+        <tr>
+          <td class="mono">GridLengths_FieldLabelWidth</td>
+          <td class="val">180px</td>
+          <td class="token">--field-label-width</td>
+          <td class="muted">Standard label column width</td>
+        </tr>
+        <tr>
+          <td class="mono">GridLengths_FieldInputStandardWidth</td>
+          <td class="val">220px</td>
+          <td class="token">--field-input-width</td>
+          <td class="muted">Standard input column width</td>
+        </tr>
+        <tr>
+          <td class="mono">Doubles_FieldMaxWidth</td>
+          <td class="val">300px</td>
+          <td class="token">--field-max-width</td>
+          <td class="muted">Max field width</td>
+        </tr>
+        <tr>
+          <td class="mono">Doubles_DropdownPopupMaxWidth</td>
+          <td class="val">300px</td>
+          <td class="token">--dropdown-max-width</td>
+          <td class="muted">Max dropdown popup width</td>
+        </tr>
+        <tr>
+          <td class="mono">Doubles_FirstPanelMinWidth</td>
+          <td class="val">312px</td>
+          <td class="token">--panel-first-min-width</td>
+          <td class="muted">Min width of first panel in split layout</td>
+        </tr>
+        <tr>
+          <td class="mono">Sizes_Column_Width</td>
+          <td class="val">300px</td>
+          <td class="token">--panel-column-width</td>
+          <td class="muted">Standard panel column width</td>
+        </tr>
+        <tr>
+          <td class="mono">Sizes_Header_Height</td>
+          <td class="val">132px</td>
+          <td class="token">--panel-header-height</td>
+          <td class="muted">Panel header height</td>
+        </tr>
+        <tr>
+          <td class="mono">Doubles_OnObjectUIWidth (Double)</td>
+          <td class="val">400px</td>
+          <td class="token">--panel-on-object-ui</td>
+          <td class="muted">On-object UI panel width</td>
+        </tr>
+        <tr>
+          <td class="mono">GridLengths_OnObjectUIWidth</td>
+          <td class="val">320px</td>
+          <td class="token">--panel-on-object-ui-grid</td>
+          <td class="muted">On-object UI GridLength</td>
+        </tr>
+        <tr>
+          <td class="mono">GridLengths_MasterDetailsMasterListWidth</td>
+          <td class="val">236px</td>
+          <td class="token">--panel-master-list-width</td>
+          <td class="muted">Master list column width</td>
+        </tr>
+        <tr>
+          <td class="mono">GridLengths_ModeSectionTitleHeight</td>
+          <td class="val">158px</td>
+          <td class="token">--panel-mode-section-title</td>
+          <td class="muted">Mode section title height</td>
+        </tr>
+        <tr>
+          <td class="mono">Doubles_MaxLabelWidth</td>
+          <td class="val">500px</td>
+          <td class="token">--label-max-width</td>
+          <td class="muted">Max TextBlock label width</td>
+        </tr>
+        <tr>
+          <td class="mono">Doubles_MinWindowContentWidth</td>
+          <td class="val">600px</td>
+          <td class="token">--min-window-width</td>
+          <td class="muted">Min window content width</td>
+        </tr>
+        <tr>
+          <td class="mono">Doubles_MinWindowContentHeight</td>
+          <td class="val">300px</td>
+          <td class="token">--min-window-height</td>
+          <td class="muted">Min window content height</td>
+        </tr>
+        <tr>
+          <td class="mono">Doubles_BrandHeightOffset</td>
+          <td class="val">113px</td>
+          <td class="muted">—</td>
+          <td class="muted">Caps sidebar top row (logo height)</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <hr class="sp-divider">
+
+    <!-- TOUCH & ICON SIZES -->
+    <h2>Touch Targets &amp; Icon Sizes <span class="src">SizesNew.xaml</span></h2>
+
+    <div class="size-demo-row">
+      <div class="size-demo-item">
+        <div class="size-box" style="width:36px; height:36px;"></div>
+        <span class="size-label"><strong>36px</strong>--touch-sm<br>TouchSizeSm</span>
+      </div>
+      <div class="size-demo-item">
+        <div class="size-box" style="width:44px; height:44px;"></div>
+        <span class="size-label"><strong>44px</strong>--touch<br>TouchSize (WCAG AA)</span>
+      </div>
+      <div class="size-demo-item">
+        <div class="size-box" style="width:56px; height:56px;"></div>
+        <span class="size-label"><strong>56px</strong>--touch-lg<br>TouchSizeLg</span>
+      </div>
+      <div style="width:1px; background:#ddd; align-self:stretch; margin:0 8px;"></div>
+      <div class="size-demo-item">
+        <div class="size-box" style="width:8px; height:8px; border-radius:50%;"></div>
+        <span class="size-label"><strong>8px</strong>--icon-adorner<br>Badge/dot</span>
+      </div>
+      <div class="size-demo-item">
+        <div class="size-box" style="width:12px; height:12px;"></div>
+        <span class="size-label"><strong>12px</strong>--icon-sm</span>
+      </div>
+      <div class="size-demo-item">
+        <div class="size-box" style="width:20px; height:20px;"></div>
+        <span class="size-label"><strong>20px</strong>--icon<br>Standard</span>
+      </div>
+      <div class="size-demo-item">
+        <div class="size-box" style="width:32px; height:32px;"></div>
+        <span class="size-label"><strong>32px</strong>--icon-lg</span>
+      </div>
+      <div class="size-demo-item">
+        <div class="size-box" style="width:40px; height:40px;"></div>
+        <span class="size-label"><strong>40px</strong>--icon-btn-lg</span>
+      </div>
+    </div>
+
+    <hr class="sp-divider">
+
+    <!-- BORDER WIDTHS -->
+    <h2>Border Widths <span class="src">SizesNew.xaml</span></h2>
+
+    <table class="sp-table">
+      <thead>
+        <tr>
+          <th>XAML Key</th>
+          <th>Value</th>
+          <th>CSS Token</th>
+          <th>Context</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="mono">Doubles_BorderWidth</td>
+          <td class="val">1px</td>
+          <td class="token">--border-width</td>
+          <td class="muted">Default border</td>
+        </tr>
+        <tr>
+          <td class="mono">Doubles_FocusedWidth</td>
+          <td class="val">2px</td>
+          <td class="token">--border-width-focused</td>
+          <td class="muted">Focus ring</td>
+        </tr>
+        <tr>
+          <td class="mono">Doubles_SelectedWidth</td>
+          <td class="val">4px</td>
+          <td class="token">--border-width-selected</td>
+          <td class="muted">Selected state indicator bar</td>
+        </tr>
+        <tr>
+          <td class="mono">Doubles_LineSize</td>
+          <td class="val">1px</td>
+          <td class="token">--line-size</td>
+          <td class="muted">Dividers and separators</td>
+        </tr>
+      </tbody>
+    </table>
+
+  </div>
+  </main>
+</div>
+
+<script src="../js/nav.js"></script>
+</body>
+</html>

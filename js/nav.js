@@ -104,7 +104,13 @@
     {
       title: "Spacing",
       links: [
-        { label: "Spacing & Layout Grid", href: "spacing/spacing.html" }
+        { label: "Overview",           href: "spacing/spacing.html" },
+        { label: "Scale & Tokens",     href: "spacing/tokens.html" },
+        { label: "Padding & Margins",  href: "spacing/padding-margins.html" },
+        { label: "Component Sizing",   href: "spacing/component-sizing.html" },
+        { label: "Buttons",            href: "spacing/buttons.html" },
+        { label: "Grid Layouts",       href: "spacing/grid-layouts.html" },
+        { label: "Hardcoded Values",   href: "spacing/magic-numbers.html" }
       ]
     },
     {
