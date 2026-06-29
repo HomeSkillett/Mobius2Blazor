@@ -33,6 +33,12 @@
       border-top: var(--line-size) solid var(--InnerLines);
       margin: 32px 0 0;
     }
+    /* Demo page only: reserve space below open dropdowns so they
+       don't overlap the next section. The actual Blazor component
+       uses a popup overlay and doesn't need this. */
+    .mob-select.is-open {
+      margin-bottom: 240px;
+    }
   </style>
 </head>
 <body>
@@ -366,9 +372,429 @@
 
 </div><!-- /.states-list -->
 
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 5: DROPDOWN OPEN (static view)
+     Source: PART_Popup — Placement=Bottom, PopupAnimation=Fade
+             Grid MinWidth=ActualWidth, Margin=20
+             BoxShadow Margin=2, Opacity=ShadowOpacity
+             ComboBoxItem: MinHeight=TouchSize, Padding=PaddingLeftRightMedium
+             MaxWidth=DropdownPopupMaxWidth (300px)
+             MouseOver: _mouseOverElement bg=MouseOverPrimary, Opacity=0.3
+             Selected: _selectionElement bg=SelectionPrimary, fg=SelectionForeground
+     ========================================================= -->
+
+<h2>Dropdown Open</h2>
+<p style="font: var(--font-default); color: var(--ForegroundPrimary); margin: 0 0 16px; max-width: 600px;">
+  Static representation of the popup dropdown. Items use <code style="font-family: var(--font-monospace);">TouchSize</code> (44px) min-height. Hover shows <code style="font-family: var(--font-monospace);">MouseOverPrimary</code> at 30% opacity. Selected item uses <code style="font-family: var(--font-monospace);">SelectionPrimary</code> background with <code style="font-family: var(--font-monospace);">SelectionForeground</code> text. Max item width is 300px. Uses div-based markup since native <code style="font-family: var(--font-monospace);">&lt;select&gt;</code> dropdowns can't be opened statically.
+</p>
+
+<div class="states-list">
+
+  <!-- XAML: ComboBox IsDropDownOpen=True — PART_Popup visible
+       Popup > Grid > BoxShadow + ScrollViewer > Border(SubmenuBorder) > StackPanel -->
+  <div class="mob-field">
+    <label class="mob-field__label">Vehicle Type:</label>
+    <div class="mob-field__body">
+      <div class="mob-select is-open">
+        <span class="mob-select__value">Autonomous Truck</span>
+        <!-- XAML: _toggleArrow — Icon_Arrow_PointerDownSm, PathIconSm 12x12 -->
+        <svg class="mob-select__arrow" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M12,4.5V3h-1.3L6,7.6L1.4,3H0v1.4l6,6L12,4.5z M0,0 M12,12" />
+        </svg>
+        <!-- XAML: PART_Popup > SubmenuBorder > StackPanel(IsItemsHost) -->
+        <div class="mob-select__options">
+          <!-- XAML: ComboBoxItem — Selected VisualState -->
+          <div class="mob-select__option is-selected">Autonomous Truck</div>
+          <div class="mob-select__option">Utility Vehicle</div>
+          <!-- XAML: ComboBoxItem — MouseOver VisualState -->
+          <div class="mob-select__option is-hovered">Mining Haul Truck</div>
+          <div class="mob-select__option">Agricultural Tractor</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 6: EDITABLE (type-to-select)
+     Source: ComboBox with IsEditable="True"
+             PART_EditableTextBox — TouchTextBox overlays ContentPresenter
+             Visibility bound to IsEditable via BoolToVisOrCollapsedConverter
+             (DefaultControls.xaml:3109-3119)
+     Also:  PropertyViewer.xaml — SearchableEnumeratedPropertyVM
+            ComboBox with IsTextSearchEnabled="True", IsTextSearchCaseSensitive="False"
+     ========================================================= -->
+
+<h2>Editable (Type-to-Select)</h2>
+<p style="font: var(--font-default); color: var(--ForegroundPrimary); margin: 0 0 16px; max-width: 600px;">
+  When <code style="font-family: var(--font-monospace);">IsEditable="True"</code>, a <code style="font-family: var(--font-monospace);">TouchTextBox</code> overlays the content presenter, allowing free-text entry or type-to-filter. The dropdown arrow remains. Also supports <code style="font-family: var(--font-monospace);">IsTextSearchEnabled</code> for jump-to-match behavior on standard (non-editable) ComboBoxes. Uses div-based markup since native <code style="font-family: var(--font-monospace);">&lt;select&gt;</code> doesn't support editable text input. XAML: <code style="font-family: var(--font-monospace);">PART_EditableTextBox</code> in the ComboBox template.
+</p>
+
+<div class="states-list">
+
+  <!-- ===== Interactive Editable Demo ===== -->
+  <!-- XAML: IsEditable=True — PART_EditableTextBox visible, ContentSite hidden
+       Click arrow or focus input to open. Type to filter. Click option to select. -->
+  <div class="mob-field">
+    <label class="mob-field__label">Vehicle Type:</label>
+    <div class="mob-field__body">
+      <div class="mob-select mob-select--editable" id="editable-demo">
+        <!-- XAML: PART_EditableTextBox — TouchTextBox, Background=Transparent -->
+        <input class="mob-select__input" id="editable-input" type="text" placeholder="Type to search..." autocomplete="off" />
+        <svg class="mob-select__arrow" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M12,4.5V3h-1.3L6,7.6L1.4,3H0v1.4l6,6L12,4.5z M0,0 M12,12" />
+        </svg>
+        <div class="mob-select__options" id="editable-options" style="display:none;">
+          <div class="mob-select__option" data-value="Autonomous Truck">Autonomous Truck</div>
+          <div class="mob-select__option" data-value="Utility Vehicle">Utility Vehicle</div>
+          <div class="mob-select__option" data-value="Mining Haul Truck">Mining Haul Truck</div>
+          <div class="mob-select__option" data-value="Agricultural Tractor">Agricultural Tractor</div>
+          <div class="mob-select__option" data-value="Yard Spotter">Yard Spotter</div>
+          <div class="mob-select__option" data-value="Terminal Tractor">Terminal Tractor</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 7: WITH ACTION BUTTON (ComboBoxWithButton)
+     Source: ComboBoxWithButton.xaml
+             BasedOn Mobius_UI_Resources_Styles_ComboBox
+             Adds Button at Grid.Row="1" in popup
+             Button: Margin="15,10,15,10", HorizontalAlignment=Stretch
+             Command=ButtonCommand, Content=ButtonText
+             HasItems=False trigger: IsEnabled=True (overrides base)
+     ========================================================= -->
+
+<h2>With Action Button (ComboBoxWithButton)</h2>
+<p style="font: var(--font-default); color: var(--ForegroundPrimary); margin: 0 0 16px; max-width: 600px;">
+  Extended ComboBox that adds an action button at the bottom of the dropdown popup. Used for "Add new..." or "Configure..." actions. The button sits in <code style="font-family: var(--font-monospace);">Grid.Row="1"</code> with 15px horizontal margin and 10px vertical margin. The control stays enabled even when <code style="font-family: var(--font-monospace);">HasItems=False</code>. XAML: <code style="font-family: var(--font-monospace);">ComboBoxWithButton.xaml</code>.
+</p>
+
+<div class="states-list">
+
+  <!-- XAML: ComboBoxWithButton — IsDropDownOpen=True
+       Popup Grid has two rows: Row 0=ScrollViewer(items), Row 1=Button -->
+  <div class="mob-field">
+    <label class="mob-field__label">Configuration:</label>
+    <div class="mob-field__body">
+      <div class="mob-select mob-select--editable is-open">
+        <input class="mob-select__input" type="text" value="" placeholder="Select or type..." />
+        <svg class="mob-select__arrow" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M12,4.5V3h-1.3L6,7.6L1.4,3H0v1.4l6,6L12,4.5z M0,0 M12,12" />
+        </svg>
+        <!-- XAML: PART_Popup > Grid (two rows) — Row 0: ScrollViewer, Row 1: Button
+             (ComboBoxWithButton.xaml:93-133) -->
+        <div class="mob-select__popup">
+          <!-- XAML: ScrollViewer > SubmenuBorder > StackPanel (Row 0) -->
+          <div class="mob-select__options">
+            <div class="mob-select__option is-selected">Default Profile</div>
+            <div class="mob-select__option">Night Operations</div>
+            <div class="mob-select__option">Low Speed Mode</div>
+          </div>
+          <!-- XAML: Button Grid.Row="1" — Margin="15,10,15,10", HorizontalAlignment=Stretch
+               Default Button style: bg=SelectionPrimary, fg=SelectionForeground (white),
+               font=14px bold uppercase (TextBlock_Meta) (DefaultControls.xaml:2634-2645) -->
+          <button class="mob-select__action-btn">Add New Configuration...</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== With Button — empty list (HasItems=False, still enabled) ===== -->
+  <!-- XAML: HasItems=False trigger overridden — IsEnabled=True
+       (ComboBoxWithButton.xaml:141-143) -->
+  <div class="mob-field">
+    <label class="mob-field__label">Configuration:</label>
+    <div class="mob-field__body">
+      <div class="mob-select mob-select--editable is-open">
+        <input class="mob-select__input" type="text" value="" placeholder="No items available" />
+        <svg class="mob-select__arrow" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M12,4.5V3h-1.3L6,7.6L1.4,3H0v1.4l6,6L12,4.5z M0,0 M12,12" />
+        </svg>
+        <!-- XAML: PART_Popup > Grid — HasItems=False, no ScrollViewer content -->
+        <div class="mob-select__popup">
+          <!-- XAML: Button Grid.Row="1" only — no items in Row 0 -->
+          <button class="mob-select__action-btn">Add New Configuration...</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 8: STYLE VARIANTS
+     Source: Mobius_UI_Resources_Styles_ComboBoxInvert (DefaultControls.xaml:3414)
+             Mobius_UI_Resources_Styles_ComboBoxBorderless (DefaultControls.xaml:3435)
+     ========================================================= -->
+
+<h2>Style Variants</h2>
+<p style="font: var(--font-default); color: var(--ForegroundPrimary); margin: 0 0 16px; max-width: 600px;">
+  ComboBox supports the same style variants as FieldInput: <code style="font-family: var(--font-monospace);">Invert</code> for dark panels and <code style="font-family: var(--font-monospace);">Borderless</code> for minimal chrome. Shown here with div-based markup; the same token overrides apply to native <code style="font-family: var(--font-monospace);">&lt;select&gt;</code> styling above.
+</p>
+
+<div class="states-list">
+
+  <!-- ===== Invert ===== -->
+  <!-- XAML: Mobius_UI_Resources_Styles_ComboBoxInvert
+       Foreground=ForegroundInvertPrimary, Background=BackgroundInvertStrong,
+       BorderBrush=BackgroundInvertInputOutline -->
+  <div style="background-color: var(--BackgroundInvertStrong); border: var(--border-width) solid var(--InnerLines); padding: var(--size-24); border-radius: 4px;">
+    <div class="mob-field mob-field--invert" style="margin-bottom: var(--spacing-field);">
+      <label class="mob-field__label">Theme:</label>
+      <div class="mob-field__body">
+        <div class="mob-select mob-select--invert">
+          <span class="mob-select__value">Dark</span>
+          <svg class="mob-select__arrow" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M12,4.5V3h-1.3L6,7.6L1.4,3H0v1.4l6,6L12,4.5z M0,0 M12,12" />
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Borderless ===== -->
+  <!-- XAML: Mobius_UI_Resources_Styles_ComboBoxBorderless (DefaultControls.xaml:3435)
+       Template: Mobius_UI_Resources_Templates_ComboBoxBorderless (DefaultControls.xaml:3206)
+       Background=Transparent, BorderBrush=Transparent,
+       Foreground=ForegroundPrimary, MinWidth=0
+       States below: Normal, MouseOver (selection fill), Disabled, Open. -->
+
+  <!-- ===== Borderless — default (Normal) ===== -->
+  <!-- XAML: CommonStates > Normal — _selectionElement Opacity=0, no chrome (DefaultControls.xaml:3324) -->
+  <div class="mob-field">
+    <label class="mob-field__label">Sort by:</label>
+    <div class="mob-field__body">
+      <div class="mob-select mob-select--borderless">
+        <span class="mob-select__value">Name (A-Z)</span>
+        <svg class="mob-select__arrow" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M12,4.5V3h-1.3L6,7.6L1.4,3H0v1.4l6,6L12,4.5z M0,0 M12,12" />
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Borderless — hover (selection fill) ===== -->
+  <!-- XAML: CommonStates > MouseOver — _selectionElement bg=SelectionPrimary Opacity 0->1,
+       _contentElement Foreground -> SelectionForeground (DefaultControls.xaml:3331-3334) -->
+  <div class="mob-field">
+    <label class="mob-field__label">Sort by:</label>
+    <div class="mob-field__body">
+      <div class="mob-select mob-select--borderless is-hovered">
+        <span class="mob-select__value">Name (A-Z)</span>
+        <svg class="mob-select__arrow" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M12,4.5V3h-1.3L6,7.6L1.4,3H0v1.4l6,6L12,4.5z M0,0 M12,12" />
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Borderless — disabled ===== -->
+  <!-- XAML: CommonStates > Disabled — _templateRoot Opacity -> DisabledOpacity (DefaultControls.xaml:3338-3342) -->
+  <div class="mob-field">
+    <label class="mob-field__label">Sort by:</label>
+    <div class="mob-field__body">
+      <div class="mob-select mob-select--borderless is-disabled">
+        <span class="mob-select__value">Name (A-Z)</span>
+        <svg class="mob-select__arrow" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M12,4.5V3h-1.3L6,7.6L1.4,3H0v1.4l6,6L12,4.5z M0,0 M12,12" />
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Borderless — open (dropdown) ===== -->
+  <!-- XAML: IsDropDownOpen=True — PART_Popup visible. Trigger keeps the MouseOver
+       selection fill (no Focused state in this template). SubmenuBorder
+       Background=BackgroundStrong (DefaultControls.xaml:3310-3311) -->
+  <div class="mob-field">
+    <label class="mob-field__label">Sort by:</label>
+    <div class="mob-field__body">
+      <div class="mob-select mob-select--borderless is-open">
+        <span class="mob-select__value">Name (A-Z)</span>
+        <svg class="mob-select__arrow" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M12,4.5V3h-1.3L6,7.6L1.4,3H0v1.4l6,6L12,4.5z M0,0 M12,12" />
+        </svg>
+        <!-- XAML: PART_Popup > SubmenuBorder(BackgroundStrong) > StackPanel(IsItemsHost) -->
+        <div class="mob-select__options">
+          <!-- XAML: ComboBoxItem — Selected VisualState -->
+          <div class="mob-select__option is-selected">Name (A-Z)</div>
+          <div class="mob-select__option">Name (Z-A)</div>
+          <!-- XAML: ComboBoxItem — MouseOver VisualState -->
+          <div class="mob-select__option is-hovered">Date added</div>
+          <div class="mob-select__option">Last modified</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
   </main>
 </div><!-- /.mob-layout -->
 
 <script src="../js/nav.js"></script>
+<script>
+/* =========================================================
+   Interactive Editable ComboBox Demo
+   Mirrors WPF ComboBox behavior when IsEditable="True":
+   - Focus / click arrow opens dropdown
+   - Typing filters options (case-insensitive substring)
+   - Click option selects it & closes
+   - Click outside or Escape closes
+   - Arrow keys navigate, Enter selects
+   ========================================================= */
+(function () {
+  var wrap = document.getElementById('editable-demo');
+  var input = document.getElementById('editable-input');
+  var panel = document.getElementById('editable-options');
+  if (!wrap || !input || !panel) return;
+
+  var allOptions = Array.prototype.slice.call(panel.querySelectorAll('.mob-select__option'));
+  var focusedIdx = -1;
+
+  /* --- open / close helpers --- */
+  function open() {
+    panel.style.display = '';
+    wrap.classList.add('is-open');
+    filterOptions();
+  }
+
+  function close() {
+    panel.style.display = 'none';
+    wrap.classList.remove('is-open');
+    clearFocus();
+  }
+
+  function isOpen() {
+    return wrap.classList.contains('is-open');
+  }
+
+  /* --- filter --- */
+  function filterOptions() {
+    var q = input.value.toLowerCase();
+    var visibleCount = 0;
+    allOptions.forEach(function (opt) {
+      var match = opt.getAttribute('data-value').toLowerCase().indexOf(q) !== -1;
+      opt.style.display = match ? '' : 'none';
+      opt.classList.remove('is-hovered');
+      if (match) visibleCount++;
+    });
+    focusedIdx = -1;
+    return visibleCount;
+  }
+
+  /* --- keyboard focus on options --- */
+  function getVisible() {
+    return allOptions.filter(function (o) { return o.style.display !== 'none'; });
+  }
+
+  function clearFocus() {
+    allOptions.forEach(function (o) { o.classList.remove('is-hovered'); });
+    focusedIdx = -1;
+  }
+
+  function setFocus(idx) {
+    var visible = getVisible();
+    if (!visible.length) return;
+    clearFocus();
+    if (idx < 0) idx = visible.length - 1;
+    if (idx >= visible.length) idx = 0;
+    focusedIdx = idx;
+    visible[idx].classList.add('is-hovered');
+    visible[idx].scrollIntoView({ block: 'nearest' });
+  }
+
+  function selectOption(opt) {
+    input.value = opt.getAttribute('data-value');
+    /* Mark selected */
+    allOptions.forEach(function (o) { o.classList.remove('is-selected'); });
+    opt.classList.add('is-selected');
+    close();
+  }
+
+  /* --- events --- */
+
+  /* Click arrow area opens/closes */
+  wrap.querySelector('.mob-select__arrow').addEventListener('click', function (e) {
+    e.stopPropagation();
+    if (isOpen()) { close(); } else { open(); input.focus(); }
+  });
+
+  /* Focus input opens dropdown */
+  input.addEventListener('focus', function () {
+    if (!isOpen()) open();
+  });
+
+  /* Typing filters */
+  input.addEventListener('input', function () {
+    if (!isOpen()) open();
+    filterOptions();
+  });
+
+  /* Keyboard nav */
+  input.addEventListener('keydown', function (e) {
+    var visible = getVisible();
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      if (!isOpen()) { open(); }
+      setFocus(focusedIdx + 1);
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (!isOpen()) { open(); }
+      setFocus(focusedIdx - 1);
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      if (isOpen() && focusedIdx >= 0 && visible[focusedIdx]) {
+        selectOption(visible[focusedIdx]);
+      }
+    } else if (e.key === 'Escape') {
+      close();
+    }
+  });
+
+  /* Click an option */
+  allOptions.forEach(function (opt) {
+    opt.addEventListener('click', function (e) {
+      e.stopPropagation();
+      selectOption(opt);
+    });
+    /* Hover highlights */
+    opt.addEventListener('mouseenter', function () {
+      clearFocus();
+      opt.classList.add('is-hovered');
+    });
+    opt.addEventListener('mouseleave', function () {
+      opt.classList.remove('is-hovered');
+    });
+  });
+
+  /* Click outside closes */
+  document.addEventListener('click', function (e) {
+    if (!wrap.contains(e.target) && isOpen()) close();
+  });
+})();
+</script>
 </body>
 </html>

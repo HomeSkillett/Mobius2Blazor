@@ -404,3 +404,395 @@
 .mob-field--vertical .mob-field__body .combobox {
   width: 100%;
 }
+
+
+/* =============================================================================
+   DIV-BASED SELECT  (.mob-select)
+   Used for patterns native <select> can't handle:
+     - Static dropdown-open view
+     - Editable / type-to-select (IsEditable="True")
+     - ComboBoxWithButton (action button in popup)
+     - Invert / Borderless style variants (visual demo)
+
+   XAML: Mobius_UI_Resources_Templates_ComboBox (DefaultControls.xaml:3035)
+         Mobius_UI_Resources_Styles_ComboBox (DefaultControls.xaml:3381)
+   Structure: 2-column Grid — Column 0: content area (*), Column 1: arrow (Auto)
+              Background=BackgroundInputBrush, BorderBrush=BackgroundInputOutlineBrush
+              Foreground=ForegroundActionBrush
+              MinHeight=TouchSize (44px), MinWidth=120px
+              Padding=PaddingLeftRightMedium
+   ============================================================================= */
+
+/* XAML: Grid > Border(inputBackground) + Border(StaticBorder,1px) + ContentControl
+         Arrow: Icon_Arrow_PointerDownSm, PathIconSm (12x12), Fill=ForegroundAction */
+.mob-select {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  box-sizing: border-box;
+  min-width: 120px;                                   /* XAML: MinWidth=120 (DefaultControls.xaml:3394) */
+  min-height: var(--touch);                            /* XAML: MinHeight=TouchSize (DefaultControls.xaml:3395) */
+  padding: var(--padding-lr-md);                       /* XAML: Padding=PaddingLeftRightMedium (DefaultControls.xaml:3397) */
+  background-color: var(--BackgroundInput);            /* XAML: Background=BackgroundInputBrush (DefaultControls.xaml:3388) */
+  border: var(--border-width) solid var(--BackgroundInputOutline); /* XAML: BorderBrush=BackgroundInputOutlineBrush, 1px (DefaultControls.xaml:3389,3054-3055) */
+  color: var(--ForegroundAction);                      /* XAML: Foreground=ForegroundActionBrush (DefaultControls.xaml:3387) */
+  font: var(--font-default);
+  cursor: pointer;
+  transition:
+    border-color var(--transition-mouse-out) ease,
+    color var(--transition-mouse-out) ease,
+    background-color var(--transition-mouse-out) ease,
+    opacity var(--transition-mouse-out) ease;
+}
+
+/* XAML: _toggleArrow — Grid.Column="1", Icon_Arrow_PointerDownSm
+         PathIconSm: Width=12, Height=12, Stretch=Uniform
+         Fill=ForegroundAction (inherits from Foreground) */
+.mob-select__arrow {
+  flex-shrink: 0;
+  width: var(--icon-sm);                               /* XAML: PathIconSm Width=12 (DefaultControls.xaml:837) */
+  height: var(--icon-sm);                              /* XAML: PathIconSm Height=12 (DefaultControls.xaml:836) */
+  margin-left: auto;
+  padding-left: var(--size-12);
+  fill: currentColor;
+  pointer-events: none;
+  transition: fill var(--transition-mouse-out) ease;
+}
+
+/* Selected value text — fills remaining space */
+/* XAML: ContentPresenter(ContentSite) — HorizontalAlignment=Left, VerticalAlignment=Center */
+.mob-select__value {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Placeholder when no value is selected */
+.mob-select__value--placeholder {
+  color: var(--ForegroundWatermark);
+}
+
+
+/* --- Hover --- */
+/* XAML: MouseOver VisualState — StaticBorder.BorderBrush + _toggleArrow.Fill -> MouseOverPrimary
+         (DefaultControls.xaml:3170-3176) */
+.mob-select:hover:not(.is-disabled):not(.is-open) {
+  border-color: var(--MouseOverPrimary);
+  color: var(--MouseOverPrimary);
+  transition-duration: var(--transition-mouse-over);
+}
+
+.mob-select.is-hovered {
+  border-color: var(--MouseOverPrimary);
+  color: var(--MouseOverPrimary);
+  transition-duration: var(--transition-mouse-over);
+}
+
+
+/* --- Focused / Open --- */
+/* XAML: Focused VisualState — StaticBorder.BorderBrush + _toggleArrow.Fill -> MouseOverPrimary
+         (DefaultControls.xaml:3194-3198) */
+.mob-select:focus,
+.mob-select.is-focused,
+.mob-select.is-open {
+  border-color: var(--MouseOverPrimary);
+  color: var(--MouseOverPrimary);
+  outline: var(--border-width-focused) solid var(--MouseOverPrimary);
+  outline-offset: calc(var(--border-width) * -1);
+  transition-duration: var(--transition-focus);
+}
+
+
+/* --- Disabled --- */
+/* XAML: Disabled VisualState — inputBackground.Opacity=0, _toggleArrow.Fill=ForegroundDisabled
+         (DefaultControls.xaml:3178-3185) */
+.mob-select.is-disabled {
+  background-color: transparent;
+  color: var(--ForegroundDisabled);
+  opacity: var(--opacity-disabled);
+  cursor: default;
+  pointer-events: none;
+  transition-duration: var(--transition-disable);
+}
+
+
+/* =============================================================================
+   DROPDOWN OPTIONS  (.mob-select__options)
+   XAML: PART_Popup > Grid > ScrollViewer > Border(SubmenuBorder) > StackPanel(IsItemsHost)
+         Popup: Placement=Bottom, PopupAnimation=Fade
+         SubmenuBorder: Background=BackgroundInput, BorderThickness=0
+         BoxShadow: Margin=2, Opacity=ShadowOpacity
+   ============================================================================= */
+
+/* XAML: Popup Placement=Bottom — dropdown overlays below the trigger.
+   In a live Blazor component this is a positioned popup panel. */
+.mob-select__options {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 10;
+  min-width: 100%;                                     /* XAML: MinWidth=ActualWidth (DefaultControls.xaml:3134) */
+  max-height: 308px;                                   /* XAML: MaxDropDownHeight default=308 (WPF default) */
+  overflow-y: auto;
+  background-color: var(--BackgroundInput);            /* XAML: SubmenuBorder Background=BackgroundInput (DefaultControls.xaml:3148) */
+  border: var(--border-width) solid var(--BackgroundInputOutline);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, var(--shadow-opacity, 0.16)); /* XAML: BoxShadow, Opacity=ShadowOpacity */
+  margin-top: -1px;
+}
+
+
+/* =============================================================================
+   POPUP WRAPPER  (.mob-select__popup)
+   XAML: ComboBoxWithButton — PART_Popup > Grid with two RowDefinitions:
+         Row 0 (auto): ScrollViewer with items
+         Row 1 (*):    Button pinned below, outside scroll area
+         Grid: MinWidth=ActualWidth, Margin=20 (for BoxShadow),
+               Background=BackgroundInput
+         (ComboBoxWithButton.xaml:93-133)
+   ============================================================================= */
+
+/* The popup wrapper takes over absolute positioning from .mob-select__options.
+   When __options is inside __popup, it becomes a normal-flow child. */
+.mob-select__popup {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 10;
+  min-width: 100%;                                     /* XAML: MinWidth=ActualWidth (ComboBoxWithButton.xaml:94) */
+  background-color: var(--BackgroundInput);            /* XAML: Grid Background=BackgroundInput (ComboBoxWithButton.xaml:96) */
+  border: var(--border-width) solid var(--BackgroundInputOutline);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, var(--shadow-opacity, 0.16)); /* XAML: BoxShadow RowSpan=2 (ComboBoxWithButton.xaml:102-107) */
+  margin-top: -1px;
+}
+
+/* When .mob-select__options lives inside .mob-select__popup,
+   remove its own positioning/border/shadow — the popup owns those. */
+.mob-select__popup .mob-select__options {
+  position: static;
+  border: none;
+  box-shadow: none;
+  margin-top: 0;
+}
+
+/* XAML: ComboBoxItem template (DefaultControls.xaml:2953)
+         MinHeight=TouchSize, Padding=PaddingLeftRightMedium
+         Foreground=ForegroundStrong, MaxWidth=300px */
+.mob-select__option {
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  min-height: var(--touch);                            /* XAML: MinHeight=TouchSize (DefaultControls.xaml:3357) */
+  max-width: 300px;                                    /* XAML: MaxWidth=DropdownPopupMaxWidth=300 (Sizes.xaml:20) */
+  padding: var(--padding-lr-md);                       /* XAML: Padding=PaddingLeftRightMedium (DefaultControls.xaml:3360) */
+  color: var(--ForegroundStrong);                      /* XAML: Foreground=ForegroundStrongBrush (DefaultControls.xaml:3356) */
+  font: var(--font-default);
+  cursor: pointer;
+  position: relative;
+  transition: background-color var(--transition-mouse-out) ease;
+}
+
+/* XAML: MouseOver VisualState — _mouseOverElement Opacity=0.3
+         Background=MouseOverPrimaryBrush (DefaultControls.xaml:2991-2994) */
+.mob-select__option:hover {
+  background-color: color-mix(in srgb, var(--MouseOverPrimary) 30%, transparent);
+}
+
+.mob-select__option.is-hovered {
+  background-color: color-mix(in srgb, var(--MouseOverPrimary) 30%, transparent);
+}
+
+/* XAML: Selected VisualState — _selectionElement Opacity=1.0, Background=SelectionPrimary
+         _contentElement Foreground -> SelectionForeground (DefaultControls.xaml:3011-3015) */
+.mob-select__option.is-selected {
+  background-color: var(--SelectionPrimary);
+  color: var(--SelectionForeground);
+}
+
+/* XAML: Focused VisualState — _mouseOverElement Opacity=0.3 */
+.mob-select__option:focus {
+  background-color: color-mix(in srgb, var(--MouseOverPrimary) 30%, transparent);
+  outline: none;
+}
+
+/* XAML: Disabled VisualState — _templateRoot Opacity=DisabledOpacity */
+.mob-select__option.is-disabled {
+  opacity: var(--opacity-disabled);
+  pointer-events: none;
+}
+
+
+/* =============================================================================
+   EDITABLE (type-to-select)  (.mob-select--editable)
+   XAML: ComboBox IsEditable="True" — shows PART_EditableTextBox
+         TouchTextBox overlays ContentPresenter (ContentSite hidden)
+         (DefaultControls.xaml:3109-3119)
+   Also: ComboBoxWithButton (ComboBoxWithButton.xaml)
+   ============================================================================= */
+
+.mob-select--editable {
+  cursor: text;
+}
+
+/* XAML: PART_EditableTextBox — HorizontalAlignment=Stretch, Background=Transparent */
+.mob-select--editable .mob-select__input {
+  flex: 1 1 auto;
+  min-width: 0;
+  border: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  padding: 0;
+  outline: none;
+}
+
+.mob-select--editable .mob-select__input::placeholder {
+  color: var(--ForegroundWatermark);
+}
+
+/* Hide the static value text when editable input is active */
+.mob-select--editable .mob-select__value {
+  display: none;
+}
+
+
+/* =============================================================================
+   WITH BUTTON  (.mob-select__action-btn)
+   XAML: ComboBoxWithButton (ComboBoxWithButton.xaml:126-132)
+         Button in Grid.Row="1" of popup, Margin="15,10,15,10"
+         Uses implicit default Button style (DefaultControls.xaml:2634-2645)
+         Template: Mobius_UI_Resources_Templates_Button (DefaultControls.xaml:887-998)
+   ============================================================================= */
+
+.mob-select__action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-width: 90px;                                     /* XAML: MinWidth=90 (DefaultControls.xaml:2642) */
+  min-height: var(--touch);                            /* XAML: MinHeight=TouchSize 44px (DefaultControls.xaml:2643) */
+  margin: 10px 15px;                                   /* XAML: Margin="15,10,15,10" (l,t,r,b -> CSS t,r,b,l) (ComboBoxWithButton.xaml:128) */
+  padding: 1px var(--size-12) 0;                       /* XAML: Padding="12,1,12,0" (l,t,r,b) (DefaultControls.xaml:2644) */
+  background-color: var(--SelectionPrimary);           /* XAML: Background=SelectionPrimaryBrush (DefaultControls.xaml:2639) */
+  border: var(--border-width) solid var(--SelectionPrimary); /* XAML: _buttonBackgroundElement BorderBrush=Background (DefaultControls.xaml:902) */
+  color: var(--SelectionForeground);                   /* XAML: Foreground=SelectionForegroundBrush (DefaultControls.xaml:2640) */
+  font: var(--font-meta);                              /* XAML: TextBlock_Meta — 14px Roboto (Typography.xaml:40-44) */
+  font-weight: var(--font-bold);                       /* XAML: Font_Meta FontWeight=Bold (Typography.xaml:42) */
+  text-transform: uppercase;                           /* XAML: TextBlockExtension.Uppercase=True (Typography.xaml:44) */
+  cursor: pointer;
+  transition:
+    background-color var(--transition-mouse-out) ease,
+    border-color var(--transition-mouse-out) ease;
+}
+
+/* XAML: MouseOver VisualState — MouseOverElement Opacity=1.0
+         MouseOverElement bg=MouseOverPrimary overlays the button
+         (DefaultControls.xaml:945-955) */
+.mob-select__action-btn:hover {
+  background-color: var(--MouseOverPrimary);
+  border-color: var(--MouseOverPrimary);
+  color: var(--SelectionForeground);
+  transition-duration: var(--transition-mouse-over);
+}
+
+/* XAML: Pressed VisualState — MouseOver + MouseDown(Black 25%) overlay
+         (DefaultControls.xaml:957-967) */
+.mob-select__action-btn:active {
+  background-color: color-mix(in srgb, var(--MouseOverPrimary) 75%, black);
+  border-color: color-mix(in srgb, var(--MouseOverPrimary) 75%, black);
+  color: var(--SelectionForeground);
+}
+
+
+/* =============================================================================
+   INVERT  (.mob-select--invert)
+   XAML: Mobius_UI_Resources_Styles_ComboBoxInvert (DefaultControls.xaml:3414)
+   ============================================================================= */
+
+.mob-select--invert {
+  background-color: var(--BackgroundInvertStrong);
+  border-color: var(--BackgroundInvertInputOutline);
+  color: var(--ForegroundInvertPrimary);
+}
+
+.mob-select--invert .mob-select__options {
+  background-color: var(--BackgroundInvertStrong);
+  border-color: var(--BackgroundInvertInputOutline);
+}
+
+.mob-select--invert .mob-select__option {
+  color: var(--ForegroundInvertPrimary);
+}
+
+.mob-select--invert .mob-select__option.is-selected {
+  background-color: var(--SelectionPrimary);
+  color: var(--SelectionForeground);
+}
+
+
+/* =============================================================================
+   BORDERLESS  (.mob-select--borderless)
+   XAML: Mobius_UI_Resources_Styles_ComboBoxBorderless (DefaultControls.xaml:3435)
+   ============================================================================= */
+
+.mob-select--borderless {
+  background-color: transparent;                       /* XAML: Background=Transparent (DefaultControls.xaml:3440) */
+  border-color: transparent;                           /* XAML: BorderBrush=Transparent (DefaultControls.xaml:3441) */
+  color: var(--ForegroundPrimary);                     /* XAML: Foreground=ForegroundPrimaryBrush (DefaultControls.xaml:3439) */
+  min-width: 0;                                        /* XAML: MinWidth=0 (DefaultControls.xaml:3446) */
+}
+
+/* --- Hover --- */
+/* XAML: MouseOver VisualState — _selectionElement Background=SelectionPrimaryBrush
+         opacity animates 0->1, _contentElement Foreground -> SelectionForeground.
+         Not a text-color change to MouseOverPrimary — it is a full selection fill.
+         (Templates_ComboBoxBorderless: _selectionElement DefaultControls.xaml:3216,
+          MouseOver storyboard DefaultControls.xaml:3331-3334) */
+.mob-select--borderless:hover:not(.is-disabled):not(.is-open),
+.mob-select--borderless.is-hovered {
+  background-color: var(--SelectionPrimary);
+  color: var(--SelectionForeground);
+  border-color: transparent;
+}
+
+/* --- Open --- */
+/* XAML: The borderless template has no Focused/StaticBorder visual state, so when
+         the dropdown is open the trigger keeps the MouseOver selection fill (the
+         pointer is over it). Override the inherited .mob-select.is-open outline,
+         which belongs to the bordered template only.
+         (Templates_ComboBoxBorderless, DefaultControls.xaml:3206) */
+.mob-select--borderless.is-open {
+  background-color: var(--SelectionPrimary);
+  color: var(--SelectionForeground);
+  border-color: transparent;
+  outline: none;
+}
+
+/* --- Disabled --- */
+/* XAML: Disabled VisualState — _templateRoot.Opacity -> DisabledOpacity only.
+         Foreground stays ForegroundPrimary (template does not recolor on disable).
+         (Templates_ComboBoxBorderless, DefaultControls.xaml:3338-3342) */
+.mob-select--borderless.is-disabled {
+  background-color: transparent;
+  color: var(--ForegroundPrimary);
+  opacity: var(--opacity-disabled);
+}
+
+/* --- Dropdown popup --- */
+/* XAML: SubmenuBorder Background=BackgroundStrongBrush — the borderless popup uses
+         BackgroundStrong, not BackgroundInput like the standard popup.
+         (Templates_ComboBoxBorderless, DefaultControls.xaml:3310-3311) */
+.mob-select--borderless .mob-select__options {
+  background-color: var(--BackgroundStrong);
+}
+
+
+/* =============================================================================
+   FIELD INTEGRATION — .mob-select inside .mob-field
+   ============================================================================= */
+
+.mob-field__body .mob-select {
+  flex: 1 1 auto;
+  width: var(--field-input-width);
+}
