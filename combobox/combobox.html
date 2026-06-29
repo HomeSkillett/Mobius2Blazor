@@ -377,7 +377,7 @@
 
 
 <!-- =========================================================
-     SECTION 5: DROPDOWN OPEN (static view)
+     SECTION 5: DROPDOWN OPEN (interactive)
      Source: PART_Popup — Placement=Bottom, PopupAnimation=Fade
              Grid MinWidth=ActualWidth, Margin=20
              BoxShadow Margin=2, Opacity=ShadowOpacity
@@ -389,7 +389,7 @@
 
 <h2>Dropdown Open</h2>
 <p style="font: var(--font-default); color: var(--ForegroundPrimary); margin: 0 0 16px; max-width: 600px;">
-  Static representation of the popup dropdown. Items use <code style="font-family: var(--font-monospace);">TouchSize</code> (44px) min-height. Hover shows <code style="font-family: var(--font-monospace);">MouseOverPrimary</code> at 30% opacity. Selected item uses <code style="font-family: var(--font-monospace);">SelectionPrimary</code> background with <code style="font-family: var(--font-monospace);">SelectionForeground</code> text. Max item width is 300px. Uses div-based markup since native <code style="font-family: var(--font-monospace);">&lt;select&gt;</code> dropdowns can't be opened statically.
+  Click the field to open the popup dropdown. Items use <code style="font-family: var(--font-monospace);">TouchSize</code> (44px) min-height. Hover shows <code style="font-family: var(--font-monospace);">MouseOverPrimary</code> at 30% opacity. Selected item uses <code style="font-family: var(--font-monospace);">SelectionPrimary</code> background with <code style="font-family: var(--font-monospace);">SelectionForeground</code> text. Max item width is 300px. Uses div-based markup to mirror the WPF popup; the demo-only script below handles open/close (the Blazor component uses a native popup overlay).
 </p>
 
 <div class="states-list">
@@ -399,20 +399,19 @@
   <div class="mob-field">
     <label class="mob-field__label">Vehicle Type:</label>
     <div class="mob-field__body">
-      <div class="mob-select is-open">
+      <div class="mob-select" tabindex="0">
         <span class="mob-select__value">Autonomous Truck</span>
         <!-- XAML: _toggleArrow — Icon_Arrow_PointerDownSm, PathIconSm 12x12 -->
         <svg class="mob-select__arrow" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <path d="M12,4.5V3h-1.3L6,7.6L1.4,3H0v1.4l6,6L12,4.5z M0,0 M12,12" />
         </svg>
         <!-- XAML: PART_Popup > SubmenuBorder > StackPanel(IsItemsHost) -->
-        <div class="mob-select__options">
+        <div class="mob-select__options" style="display:none;">
           <!-- XAML: ComboBoxItem — Selected VisualState -->
-          <div class="mob-select__option is-selected">Autonomous Truck</div>
-          <div class="mob-select__option">Utility Vehicle</div>
-          <!-- XAML: ComboBoxItem — MouseOver VisualState -->
-          <div class="mob-select__option is-hovered">Mining Haul Truck</div>
-          <div class="mob-select__option">Agricultural Tractor</div>
+          <div class="mob-select__option is-selected" data-value="Autonomous Truck">Autonomous Truck</div>
+          <div class="mob-select__option" data-value="Utility Vehicle">Utility Vehicle</div>
+          <div class="mob-select__option" data-value="Mining Haul Truck">Mining Haul Truck</div>
+          <div class="mob-select__option" data-value="Agricultural Tractor">Agricultural Tractor</div>
         </div>
       </div>
     </div>
@@ -580,16 +579,27 @@
        Foreground=ForegroundPrimary, MinWidth=0
        States below: Normal, MouseOver (selection fill), Disabled, Open. -->
 
-  <!-- ===== Borderless — default (Normal) ===== -->
-  <!-- XAML: CommonStates > Normal — _selectionElement Opacity=0, no chrome (DefaultControls.xaml:3324) -->
+  <!-- ===== Borderless — interactive (click to open) ===== -->
+  <!-- XAML: CommonStates > Normal (closed) / IsDropDownOpen=True (open).
+       Click the trigger to open the popup, click an option to select, click
+       outside or Escape to close. Demo-only JS (see script below) — the Blazor
+       component uses a native popup overlay, not this script.
+       (Templates_ComboBoxBorderless, DefaultControls.xaml:3206) -->
   <div class="mob-field">
     <label class="mob-field__label">Sort by:</label>
     <div class="mob-field__body">
-      <div class="mob-select mob-select--borderless">
+      <div class="mob-select mob-select--borderless" tabindex="0">
         <span class="mob-select__value">Name (A-Z)</span>
         <svg class="mob-select__arrow" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <path d="M12,4.5V3h-1.3L6,7.6L1.4,3H0v1.4l6,6L12,4.5z M0,0 M12,12" />
         </svg>
+        <!-- XAML: PART_Popup > SubmenuBorder(BackgroundStrong) > StackPanel(IsItemsHost) -->
+        <div class="mob-select__options" style="display:none;">
+          <div class="mob-select__option is-selected" data-value="Name (A-Z)">Name (A-Z)</div>
+          <div class="mob-select__option" data-value="Name (Z-A)">Name (Z-A)</div>
+          <div class="mob-select__option" data-value="Date added">Date added</div>
+          <div class="mob-select__option" data-value="Last modified">Last modified</div>
+        </div>
       </div>
     </div>
   </div>
@@ -619,31 +629,6 @@
         <svg class="mob-select__arrow" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <path d="M12,4.5V3h-1.3L6,7.6L1.4,3H0v1.4l6,6L12,4.5z M0,0 M12,12" />
         </svg>
-      </div>
-    </div>
-  </div>
-
-  <!-- ===== Borderless — open (dropdown) ===== -->
-  <!-- XAML: IsDropDownOpen=True — PART_Popup visible. Trigger keeps the MouseOver
-       selection fill (no Focused state in this template). SubmenuBorder
-       Background=BackgroundStrong (DefaultControls.xaml:3310-3311) -->
-  <div class="mob-field">
-    <label class="mob-field__label">Sort by:</label>
-    <div class="mob-field__body">
-      <div class="mob-select mob-select--borderless is-open">
-        <span class="mob-select__value">Name (A-Z)</span>
-        <svg class="mob-select__arrow" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <path d="M12,4.5V3h-1.3L6,7.6L1.4,3H0v1.4l6,6L12,4.5z M0,0 M12,12" />
-        </svg>
-        <!-- XAML: PART_Popup > SubmenuBorder(BackgroundStrong) > StackPanel(IsItemsHost) -->
-        <div class="mob-select__options">
-          <!-- XAML: ComboBoxItem — Selected VisualState -->
-          <div class="mob-select__option is-selected">Name (A-Z)</div>
-          <div class="mob-select__option">Name (Z-A)</div>
-          <!-- XAML: ComboBoxItem — MouseOver VisualState -->
-          <div class="mob-select__option is-hovered">Date added</div>
-          <div class="mob-select__option">Last modified</div>
-        </div>
       </div>
     </div>
   </div>
@@ -793,6 +778,107 @@
   /* Click outside closes */
   document.addEventListener('click', function (e) {
     if (!wrap.contains(e.target) && isOpen()) close();
+  });
+})();
+
+/* =========================================================
+   Generic ComboBox Dropdown Demo (non-editable)
+   Wires every .mob-select that has an options panel and is
+   NOT editable (Section 5 standard + Section 8 borderless).
+   Mirrors WPF ComboBox click behavior:
+   - Click trigger toggles the dropdown
+   - Click option selects it & closes
+   - Click outside or Escape closes
+   - Arrow keys navigate, Enter/Space selects
+   Closed-only stills (hover, disabled) have no options panel
+   and are skipped. Demo-only — Blazor uses a native popup.
+   ========================================================= */
+(function () {
+  var selects = document.querySelectorAll('.mob-select:not(.mob-select--editable)');
+
+  Array.prototype.forEach.call(selects, function (sel) {
+    var valueEl = sel.querySelector('.mob-select__value');
+    var panel = sel.querySelector('.mob-select__options');
+    if (!valueEl || !panel) return;                 // skip stills with no dropdown
+    if (sel.classList.contains('is-disabled')) return;
+    if (!sel.hasAttribute('tabindex')) sel.setAttribute('tabindex', '0');
+
+    var options = Array.prototype.slice.call(panel.querySelectorAll('.mob-select__option'));
+    var focusedIdx = -1;
+
+    function open() { panel.style.display = ''; sel.classList.add('is-open'); }
+    function close() {
+      panel.style.display = 'none';
+      sel.classList.remove('is-open');
+      options.forEach(function (o) { o.classList.remove('is-hovered'); });
+      focusedIdx = -1;
+    }
+    function isOpen() { return sel.classList.contains('is-open'); }
+
+    function setFocus(idx) {
+      if (!options.length) return;
+      options.forEach(function (o) { o.classList.remove('is-hovered'); });
+      if (idx < 0) idx = options.length - 1;
+      if (idx >= options.length) idx = 0;
+      focusedIdx = idx;
+      options[idx].classList.add('is-hovered');
+      options[idx].scrollIntoView({ block: 'nearest' });
+    }
+
+    function selectOption(opt) {
+      valueEl.textContent = opt.getAttribute('data-value') || opt.textContent;
+      options.forEach(function (o) { o.classList.remove('is-selected'); });
+      opt.classList.add('is-selected');
+      close();
+      sel.focus();
+    }
+
+    /* Toggle on trigger click (ignore clicks inside the options panel) */
+    sel.addEventListener('click', function (e) {
+      if (panel.contains(e.target)) return;
+      if (isOpen()) { close(); } else { open(); }
+    });
+
+    /* Keyboard nav */
+    sel.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        if (!isOpen()) open();
+        setFocus(focusedIdx + 1);
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        if (!isOpen()) open();
+        setFocus(focusedIdx - 1);
+      } else if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        if (isOpen() && focusedIdx >= 0) {
+          selectOption(options[focusedIdx]);
+        } else if (!isOpen()) {
+          open();
+        }
+      } else if (e.key === 'Escape') {
+        close();
+      }
+    });
+
+    options.forEach(function (opt) {
+      opt.addEventListener('click', function (e) {
+        e.stopPropagation();
+        selectOption(opt);
+      });
+      opt.addEventListener('mouseenter', function () {
+        options.forEach(function (o) { o.classList.remove('is-hovered'); });
+        opt.classList.add('is-hovered');
+      });
+      opt.addEventListener('mouseleave', function () {
+        opt.classList.remove('is-hovered');
+      });
+    });
+
+    /* Click outside closes */
+    document.addEventListener('click', function (e) {
+      if (!sel.contains(e.target) && isOpen()) close();
+    });
   });
 })();
 </script>
