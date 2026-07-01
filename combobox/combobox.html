@@ -33,12 +33,10 @@
       border-top: var(--line-size) solid var(--InnerLines);
       margin: 32px 0 0;
     }
-    /* Demo page only: reserve space below open dropdowns so they
-       don't overlap the next section. The actual Blazor component
-       uses a popup overlay and doesn't need this. */
-    .mob-select.is-open {
-      margin-bottom: 240px;
-    }
+    /* Open dropdowns overlay the content below (they don't push it
+       down), matching the WPF popup overlay. The .mob-select__options
+       panel is absolutely positioned with a high z-index in
+       combobox.css, so no space needs to be reserved here. */
   </style>
 </head>
 <body>
