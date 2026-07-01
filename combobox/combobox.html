@@ -490,19 +490,19 @@
   <div class="mob-field">
     <label class="mob-field__label">Configuration:</label>
     <div class="mob-field__body">
-      <div class="mob-select mob-select--editable is-open">
+      <div class="mob-select mob-select--editable mob-select--with-button">
         <input class="mob-select__input" type="text" value="" placeholder="Select or type..." />
         <svg class="mob-select__arrow" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <path d="M12,4.5V3h-1.3L6,7.6L1.4,3H0v1.4l6,6L12,4.5z M0,0 M12,12" />
         </svg>
         <!-- XAML: PART_Popup > Grid (two rows) — Row 0: ScrollViewer, Row 1: Button
              (ComboBoxWithButton.xaml:93-133) -->
-        <div class="mob-select__popup">
+        <div class="mob-select__popup" style="display:none;">
           <!-- XAML: ScrollViewer > SubmenuBorder > StackPanel (Row 0) -->
           <div class="mob-select__options">
-            <div class="mob-select__option is-selected">Default Profile</div>
-            <div class="mob-select__option">Night Operations</div>
-            <div class="mob-select__option">Low Speed Mode</div>
+            <div class="mob-select__option is-selected" data-value="Default Profile">Default Profile</div>
+            <div class="mob-select__option" data-value="Night Operations">Night Operations</div>
+            <div class="mob-select__option" data-value="Low Speed Mode">Low Speed Mode</div>
           </div>
           <!-- XAML: Button Grid.Row="1" — Margin="15,10,15,10", HorizontalAlignment=Stretch
                Default Button style: bg=SelectionPrimary, fg=SelectionForeground (white),
@@ -519,13 +519,13 @@
   <div class="mob-field">
     <label class="mob-field__label">Configuration:</label>
     <div class="mob-field__body">
-      <div class="mob-select mob-select--editable is-open">
+      <div class="mob-select mob-select--editable mob-select--with-button">
         <input class="mob-select__input" type="text" value="" placeholder="No items available" />
         <svg class="mob-select__arrow" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <path d="M12,4.5V3h-1.3L6,7.6L1.4,3H0v1.4l6,6L12,4.5z M0,0 M12,12" />
         </svg>
         <!-- XAML: PART_Popup > Grid — HasItems=False, no ScrollViewer content -->
-        <div class="mob-select__popup">
+        <div class="mob-select__popup" style="display:none;">
           <!-- XAML: Button Grid.Row="1" only — no items in Row 0 -->
           <button class="mob-select__action-btn">Add New Configuration...</button>
         </div>
@@ -872,6 +872,64 @@
         opt.classList.remove('is-hovered');
       });
     });
+
+    /* Click outside closes */
+    document.addEventListener('click', function (e) {
+      if (!sel.contains(e.target) && isOpen()) close();
+    });
+  });
+})();
+
+/* =========================================================
+   ComboBox With Action Button Demo (editable + popup button)
+   Section 7. Click the arrow/input to open, click an option to
+   select, the action button closes for this demo. Outside click
+   or Escape closes. Demo-only — Blazor uses a native popup.
+   ========================================================= */
+(function () {
+  var selects = document.querySelectorAll('.mob-select--with-button');
+
+  Array.prototype.forEach.call(selects, function (sel) {
+    var input = sel.querySelector('.mob-select__input');
+    var popup = sel.querySelector('.mob-select__popup');
+    var arrow = sel.querySelector('.mob-select__arrow');
+    if (!input || !popup) return;
+
+    var options = Array.prototype.slice.call(popup.querySelectorAll('.mob-select__option'));
+    var btn = popup.querySelector('.mob-select__action-btn');
+
+    function open() { popup.style.display = ''; sel.classList.add('is-open'); }
+    function close() { popup.style.display = 'none'; sel.classList.remove('is-open'); }
+    function isOpen() { return sel.classList.contains('is-open'); }
+
+    if (arrow) {
+      arrow.addEventListener('click', function (e) {
+        e.stopPropagation();
+        if (isOpen()) { close(); } else { open(); input.focus(); }
+      });
+    }
+    input.addEventListener('focus', function () { if (!isOpen()) open(); });
+    input.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+
+    options.forEach(function (opt) {
+      opt.addEventListener('click', function (e) {
+        e.stopPropagation();
+        input.value = opt.getAttribute('data-value') || opt.textContent;
+        options.forEach(function (o) { o.classList.remove('is-selected'); });
+        opt.classList.add('is-selected');
+        close();
+      });
+      opt.addEventListener('mouseenter', function () { opt.classList.add('is-hovered'); });
+      opt.addEventListener('mouseleave', function () { opt.classList.remove('is-hovered'); });
+    });
+
+    if (btn) {
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        close();
+        input.focus();
+      });
+    }
 
     /* Click outside closes */
     document.addEventListener('click', function (e) {
