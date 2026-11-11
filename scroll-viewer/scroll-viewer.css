@@ -76,16 +76,27 @@
 
 
 /* --- Firefox: thin overlay scrollbar with Mobius colors --- */
-/* XAML: ScrollBarPrimary thumb, Transparent track */
-@supports (scrollbar-color: auto) {
+/* XAML: ScrollBarPrimary thumb, Transparent track
+   Firefox only: Chromium 121+ and Safari 18.2+ also support scrollbar-color,
+   and once it is set they ignore every ::-webkit-scrollbar rule below,
+   including the MouseOverPrimary hover. Browsers that have the webkit
+   pseudo-elements skip this block and use them instead. */
+@supports not selector(::-webkit-scrollbar) {
   .mob-scroll-viewer {
     scrollbar-width: thin;
-    scrollbar-color: var(--ScrollBarPrimary) transparent;
+    scrollbar-color: var(--scrollbar-thumb-resting) transparent;
   }
 }
 
 
 /* --- Chromium / Safari: custom scrollbar pseudo-elements --- */
+
+/* XAML fades the whole scroll bar (ScrollViewer Opacity 0.5, Track Opacity 0.5)
+   and keeps ScrollBarPrimary opaque. Scrollbar pseudo-elements ignore opacity,
+   so the fade is applied to the color here instead of in the theme token. */
+.mob-scroll-viewer {
+  --scrollbar-thumb-resting: color-mix(in srgb, var(--ScrollBarPrimary) 30%, transparent);
+}
 
 /* XAML: ScrollBarElement Grid — Background="Transparent", ClipToBounds="True" */
 .mob-scroll-viewer::-webkit-scrollbar {
@@ -102,11 +113,10 @@
 /* XAML: ScrollBarThumb — _gripElement Rectangle
    - Fill: ScrollBarPrimaryBrush
    - Normal state opacity (from Track): 0.5
-   - Approximated with reduced alpha since pseudo-elements
-     don't support opacity transitions independently */
+   - Approximated with --scrollbar-thumb-resting, since pseudo-elements
+     ignore opacity */
 .mob-scroll-viewer::-webkit-scrollbar-thumb {
-  background: var(--ScrollBarPrimary);
-  opacity: 0.5;
+  background: var(--scrollbar-thumb-resting);
   border-radius: var(--border-radius-sm, 3px);
 
   /* Inset the thumb from the track edge to mimic the
