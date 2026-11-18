@@ -80,7 +80,7 @@
 .mob-toast__message {
   grid-column: 2;
   grid-row: 3;
-  font: var(--font-bodyMd);
+  font: var(--font-default);
   color: var(--ForegroundInvertStrong);
   padding: 0 var(--size-6) var(--size-6) var(--size-6);
 }
@@ -89,7 +89,7 @@
 .mob-toast__time {
   grid-column: 2;
   grid-row: 4;
-  font: var(--font-bodySm);
+  font: var(--font-default);
   color: var(--ForegroundInvertDisabled);
   padding: 0 var(--size-6) var(--size-6) var(--size-6);
 }
@@ -108,7 +108,7 @@
   grid-template-rows: auto auto auto auto auto;
   background: transparent;
   cursor: pointer;
-  transition: background var(--duration-mouse-over);
+  transition: background var(--transition-mouse-over);
 }
 .mob-notification:hover {
   background: color-mix(in srgb, var(--MouseOverPrimary) 10%, transparent);
@@ -153,7 +153,7 @@
 .mob-notification__level-label[data-level="critical"] { color: var(--MessageDeliveryIconCritical); }
 
 .mob-notification__error-code {
-  font: var(--font-bodySm);
+  font: var(--font-default);
   color: var(--ForegroundDisabled);
   margin-left: auto;
 }
@@ -185,7 +185,7 @@
 .mob-notification__message {
   grid-column: 2;
   grid-row: 3;
-  font: var(--font-bodyMd);
+  font: var(--font-default);
   color: var(--ForegroundStrong);
   padding: 0 var(--size-6) var(--size-12) var(--size-6);
 }
@@ -200,7 +200,7 @@
   padding: 0 var(--size-6) 0 var(--size-6);
 }
 .mob-notification__action-link {
-  font: var(--font-bodySm);
+  font: var(--font-default);
   color: var(--ForegroundAction);
   background: none;
   border: none;
@@ -223,7 +223,7 @@
 }
 
 .mob-notification__time {
-  font: var(--font-bodySm);
+  font: var(--font-default);
   color: var(--ForegroundDisabled);
 }
 
@@ -270,7 +270,7 @@
   border: none;
   cursor: pointer;
   color: var(--ForegroundPrimary);
-  transition: opacity var(--duration-mouse-over);
+  transition: opacity var(--transition-mouse-over);
 }
 
 /* XAML: _mouseOverElement — 4px left bar */
@@ -283,7 +283,7 @@
   width: 4px;
   background: var(--MouseOverPrimary);
   opacity: 0;
-  transition: opacity var(--duration-mouse-over);
+  transition: opacity var(--transition-mouse-over);
 }
 .mob-notification-toggle:hover::before { opacity: 1; }
 
@@ -371,14 +371,14 @@
   gap: 0;
 }
 .mob-notification-panel__filter-tab {
-  font: var(--font-bodySm);
+  font: var(--font-default);
   color: var(--ForegroundPrimary);
   background: none;
   border: none;
   padding: var(--size-6) var(--size-12);
   cursor: pointer;
   border-bottom: 2px solid transparent;
-  transition: color var(--duration-mouse-over), border-color var(--duration-mouse-over);
+  transition: color var(--transition-mouse-over), border-color var(--transition-mouse-over);
 }
 .mob-notification-panel__filter-tab:hover {
   color: var(--MouseOverPrimary);
@@ -422,7 +422,7 @@
 
 /* XAML: Empty state text */
 .mob-notification-panel__empty {
-  font: var(--font-bodyMd);
+  font: var(--font-default);
   color: var(--ForegroundStrong);
   padding: 8px var(--size-24);
 }
@@ -451,7 +451,7 @@
 .mob-notification-panel__history-table {
   width: 100%;
   border-collapse: collapse;
-  font: var(--font-bodySm);
+  font: var(--font-default);
   color: var(--ForegroundPrimary);
 }
 
@@ -531,7 +531,7 @@
 
 /* XAML: TextBlock — col 1 */
 .mob-active-alert__text {
-  font: var(--font-bodyMd);
+  font: var(--font-default);
   color: var(--MessageDeliveryForeground);
   padding-right: var(--size-20);
   overflow: hidden;
@@ -623,7 +623,7 @@
 .mob-dialog__body {
   flex: 1;
   padding: 30px 10px;
-  font: var(--font-bodyMd);
+  font: var(--font-default);
   color: var(--ForegroundPrimary);
 }
 

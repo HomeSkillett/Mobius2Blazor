@@ -98,14 +98,14 @@
 }
 
 .shadow-demo-card__token {
-  font: var(--font-captionSm);
+  font: var(--font-default);
   color: var(--ForegroundPrimary);
   word-break: break-all;
   text-align: center;
 }
 
 .shadow-demo-card__value {
-  font: var(--font-captionSm);
+  font: var(--font-default);
   color: var(--ForegroundWatermark);
   text-align: center;
 }
@@ -133,7 +133,7 @@
 }
 
 .shadow-context-example__body {
-  font: var(--font-captionSm);
+  font: var(--font-default);
   color: var(--ForegroundPrimary);
   margin: 0;
 }
