@@ -433,22 +433,26 @@
   background: var(--MessageDeliveryBackgroundInfo);
 }
 
-/* --- Fit the iPad screen in the browser window ----------------------
-   Added 2026-11-18 after dev feedback ("just blank pages with a grey
-   box"). The stage is a fixed 1180 x 820. On a window shorter than that
-   the closed drawer, which sits at the bottom, was below the fold. Now
-   the whole stage scales down to fit. It never scales up past 100%.
-   tan(atan2(a, b)) is CSS for "a divided by b" when both are lengths. */
+/* --- Scrollable page that opens on the drawer ------------------------
+   2026-11-18. Dev feedback: "just blank pages with a grey box". The
+   stage is a fixed 1180 x 820 and the closed drawer sits at the bottom,
+   so on a laptop it was below the fold.
+   Ben: "Make pages scrollable". The stage stays at its real size and the
+   page scrolls both ways. It starts scrolled to the bottom left, where
+   the closed drawer is: a column-reverse flex box begins its scroll at
+   the end. Scroll up to see the top of the open sheet. */
 .sandbox {
-  height: 100vh;
-  overflow: hidden;
+  height: 100vh;                     /* the stage does the scrolling, not the body */
 }
 
 .sandbox .sandbox-stage {
-  overflow: hidden;
+  min-height: 0;
+  overflow: auto;
+  flex-direction: column-reverse;    /* scroll starts at the bottom */
+  justify-content: flex-start;
+  align-items: flex-start;
 }
 
 .sandbox .sandbox-device {
-  transform-origin: top center;
-  scale: min(1, tan(atan2(calc(100vh - 48px), 820px)), tan(atan2(calc(100vw - 48px), 1180px)));
+  margin: 0 auto auto;               /* at the top and centered when it fits, bottom left reachable when it does not */
 }
