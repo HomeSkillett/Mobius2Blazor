@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mobius — DatePicker States</title>
+  <link id="mob-theme-link" rel="stylesheet" href="../styles/color-theme-tokens/LightTheme.css" />
+  <link rel="stylesheet" href="../styles/css/main.css" />
+  <link rel="stylesheet" href="date-picker.css" />
+  <style>
+    body { margin: 0; }
+    h1 {
+      font: var(--font-hdrMd);
+      margin: 0 0 8px;
+      color: var(--ForegroundStrong);
+    }
+    h2 {
+      font: var(--font-hdrSm);
+      font-weight: var(--font-light);
+      color: var(--ForegroundStrong);
+      margin: 40px 0 20px;
+    }
+    h3 {
+      font: var(--font-default);
+      font-weight: var(--font-bold);
+      color: var(--ForegroundStrong);
+      margin: 28px 0 12px;
+    }
+    .page-note {
+      font: var(--font-default);
+      color: var(--ForegroundPrimary);
+      max-width: 620px;
+      margin: 0 0 32px;
+    }
+    .page-note code {
+      font-family: var(--font-monospace);
+      font-size: var(--size-Sm);
+    }
+    /* Gallery scaffolding only — not part of the component. */
+    .states-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-field);
+      max-width: 540px;
+    }
+    .state-row {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--spacing-label-to-control-lg);
+    }
+    .state-row__label {
+      font: var(--font-default);
+      color: var(--ForegroundPrimary);
+      min-width: 180px;
+      padding-top: var(--size-12);
+    }
+    .state-row__note {
+      font-size: var(--size-Sm);
+      color: var(--ForegroundDisabled);
+      display: block;
+    }
+    .cell-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, 132px);
+      gap: var(--spacing-field);
+      max-width: 700px;
+    }
+    .cell-demo {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--size-6);
+    }
+    .cell-demo__label {
+      font-size: var(--size-Sm);
+      color: var(--ForegroundPrimary);
+      text-align: center;
+    }
+    /* White ground behind isolated day cells so the grid-area fill
+       (BackgroundStrong) is represented. */
+    .cell-demo__stage {
+      background-color: var(--BackgroundStrong);
+      padding: var(--size-6);
+    }
+    .popup-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 56px;
+      align-items: flex-start;
+    }
+    .popup-demo {
+      display: flex;
+      flex-direction: column;
+    }
+    .popup-demo__label {
+      font: var(--font-default);
+      font-weight: var(--font-bold);
+      color: var(--ForegroundStrong);
+      margin: 0 0 var(--size-12);
+    }
+    .section-divider {
+      border: none;
+      border-top: var(--line-size) solid var(--InnerLines);
+      margin: 40px 0 0;
+    }
+    .flag {
+      font-size: var(--size-Sm);
+      color: var(--InformationRed);
+    }
+    .button-row {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-label-to-control-lg);
+    }
+    /* Month cells are square via aspect-ratio, so the stage needs a
+       width for them to size against. */
+    .cell-demo__stage--month { width: 70px; }
+    /* Focus-ring comparison panels hold 4 cells, not a full month. */
+    .mob-calendar--demo-fit { width: auto; }
+    .mob-calendar__grid--demo-4col {
+      grid-template-columns: repeat(4, var(--calendar-cell));
+    }
+  </style>
+</head>
+<body>
+
+<div class="mob-layout">
+
+  <!-- Sidebar Navigation -->
+  <nav class="mob-nav" id="mob-nav"></nav>
+
+  <!-- Main Content -->
+  <main class="mob-layout__content">
+
+<h1>Mobius DatePicker</h1>
+
+<p class="page-note">
+  All 40 visual states from
+  <code>DefaultControls.xaml 6794-7711</code>. Full element map, resolved
+  dimensions and citations in <code>specs/DatePicker-SPEC.md</code>.
+  Hover and focus are live; states that need a WPF condition are simulated
+  with <code>.is-*</code> classes.
+</p>
+
+<p class="page-note">
+  <strong>Two things that render differently than the XAML reads.</strong>
+  The popup has <em>no border</em> — <code>Styles_Calendar</code> sets
+  <code>BorderBrush</code> (7688) and <code>BorderThickness</code> (7690) but
+  the template never binds either, so both setters are dead. And the header
+  row is <em>44px, not the declared 40</em> — <code>MinHeight</code> clamps it
+  (2643, 2768). Full list of never-rendering setters at the top of
+  <code>date-picker.css</code>.
+</p>
+
+<p class="page-note">
+  <strong>ARIA note for developers.</strong> Day cells carry
+  <code>aria-label</code>, <code>aria-current="date"</code> and
+  <code>aria-pressed</code>, so selection and today are not conveyed by colour
+  alone. A full <code>role="grid"</code> / <code>role="row"</code> /
+  <code>role="columnheader"</code> tree would give screen readers row and
+  column position, but needs six row wrappers this markup does not have.
+  Left out rather than invented — worth a decision before Blazor handoff.
+</p>
+
+
+<!-- =========================================================
+     XAML source map
+
+       Templates_DatePicker           7492   closed field
+       Templates_Calendar             7474   popup shadow host
+       Templates_CalendarItem         7050   popup chrome
+       Templates_DateTitleButton      7055   header title
+       Templates_CalendarDayButton    6796   day cell
+       Templates_CalendarButton       6947   month / year cell
+       implicit DatePicker style      7697   defaults
+
+     Icons — Mobius-System-Icons, codepoints read from the .ttf cmap:
+       \e752  Calendar             field button   (XAML 7560)
+       \e008  Arrow_PointerUpSm    previous       (XAML 7167)
+       \e00b  Arrow_PointerDownSm  next           (XAML 7182)
+
+     Blazor usage — closed field:
+     ┌─────────────────────────────────────────────────────────┐
+     │  <div class="mob-datepicker">                           │
+     │    <button class="mob-datepicker__button"               │
+     │            type="button"                                │
+     │            aria-label="Open calendar"                   │
+     │            @onclick="TogglePopup"></button>             │
+     │    <input class="mob-datepicker__text"                  │
+     │           @bind-value="Model.ExportStartDate"           │
+     │           @bind-value:format="M/dd/yyyy" />             │
+     │  </div>                                                 │
+     └─────────────────────────────────────────────────────────┘
+     ========================================================= -->
+
+
+<!-- =========================================================
+     SECTION 1 — CLOSED FIELD
+     XAML: Templates_DatePicker 7492-7654
+     VisualStateGroups: CommonStates 7620, FocusStates 7640
+     ========================================================= -->
+
+<h2>1. Closed Field</h2>
+
+<div class="states-list">
+
+  <!-- XAML: Normal VisualState 7621 — BackgroundInputOutline border, ForegroundAction text -->
+  <div class="state-row">
+    <div class="state-row__label">
+      Normal
+      <span class="state-row__note">XAML 7621</span>
+    </div>
+    <!-- XAML: DatePicker.PART_Root -->
+    <div class="mob-datepicker">
+      <!-- XAML: DatePicker.PART_Button -->
+      <button class="mob-datepicker__button" type="button" aria-label="Open calendar"></button>
+      <!-- XAML: DatePicker.PART_TextBox -->
+      <input class="mob-datepicker__text" type="text" value="8/24/2026" aria-label="Date" />
+    </div>
+  </div>
+
+  <!-- XAML: MouseOver VisualState 7627 — _inputMouseOverBorder opacity 0→1, 160ms -->
+  <div class="state-row">
+    <div class="state-row__label">
+      Hover
+      <span class="state-row__note">XAML 7627 — border MouseOverPrimary</span>
+    </div>
+    <div class="mob-datepicker is-hovered">
+      <button class="mob-datepicker__button" type="button" aria-label="Open calendar"></button>
+      <input class="mob-datepicker__text" type="text" value="8/24/2026" aria-label="Date" />
+    </div>
+  </div>
+
+  <!-- XAML: Focused VisualState 7646 — _inputFocusBorder opacity 0→1, 160ms.
+       Same colour as hover (7531 vs 7539); only duration differs. -->
+  <div class="state-row">
+    <div class="state-row__label">
+      Focused
+      <span class="state-row__note">XAML 7646 — same colour as hover</span>
+    </div>
+    <div class="mob-datepicker is-focused">
+      <button class="mob-datepicker__button" type="button" aria-label="Open calendar"></button>
+      <input class="mob-datepicker__text" type="text" value="8/24/2026" aria-label="Date" />
+    </div>
+  </div>
+
+  <!-- XAML: Disabled VisualState 7633 — root opacity → DisabledOpacity 0.35 -->
+  <div class="state-row">
+    <div class="state-row__label">
+      Disabled
+      <span class="state-row__note">XAML 7633 — opacity 0.35</span>
+    </div>
+    <div class="mob-datepicker is-disabled">
+      <button class="mob-datepicker__button" type="button" disabled aria-label="Open calendar"></button>
+      <input class="mob-datepicker__text" type="text" value="8/24/2026" disabled aria-label="Date" />
+    </div>
+  </div>
+
+  <!-- XAML: not a VisualState — visibility bindings 7534, 7542 collapse
+       both highlight borders. Text colour via Styles_OnDemandTextBox 644. -->
+  <div class="state-row">
+    <div class="state-row__label">
+      Read-only
+      <span class="state-row__note">XAML 7534, 7542 — no highlight</span>
+    </div>
+    <div class="mob-datepicker is-readonly">
+      <button class="mob-datepicker__button" type="button" aria-label="Open calendar"></button>
+      <input class="mob-datepicker__text" type="text" value="8/24/2026" readonly aria-label="Date" />
+    </div>
+  </div>
+
+</div>
+
+<h3>Calendar icon button — Templates_SimpleIconButton 1176-1242</h3>
+
+<div class="states-list">
+
+  <div class="state-row">
+    <div class="state-row__label">
+      Normal / Hover / Pressed / Focus / Disabled
+      <span class="state-row__note">
+        Pressed and Hover are identical. Focus adds a 2px ring at
+        offset 0 (FocusVisualStyle 36-48, Margin="0").
+      </span>
+    </div>
+    <div class="button-row">
+      <button class="mob-datepicker__button" type="button" aria-label="Normal"></button>
+      <button class="mob-datepicker__button is-hovered" type="button" aria-label="Hover"></button>
+      <button class="mob-datepicker__button is-pressed" type="button" aria-label="Pressed"></button>
+      <button class="mob-datepicker__button is-focused" type="button" aria-label="Focused"></button>
+      <!-- XAML: Disabled VisualState 1219 — opacity 0.35 -->
+      <button class="mob-datepicker__button" type="button" disabled aria-label="Disabled"></button>
+    </div>
+  </div>
+
+</div>
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 1b — LARGE VARIANT
+     ErrorReport.xaml 259-270 / 287-298. The only consumer that
+     overrides the default size. Every value hardcoded, no tokens.
+     ========================================================= -->
+
+<h2>1b. Large Variant <span class="flag">ErrorReport.xaml only</span></h2>
+
+<p class="page-note">
+  220 x 53, 18px text, floating label and a format hint.
+  None of these values has a token behind it. See SPEC open question B.
+</p>
+
+<div class="states-list">
+
+  <!-- XAML: ErrorReport.xaml Grid (line 254) — DatePicker + label + hint -->
+  <div class="state-row">
+    <div class="state-row__label">
+      Normal
+      <span class="state-row__note">ErrorReport.xaml 259</span>
+    </div>
+    <div class="mob-datepicker-field">
+      <!-- XAML: TextBlock DatePickerLabelStyle (line 269) -->
+      <span class="mob-datepicker-field__label">Start date</span>
+      <!-- XAML: DatePicker (line 259) -->
+      <div class="mob-datepicker mob-datepicker--lg">
+        <button class="mob-datepicker__button" type="button" aria-label="Open calendar"></button>
+        <input class="mob-datepicker__text" type="text" value="8/24/2026" aria-label="Start date" />
+      </div>
+      <!-- XAML: TextBlock (line 270) -->
+      <span class="mob-datepicker-field__hint">MM/DD/YYYY</span>
+    </div>
+  </div>
+
+  <div class="state-row">
+    <div class="state-row__label">
+      Disabled
+      <span class="state-row__note">ErrorReport.xaml 236-242</span>
+    </div>
+    <div class="mob-datepicker-field is-disabled">
+      <span class="mob-datepicker-field__label">Start date</span>
+      <div class="mob-datepicker mob-datepicker--lg is-disabled">
+        <button class="mob-datepicker__button" type="button" disabled aria-label="Open calendar"></button>
+        <input class="mob-datepicker__text" type="text" value="8/24/2026" disabled aria-label="Start date" />
+      </div>
+      <span class="mob-datepicker-field__hint">MM/DD/YYYY</span>
+    </div>
+  </div>
+
+</div>
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 2 — DAY CELL
+     XAML: Templates_CalendarDayButton 6796-6945
+     Six VisualStateGroups, one Trigger, two MultiTriggers.
+     ========================================================= -->
+
+<h2>2. Day Cell — 40 x 40</h2>
+
+<p class="page-note">
+  Today is <strong>red</strong> (InformationRed), not the selection blue.
+  Inactive days use opacity <strong>0.25</strong> (XAML 6922) while inactive
+  months use <strong>0.35</strong> — different values for the same concept in
+  Master, both preserved.
+</p>
+
+<div class="cell-grid">
+
+  <!-- XAML: Normal VisualState 6863 -->
+  <div class="cell-demo">
+    <div class="cell-demo__stage">
+      <!-- XAML: CalendarDayButton._templateRoot -->
+      <button class="mob-calendar__day" type="button" aria-label="Example day cell, normal"><span>15</span></button>
+    </div>
+    <span class="cell-demo__label">Normal<br />XAML 6863</span>
+  </div>
+
+  <!-- XAML: MouseOver VisualState 6869 — _mouseOverElement 34x34 @ 0.2 -->
+  <div class="cell-demo">
+    <div class="cell-demo__stage">
+      <button class="mob-calendar__day is-hovered" type="button" aria-label="Example day cell, hover"><span>15</span></button>
+    </div>
+    <span class="cell-demo__label">Hover<br />XAML 6869</span>
+  </div>
+
+  <!-- XAML: Pressed VisualState 6875 — identical fill to MouseOver -->
+  <div class="cell-demo">
+    <div class="cell-demo__stage">
+      <button class="mob-calendar__day is-pressed" type="button" aria-label="Example day cell, pressed"><span>15</span></button>
+    </div>
+    <span class="cell-demo__label">Pressed<br />XAML 6875</span>
+  </div>
+
+  <!-- XAML: Selected VisualState 6895 — SelectionSecondary fill, white text -->
+  <div class="cell-demo">
+    <div class="cell-demo__stage">
+      <button class="mob-calendar__day is-selected" type="button" aria-label="Example day cell, selected"><span>15</span></button>
+    </div>
+    <span class="cell-demo__label">Selected<br />XAML 6895</span>
+  </div>
+
+  <!-- XAML: MultiTrigger 6924 — IsToday=True, IsSelected=False -->
+  <div class="cell-demo">
+    <div class="cell-demo__stage">
+      <button class="mob-calendar__day is-today" type="button" aria-label="Example day cell, today"><span>24</span></button>
+    </div>
+    <span class="cell-demo__label">Today<br />XAML 6924</span>
+  </div>
+
+  <!-- XAML: MultiTrigger 6934 — IsToday=True, IsSelected=True -->
+  <div class="cell-demo">
+    <div class="cell-demo__stage">
+      <button class="mob-calendar__day is-today is-selected" type="button" aria-label="Example day cell, today and selected"><span>24</span></button>
+    </div>
+    <span class="cell-demo__label">Today + Selected<br />XAML 6934</span>
+  </div>
+
+  <!-- XAML: Trigger IsInactive=True 6921 — content opacity 0.25 -->
+  <div class="cell-demo">
+    <div class="cell-demo__stage">
+      <button class="mob-calendar__day is-inactive" type="button" aria-label="Example day cell, adjacent month"><span>31</span></button>
+    </div>
+    <span class="cell-demo__label">Inactive<br />XAML 6921 — 0.25</span>
+  </div>
+
+  <!-- XAML: Disabled VisualState 6881 — opacity 0.35 -->
+  <div class="cell-demo">
+    <div class="cell-demo__stage">
+      <button class="mob-calendar__day" type="button" aria-label="Example day cell, normal" disabled><span>15</span></button>
+    </div>
+    <span class="cell-demo__label">Disabled<br />XAML 6881 — 0.35</span>
+  </div>
+
+  <!-- XAML: BlackoutDayStates 6914 — BOTH states declared EMPTY.
+       Blackout dates get no treatment of their own; they fall
+       through to the Disabled path. Mirroring Master. -->
+  <div class="cell-demo">
+    <div class="cell-demo__stage">
+      <button class="mob-calendar__day is-blackout" type="button" aria-label="Example day cell, blackout" disabled><span>15</span></button>
+    </div>
+    <span class="cell-demo__label">
+      Blackout<br />
+      <span class="flag">XAML 6914 — empty state</span>
+    </span>
+  </div>
+
+</div>
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 3 — POPUP CALENDAR
+     XAML: Templates_Calendar 7474 + Templates_CalendarItem 7050
+
+     Header row is 44px, NOT the declared 40 — MinHeight clamps it
+     (XAML 2643 / 2768). Popup has NO border: Styles_Calendar sets
+     BorderBrush 7688 / BorderThickness 7690 but the template never
+     binds them. Width 7 x 40 = 280px.
+     ========================================================= -->
+
+<h2>3. Popup Calendar — 280px</h2>
+
+<p class="page-note">
+  Header row renders <strong>44px</strong>, not the declared 40 — MinHeight
+  clamps it. The popup has <strong>no border</strong>; the two setters that
+  would draw one are never bound by the template. Separated from the page
+  by shadow alone.
+</p>
+
+<div class="popup-row">
+
+  <!-- ===== Month view. XAML DataTrigger DisplayMode=Month 7418 ===== -->
+  <div class="popup-demo">
+    <p class="popup-demo__label">Month view — XAML 7418</p>
+
+    <!-- XAML: Calendar.PART_Root > CalendarItem.PART_Root -->
+    <div class="mob-calendar">
+
+      <!-- XAML: CalendarItem header Grid (line 7132) -->
+      <div class="mob-calendar__header">
+        <!-- XAML: PART_HeaderButton (7141) — Templates_DateTitleButton -->
+        <button class="mob-calendar__title" type="button">August 2026</button>
+        <!-- XAML: PART_PreviousButton (7156) — glyph \e008 -->
+        <button class="mob-calendar__nav mob-calendar__nav--prev" type="button" aria-label="Previous month"></button>
+        <!-- XAML: PART_NextButton (7171) — glyph \e00b -->
+        <button class="mob-calendar__nav mob-calendar__nav--next" type="button" aria-label="Next month"></button>
+      </div>
+
+      <!-- XAML: Border Row 1, BackgroundStrong fill (7189) -->
+      <div class="mob-calendar__body">
+
+        <!-- XAML: ExpanderItem _monthViewDayLabels > UniformGrid (7197, 7209) -->
+        <div class="mob-calendar__weekdays">
+          <!-- XAML: TextBlock 7213 — Opacity 0.45 -->
+          <span class="mob-calendar__weekday mob-calendar__weekday--weekend">S</span>
+          <span class="mob-calendar__weekday">M</span>
+          <span class="mob-calendar__weekday">T</span>
+          <span class="mob-calendar__weekday">W</span>
+          <span class="mob-calendar__weekday">T</span>
+          <span class="mob-calendar__weekday">F</span>
+          <!-- XAML: TextBlock 7244 — Opacity 0.45 -->
+          <span class="mob-calendar__weekday mob-calendar__weekday--weekend">S</span>
+        </div>
+
+        <!-- XAML: PART_MonthView (7271) — 7 cols x 7 rows -->
+        <div class="mob-calendar__grid mob-calendar__grid--month">
+          <button class="mob-calendar__day is-inactive" type="button" aria-label="July 26, 2026"><span>26</span></button>
+          <button class="mob-calendar__day is-inactive" type="button" aria-label="July 27, 2026"><span>27</span></button>
+          <button class="mob-calendar__day is-inactive" type="button" aria-label="July 28, 2026"><span>28</span></button>
+          <button class="mob-calendar__day is-inactive" type="button" aria-label="July 29, 2026"><span>29</span></button>
+          <button class="mob-calendar__day is-inactive" type="button" aria-label="July 30, 2026"><span>30</span></button>
+          <button class="mob-calendar__day is-inactive" type="button" aria-label="July 31, 2026"><span>31</span></button>
+          <button class="mob-calendar__day" type="button" aria-label="August 1, 2026"><span>1</span></button>
+
+          <button class="mob-calendar__day" type="button" aria-label="August 2, 2026"><span>2</span></button>
+          <button class="mob-calendar__day" type="button" aria-label="August 3, 2026"><span>3</span></button>
+          <button class="mob-calendar__day" type="button" aria-label="August 4, 2026"><span>4</span></button>
+          <button class="mob-calendar__day" type="button" aria-label="August 5, 2026"><span>5</span></button>
+          <button class="mob-calendar__day" type="button" aria-label="August 6, 2026"><span>6</span></button>
+          <button class="mob-calendar__day" type="button" aria-label="August 7, 2026"><span>7</span></button>
+          <button class="mob-calendar__day" type="button" aria-label="August 8, 2026"><span>8</span></button>
+
+          <button class="mob-calendar__day" type="button" aria-label="August 9, 2026"><span>9</span></button>
+          <button class="mob-calendar__day" type="button" aria-label="August 10, 2026"><span>10</span></button>
+          <button class="mob-calendar__day" type="button" aria-label="August 11, 2026"><span>11</span></button>
+          <button class="mob-calendar__day" type="button" aria-label="August 12, 2026"><span>12</span></button>
+          <button class="mob-calendar__day" type="button" aria-label="August 13, 2026"><span>13</span></button>
+          <button class="mob-calendar__day" type="button" aria-label="August 14, 2026"><span>14</span></button>
+          <!-- Selected — XAML 6895 -->
+          <button class="mob-calendar__day is-selected" type="button" aria-label="August 15, 2026" aria-pressed="true"><span>15</span></button>
+
+          <button class="mob-calendar__day" type="button" aria-label="August 16, 2026"><span>16</span></button>
+          <button class="mob-calendar__day" type="button" aria-label="August 17, 2026"><span>17</span></button>
+          <button class="mob-calendar__day" type="button" aria-label="August 18, 2026"><span>18</span></button>
+          <button class="mob-calendar__day" type="button" aria-label="August 19, 2026"><span>19</span></button>
+          <button class="mob-calendar__day" type="button" aria-label="August 20, 2026"><span>20</span></button>
+          <button class="mob-calendar__day" type="button" aria-label="August 21, 2026"><span>21</span></button>
+          <button class="mob-calendar__day" type="button" aria-label="August 22, 2026"><span>22</span></button>
+
+          <button class="mob-calendar__day" type="button" aria-label="August 23, 2026"><span>23</span></button>
+          <!-- Today — XAML MultiTrigger 6924 -->
+          <button class="mob-calendar__day is-today" type="button" aria-label="August 24, 2026" aria-current="date"><span>24</span></button>
+          <button class="mob-calendar__day" type="button" aria-label="August 25, 2026"><span>25</span></button>
+          <button class="mob-calendar__day" type="button" aria-label="August 26, 2026"><span>26</span></button>
+          <button class="mob-calendar__day" type="button" aria-label="August 27, 2026"><span>27</span></button>
+          <!-- Blackout — beyond DisplayDateEnd -->
+          <button class="mob-calendar__day is-blackout" type="button" aria-label="August 28, 2026" aria-disabled="true" disabled><span>28</span></button>
+          <button class="mob-calendar__day is-blackout" type="button" aria-label="August 29, 2026" aria-disabled="true" disabled><span>29</span></button>
+
+          <button class="mob-calendar__day is-blackout" type="button" aria-label="August 30, 2026" aria-disabled="true" disabled><span>30</span></button>
+          <button class="mob-calendar__day is-blackout" type="button" aria-label="August 31, 2026" aria-disabled="true" disabled><span>31</span></button>
+          <button class="mob-calendar__day is-inactive" type="button" aria-label="September 1, 2026"><span>1</span></button>
+          <button class="mob-calendar__day is-inactive" type="button" aria-label="September 2, 2026"><span>2</span></button>
+          <button class="mob-calendar__day is-inactive" type="button" aria-label="September 3, 2026"><span>3</span></button>
+          <button class="mob-calendar__day is-inactive" type="button" aria-label="September 4, 2026"><span>4</span></button>
+          <button class="mob-calendar__day is-inactive" type="button" aria-label="September 5, 2026"><span>5</span></button></div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Year view. XAML DataTrigger DisplayMode=Year 7435 =====
+       The day-label row is closed by DEFAULT (XAML 7201
+       IsOpened="False"); only the Month trigger opens it (7419).
+       PART_MonthView Hidden / PART_YearView Visible (7436-7437). -->
+  <div class="popup-demo">
+    <p class="popup-demo__label">Year view — XAML 7435</p>
+
+    <!-- XAML: Calendar.PART_Root > CalendarItem.PART_Root -->
+    <div class="mob-calendar mob-calendar--year">
+      <!-- XAML: CalendarItem header Grid (7132) -->
+      <div class="mob-calendar__header">
+        <!-- XAML: PART_HeaderButton (7141) -->
+        <button class="mob-calendar__title" type="button">2026</button>
+        <!-- XAML: PART_PreviousButton (7156) -->
+        <button class="mob-calendar__nav mob-calendar__nav--prev" type="button" aria-label="Previous year"></button>
+        <!-- XAML: PART_NextButton (7171) -->
+        <button class="mob-calendar__nav mob-calendar__nav--next" type="button" aria-label="Next year"></button>
+      </div>
+
+      <!-- XAML: Border Row 1, BackgroundStrong fill (7189) -->
+      <div class="mob-calendar__body">
+        <!-- XAML: ExpanderItem _monthViewDayLabels (7197) — closed in Year mode -->
+        <div class="mob-calendar__weekdays" aria-hidden="true">
+          <span class="mob-calendar__weekday mob-calendar__weekday--weekend">S</span>
+          <span class="mob-calendar__weekday">M</span>
+          <span class="mob-calendar__weekday">T</span>
+          <span class="mob-calendar__weekday">W</span>
+          <span class="mob-calendar__weekday">T</span>
+          <span class="mob-calendar__weekday">F</span>
+          <span class="mob-calendar__weekday mob-calendar__weekday--weekend">S</span>
+        </div>
+
+        <!-- XAML: PART_YearView (7295) — Templates_CalendarButton cells -->
+        <!-- XAML: PART_YearView (7295) — Templates_CalendarButton cells -->
+        <div class="mob-calendar__grid mob-calendar__grid--year">
+          <button class="mob-calendar__month" type="button"><span>JAN</span></button>
+          <button class="mob-calendar__month" type="button"><span>FEB</span></button>
+          <button class="mob-calendar__month" type="button"><span>MAR</span></button>
+          <button class="mob-calendar__month" type="button"><span>APR</span></button>
+          <button class="mob-calendar__month" type="button"><span>MAY</span></button>
+          <button class="mob-calendar__month" type="button"><span>JUN</span></button>
+          <button class="mob-calendar__month" type="button"><span>JUL</span></button>
+          <!-- Selected — XAML 7026 -->
+          <button class="mob-calendar__month is-selected" type="button"><span>AUG</span></button>
+          <button class="mob-calendar__month" type="button"><span>SEP</span></button>
+          <button class="mob-calendar__month" type="button"><span>OCT</span></button>
+          <button class="mob-calendar__month" type="button"><span>NOV</span></button>
+          <!-- Inactive — XAML Trigger 7044, opacity 0.35 (not 0.25) -->
+          <button class="mob-calendar__month is-inactive" type="button"><span>DEC</span></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Decade view. XAML DataTrigger DisplayMode=Decade 7453 =====
+       Shares PART_YearView with Year mode; only content differs. -->
+  <div class="popup-demo">
+    <p class="popup-demo__label">Decade view — XAML 7453</p>
+
+    <!-- XAML: Calendar.PART_Root > CalendarItem.PART_Root -->
+    <div class="mob-calendar mob-calendar--decade">
+      <!-- XAML: CalendarItem header Grid (7132) -->
+      <div class="mob-calendar__header">
+        <!-- XAML: PART_HeaderButton (7141) -->
+        <button class="mob-calendar__title" type="button">2020&ndash;2029</button>
+        <!-- XAML: PART_PreviousButton (7156) -->
+        <button class="mob-calendar__nav mob-calendar__nav--prev" type="button" aria-label="Previous decade"></button>
+        <!-- XAML: PART_NextButton (7171) -->
+        <button class="mob-calendar__nav mob-calendar__nav--next" type="button" aria-label="Next decade"></button>
+      </div>
+
+      <!-- XAML: Border Row 1, BackgroundStrong fill (7189) -->
+      <div class="mob-calendar__body">
+        <!-- XAML: ExpanderItem _monthViewDayLabels (7197) — closed in Decade mode -->
+        <div class="mob-calendar__weekdays" aria-hidden="true">
+          <span class="mob-calendar__weekday mob-calendar__weekday--weekend">S</span>
+          <span class="mob-calendar__weekday">M</span>
+          <span class="mob-calendar__weekday">T</span>
+          <span class="mob-calendar__weekday">W</span>
+          <span class="mob-calendar__weekday">T</span>
+          <span class="mob-calendar__weekday">F</span>
+          <span class="mob-calendar__weekday mob-calendar__weekday--weekend">S</span>
+        </div>
+
+        <!-- XAML: PART_YearView (7295) — shared with Year mode, XAML 7455 -->
+        <div class="mob-calendar__grid mob-calendar__grid--year">
+          <button class="mob-calendar__month is-inactive" type="button"><span>2019</span></button>
+          <button class="mob-calendar__month" type="button"><span>2020</span></button>
+          <button class="mob-calendar__month" type="button"><span>2021</span></button>
+          <button class="mob-calendar__month" type="button"><span>2022</span></button>
+          <button class="mob-calendar__month" type="button"><span>2023</span></button>
+          <button class="mob-calendar__month" type="button"><span>2024</span></button>
+          <button class="mob-calendar__month" type="button"><span>2025</span></button>
+          <button class="mob-calendar__month is-selected" type="button"><span>2026</span></button>
+          <button class="mob-calendar__month" type="button"><span>2027</span></button>
+          <button class="mob-calendar__month" type="button"><span>2028</span></button>
+          <button class="mob-calendar__month" type="button"><span>2029</span></button>
+          <button class="mob-calendar__month is-inactive" type="button"><span>2030</span></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 4 — HEADER + MONTH CELL STATES
+     ========================================================= -->
+
+<h2>4. Header &amp; Month Cell States</h2>
+
+<h3>Header title — Templates_DateTitleButton 7055-7123</h3>
+
+<p class="page-note">
+  The disabled title is <strong>not dimmed</strong>. Alone among every surface
+  here, its Disabled VisualState animates opacity to 1.0 (XAML 7100).
+  Disabled reads as a colour change only: blue &rarr; grey at full opacity.
+</p>
+
+<!-- Each button below is XAML: CalendarItem.PART_HeaderButton (7141),
+     Templates_DateTitleButton (7055) -->
+<div class="cell-grid">
+  <div class="cell-demo">
+    <button class="mob-calendar__title" type="button">August 2026</button>
+    <span class="cell-demo__label">Normal<br />XAML 7079</span>
+  </div>
+  <div class="cell-demo">
+    <button class="mob-calendar__title is-hovered" type="button">August 2026</button>
+    <span class="cell-demo__label">Hover<br />XAML 7085</span>
+  </div>
+  <div class="cell-demo">
+    <button class="mob-calendar__title is-pressed" type="button">August 2026</button>
+    <span class="cell-demo__label">Pressed &mdash; 0.8<br />XAML 7091</span>
+  </div>
+  <div class="cell-demo">
+    <button class="mob-calendar__title is-focused" type="button">August 2026</button>
+    <span class="cell-demo__label">Focused<br />XAML 7110</span>
+  </div>
+  <div class="cell-demo">
+    <button class="mob-calendar__title is-disabled" type="button" disabled>August 2026</button>
+    <span class="cell-demo__label">
+      Disabled &mdash; no dimming<br />
+      <span class="flag">XAML 7100</span>
+    </span>
+  </div>
+</div>
+
+<h3>Prev / Next — glyphs \e008 and \e00b, 40 wide x 44 tall</h3>
+
+<!-- Each button below is XAML: CalendarItem.PART_PreviousButton (7156)
+     or PART_NextButton (7171), Templates_SimpleIconButton (1176) -->
+<div class="cell-grid">
+  <div class="cell-demo">
+    <button class="mob-calendar__nav mob-calendar__nav--prev" type="button" aria-label="Previous"></button>
+    <span class="cell-demo__label">Prev normal<br />XAML 7156</span>
+  </div>
+  <div class="cell-demo">
+    <button class="mob-calendar__nav mob-calendar__nav--prev is-hovered" type="button" aria-label="Previous"></button>
+    <span class="cell-demo__label">Prev hover<br />XAML 1207</span>
+  </div>
+  <div class="cell-demo">
+    <button class="mob-calendar__nav mob-calendar__nav--prev is-pressed" type="button" aria-label="Previous"></button>
+    <span class="cell-demo__label">Prev pressed<br />XAML 1213</span>
+  </div>
+  <div class="cell-demo">
+    <button class="mob-calendar__nav mob-calendar__nav--next" type="button" aria-label="Next"></button>
+    <span class="cell-demo__label">Next normal<br />XAML 7171</span>
+  </div>
+  <div class="cell-demo">
+    <button class="mob-calendar__nav mob-calendar__nav--next is-focused" type="button" aria-label="Next"></button>
+    <span class="cell-demo__label">Next focus &mdash; 2px ring<br />XAML 2765</span>
+  </div>
+  <div class="cell-demo">
+    <button class="mob-calendar__nav mob-calendar__nav--next" type="button" disabled aria-label="Next"></button>
+    <span class="cell-demo__label">Disabled &mdash; 0.35<br />XAML 7014</span>
+  </div>
+</div>
+
+<h3>Month / year cell — Templates_CalendarButton 6947-7048</h3>
+
+<p class="page-note">
+  Inner inset is <strong>10px</strong> here versus 6px on day cells (XAML 6956
+  vs 6806), there are no today layers, and inactive uses
+  <strong>0.35</strong> rather than the day cell's 0.25.
+</p>
+
+<!-- Each button below is XAML: CalendarButton inside PART_YearView (7295),
+     Templates_CalendarButton (6947) -->
+<div class="cell-grid">
+  <div class="cell-demo">
+    <div class="cell-demo__stage cell-demo__stage--month">
+      <button class="mob-calendar__month" type="button"><span>AUG</span></button>
+    </div>
+    <span class="cell-demo__label">Normal<br />XAML 6994</span>
+  </div>
+  <div class="cell-demo">
+    <div class="cell-demo__stage cell-demo__stage--month">
+      <button class="mob-calendar__month is-hovered" type="button"><span>AUG</span></button>
+    </div>
+    <span class="cell-demo__label">Hover<br />XAML 7000</span>
+  </div>
+  <div class="cell-demo">
+    <div class="cell-demo__stage cell-demo__stage--month">
+      <button class="mob-calendar__month is-pressed" type="button"><span>AUG</span></button>
+    </div>
+    <span class="cell-demo__label">Pressed<br />XAML 7006</span>
+  </div>
+  <div class="cell-demo">
+    <div class="cell-demo__stage cell-demo__stage--month">
+      <button class="mob-calendar__month is-selected" type="button" aria-pressed="true"><span>AUG</span></button>
+    </div>
+    <span class="cell-demo__label">Selected<br />XAML 7026</span>
+  </div>
+  <div class="cell-demo">
+    <div class="cell-demo__stage cell-demo__stage--month">
+      <button class="mob-calendar__month is-inactive" type="button"><span>AUG</span></button>
+    </div>
+    <span class="cell-demo__label">Inactive &mdash; 0.35<br />XAML 7044</span>
+  </div>
+  <div class="cell-demo">
+    <div class="cell-demo__stage cell-demo__stage--month">
+      <button class="mob-calendar__month" type="button" disabled><span>AUG</span></button>
+    </div>
+    <span class="cell-demo__label">Disabled<br />XAML 7012</span>
+  </div>
+</div>
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 5 — ACCESSIBILITY DEVIATION
+     Opt-in only. Not present in Master.
+     ========================================================= -->
+
+<h2>5. Focus Ring on Cells <span class="flag">deviation from Master</span></h2>
+
+<p class="page-note">
+  XAML <code>CalendarButtonFocusStates</code> (6902) and
+  <code>ActiveStates</code> (6906) are both declared <strong>empty</strong>.
+  Day and month cells have no focus ring in Master, so tabbing into the grid
+  shows nothing — a WCAG 2.4.7 gap. Adding
+  <code>.mob-calendar--a11y-focus</code> to the popup opts into a ring.
+  Off by default. Tab through the cells below to compare.
+</p>
+
+<div class="popup-row">
+  <div class="popup-demo">
+    <p class="popup-demo__label">Master behaviour &mdash; no ring</p>
+    <!-- XAML: Calendar.PART_Root > CalendarItem.PART_Root -->
+    <div class="mob-calendar mob-calendar--demo-fit">
+      <!-- XAML: Border Row 1, BackgroundStrong fill (7189) -->
+      <div class="mob-calendar__body">
+        <!-- XAML: PART_MonthView (7271) — trimmed to 4 cells for comparison -->
+        <div class="mob-calendar__grid mob-calendar__grid--month mob-calendar__grid--demo-4col">
+          <button class="mob-calendar__day" type="button" aria-label="September 1, 2026"><span>1</span></button>
+          <button class="mob-calendar__day" type="button" aria-label="September 2, 2026"><span>2</span></button>
+          <button class="mob-calendar__day" type="button" aria-label="September 3, 2026"><span>3</span></button>
+          <button class="mob-calendar__day" type="button" aria-label="September 4, 2026"><span>4</span></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="popup-demo">
+    <p class="popup-demo__label">Opt-in &mdash; 2px MouseOverPrimary ring</p>
+    <!-- XAML: Calendar.PART_Root — plus .mob-calendar--a11y-focus, NOT in Master -->
+    <div class="mob-calendar mob-calendar--a11y-focus mob-calendar--demo-fit">
+      <!-- XAML: Border Row 1, BackgroundStrong fill (7189) -->
+      <div class="mob-calendar__body">
+        <!-- XAML: PART_MonthView (7271) — trimmed to 4 cells for comparison -->
+        <div class="mob-calendar__grid mob-calendar__grid--month mob-calendar__grid--demo-4col">
+          <button class="mob-calendar__day" type="button" aria-label="September 1, 2026"><span>1</span></button>
+          <button class="mob-calendar__day" type="button" aria-label="September 2, 2026"><span>2</span></button>
+          <button class="mob-calendar__day" type="button" aria-label="September 3, 2026"><span>3</span></button>
+          <button class="mob-calendar__day" type="button" aria-label="September 4, 2026"><span>4</span></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="section-divider" />
+
+
+<!-- =========================================================
+     SECTION 6 — POPUP DISABLED
+     XAML: CalendarItem VisualStates 7339-7350.
+     Duration 00:00:00 — instant, no transition.
+     ========================================================= -->
+
+<h2>6. Popup Disabled</h2>
+
+<p class="page-note">
+  Whole-popup dim at opacity 0.35 (XAML 7347). The load fade is
+  suppressed in this state, otherwise it would animate to full opacity
+  before snapping back down.
+</p>
+
+<div class="popup-row">
+  <div class="popup-demo">
+    <!-- XAML: Calendar.PART_Root, Disabled VisualState (7345) -->
+    <div class="mob-calendar mob-calendar--demo-fit is-disabled">
+      <!-- XAML: CalendarItem header Grid (7132) -->
+      <div class="mob-calendar__header">
+        <!-- XAML: PART_HeaderButton (7141) -->
+        <button class="mob-calendar__title" type="button" disabled>August 2026</button>
+      </div>
+      <!-- XAML: Border Row 1, BackgroundStrong fill (7189) -->
+      <div class="mob-calendar__body">
+        <!-- XAML: PART_MonthView (7271) — trimmed to 4 cells -->
+        <div class="mob-calendar__grid mob-calendar__grid--month mob-calendar__grid--demo-4col">
+          <button class="mob-calendar__day" type="button" disabled aria-label="August 1, 2026"><span>1</span></button>
+          <button class="mob-calendar__day is-selected" type="button" disabled aria-label="August 2, 2026" aria-pressed="true"><span>2</span></button>
+          <button class="mob-calendar__day" type="button" disabled aria-label="August 3, 2026"><span>3</span></button>
+          <button class="mob-calendar__day" type="button" disabled aria-label="August 4, 2026"><span>4</span></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  </main>
+</div>
+
+<script src="../js/nav.js"></script>
+</body>
+</html>

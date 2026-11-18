@@ -1,0 +1,35 @@
+/* =============================================
+   GAUGE DATA TEMPLATES
+   Source: GaugeDataTemplates.xaml
+   Asi.Gauges.Client.UI
+
+   This file is a registry/reference only — it does
+   not define new visual styles. GaugeDataTemplates.xaml
+   maps ViewModel types to their gauge DataTemplates.
+
+   Each DataTemplate instantiates the corresponding
+   gauge control (already converted separately):
+
+     ITextGaugeVM           → TextGaugeTemplate
+     SliderGaugeVM          → SliderGauge
+     PrimaryVehicleGaugeVM  → PrimaryVehicleGauge
+     PrimaryTractorGaugeVM  → PrimaryTractorGauge
+     IIndicatorGaugeVM      → IndicatorGaugeTemplate
+     IToggleSwitchGaugeVM   → ToggleSwitchGaugeTemplate
+     GpsGaugeVM             → GPSGaugeTemplate
+     ComboBoxGaugeVM        → ComboBoxGauge
+     BoomFeedbackGaugeVM    → BoomFeedbackGauge
+     BarGaugeVM             → BarGaugeTemplate
+     IDegreeGaugeVM         → DegreeGaugeTemplate
+     ViewSwitchGaugeVM      → ViewSwitchGauge
+     MultipleRowGaugeVM     → MultipleRowGauge
+     IOdometerGaugeVM       → OdometerGaugeTemplate
+     IButtonGaugeVM         → ButtonGauge
+
+   Several gauges also have MultiThread variants that
+   wrap the template in a MultiThreadVisual for off-
+   thread rendering. The HTML/CSS output is identical.
+
+   No additional CSS is needed for this file — it
+   exists as documentation of the template registry.
+   ============================================= */

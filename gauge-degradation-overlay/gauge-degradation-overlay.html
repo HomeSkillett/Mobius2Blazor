@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mobius — Gauge Degradation Overlay</title>
+  <link id="mob-theme-link" rel="stylesheet" href="../styles/color-theme-tokens/LightTheme.css" />
+  <link rel="stylesheet" href="../styles/css/main.css" />
+  <link rel="stylesheet" href="../status-icon/status-icon.css" />
+  <link rel="stylesheet" href="gauge-degradation-overlay.css" />
+  <style>
+    body { margin: 0; }
+    h1 {
+      font: var(--font-hdrMd);
+      margin: 0 0 32px;
+      color: var(--ForegroundStrong);
+    }
+    h2 {
+      font: var(--font-hdrSm);
+      margin: 48px 0 12px;
+      color: var(--ForegroundStrong);
+    }
+    h2:first-of-type { margin-top: 0; }
+    .section-divider {
+      border: none;
+      border-top: var(--line-size) solid var(--InnerLines);
+      margin: 32px 0 0;
+    }
+    .demo-caption {
+      font: var(--font-Sm);
+      color: var(--ForegroundDisabled);
+      margin-top: var(--spacing-label-to-control-sm);
+    }
+    .demo-row {
+      display: flex;
+      gap: 48px;
+      flex-wrap: wrap;
+    }
+    .demo-cell {
+      position: relative;
+      width: 200px;
+      height: 80px;
+      background: var(--GaugeInvertBackground);
+      padding: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .demo-cell__label {
+      font: var(--font-hdrSm);
+      color: var(--GaugeInvertValueForeground);
+    }
+  </style>
+</head>
+<body>
+
+<div class="mob-layout">
+
+  <!-- Sidebar Navigation -->
+  <nav class="mob-nav" id="mob-nav"></nav>
+
+  <!-- Main Content -->
+  <main class="mob-layout__content">
+
+    <h1>Gauge Degradation Overlay</h1>
+    <p class="demo-caption">Source: GaugeDegradationOverlay.xaml — A translucent overlay shown when gauge data is degraded, not supported, or not configured.</p>
+
+
+    <!-- ============================
+         NORMAL (no overlay)
+         ============================ -->
+    <hr class="section-divider">
+    <h2>Normal — No Overlay</h2>
+    <p class="demo-caption">Gauge cell with no degradation state — overlay hidden.</p>
+
+    <div class="demo-row">
+      <div>
+        <!-- XAML: Grid — no GaugeState binding = collapsed -->
+        <div class="demo-cell">
+          <span class="demo-cell__label">72 RPM</span>
+          <!-- No overlay element rendered -->
+        </div>
+        <p class="demo-caption">data-state not set</p>
+      </div>
+    </div>
+
+
+    <!-- ============================
+         DEGRADED STATE
+         ============================ -->
+    <hr class="section-divider">
+    <h2>Degraded / Not Supported</h2>
+    <p class="demo-caption">XAML: DegradedOverlay — GaugeState = Degraded or NotSupported. 1px border, 0.15 opacity fill, overall 0.5 opacity.</p>
+
+    <div class="demo-row">
+      <div>
+        <!-- XAML: Border x:Name="DegradedOverlay" Margin="-8"
+             BorderBrush=ForegroundInvertDisabledBrush BorderThickness=1 Opacity=0.5 -->
+        <div class="demo-cell">
+          <span class="demo-cell__label">72 RPM</span>
+          <div class="mob-gauge-degradation-overlay" data-state="degraded"
+               title="This gauge's data is degraded or not supported."></div>
+        </div>
+        <p class="demo-caption">data-state="degraded"</p>
+      </div>
+
+      <div>
+        <div class="demo-cell">
+          <span class="demo-cell__label">72 RPM</span>
+          <div class="mob-gauge-degradation-overlay" data-state="not-supported"
+               title="This gauge is not supported."></div>
+        </div>
+        <p class="demo-caption">data-state="not-supported"</p>
+      </div>
+    </div>
+
+
+    <!-- ============================
+         NOT CONFIGURED STATE
+         ============================ -->
+    <hr class="section-divider">
+    <h2>Not Configured</h2>
+    <p class="demo-caption">XAML: NotConfiguredOverlay — GaugeState = NotConfigured. Same visual as degraded, different tooltip.</p>
+
+    <div class="demo-row">
+      <div>
+        <!-- XAML: Border x:Name="NotConfiguredOverlay" Margin="-8"
+             BorderBrush=ForegroundInvertDisabledBrush BorderThickness=1 Opacity=0.5
+             ToolTip="This gauge is not properly configured." -->
+        <div class="demo-cell">
+          <span class="demo-cell__label">72 RPM</span>
+          <div class="mob-gauge-degradation-overlay" data-state="not-configured"
+               title="This gauge is not properly configured."></div>
+        </div>
+        <p class="demo-caption">data-state="not-configured"</p>
+      </div>
+    </div>
+
+  </main>
+
+</div>
+
+<script src="../js/nav.js"></script>
+</body>
+</html>

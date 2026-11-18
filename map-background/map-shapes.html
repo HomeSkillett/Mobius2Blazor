@@ -22,7 +22,7 @@
     }
     h2:first-of-type { margin-top: 0; }
     h3 {
-      font: var(--font-bodyMd);
+      font: var(--font-default);
       font-weight: 600;
       margin: 24px 0 12px;
       color: var(--ForegroundPrimary);
@@ -33,7 +33,7 @@
       margin: 32px 0 0;
     }
     .section-note {
-      font: var(--font-bodySm);
+      font: var(--font-Sm);
       color: var(--ForegroundDisabled);
       margin-bottom: 16px;
     }
@@ -66,19 +66,19 @@
       margin: 0 auto;
     }
     .shape-card__label {
-      font: var(--font-bodySm);
+      font: var(--font-Sm);
       color: var(--ForegroundPrimary);
       margin-top: var(--spacing-label-to-control-sm);
     }
     .shape-card__token {
-      font: var(--font-bodySm);
+      font: var(--font-Sm);
       color: var(--ForegroundDisabled);
       margin-top: 2px;
       font-family: monospace;
       font-size: 10px;
     }
     .shape-card__desc {
-      font: var(--font-bodySm);
+      font: var(--font-Sm);
       color: var(--ForegroundSecondary);
       margin-top: 4px;
       font-size: 11px;
@@ -100,7 +100,7 @@
       min-width: 180px;
     }
     .state-demo__label {
-      font: var(--font-bodySm);
+      font: var(--font-Sm);
       color: var(--ForegroundDisabled);
       margin-top: var(--spacing-label-to-control-sm);
     }
@@ -125,12 +125,12 @@
       overflow: hidden;
     }
     .zoom-card__label {
-      font: var(--font-bodySm);
+      font: var(--font-Sm);
       color: var(--ForegroundPrimary);
       padding: var(--spacing-label-to-control-sm) var(--spacing-control-to-control);
     }
     .zoom-card__token {
-      font: var(--font-bodySm);
+      font: var(--font-Sm);
       color: var(--ForegroundDisabled);
       padding: 0 var(--spacing-control-to-control) var(--spacing-label-to-control-sm);
       font-family: monospace;
@@ -153,13 +153,13 @@
       padding: var(--spacing-control-to-control);
     }
     .anatomy-card__title {
-      font: var(--font-bodyMd);
+      font: var(--font-default);
       font-weight: 600;
       color: var(--ForegroundPrimary);
       margin-bottom: 8px;
     }
     .anatomy-card__detail {
-      font: var(--font-bodySm);
+      font: var(--font-Sm);
       color: var(--ForegroundDisabled);
       font-family: monospace;
       font-size: 10px;
@@ -931,7 +931,7 @@
      Source: Plugins/Construction/
      ============================================================ -->
 <h2>Construction</h2>
-<p class="section-note">From Plugins/Construction/. Shapes for autonomous loading, pile placement, and solar panel installation.</p>
+<p class="section-note">From Plugins/Construction/. Shapes for autonomous loading, pile placement, and solar panel installation, plus asset mode indicators.</p>
 
 <div class="shape-grid">
 
@@ -996,6 +996,33 @@
     <div class="shape-card__label">Solar Block</div>
     <div class="shape-card__desc">Solar panel placement zone. --DriveableShapeFill with --ForegroundPrimary hole markers at each panel position. Labels visible when zoomed in.</div>
     <div class="shape-card__token">--DriveableShapeFill<br>+ HolesControl point markers</div>
+  </div>
+
+  <!-- Park-Up Mode Indicator — Asset mode indicator (point marker, not a polygon)
+       Source: Plugins/Construction/InCabClientCommon/Asi.MannedCheckoutBubble.Client/ParkUpMode/Templates.xaml
+       Icon: Mobius-System-Icons glyph U+E92C (park-up mode).
+             Master XAML uses the equivalent Icon_ParkUpMode PathGeometry (Icons.xaml:456);
+             font glyph substituted per design direction (Ben, 2026-07-29).
+       Fill: ForegroundActionBrush (Templates.xaml lines 9, 32) -> --ForegroundAction
+       Placement: Border TranslateTransform X=3, Y=ParkUpIconSeparateDistance (Templates.xaml:17)
+         ParkUpIconSeparateDistance = AssetRadius * 2.5 (ParkUpModeIndicatorVM.cs:32)
+         AssetRadius = -(sqrt(length^2 + width^2) / 2) (ParkUpModeIndicatorVM.cs:23) — negative = offset above asset
+       Icon scaled 0.5 with Y-flip (ScaleTransform 0.5,-0.5, Templates.xaml:36) to compensate the map's
+         Y-up coordinate space; rendered unflipped here. Counter-rotated against map angle + vehicle
+         heading (Templates.xaml:24-25) so it always stays upright on screen.
+       Visible only while IsParkUpModeEnabled telemetry is true (ParkUpModeIndicatorVM.cs:26).
+       20x20 geometry equivalent rendered at 60px for card display -->
+  <div class="shape-card">
+    <svg width="160" height="100" viewBox="0 0 160 100">
+      <!-- XAML: ParkUpModeIndicatorVM.Path — Icon_ParkUpMode, Fill=ForegroundActionBrush -->
+      <text x="80" y="50"
+        text-anchor="middle" dominant-baseline="central"
+        font-family="Mobius-System-Icons" font-size="60"
+        fill="var(--ForegroundAction)">&#xE92C;</text>
+    </svg>
+    <div class="shape-card__label">Park-Up Mode Indicator</div>
+    <div class="shape-card__desc">Asset mode indicator, not a map shape. Marks a manned vehicle deliberately checked out in a safe location. Floats above the asset at AssetRadius &times; 2.5, counter-rotated to stay upright. Visible only while park-up telemetry is enabled. Mobius-System-Icons glyph, --ForegroundAction.</div>
+    <div class="shape-card__token">Mobius-System-Icons U+E92C<br>--ForegroundAction, offset = AssetRadius &times; 2.5</div>
   </div>
 
 </div>

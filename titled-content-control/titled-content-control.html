@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mobius — TitledContentControl (50px header)</title>
+  <link id="mob-theme-link" rel="stylesheet" href="../styles/color-theme-tokens/LightTheme.css" />
+  <link rel="stylesheet" href="../styles/css/main.css" />
+  <link rel="stylesheet" href="titled-content-control.css" />
+  <style>
+    body { margin: 0; }
+    h1 { font: var(--font-hdrMd); margin: 0 0 32px; color: var(--ForegroundStrong); }
+    h2 { font: var(--font-hdrSm); margin: 40px 0 16px; color: var(--ForegroundStrong); }
+    h2:first-of-type { margin-top: 0; }
+    .note { font: var(--font-default); color: var(--ForegroundPrimary); margin: 0 0 var(--spacing-section-to-header) 0; max-width: 640px; }
+    .note code { font-family: var(--font-monospace); background: var(--BackgroundPrimary); padding: 1px 4px; border-radius: 3px; }
+    /* Demo frame = the 300px panel TitledContentControl is used in (ModeCommandAndControl.xaml:341) */
+    .demo-panel { width: 300px; border: var(--line-size) solid var(--InnerLines); margin-bottom: 24px; }
+    .demo-panel__body { height: 80px; background: var(--BackgroundInvertPrimary); }
+  </style>
+</head>
+<body>
+<main style="padding: 40px;">
+  <h1>TitledContentControl — 50px panel header</h1>
+  <p class="note">Source: <code>Common/Asi.CommonControls.Client.UI/TitledContentControl.xaml</code>. Spec: <code>specs/TitledContentControl-SPEC.md</code>. Shown inside the 300px panel it docks into in Command &amp; Control. Body area below each bar is placeholder only.</p>
+
+  <h2>Default — title only (ShowNavigationButton=False)</h2>
+  <div class="demo-panel">
+    <!-- XAML: DockPanel TitleBar — TitledContentControl.xaml lines 16-22 -->
+    <header class="titled-header">
+      <!-- XAML: TextBlock StaticTitle — lines 45-52 -->
+      <h2 class="titled-header__title">Assets</h2>
+    </header>
+    <div class="demo-panel__body"></div>
+  </div>
+
+  <h2>With navigation button (ShowNavigationButton=True)</h2>
+  <div class="demo-panel">
+    <!-- XAML: DockPanel TitleBar — lines 16-22 -->
+    <header class="titled-header">
+      <!-- XAML: Button NavigationButton — lines 29-44 -->
+      <button class="titled-header__nav" type="button" aria-label="Back">
+        <!-- XAML: Path NavigationButtonIcon (Icon_Arrow_DirectionLeft) — lines 39-43, 71 -->
+        <i class="titled-header__nav-icon" aria-hidden="true"></i>
+      </button>
+      <!-- XAML: TextBlock StaticTitle — lines 45-52 -->
+      <h2 class="titled-header__title">Path Builder</h2>
+    </header>
+    <div class="demo-panel__body"></div>
+  </div>
+
+  <h2>Long title — CharacterEllipsis (line 50)</h2>
+  <div class="demo-panel">
+    <header class="titled-header">
+      <button class="titled-header__nav" type="button" aria-label="Back">
+        <i class="titled-header__nav-icon" aria-hidden="true"></i>
+      </button>
+      <h2 class="titled-header__title">A very long panel title that will not fit in three hundred pixels</h2>
+    </header>
+    <div class="demo-panel__body"></div>
+  </div>
+
+  <h2>Editable title (IsTitleEditable=True)</h2>
+  <p class="note">FieldInput is 333px with <code>Margin="-20,0,-50,0"</code> (line 58), so it overhangs the panel's right edge by 50px in Master. Hover or focus to see the on-demand outline.</p>
+  <div class="demo-panel">
+    <header class="titled-header">
+      <!-- XAML: FieldInput EditableTitle (InlineFieldInput / OnDemandTextBox) — lines 53-66 -->
+      <input class="titled-header__title-input" type="text" value="Playlist 04" aria-label="Title" />
+    </header>
+    <div class="demo-panel__body"></div>
+  </div>
+
+  <h2>Invert foreground (ModeCommandAndControl.xaml line 342)</h2>
+  <div class="demo-panel">
+    <header class="titled-header titled-header--invert">
+      <button class="titled-header__nav" type="button" aria-label="Back">
+        <i class="titled-header__nav-icon" aria-hidden="true"></i>
+      </button>
+      <h2 class="titled-header__title">Command List</h2>
+    </header>
+    <div class="demo-panel__body"></div>
+  </div>
+</main>
+</body>
+</html>

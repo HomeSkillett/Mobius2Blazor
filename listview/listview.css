@@ -323,11 +323,11 @@
    ============================================================= */
 
 .mob-listview__item--detailed {
-  /* Override default listview padding to match DetailedListItem grid:
-     XAML col 0 (4px) + col 1 (20px) + Padding left (28px) = 52px left
+  /* Uses standard ListView left padding (40px) to align with
+     MasterDetailsListMargin. Right side reduced for command slot.
      XAML col 4 (16px) + col 5 (4px) = 20px right
-     Source: DetailedListItemContentControl.xaml lines 247-254, 577 */
-  padding: 0 20px 0 52px;
+     Source: DetailedListItemContentControl.xaml lines 247-254 */
+  padding: 0 20px 0 40px;
   justify-content: space-between;
 }
 
@@ -399,23 +399,25 @@
 }
 
 /* XAML: IconLabelButton below ListView
-   Height=TouchSize, Margin="52,6,0,0"
+   Height=TouchSize, Margin=MasterDetailsListMargin (40,0,0,0)
    Background=Transparent
-   Source: AttachmentSettings.xaml lines 88-98 */
+   Source: MasterDetailControl.xaml, spacing-tokens.css line 59 */
 .mob-listview-actions__add {
-  /* XAML: Margin="52,6,0,0" — AttachmentSettings.xaml line 90 */
-  margin: var(--spacing-xxs) 0 0 52px;
+  /* XAML: MasterDetailsListMargin → 40,0,0,0
+     Token: --margin-master-list: 0 0 0 40px
+     Source: spacing-tokens.css line 59 */
+  margin: var(--margin-master-list);
+  margin-top: var(--spacing-xxs);
   height: var(--touch);
   display: flex;
   align-items: center;
 }
 
-/* Invert Add button — inherits ForegroundInvertPrimary from parent context */
+/* Invert Add button — uses ForegroundInvertPrimary in dark panel context
+   XAML: Foreground inherited from ExpanderItem.Foreground=ForegroundInvertPrimaryBrush
+   Source: AttachmentSettings.xaml line 25
+   Hover: MouseOverPrimary (bright cyan) is visible on dark bg — no override needed */
 .mob-listview-actions__add--invert .mob-icon-label-btn__button {
-  color: var(--ForegroundInvertPrimary);
-}
-
-.mob-listview-actions__add--invert .mob-icon-label-btn__icon {
   color: var(--ForegroundInvertPrimary);
 }
 
@@ -631,4 +633,148 @@
 /* XAML: Selected → selectionRing 3px stroke SelectionPrimary */
 .mob-listbox__item--color-chip.is-selected .mob-listbox__chip {
   outline: 3px solid var(--SelectionPrimary);
+}
+
+
+/* =============================================================
+   ITEM — ListBoxItem Vehicle  (iPad exploration, NOT in master)
+   Source: Figma "iPad" file, node 1955:109798 "Vehicle Panel Open",
+           row component "Options" (I1955:109798;687:11888).
+   Master has no row like this. The closest master control is
+   DetailedListItemContentControl (44px, 4px status stripe, name only).
+   This variant keeps the ListBoxItem selection and hover layers and
+   adds a vehicle thumbnail with a status ring, a name and a status
+   line, at 60px tall.
+
+   Use with .mob-listbox__item (add --invert on dark panels).
+   Status comes from data-status on the item:
+     critical   red edge, red ring, red status text
+     warning    orange edge, orange ring, orange status text
+     (none)     no edge, no ring
+   .is-selected adds the SelectionPrimary fill and a blue ring.
+
+   Structure:
+     .mob-listbox__item.mob-listbox__item--vehicle[data-status]
+       .mob-listbox__vehicle-thumb > img.mob-listbox__vehicle-img
+       .mob-listbox__vehicle-text
+         .mob-listbox__vehicle-name
+         .mob-listbox__vehicle-status
+   ============================================================= */
+
+.mob-listbox__item--vehicle {
+  box-sizing: border-box;
+  height: 60px;                                          /* Figma: Options row height 60 */
+  min-height: 60px;
+  padding: 5px 25px 5px 20px;                            /* Figma: py 5, pr 25, pl 20 */
+  gap: 20px;                                             /* Figma: Vehicle & Name gap 20 */
+  border-left: var(--border-width-selected) solid transparent;   /* Figma: border-l 4. Token = 4px (SelectedWidth) */
+  background: transparent;                               /* Figma: rows have no fill, the drawer shows through */
+}
+
+/* Selection and hover layers must also cover the 4px left edge */
+.mob-listbox__item--vehicle::before,
+.mob-listbox__item--vehicle::after {
+  left: calc(-1 * var(--border-width-selected));
+}
+
+/* Figma: left edge color per status */
+.mob-listbox__item--vehicle[data-status="critical"] {
+  border-left-color: var(--MessageDeliveryIconCritical); /* Figma: Message Delivery Colors/MessageDeliveryIconCritical */
+}
+
+.mob-listbox__item--vehicle[data-status="warning"] {
+  border-left-color: var(--MessageDeliveryIconWarning);  /* Figma: #ff8000 = MessageDeliveryIconWarning */
+}
+
+/* Figma: the selected row is a solid SelectionPrimary fill with no edge */
+.mob-listbox__item--vehicle.is-selected {
+  border-left-color: transparent;
+}
+
+
+/* --- Thumbnail + status ring ------------------------------------ */
+/* Figma: "Status Rings" 50 x 50. Ring and fill colors follow the
+   Message Delivery icon / background pairs in the Figma variables.
+   Drawn in CSS so the colors stay on tokens. */
+.mob-listbox__vehicle-thumb {
+  flex: none;
+  box-sizing: border-box;
+  width: 50px;                                           /* Figma: Status Rings 50 x 50 */
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: var(--border-width-selected) solid transparent;   /* ring is about 4px in the Figma render */
+  border-radius: 50%;
+}
+
+/* Figma: the selected row shows a blue ring. In the closed drawer,
+   where nothing is selected, that vehicle has no ring, so the blue
+   ring is a selection cue, not a status. Status rings below win. */
+.mob-listbox__item--vehicle.is-selected .mob-listbox__vehicle-thumb {
+  border-color: var(--MessageDeliveryIconInfo);
+  background: var(--MessageDeliveryBackgroundInfo);
+}
+
+.mob-listbox__item--vehicle[data-status="critical"] .mob-listbox__vehicle-thumb {
+  border-color: var(--MessageDeliveryIconCritical);
+  background: var(--MessageDeliveryBackgroundCritical);
+}
+
+.mob-listbox__item--vehicle[data-status="warning"] .mob-listbox__vehicle-thumb {
+  border-color: var(--MessageDeliveryIconWarning);
+  background: var(--MessageDeliveryBackgroundWarning);
+}
+
+
+/* Figma: "Vechicle Icons" 40 wide, rotated -135deg.
+   Use the SVGs in assets/Vehicle Icons (100 wide, nose to the right). */
+.mob-listbox__vehicle-img {
+  flex: none;
+  width: 40px;                                           /* Figma: icon width 40 */
+  height: auto;
+  transform: rotate(-135deg);                            /* Figma: -rotate-135 */
+}
+
+
+/* --- Name + status ---------------------------------------------- */
+.mob-listbox__vehicle-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* Figma: Roboto Condensed Regular 16. There is no 16px size token,
+   so the size is set directly on top of the default font. */
+.mob-listbox__vehicle-name {
+  font: var(--font-default);
+  font-size: 16px;                                       /* Figma: 16px, no token */
+  line-height: 20px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Figma: Roboto Condensed Regular 14 (Body), ForegroundWatermark */
+.mob-listbox__vehicle-status {
+  font: var(--font-default);
+  line-height: 16px;
+  color: var(--ForegroundWatermark);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mob-listbox__item--invert .mob-listbox__vehicle-status {
+  color: var(--ForegroundInvertWatermark);
+}
+
+.mob-listbox__item--vehicle[data-status="critical"] .mob-listbox__vehicle-status {
+  color: var(--InformationRed);                          /* Figma: #ed2939 = Information Colors/InformationRed */
+}
+
+.mob-listbox__item--vehicle[data-status="warning"] .mob-listbox__vehicle-status {
+  color: var(--InformationOrange);                       /* Figma: #ff8000 = Information Colors/InformationOrange */
 }

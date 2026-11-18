@@ -70,6 +70,8 @@
     .demo-list { height: 264px; }
     .demo-list--short { height: 176px; }
     .demo-list--auto { height: auto; }
+    /* vehicle item demo: no inner padding so the 4px edge sits on the panel edge */
+    .demo-invert-bg.demo-invert-bg--flush { padding: 0; width: 400px; background: var(--BackgroundInvertPrimary); }
     /* invert demo wrapper */
     .demo-invert-bg {
       background: var(--BackgroundInvertStrong);
@@ -453,35 +455,35 @@
                Path Data=Icon_Delete
                Source: AttachmentSettings.xaml line 64-82 -->
           <button class="mob-listview__item-delete" type="button" title="Delete attachment">
-            <span class="mob-listview__item-delete-icon">&#xE504;</span>
+            <span class="mob-listview__item-delete-icon">&#xE545;</span>
           </button>
         </div>
 
         <div class="mob-listview__item mob-listview__item--detailed is-selected" tabindex="0">
           <span class="mob-listview__item-text">Rear Ripper</span>
           <button class="mob-listview__item-delete" type="button" title="Delete attachment">
-            <span class="mob-listview__item-delete-icon">&#xE504;</span>
+            <span class="mob-listview__item-delete-icon">&#xE545;</span>
           </button>
         </div>
 
         <div class="mob-listview__item mob-listview__item--detailed" tabindex="0">
           <span class="mob-listview__item-text">Side Cutter</span>
           <button class="mob-listview__item-delete" type="button" title="Delete attachment">
-            <span class="mob-listview__item-delete-icon">&#xE504;</span>
+            <span class="mob-listview__item-delete-icon">&#xE545;</span>
           </button>
         </div>
 
       </div>
 
       <!-- XAML: IconLabelButton
-           Height=TouchSize, Margin="52,6,0,0"
+           Height=TouchSize, Margin=MasterDetailsListMargin (40,0,0,0)
            Background=Transparent, Icon=Icon_Math_Plus
            Grid cols: 22px icon | 10px spacing | * text
-           Source: AttachmentSettings.xaml line 88-98 -->
+           Source: MasterDetailControl.xaml, spacing-tokens -->
       <div class="mob-listview-actions__add">
         <button class="mob-icon-label-btn__button" type="button">
           <!-- XAML: Path Data=Icon_Math_Plus, Stretch=Fill, Style=PathIcon -->
-          <span class="mob-icon-label-btn__icon" data-icon="&#xE501;"></span>
+          <span class="mob-icon-label-btn__icon" data-icon="&#xE21C;"></span>
           <!-- XAML: TextBlock Text=AddButtonText -->
           <span class="mob-icon-label-btn__text">Add</span>
         </button>
@@ -503,21 +505,21 @@
           <div class="mob-listview__item mob-listview__item--detailed mob-listview__item--invert" tabindex="0">
             <span class="mob-listview__item-text">Front Blade</span>
             <button class="mob-listview__item-delete" type="button" title="Delete attachment">
-              <span class="mob-listview__item-delete-icon">&#xE504;</span>
+              <span class="mob-listview__item-delete-icon">&#xE545;</span>
             </button>
           </div>
 
           <div class="mob-listview__item mob-listview__item--detailed mob-listview__item--invert is-selected" tabindex="0">
             <span class="mob-listview__item-text">Rear Ripper</span>
             <button class="mob-listview__item-delete" type="button" title="Delete attachment">
-              <span class="mob-listview__item-delete-icon">&#xE504;</span>
+              <span class="mob-listview__item-delete-icon">&#xE545;</span>
             </button>
           </div>
 
           <div class="mob-listview__item mob-listview__item--detailed mob-listview__item--invert" tabindex="0">
             <span class="mob-listview__item-text">Side Cutter</span>
             <button class="mob-listview__item-delete" type="button" title="Delete attachment">
-              <span class="mob-listview__item-delete-icon">&#xE504;</span>
+              <span class="mob-listview__item-delete-icon">&#xE545;</span>
             </button>
           </div>
 
@@ -525,7 +527,7 @@
 
         <div class="mob-listview-actions__add mob-listview-actions__add--invert">
           <button class="mob-icon-label-btn__button" type="button">
-            <span class="mob-icon-label-btn__icon" data-icon="&#xE501;"></span>
+            <span class="mob-icon-label-btn__icon" data-icon="&#xE21C;"></span>
             <span class="mob-icon-label-btn__text">Add</span>
           </button>
         </div>
@@ -644,6 +646,72 @@
         <div class="mob-listview__item mob-listview__item--invert is-selected" tabindex="0"><span>Zone Bravo</span></div>
         <div class="mob-listview__item mob-listview__item--invert" tabindex="0"><span>Zone Charlie</span></div>
         <div class="mob-listview__item mob-listview__item--invert" tabindex="0"><span>Zone Delta</span></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+<hr class="section-divider" />
+
+
+<!-- ============================================================
+     VEHICLE ITEM (iPad exploration, not in master)
+     Source: Figma "iPad" file, node 1955:109798, row "Options"
+     ============================================================ -->
+<h2>ListBox — Vehicle Item (iPad exploration)</h2>
+
+<p class="note">
+  A 60px ListBox item with a vehicle thumbnail, status ring, name and status line.
+  This comes from the iPad Figma file and is <strong>not in master</strong>. Master's vehicle
+  rows are 44px with a 4px status stripe and the name only. States shown: critical,
+  warning, selected, idle.
+</p>
+
+<div class="demo-grid">
+
+  <div class="demo-col">
+    <span class="demo-label">ListBox Invert + Vehicle items</span>
+    <div class="demo-invert-bg demo-invert-bg--flush">
+      <!-- Library: ListBox Style="ListBoxInvert" with vehicle items -->
+      <div class="mob-listbox mob-listbox--invert demo-list--auto" role="listbox" aria-label="Vehicles">
+        <!-- Figma: "Options" row. Library: ListBoxItem, vehicle variant. -->
+        <div class="mob-listbox__item mob-listbox__item--invert mob-listbox__item--vehicle" data-status="critical" role="option" aria-selected="false" tabindex="0">
+          <!-- Figma: "Status Rings" + "Vechicle Icons" -->
+          <span class="mob-listbox__vehicle-thumb"><img class="mob-listbox__vehicle-img" src="../assets/Vehicle%20Icons/Vehicle%3Dtractor-Case-QuadTrac.svg" alt=""></span>
+          <span class="mob-listbox__vehicle-text">
+            <span class="mob-listbox__vehicle-name">Deere9R_Sugar_Daddy</span>
+            <span class="mob-listbox__vehicle-status">e-Stop</span>
+          </span>
+        </div>
+        <!-- Figma: "Options" row. Library: ListBoxItem, vehicle variant. -->
+        <div class="mob-listbox__item mob-listbox__item--invert mob-listbox__item--vehicle" data-status="warning" role="option" aria-selected="false" tabindex="0">
+          <!-- Figma: "Status Rings" + "Vechicle Icons" -->
+          <span class="mob-listbox__vehicle-thumb"><img class="mob-listbox__vehicle-img" src="../assets/Vehicle%20Icons/Vehicle%3Dtractor-Case-Magnum-210.svg" alt=""></span>
+          <span class="mob-listbox__vehicle-text">
+            <span class="mob-listbox__vehicle-name">Deere_FN</span>
+            <span class="mob-listbox__vehicle-status">Some status reason</span>
+          </span>
+        </div>
+        <!-- Figma: "Options" row. Library: ListBoxItem, vehicle variant. -->
+        <div class="mob-listbox__item mob-listbox__item--invert mob-listbox__item--vehicle is-selected" role="option" aria-selected="true" tabindex="0">
+          <!-- Figma: "Status Rings" + "Vechicle Icons" -->
+          <span class="mob-listbox__vehicle-thumb"><img class="mob-listbox__vehicle-img" src="../assets/Vehicle%20Icons/Vehicle%3DNewHolland-T8360.svg" alt=""></span>
+          <span class="mob-listbox__vehicle-text">
+            <span class="mob-listbox__vehicle-name">Lamborghini_Spark_R</span>
+            <span class="mob-listbox__vehicle-status">Running</span>
+          </span>
+        </div>
+        <!-- Figma: "Options" row. Library: ListBoxItem, vehicle variant. -->
+        <div class="mob-listbox__item mob-listbox__item--invert mob-listbox__item--vehicle" role="option" aria-selected="false" tabindex="0">
+          <!-- Figma: "Status Rings" + "Vechicle Icons" -->
+          <span class="mob-listbox__vehicle-thumb"><img class="mob-listbox__vehicle-img" src="../assets/Vehicle%20Icons/Vehicle%3DTractor-new-holland-t4-050.svg" alt=""></span>
+          <span class="mob-listbox__vehicle-text">
+            <span class="mob-listbox__vehicle-name">JD_8R</span>
+            <span class="mob-listbox__vehicle-status">Idle</span>
+          </span>
+        </div>
       </div>
     </div>
   </div>

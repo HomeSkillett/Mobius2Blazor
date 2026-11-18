@@ -22,7 +22,7 @@
     }
     h2:first-of-type { margin-top: 0; }
     p {
-      font: var(--font-bodyMd);
+      font: var(--font-default);
       color: var(--ForegroundPrimary);
       margin: 0 0 var(--size-12);
       max-width: 680px;
@@ -56,12 +56,12 @@
       color: var(--ForegroundDisabled);
     }
     .pattern-card__desc {
-      font: var(--font-bodySm);
+      font: var(--font-Sm);
       color: var(--ForegroundPrimary);
       margin: 0;
     }
     .pattern-card__link {
-      font: var(--font-bodySm);
+      font: var(--font-Sm);
       color: var(--ForegroundAction);
       text-decoration: none;
     }
@@ -97,7 +97,6 @@
     .pattern-card__example .mob-dialog {
       width: 100%;
       max-height: none;
-      box-shadow: none;
       border: 1px solid var(--InnerLines);
     }
     .pattern-card__example .mob-notification-toggle {
@@ -106,7 +105,7 @@
 
     .enum-table {
       border-collapse: collapse;
-      font: var(--font-bodySm);
+      font: var(--font-Sm);
       color: var(--ForegroundPrimary);
       margin-top: var(--size-6);
     }
@@ -173,7 +172,8 @@
         <div class="mob-toast__level" data-level="warning"></div>
         <div class="mob-toast__header">
           <span class="mob-toast__level-label" data-level="warning">Warning</span>
-          <button class="mob-toast__dismiss" aria-label="Dismiss">&#xE454;</button>
+          <!-- XAML: DismissButton uses Icon_XSm (plain X, no circle) = font glyph "XSm" at 0xE567. 0xE454 is "Status_XSm" (circled X), a different icon. -->
+          <button class="mob-toast__dismiss" aria-label="Dismiss">&#xE567;</button>
         </div>
         <div class="mob-toast__title">GPS Signal Lost</div>
         <div class="mob-toast__message">Vehicle 12 has lost GPS connectivity in Field B.</div>
@@ -226,7 +226,9 @@
           <button class="mob-notification-panel__filter-tab">Dismissed</button>
         </div>
         <div class="mob-notification-panel__actions">
-          <button class="mob-notification-panel__action-btn" aria-label="Vehicle filter">&#xE532;</button>
+          <!-- XAML: VehicleFilterButton uses Icon_VehicleAdorned = font glyph "VehicleAdorned" at 0xEC16. 0xE532 is "CollapseHorz", unrelated. -->
+          <button class="mob-notification-panel__action-btn" aria-label="Vehicle filter">&#xEC16;</button>
+          <!-- XAML: DismissAllRecentNotificationsButton uses Icon_ClearNotifications, which has no matching glyph anywhere in mobius-system-icons.ttf (checked full cmap). Needs a real icon from design/font maintainer before this can be fixed — flagging rather than guessing. -->
           <button class="mob-notification-panel__action-btn" aria-label="Dismiss all">&#xE454;</button>
         </div>
       </div>
@@ -248,7 +250,8 @@
         <div class="mob-active-alert__progress">
           <div class="mob-active-alert__progress-fill" style="width: 65%;"></div>
         </div>
-        <span class="mob-active-alert__icon">&#xE44B;</span>
+        <!-- XAML: ActiveInfoVisual uses Icon_Status_Info = font glyph "Status_Info" at 0xE416. 0xE44B is "TireSlippage", unrelated. -->
+        <span class="mob-active-alert__icon">&#xE416;</span>
         <span class="mob-active-alert__text">Section coverage complete &mdash; moving to next row</span>
       </div>
     </div>
@@ -264,18 +267,18 @@
     <h3 class="pattern-card__title">Confirmation Dialog</h3>
     <span class="pattern-card__source">OkCancelDialog.xaml</span>
     <div class="pattern-card__example">
-      <!-- XAML: OkCancelDialog -->
+      <!-- XAML: OkCancelDialog — native OS window, no custom titlebar/close
+           button in Master (see alerts.css comment above .mob-dialog).
+           Padding below is compressed to --size-12 for this thumbnail only;
+           the real value is 30px per OkCancelDialog.xaml:21 (see alerts-dialog.html). -->
       <div class="mob-dialog">
-        <div class="mob-dialog__titlebar">
-          <span class="mob-dialog__title">Confirm Action</span>
-          <button class="mob-dialog__close">&#xE454;</button>
-        </div>
         <div class="mob-dialog__body" style="padding: var(--size-12) 10px;">
           Are you sure you want to end the current task?
         </div>
+        <!-- XAML: neither button has a Style override — both render identically, no primary/outline distinction -->
         <div class="mob-dialog__actions">
-          <button class="mob-btn mob-btn--primary" style="flex:1;">OK</button>
-          <button class="mob-btn mob-btn--outline" style="flex:1;">Cancel</button>
+          <button class="mob-btn" style="flex:1;">OK</button>
+          <button class="mob-btn" style="flex:1;">Cancel</button>
         </div>
       </div>
     </div>

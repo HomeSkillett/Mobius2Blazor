@@ -35,7 +35,7 @@
       border: 1px solid var(--InnerLines);
     }
     .note {
-      font: var(--font-bodySm);
+      font: var(--font-Sm);
       color: var(--ForegroundDisabled);
       max-width: 540px;
       margin: var(--size-6) 0 0;
@@ -74,7 +74,8 @@
       <span class="mob-notification__status-badge" data-status="new">New</span>
       <span class="mob-notification__level-label" data-level="info">Info</span>
       <span class="mob-notification__error-code"></span>
-      <button class="mob-notification__dismiss" aria-label="Dismiss">&#xE454;</button>
+      <!-- XAML: DismissButton uses Icon_XSm = font glyph "XSm" (0xE567), not "Status_XSm" (0xE454, a circled X) -->
+      <button class="mob-notification__dismiss" aria-label="Dismiss">&#xE567;</button>
     </div>
     <p class="mob-notification__title">GPS signal restored on Vehicle 3</p>
     <div class="mob-notification__footer">
@@ -89,7 +90,7 @@
       <span class="mob-notification__status-badge" data-status="new">New</span>
       <span class="mob-notification__level-label" data-level="warning">Warning</span>
       <span class="mob-notification__error-code">W-4012</span>
-      <button class="mob-notification__dismiss" aria-label="Dismiss">&#xE454;</button>
+      <button class="mob-notification__dismiss" aria-label="Dismiss">&#xE567;</button>
     </div>
     <p class="mob-notification__title">Vehicle 12 — Low fuel</p>
     <div class="mob-notification__footer">
@@ -104,7 +105,7 @@
       <span class="mob-notification__status-badge" data-status="new">New</span>
       <span class="mob-notification__level-label" data-level="critical">Critical</span>
       <span class="mob-notification__error-code">E-7001</span>
-      <button class="mob-notification__dismiss" aria-label="Dismiss">&#xE454;</button>
+      <button class="mob-notification__dismiss" aria-label="Dismiss">&#xE567;</button>
     </div>
     <p class="mob-notification__title">E-Stop activated on Vehicle 7</p>
     <div class="mob-notification__footer">
@@ -148,7 +149,7 @@
       <span class="mob-notification__status-badge" data-status="new">New</span>
       <span class="mob-notification__level-label" data-level="critical">Critical</span>
       <span class="mob-notification__error-code">E-7001</span>
-      <button class="mob-notification__dismiss" aria-label="Dismiss">&#xE454;</button>
+      <button class="mob-notification__dismiss" aria-label="Dismiss">&#xE567;</button>
     </div>
     <!-- XAML: Row 1 — NotificationTitle (HeadingSm) -->
     <p class="mob-notification__title">E-Stop activated on Vehicle 7</p>
@@ -165,9 +166,13 @@
     <!-- XAML: Row 4 — Time + GoToVehicle, GoToPoint, ErrorReport buttons -->
     <div class="mob-notification__footer">
       <span class="mob-notification__time">just now (10:42:15 AM)</span>
+      <!-- XAML: GoToVehicleButton uses Icon_Vehicle_Follow (font "Vehicle_Follow", 0xE60F, not 0xE532 "CollapseHorz").
+           GoToPointButton uses Icon_MapPoint (font "MapPoint", 0xE922, not 0xE42F "Battery05").
+           ErrorReportButton uses Icon_DocumentExclamation, which has no matching glyph anywhere in
+           mobius-system-icons.ttf — left as-is and flagged rather than guessing. -->
       <span class="mob-notification__nav-buttons">
-        <button class="mob-notification__nav-btn" aria-label="Go to vehicle" title="Go to Vehicle 7">&#xE532;</button>
-        <button class="mob-notification__nav-btn" aria-label="Go to point" title="Go to map point">&#xE42F;</button>
+        <button class="mob-notification__nav-btn" aria-label="Go to vehicle" title="Go to Vehicle 7">&#xE60F;</button>
+        <button class="mob-notification__nav-btn" aria-label="Go to point" title="Go to map point">&#xE922;</button>
         <button class="mob-notification__nav-btn" aria-label="Error report" title="Report an Issue">&#xE407;</button>
       </span>
     </div>
@@ -204,7 +209,7 @@
       <span class="mob-notification__status-badge" data-status="new">New</span>
       <span class="mob-notification__level-label" data-level="info">Info</span>
       <span class="mob-notification__error-code"></span>
-      <button class="mob-notification__dismiss" aria-label="Dismiss">&#xE454;</button>
+      <button class="mob-notification__dismiss" aria-label="Dismiss">&#xE567;</button>
     </div>
     <p class="mob-notification__title">GPS signal restored on Vehicle 3</p>
     <div class="mob-notification__footer">
@@ -218,7 +223,7 @@
       <span class="mob-notification__status-badge" data-status="new">New</span>
       <span class="mob-notification__level-label" data-level="warning">Warning</span>
       <span class="mob-notification__error-code">W-4012</span>
-      <button class="mob-notification__dismiss" aria-label="Dismiss">&#xE454;</button>
+      <button class="mob-notification__dismiss" aria-label="Dismiss">&#xE567;</button>
     </div>
     <p class="mob-notification__title">Vehicle 12 — Low fuel</p>
     <div class="mob-notification__footer">
@@ -232,7 +237,7 @@
       <span class="mob-notification__status-badge" data-status="new">New</span>
       <span class="mob-notification__level-label" data-level="critical">Critical</span>
       <span class="mob-notification__error-code">E-7001</span>
-      <button class="mob-notification__dismiss" aria-label="Dismiss">&#xE454;</button>
+      <button class="mob-notification__dismiss" aria-label="Dismiss">&#xE567;</button>
     </div>
     <p class="mob-notification__title">E-Stop activated on Vehicle 7</p>
     <div class="mob-notification__footer">
@@ -334,8 +339,8 @@
       var navBtns = document.createElement('span');
       navBtns.className = 'mob-notification__nav-buttons';
       navBtns.innerHTML =
-        '<button class="mob-notification__nav-btn" aria-label="Go to vehicle" title="Go to Vehicle">\uE532</button>' +
-        '<button class="mob-notification__nav-btn" aria-label="Go to point" title="Go to map point">\uE42F</button>' +
+        '<button class="mob-notification__nav-btn" aria-label="Go to vehicle" title="Go to Vehicle">\uE60F</button>' +
+        '<button class="mob-notification__nav-btn" aria-label="Go to point" title="Go to map point">\uE922</button>' +
         '<button class="mob-notification__nav-btn" aria-label="Error report" title="Report an Issue">\uE407</button>';
       footer.appendChild(navBtns);
     }

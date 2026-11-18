@@ -249,3 +249,73 @@ When `EnableButtonRepositioning` is true, the toggle button's top margin shifts 
 This component **replaces** the previous `ResizeExpander` conversion. The ResizeExpander is a child control that SplitPanel wraps — the visual elements users see (angled tab, 40x50 toggle, decorative path) all come from SplitPanel's template, not ResizeExpander's. For Blazor handoff, building SplitPanel directly gives us the correct visual structure without needing to reconstruct the parent/child nesting.
 
 The ResizeExpander spec (`ResizeExpander-SPEC.md`) remains as reference for the inner panel animation behavior (slide-in, header, body, GridSplitter resize handle) that SplitPanel's content panes may contain.
+
+---
+
+## 8. Vertical Template (added 2026-11-18)
+
+Template `Mobius_UI_Common_Templates_SplitPanelVertical`, SplitPanel.xaml lines 170-296. Selected by `Orientation="Vertical"` (lines 298-305). Built as `.split-panel--vertical` on the same root and child classes.
+
+### 8.1 Hierarchy
+
+```
+Grid (root)                                              line 174
+  Row 0: PART_FirstContentRow  Height=*  MaxHeight=FirstContentMaxOpenLength    line 176
+  Row 1: Height=2                                                               line 177
+  Row 2: PART_SecondContentRow Height=*  MaxHeight=SecondContentMaxOpenLength   line 178
+  ├─ PART_FirstContent  [ContentPresenter, Row 0]                               lines 180-185
+  ├─ PART_SecondContent [ContentPresenter, Row 2]                               lines 186-191
+  ├─ Rectangle [Row 1] Fill=BackgroundInvertStrongStepOne, no hit test          lines 192-198
+  ├─ PART_PanelSplitter [GridSplitter, Row 1] Margin="0,-8", Transparent        lines 199-208
+  ├─ Toggle-C Grid [Row 0] Margin="0,-42,0,0", Right / Top                      lines 209-251
+  │    Visible when FirstContentIsOpen = false                                  line 214
+  │    ├─ Path 120 x 40, Stretch=Fill                                           lines 216-223
+  │    ├─ ContentPresenter (SecondContentBonusActions), HAlign=Center           lines 224-227
+  │    └─ PART_TOGGLE_BUTTON_C 50 x 40, Right / Top                             lines 228-250
+  │         IsChecked <-> FirstContentIsOpen, Icon_Arrow_PointerUp 20 x 20
+  └─ Toggle-D Grid [Row 2] Margin="0,-42,0,0", Right / Top                      lines 252-294
+       Visible when FirstContentIsOpen = true                                   line 257
+       ├─ Path 120 x 40, Stretch=Fill                                           lines 259-266
+       ├─ ContentPresenter (SecondContentBonusActions), HAlign=Center           lines 267-270
+       └─ PART_TOGGLE_BUTTON_D 50 x 40, Right / Top                             lines 271-293
+            IsChecked <-> SecondContentIsOpen, Icon_Arrow_PointerUp 20 x 20
+```
+
+### 8.2 Resolved values
+
+| Item | Value | Source |
+|---|---|---|
+| Rows | * / 2 / * | lines 176-178 |
+| Splitter drag target | 2 + 8 + 8 = 18px tall | line 202 |
+| Tab size | 120 x 40 | lines 217-218 |
+| Tab position | right aligned, top = row top - 42, so its bottom edge is 2px above the row | lines 211-213 |
+| Tab shape | Path bounds x -50 to 40, y 0 to 40. Stretch=Fill onto 120 x 40 gives `polygon(44.444% 0, 100% 0, 100% 100%, 0 100%)` | line 219 |
+| Toggle button | 50 x 40, right / top inside the tab | lines 230-233 |
+| Icon | Icon_Arrow_PointerUp = Mobius-System-Icons U+E007 (confirmed in the font file) | line 245 |
+| Checked | arrow rotated 180deg, so an open pane shows a down arrow | DefaultControls.xaml line 2121 |
+| No ExpanderItem | the tab shape is always visible when its toggle grid is | lines 216-223 |
+
+### 8.3 States
+
+| Root class | Master state | Rows | Tab shown | Arrow |
+|---|---|---|---|---|
+| `first-open` | both open (default) | * / 2 / * | Toggle-D, on the divider | down (checked) |
+| `second-collapsed` | SecondContentIsOpen = false | * / 2 / 0 (SplitPanel.cs 430-431) | Toggle-D, at the bottom over the first pane | up |
+| `first-collapsed` | FirstContentIsOpen = false | 0 / 2 / * (SplitPanel.cs 415-416) | Toggle-C, 42px above the top of the panel | up |
+
+Row heights are set in code (SplitPanel.cs lines 314-349). CSS takes them as `--split-first-length` and `--split-second-length`, defaulting to 1fr.
+
+### 8.4 Usage traced in master
+
+`Asi.Miscellaneous.Client.UI/ModeControls/ModeCommandAndControl.xaml` lines 445-688: Orientation=Vertical, SecondContentMinOpenLength 376, SecondContentMaxOpenLength 654, StartSnap SecondContentMin, inside a 300px wide column. FirstContent is the vehicle list. SecondContent is the gauge panel host (BackgroundInvertStepOne, "No asset selected" HeadingSm with 24 margin). SecondContentBonusActions is a pop-out gauges IconButton (Icon_PopOut, U+E560).
+
+### 8.5 Not covered
+
+- Open / close animation (700ms, SmoothEase EaseOut) is not built for the vertical demos. They are static, no JavaScript.
+- Drag snap logic (SplitPanel.cs lines 400-441) is behavior for Blazor.
+- The pop-out button in the demo uses the page's demo button class. The real IconButton style is not traced.
+- The vertical template has no Disabled triggers (the horizontal one does, lines 150-167).
+
+### 8.6 Note on section 2.5
+
+Section 2.5 gives a second polygon for the horizontal tab (`100% 75%, 0 41.7%`). With Stretch=Fill the path bounds (40 x 90) stretch to the full 40 x 120, so the polygon already in split-panel.css (`100% 100%, 0 55.6%`) is the right one.

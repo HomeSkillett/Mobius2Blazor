@@ -1,0 +1,530 @@
+/* =============================================
+   iPAD SANDBOX, VARIANT v5 "convoy"
+   Copied from v4-corner-then-up.css, 2026-11-18. Only the timing differs.
+   Sandbox-only styles. Not part of Mobius2Blazor.
+   Component styles come from the library:
+     ../styles/css/main.css
+     ../ipad-vehicle-drawer/ipad-vehicle-drawer.css
+   Put experiments at the bottom of this file. When one is ready,
+   move it into the library component's CSS.
+
+   NO JAVASCRIPT. State lives in hidden inputs and CSS reads it with
+   :has(). Sequencing is done with transition-delay.
+   ============================================= */
+
+
+/* --- Page ------------------------------------------------------- */
+.sandbox {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--BackgroundStrong);
+  color: var(--ForegroundPrimary);
+  font: var(--font-default);
+}
+
+
+/* --- Toolbar ----------------------------------------------------
+   Removed (Ben, 2026-11-18). The Device and Transition pickers went with
+   it. To change them now, edit two values in this file:
+     speed   --sandbox-duration on .sandbox-stage
+     device  width / height on .sandbox-device (portrait is 820 x 1180) */
+
+
+/* --- Device stage ----------------------------------------------- */
+.sandbox-stage {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 24px;
+  overflow: auto;
+}
+
+/* The iPad screen. Sizes are iPad Air points (an assumption: Figma's
+   drawer is 820 tall, which matches this device in landscape). */
+.sandbox-device {
+  position: relative;
+  flex: none;
+  width: 1180px;
+  height: 820px;
+  overflow: hidden;
+  background: var(--BackgroundPrimary);
+  border: var(--border-width) solid var(--InnerLines);
+}
+
+/* Hidden state inputs: invisible but still focusable from the keyboard */
+.sandbox-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.sandbox-device:has(#sandbox-drawer-open:focus-visible) .ipad-drawer__handle-pill,
+.sandbox-device .mob-listbox__item--vehicle:has(.sandbox-radio:focus-visible) {
+  outline: 2px solid var(--MouseOverPrimary);
+  outline-offset: 2px;
+}
+
+
+/* =============================================
+   EXPERIMENTS
+   Add sandbox-only overrides below this line.
+   ============================================= */
+
+/* --- Variant v5: convoy -------------------------------------------
+   Ben, 2026-11-18:
+     "lets try moving them like ants or a convoy not overlapping"
+     "Same version. Make open and close the same speed. Open sheet at
+      speed of typical finger slide while vehicles convoy up maintaining
+      spacing"
+
+   What is different from v4: no stack in the corner. The vehicles drive
+   the same route as v4 (left along the row, round the corner, up the
+   column) nose to tail, all at one constant speed, and never overlap.
+   The first vehicle is already at the corner, so it leads straight up.
+
+   The sheet is not tied to the convoy. It slides open at finger speed
+   and the vehicles drive up inside it.
+
+   State (no classes, no script):
+     #sandbox-drawer-open   unchecked = closed, checked = open
+     #sandbox-gauges        the SplitPanel tab: gauges shown / hidden
+     .sandbox-radio         one per vehicle row: the selected vehicle
+
+   Opening, D = one step (--sandbox-duration):
+     0 to 350ms      SHEET: slides up to full height like a finger swipe
+     0 to about 2D   CONVOY: every vehicle sets off along the row, turns
+                     up at the corner and parks at its own row. Constant
+                     speed (linear), so the spacing holds.
+     then            NAMES: each name + status slides out from its
+                     vehicle (250ms, top row first, 40ms apart)
+     then            EDGES + SELECTION: the left status edge, the selected
+                     fill and the selected ring fade in (250ms)
+     with the names  the gauges and the SplitPanel tab slide up from the
+                     bottom, over the lower vehicles (1D)
+   Closing is the opening backwards at the SAME speed:
+     0 to 250ms      NAMES slide back in, edges + selection fade out.
+                     Gauges slide down, tab fades.
+     then, about 2D  CONVOY: the last vehicle leads back down the column
+                     and along the row
+     last 350ms      SHEET: slides down to the card as the convoy gets home
+
+   How the order works without script: a CSS transition uses the timing of
+   the state it is going TO. So the open rules carry the opening delays and
+   the base (closed) rules carry the closing delays.
+
+   The drawer has no fixed height. It is handle + list + 2px divider.
+     closed  26 + 68  + 2 = 96
+     open    26 + 792 + 2 = 820
+   The gauges are a 450 layer over the bottom of the list, so 342 of the
+   list shows above them. */
+.sandbox-stage {
+  --sandbox-duration: var(--transition-expand);                /* 500ms, GeneralExpandDuration */
+  --sandbox-ease-in: cubic-bezier(0.64, 0, 1, 1);
+  --sandbox-ease-out: cubic-bezier(0, 0, 0.58, 1);
+  --sandbox-ease-in-out: cubic-bezier(0.42, 0, 0.58, 1);
+  --sandbox-list-open: 792px;                                  /* 820 sheet - 26 handle - 2 divider */
+  /* Convoy speed: time to travel 1px. The longest trip is 778px (see the
+     ring rules), so the whole convoy takes about 2 steps. */
+  --sandbox-px: calc(var(--sandbox-duration) / 374);
+  --sandbox-convoy: calc(var(--sandbox-px) * 778);             /* when the last vehicle has parked */
+
+  /* The sheet itself moves like a finger slide: 350ms, fast at first and
+     settling at the end. These are not Mobius tokens. They are my
+     estimate of a typical iPad sheet swipe. Closing uses the same curve
+     mirrored, so it is the opening played backwards. */
+  --sandbox-names: 250ms;                                      /* name + status slide, my pick, not a token */
+  --sandbox-sheet: 350ms;
+  --sandbox-ease-sheet-open: cubic-bezier(0.32, 0.72, 0, 1);
+  --sandbox-ease-sheet-close: cubic-bezier(1, 0, 0.68, 0.28);
+  --sandbox-gauges-open: 448px;                                /* library --split-second-length */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sandbox .sandbox-stage { --sandbox-duration: 0ms; }
+}
+
+
+/* --- Drawer box ---------------------------------------------------- */
+/* Closed: 360 wide card, 10px from the left and bottom, all corners round */
+.sandbox-device .ipad-drawer {
+  position: absolute;
+  left: 10px;                        /* Ben: 10px from the left */
+  bottom: 10px;                      /* Ben: 10px from the bottom */
+  width: 360px;                      /* Ben: 360 wide (Figma draws 358) */
+  height: auto;                      /* sum of its parts, see the table above */
+  max-height: 100%;
+  border-radius: 14px;               /* Ben: bottom corners match the top */
+  transition:                        /* closing: the sheet slides down as the convoy gets home */
+    bottom var(--sandbox-sheet) var(--sandbox-ease-sheet-close) calc(var(--sandbox-names) + var(--sandbox-convoy) - var(--sandbox-sheet)),
+    border-radius var(--sandbox-sheet) var(--sandbox-ease-sheet-close) calc(var(--sandbox-names) + var(--sandbox-convoy) - var(--sandbox-sheet)),
+    left var(--sandbox-sheet) var(--sandbox-ease-sheet-close) calc(var(--sandbox-names) + var(--sandbox-convoy) - var(--sandbox-sheet)),
+    width var(--sandbox-sheet) var(--sandbox-ease-sheet-close) calc(var(--sandbox-names) + var(--sandbox-convoy) - var(--sandbox-sheet));
+}
+
+/* Open: docked in the corner, 400 wide, square bottom corners */
+.sandbox-device:has(#sandbox-drawer-open:checked) .ipad-drawer {
+  left: 0;
+  bottom: 0;
+  width: 400px;
+  border-radius: 14px 14px 0 0;
+  transition:                        /* opening: the sheet slides up at finger speed */
+    bottom var(--sandbox-sheet) var(--sandbox-ease-sheet-open),
+    border-radius var(--sandbox-sheet) var(--sandbox-ease-sheet-open),
+    left var(--sandbox-sheet) var(--sandbox-ease-sheet-open),
+    width var(--sandbox-sheet) var(--sandbox-ease-sheet-open);
+}
+
+.sandbox-device .ipad-drawer__handle {
+  box-sizing: border-box;            /* the handle is a <label> here, not a <button> */
+}
+
+
+/* --- Header ---------------------------------------------------------
+   Removed (Ben, 2026-11-18). The "My Vehicles 6" markup is gone from the
+   sandbox page. The library page still has it. */
+
+
+/* --- SplitPanel: rows sized by their panes --------------------------- */
+/* The library sizes the rows from the root. Here each pane carries its own
+   height so the list and the gauge area can move on different beats. */
+.sandbox-device .ipad-drawer__split.split-panel {
+  flex: none;
+  height: auto;
+  grid-template-rows: auto 2px auto;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--sandbox-sheet) var(--sandbox-ease-sheet-close) calc(var(--sandbox-names) + var(--sandbox-convoy) - var(--sandbox-sheet));   /* closing: rows leave with the sheet */
+}
+
+.sandbox-device:has(#sandbox-drawer-open:checked) .ipad-drawer__split.split-panel {
+  opacity: 1;
+  pointer-events: auto;
+  transition: opacity var(--sandbox-sheet) var(--sandbox-ease-sheet-open);   /* opening: rows (edges, selection) arrive with the sheet */
+}
+
+/* List pane: 68 closed (fills the 96 card under the handle). Open, it is
+   the full sheet under the handle, so no vehicle is cut off while the
+   sheet rises. One continuous rise over steps 1 and 2. */
+.sandbox-device .ipad-drawer__split .split-panel__pane--first {
+  height: 68px;                      /* 96 card - 26 handle - 2 divider */
+  transition: height var(--sandbox-sheet) var(--sandbox-ease-sheet-close) calc(var(--sandbox-names) + var(--sandbox-convoy) - var(--sandbox-sheet));   /* closing: finger slide down, last */
+}
+
+.sandbox-device:has(#sandbox-drawer-open:checked) .ipad-drawer__split .split-panel__pane--first {
+  height: var(--sandbox-list-open);
+  transition: height var(--sandbox-sheet) var(--sandbox-ease-sheet-open);   /* opening: finger slide up, first */
+}
+
+/* The list runs under the gauges, so it gets the gauges' height as bottom
+   padding while they are shown. That keeps the last vehicles reachable by
+   scrolling. */
+.sandbox-device:has(#sandbox-gauges:checked) .ipad-drawer__list {
+  padding-bottom: calc(var(--sandbox-gauges-open) + 2px);
+}
+
+/* Gauge area: a layer over the bottom of the list (Ben, 2026-11-18:
+   "Gauge should move up over the vehicles rather then them being cut off
+   before"). It is pinned to the bottom of the sheet and slides up over
+   the vehicles on step 3. Its top border is the SplitPanel divider.
+
+   Two separate properties move it, so each can have its own timing:
+     translate   drawer open / closed   (waits for steps 1 and 2 on open)
+     transform   the tab chevron        (no wait) */
+.sandbox-device .ipad-drawer__split.split-panel {
+  position: relative;
+}
+
+.sandbox-device .ipad-drawer__split .split-panel__pane--second {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  box-sizing: border-box;
+  height: calc(var(--sandbox-gauges-open) + 2px);              /* gauges + the 2px divider */
+  border-top: 2px solid var(--BackgroundInvertStrongStepOne);  /* library: SplitPanel spacer, SplitPanel.xaml line 39 */
+  background: var(--BackgroundInvertPrimary);                  /* library: drawer background, so it covers the list */
+  translate: 0 100%;
+  transition:
+    translate var(--sandbox-duration) var(--sandbox-ease-in-out),   /* closing: together with everything else */
+    transform var(--sandbox-duration) var(--sandbox-ease-in-out);
+}
+
+.sandbox-device:has(#sandbox-drawer-open:checked) .ipad-drawer__split .split-panel__pane--second {
+  translate: 0 0;
+  transition:
+    translate var(--sandbox-duration) var(--sandbox-ease-out) var(--sandbox-convoy),   /* step 3: after the last vehicle lands */
+    transform var(--sandbox-duration) var(--sandbox-ease-in-out);
+}
+
+/* Gauges closed from the tab: the layer slides back down. The sheet keeps
+   its height because the list already fills it. */
+.sandbox-device:has(#sandbox-gauges:not(:checked)) .ipad-drawer__split .split-panel__pane--second {
+  transform: translateY(100%);
+}
+
+.sandbox-device .ipad-drawer__gauges {
+  flex: none;
+  height: var(--sandbox-gauges-open);
+}
+
+/* SplitPanel tab: rides on the top edge of the gauge layer, same two
+   properties and the same timing. In the grid it sits at the bottom of
+   the sheet (library: margin -42 above row 3), which is where it belongs
+   while the gauges are hidden. */
+.sandbox-device .ipad-drawer .split-panel__toggle-area {
+  z-index: 2;
+  translate: 0 calc(var(--sandbox-gauges-open) + 44px);   /* closed: below the sheet's bottom edge, clipped */
+  pointer-events: none;
+  opacity: 0;
+  transition:
+    opacity var(--sandbox-duration) var(--sandbox-ease-in-out),
+    translate var(--sandbox-duration) var(--sandbox-ease-in-out),
+    transform var(--sandbox-duration) var(--sandbox-ease-in-out);
+}
+
+.sandbox-device:has(#sandbox-drawer-open:checked) .ipad-drawer .split-panel__toggle-area {
+  translate: 0 0;
+  opacity: 1;
+  pointer-events: auto;
+  transition:
+    translate var(--sandbox-duration) var(--sandbox-ease-out) var(--sandbox-convoy),   /* step 3: after the last vehicle lands */
+    transform var(--sandbox-duration) var(--sandbox-ease-in-out),
+    opacity 0s linear;
+}
+
+.sandbox-device:has(#sandbox-gauges:checked) .ipad-drawer .split-panel__toggle-area {
+  transform: translateY(calc(var(--sandbox-gauges-open) * -1));   /* up on the gauge layer's top edge */
+}
+
+.sandbox-device .ipad-drawer .split-panel__toggle {
+  cursor: pointer;
+}
+
+/* Chevron: down while the gauges are shown (library: .is-checked rotates 180deg) */
+.sandbox-device .ipad-drawer .split-panel__toggle-icon {
+  transition: transform var(--sandbox-duration) var(--sandbox-ease-in-out);
+}
+
+.sandbox-device:has(#sandbox-gauges:checked) .ipad-drawer .split-panel__toggle-icon {
+  transform: rotate(180deg);
+}
+
+
+/* --- Rings overlay ---------------------------------------------------- */
+/* One set of rings laid over the drawer. They stand in for the six
+   list thumbnails while closed and during the horizontal <-> vertical move,
+   then hand over to the real list with a zero-length, delayed switch.
+
+   Closed, the row is left aligned and scrolls sideways (Ben, 2026-11-18:
+   "width 360px align=left and scrollable"). The overlay is a fixed 360
+   wide scroller that starts under the 26 handle, so the handle stays
+   tappable, and stops at the 2px divider, where the list pane clips its
+   rows, so the 6th ring is cut exactly like the 6th row. */
+.sandbox-device .ipad-drawer__rings {
+  display: block;
+  position: absolute;
+  top: 26px;                         /* library: handle height */
+  bottom: 2px;                       /* library: SplitPanel spacer */
+  left: 0;
+  width: 360px;                      /* Ben: closed drawer width. Fixed so the scroll range never changes */
+  padding: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;             /* iPad: no visible scrollbar */
+  opacity: 1;
+  pointer-events: auto;
+  transition: opacity 0s linear;     /* closing: appear at once */
+
+  /* No JavaScript, so CSS has to know how far the row is scrolled. A
+     scroll-driven animation writes that distance into --ring-scroll.
+     The list slots add it back, so every ring still lands on its own
+     list row when the drawer opens from a scrolled row. Needs Chrome /
+     Edge 115+ or Safari 26+. Older browsers: rings land off by the
+     scroll distance, then snap at the hand-over. */
+  animation: sandbox-ring-scroll linear both;
+  animation-timeline: scroll(self x);
+}
+
+.sandbox-device .ipad-drawer__rings::-webkit-scrollbar {
+  display: none;
+}
+
+/* Right padding of the row: an empty box 24 past the last ring.
+   24 + 6 x 50 + 5 x 15 = 399, + 24 = 423 of content in a 360 window. */
+.sandbox-device .ipad-drawer__rings::after {
+  content: "";
+  position: absolute;
+  left: 399px;
+  top: 0;
+  width: 24px;
+  height: 1px;
+}
+
+@property --ring-scroll {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 0px;
+}
+
+@keyframes sandbox-ring-scroll {
+  from { --ring-scroll: 0px; }
+  to   { --ring-scroll: 63px; }      /* 423 content - 360 window */
+}
+
+.sandbox-device:has(#sandbox-drawer-open:checked) .ipad-drawer__rings {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0s linear var(--sandbox-convoy);   /* opening: vanish when the last vehicle has landed */
+}
+
+.sandbox-device .ipad-drawer__ring:nth-child(1) { --ring-index: 0; }
+.sandbox-device .ipad-drawer__ring:nth-child(2) { --ring-index: 1; }
+.sandbox-device .ipad-drawer__ring:nth-child(3) { --ring-index: 2; }
+.sandbox-device .ipad-drawer__ring:nth-child(4) { --ring-index: 3; }
+.sandbox-device .ipad-drawer__ring:nth-child(5) { --ring-index: 4; }
+.sandbox-device .ipad-drawer__ring:nth-child(6) { --ring-index: 5; }
+
+/* Horizontal (closed) slots: left aligned at 24, the same x as the list
+   thumbnails (4 edge + 20 padding), so the first ring only moves down.
+   Rings of 50 with 15 between (Figma). 10 below the handle (Figma). */
+.sandbox-device .ipad-drawer__ring {
+  position: absolute;
+  left: calc(24px + var(--ring-index) * 65px);
+  top: auto;
+  bottom: 8px;                       /* = 10 below the handle: 68 overlay - 10 - 50 ring */
+  transition:                        /* closing: the open trip backwards at the same speed, last vehicle leads */
+    bottom calc((723 - var(--ring-index) * 60) * var(--sandbox-px)) linear calc(var(--sandbox-names) + (55 - var(--ring-index) * 11) * var(--sandbox-px)),
+    left calc(var(--ring-index) * 65 * var(--sandbox-px)) linear calc(var(--sandbox-names) + (778 - var(--ring-index) * 71) * var(--sandbox-px)),
+    border-color var(--sandbox-duration) var(--sandbox-ease-in-out),
+    background-color var(--sandbox-duration) var(--sandbox-ease-in-out);
+}
+
+/* Vertical (list) slots: left = 4 edge + 20 padding, plus the scroll
+   distance (see above). Rings are placed from the BOTTOM of the overlay
+   in this variant. The sheet is anchored to the bottom of the screen, so
+   a ring's height on screen does not depend on how tall the sheet is.
+
+   Convoy numbers, in px of travel (time = px x --sandbox-px):
+     row leg       vehicle n starts 65n right of the corner
+     column leg    row 1 is 723 above the row, each next row 60 less
+     head start    each vehicle sets off 6 after the one in front, so the
+                   gap along the route is 71. That is 50 x 1.414, the
+                   least that keeps two 50px rings apart at the corner.
+     longest trip  vehicle 6: 5 x 71 + 423 = 778 */
+.sandbox-device:has(#sandbox-drawer-open:checked) .ipad-drawer__ring {
+  left: calc(24px + var(--ring-scroll));
+  bottom: calc(731px - var(--ring-index) * 60px);   /* 792 overlay - 11 - 50 ring = 731 for row 1, then 60 per row */
+  transition:                        /* opening: along the row to the corner, then up, at one constant speed */
+    left calc(var(--ring-index) * 65 * var(--sandbox-px)) linear calc(var(--ring-index) * 6 * var(--sandbox-px)),
+    bottom calc((723 - var(--ring-index) * 60) * var(--sandbox-px)) linear calc(var(--ring-index) * 71 * var(--sandbox-px)),
+    border-color calc(var(--sandbox-duration) * 2) var(--sandbox-ease-in-out),
+    background-color calc(var(--sandbox-duration) * 2) var(--sandbox-ease-in-out);
+}
+
+/* List thumbnails under the rings: hidden until the rings land */
+.sandbox-device .mob-listbox__item--vehicle:nth-child(-n+6) .mob-listbox__vehicle-thumb {
+  visibility: hidden;
+  transition: visibility 0s linear;
+}
+
+.sandbox-device:has(#sandbox-drawer-open:checked) .mob-listbox__item--vehicle:nth-child(-n+6) .mob-listbox__vehicle-thumb {
+  visibility: visible;
+  transition: visibility 0s linear var(--sandbox-convoy);
+}
+
+
+/* --- Names and status: slide out from the vehicle -------------------- */
+/* Ben, 2026-11-18: "vehicle names and status to slide out after vehicles
+   are in position". The text block is tucked behind its vehicle (clipped
+   and shifted left) and slides out to the right once the convoy has
+   parked, top row first, 40ms apart. Closing: the text slides back in
+   first, then the convoy leaves. */
+.sandbox-device .mob-listbox__item--vehicle:nth-child(1) { --row-index: 0; }
+.sandbox-device .mob-listbox__item--vehicle:nth-child(2) { --row-index: 1; }
+.sandbox-device .mob-listbox__item--vehicle:nth-child(3) { --row-index: 2; }
+.sandbox-device .mob-listbox__item--vehicle:nth-child(4) { --row-index: 3; }
+.sandbox-device .mob-listbox__item--vehicle:nth-child(5) { --row-index: 4; }
+.sandbox-device .mob-listbox__item--vehicle:nth-child(6) { --row-index: 5; }
+
+.sandbox-device .mob-listbox__vehicle-text {
+  clip-path: inset(0 100% 0 0);
+  transform: translateX(-24px);
+  opacity: 0;
+  transition:                        /* closing: straight away, before the convoy moves */
+    clip-path var(--sandbox-names) var(--sandbox-ease-in),
+    transform var(--sandbox-names) var(--sandbox-ease-in),
+    opacity var(--sandbox-names) var(--sandbox-ease-in);
+}
+
+.sandbox-device:has(#sandbox-drawer-open:checked) .mob-listbox__vehicle-text {
+  clip-path: inset(0 0 0 0);
+  transform: translateX(0);
+  opacity: 1;
+  transition:                        /* opening: after the last vehicle has parked */
+    clip-path var(--sandbox-names) var(--sandbox-ease-out) calc(var(--sandbox-convoy) + var(--row-index) * 40ms),
+    transform var(--sandbox-names) var(--sandbox-ease-out) calc(var(--sandbox-convoy) + var(--row-index) * 40ms),
+    opacity var(--sandbox-names) var(--sandbox-ease-out) calc(var(--sandbox-convoy) + var(--row-index) * 40ms);
+}
+
+
+/* --- Left status edge and selected state: fade in last ---------------- */
+/* Ben, 2026-11-18: "left acuity border and selected state to fade in
+   after vehicle names & states".
+
+   --row-reveal goes 0 to 1 on the list once the last name has finished
+   sliding out (convoy + 250 slide + 5 x 40 stagger). The status edge,
+   the selected fill and the selected ring mix their color by that
+   number. It is a separate number on purpose: tapping a different
+   vehicle while the drawer is open still changes selection at once,
+   without waiting for the opening delay. */
+@property --row-reveal {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+.sandbox-device .ipad-drawer__list {
+  --row-reveal: 0;
+  transition: --row-reveal var(--sandbox-names) var(--sandbox-ease-in);   /* closing: fades out straight away, with the names */
+}
+
+.sandbox-device:has(#sandbox-drawer-open:checked) .ipad-drawer__list {
+  --row-reveal: 1;
+  transition: --row-reveal var(--sandbox-names) var(--sandbox-ease-out) calc(var(--sandbox-convoy) + var(--sandbox-names) + 200ms);
+}
+
+/* Left status edge (library colors, mixed in by --row-reveal) */
+.sandbox-device .mob-listbox__item--vehicle[data-status="critical"] {
+  border-left-color: color-mix(in srgb, var(--MessageDeliveryIconCritical) calc(var(--row-reveal) * 100%), transparent);
+}
+
+.sandbox-device .mob-listbox__item--vehicle[data-status="warning"] {
+  border-left-color: color-mix(in srgb, var(--MessageDeliveryIconWarning) calc(var(--row-reveal) * 100%), transparent);
+}
+
+
+/* --- Selection, CSS only ------------------------------------------------ */
+/* Same look as the library's .is-selected, driven by the row's radio. */
+.sandbox-device .mob-listbox__item--vehicle:has(.sandbox-radio:checked) {
+  color: var(--SelectionForeground);
+  border-left-color: transparent;
+}
+
+.sandbox-device .mob-listbox__item--vehicle:has(.sandbox-radio:checked)::before {
+  opacity: var(--row-reveal);
+}
+
+.sandbox-device .mob-listbox__item--vehicle:not([data-status]):has(.sandbox-radio:checked) .mob-listbox__vehicle-thumb {
+  border-color: color-mix(in srgb, var(--MessageDeliveryIconInfo) calc(var(--row-reveal) * 100%), transparent);
+  background: color-mix(in srgb, var(--MessageDeliveryBackgroundInfo) calc(var(--row-reveal) * 100%), transparent);
+}
+
+/* The convoy shows no selection: the selected vehicle's ring stays plain
+   while it drives and turns blue with the rest of the selected state. */

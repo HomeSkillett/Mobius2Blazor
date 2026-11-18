@@ -24,14 +24,20 @@
   --size-metaSm: 11px;
   --size-icons: 20px;
 
-  /* Font Shorthand (size/line-height family) */
-  --font-hdrLg: var(--size-hdrLg) / var(--lh-hdrLg) var(--header-font);
-  --font-hdrMd: var(--size-hdrMd) / var(--lh-hdrMd) var(--header-font);
-  --font-hdrSm: var(--size-hdrSm) / var(--lh-hdrSm) var(--header-font);
+  /* Font Shorthand (weight size/line-height family)
+     IMPORTANT: the CSS `font` shorthand resets font-weight to "normal" for any
+     longhand not included in the value list. Every one of these tokens was
+     missing its weight, so Thin/Light/Bold styles were silently rendering as
+     normal (400) everywhere they're used. Weights below are sourced from
+     Typography.xaml: HeadingLg=Thin (line 50), HeadingMd=Light (line 56),
+     HeadingSm=Light (line 61), Font_Meta=Bold (line 42, inherited by MetaSm). */
+  --font-hdrLg: var(--font-thin) var(--size-hdrLg) / var(--lh-hdrLg) var(--header-font);
+  --font-hdrMd: var(--font-light) var(--size-hdrMd) / var(--lh-hdrMd) var(--header-font);
+  --font-hdrSm: var(--font-light) var(--size-hdrSm) / var(--lh-hdrSm) var(--header-font);
   --font-default: var(--size-default) / var(--lh-default) var(--default-font);
   --font-Sm: var(--size-Sm) / var(--lh-Sm) var(--default-font);
-  --font-meta: var(--size-meta) / var(--lh-meta) var(--default-font);
-  --font-metaSm: var(--size-metaSm) / var(--lh-metaSm) var(--default-font);
+  --font-meta: var(--font-bold) var(--size-meta) / var(--lh-meta) var(--default-font);
+  --font-metaSm: var(--font-bold) var(--size-metaSm) / var(--lh-metaSm) var(--default-font);
   --font-icons: var(--size-icons) / var(--lh-icons) var(--font-icon);
 
   /* Line Height */

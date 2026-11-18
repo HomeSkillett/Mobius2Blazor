@@ -250,3 +250,160 @@
 .mob-indicator-gauge--toggle[data-status="off"] .mob-indicator-gauge__circle::before {
   border-color: var(--GaugeInvertDataTick);
 }
+
+
+/* =================================================================
+   PANEL CELL LAYOUT (traced line by line to IndicatorGauge.xaml)
+   Use .mob-indicator-gauge--cell when the gauge sits in a gauge
+   panel cell. It gives the layout the WPF template really draws:
+   value inside the ring, label strip overlapping the ring bottom.
+
+   The base rules above were written earlier and differ from master
+   in a few places (ring color, value below the ring, upper-case
+   label). They are left as they are so existing demos do not change.
+   These rules override them for the --cell layout only.
+
+   Text metrics: Typography.xaml line 37 sets LineHeight="Auto", so WPF
+   uses the font's own line spacing. For the Roboto files in master
+   (Asi.Resources.Client.UI/Themes/Fonts) that is usWinAscent 1946 +
+   usWinDescent 512 over 2048 units = 1.2 x font size. The web font
+   files report a taller "normal" line height, so 1.2 is set explicitly.
+   ASSUMPTION: WPF reads the Windows metrics here. If it reads the hhea
+   table instead the factor is 1.172 (under half a pixel at 14px).
+   ================================================================= */
+
+/* XAML: Grid x:Name="_templateRoot" (lines 14-17) filling a 48 x 48
+   cell (GaugeManagerVMBase.cs lines 405-406) */
+.mob-indicator-gauge--cell {
+  position: relative;
+  display: block;
+  width: 48px;                       /* GaugeManagerVMBase.cs line 405 */
+  height: 48px;                      /* GaugeManagerVMBase.cs line 406 */
+  font: var(--font-default);         /* Typography.xaml lines 21-23 */
+  line-height: 1.2;                  /* Typography.xaml line 37, see text metrics note */
+}
+
+/* XAML: Border x:Name="_primaryContainer" BorderThickness="2"
+   BorderBrush=GaugeDataBackgroundBrush (lines 24-35) */
+.mob-indicator-gauge--cell .mob-indicator-gauge__circle::before {
+  border-color: var(--GaugeInvertDataBackground);   /* line 32 */
+}
+
+
+/* --- Value inside the ring (HideIcons state) --------------------- */
+/* XAML: Viewbox x:Name="_gaugeValueLarge" Margin="-5.5,-6,-6.5,-5"
+   Stretch="Uniform" inside the 20 x 20 _iconContainer, which is
+   centered in the 48px ring (lines 76-80, 137-142).
+   Box: x 14 - 5.5 = 8.5 to 34 + 6.5 = 40.5 (32 wide),
+        y 14 - 6   = 8   to 34 + 5   = 39   (31 tall).
+   Text: HeadingMd = Roboto Light 24 (Typography.xaml lines 53-56),
+   centered (line 148), Foreground=GaugeValueForegroundBrush (line 145). */
+.mob-indicator-gauge__ring-value {
+  position: absolute;
+  left: 8.5px;                       /* 14 - 5.5, line 139 */
+  top: 8px;                          /* 14 - 6, line 139 */
+  width: 32px;                       /* 20 + 5.5 + 6.5, lines 78, 139 */
+  height: 31px;                      /* 20 + 6 + 5, lines 79, 139 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font: var(--font-hdrMd);           /* line 146: HeadingMd */
+  line-height: 1.2;                  /* Typography.xaml line 37, see text metrics note */
+  color: var(--GaugeInvertValueForeground);   /* line 145 */
+  white-space: nowrap;
+}
+
+/* VIEWBOX NOTE: WPF scales the value uniformly until it touches the
+   32 x 31 box (line 140). CSS cannot measure text without JavaScript.
+   The --fit-N classes below apply that same scale for a value that is
+   N digits wide. Roboto Light digits all share one advance width,
+   1135 / 2048 = 0.5542 em (Roboto-Light.ttf in master), and the text
+   height is 1.2 em (see the text metrics note above), so:
+     scale = min( 31 / (24 x 1.2), 32 / (N x 24 x 0.5542) )
+   Count "." "-" and ":" as half a digit and round up.
+   Values with letters are only an approximation. An exact fit needs a
+   runtime measurement in Blazor. */
+.mob-indicator-gauge__ring-value--fit-1 { font-size: calc(31px / 1.2); }                /* height limited = 25.8px */
+.mob-indicator-gauge__ring-value--fit-2 { font-size: calc(31px / 1.2); }                /* height limited = 25.8px */
+.mob-indicator-gauge__ring-value--fit-3 { font-size: calc(32px / (3 * 0.5542)); }       /* = 19.2px */
+.mob-indicator-gauge__ring-value--fit-4 { font-size: calc(32px / (4 * 0.5542)); }       /* = 14.4px */
+.mob-indicator-gauge__ring-value--fit-5 { font-size: calc(32px / (5 * 0.5542)); }       /* = 11.5px */
+.mob-indicator-gauge__ring-value--fit-6 { font-size: calc(32px / (6 * 0.5542)); }       /* = 9.6px */
+.mob-indicator-gauge__ring-value--fit-7 { font-size: calc(32px / (7 * 0.5542)); }       /* = 8.2px */
+.mob-indicator-gauge__ring-value--fit-8 { font-size: calc(32px / (8 * 0.5542)); }       /* = 7.2px */
+.mob-indicator-gauge__ring-value--fit-9 { font-size: calc(32px / (9 * 0.5542)); }       /* = 6.4px */
+
+
+/* --- Icon inside the ring (ShowIcons state) ---------------------- */
+/* XAML: Path 20 x 20 Stretch="Uniform" (lines 90-107). The Normal
+   state animates the fill to the control Foreground (lines 231-232),
+   which is ForegroundPrimary (Typography.xaml line 20). */
+.mob-indicator-gauge--cell .mob-indicator-gauge__icon {
+  color: var(--ForegroundPrimary);   /* IndicatorGauge.xaml lines 231-232, Typography.xaml line 20 */
+  opacity: 1;
+}
+
+
+/* --- Label strip ------------------------------------------------- */
+/* XAML: Border x:Name="_labelBorder" Margin="-8,-5"
+   HorizontalAlignment="Stretch" VerticalAlignment="Bottom"
+   Background=GaugeBackgroundBrush (lines 174-180).
+   It overlaps the bottom of the ring and hides it.
+   Inner StackPanel Margin="2,0,-2,0" HorizontalAlignment="Center"
+   Orientation="Horizontal" (lines 181-185): Label, Value, Units. */
+.mob-indicator-gauge__label-strip {
+  position: absolute;
+  left: -8px;                        /* line 176 */
+  right: -8px;                       /* line 176 */
+  bottom: -5px;                      /* line 176 */
+  display: flex;
+  justify-content: center;           /* line 183 */
+  padding-left: 4px;                 /* line 182: Margin 2,0,-2,0 moves the centered content 2px right */
+  background: var(--GaugeInvertBackground);   /* line 179 */
+  color: var(--GaugeInvertValueForeground);   /* lines 194, 206, 215 */
+  white-space: nowrap;
+}
+
+/* XAML: each TextBlock has common:Margin.Horizontal="1"
+   (lines 193, 205, 214). No case conversion on any of them. */
+.mob-indicator-gauge__strip-text {
+  margin: 0 1px;
+}
+
+
+/* --- Commandable ring -------------------------------------------- */
+/* XAML: VisualState "CanCommandButton" sets _statusBorderContainer
+   Opacity to 1 (line 525). _selectedBorder is a 2px SelectionPrimary
+   ring just inside the 2px outer border (lines 41-48).
+   IconOff shows it with _selectedBorderCover Margin=1, so 1px of it
+   is visible (lines 353, 358). IconOn uses Margin=2, so the full 2px
+   is visible (lines 376, 392). */
+/* XAML: Button x:Name="_commandButton" Style=TransparentButton covers
+   the gauge (lines 221-225). In HTML the gauge root is the <button>,
+   so strip the browser button chrome. */
+.mob-indicator-gauge--commandable {
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.mob-indicator-gauge--commandable .mob-indicator-gauge__circle::after {
+  content: "";
+  position: absolute;
+  inset: 2px;                        /* inside BorderThickness="2", line 33 */
+  border-radius: 50%;
+  border: 1px solid var(--SelectionPrimary);   /* IconOff: cover Margin 1, line 358 */
+  box-sizing: border-box;
+}
+
+.mob-indicator-gauge--commandable[data-icon-state="on"] .mob-indicator-gauge__circle::after {
+  border-width: 2px;                 /* IconOn: cover Margin 2, line 392 */
+}
+
+/* XAML: VisualState "MouseOver" animates the icon fill to
+   MouseOverPrimary (lines 241-242). Only entered when the gauge is
+   enabled and commandable (IndicatorGauge.cs line 163). */
+.mob-indicator-gauge--commandable:hover .mob-indicator-gauge__icon {
+  color: var(--MouseOverPrimary);
+}

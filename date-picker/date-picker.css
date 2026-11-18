@@ -1,0 +1,979 @@
+/* =============================================
+   DatePicker — closed field + popup calendar
+
+   XAML source: Common/Asi.Resources.Client.UI/DefaultControls.xaml
+     6796  Templates_CalendarDayButton
+     6947  Templates_CalendarButton      (month & year cells)
+     7050  Templates_CalendarItem        (popup chrome)
+     7055  Templates_DateTitleButton     (header title)
+     7474  Templates_Calendar            (shadow host)
+     7492  Templates_DatePicker          (closed field)
+     7697  implicit DatePicker style     (defaults)
+     1176  Templates_SimpleIconButton    (icon + prev/next)
+     2762  Styles_SimpleIconButton
+     2634  implicit Button style         (header title inherits this)
+     359   Templates_OnDemandTextBox     (the date text)
+     36    Styles_FocusVisualStyle       (2px ring, Margin="0")
+
+   Full spec + state matrix: specs/DatePicker-SPEC.md
+
+   Icons — Mobius-System-Icons (codepoints from the .ttf cmap):
+     \e752  Calendar            field button      (XAML 7560 Icon_Calendar)
+     \e008  Arrow_PointerUpSm   previous          (XAML 7167)
+     \e00b  Arrow_PointerDownSm next              (XAML 7182)
+   Navigation is UP/DOWN in Master, not left/right — matches the
+   vertical slide animation on the grid (XAML 7354-7417).
+
+   ---------------------------------------------
+   XAML SETTERS THAT NEVER RENDER
+   Traced and deliberately NOT ported:
+
+   1. Popup border. Styles_Calendar sets BorderBrush (7688) and
+      BorderThickness="1" (7690), but Templates_Calendar
+      (7474-7490) never TemplateBinds either, and CalendarItem's
+      outer Border (7126) sets Background only. The popup has NO
+      border — shadow separates it from the page.
+
+   2. TextBox padding. Styles_OnDemandTextBox sets Padding="2,0"
+      (634), but Templates_OnDemandTextBox never binds Padding.
+      _contentElement uses Margin="{TemplateBinding Tag}" (385)
+      instead, and Tag is the Thickness -2,0,0,-2 (635-637).
+      So the effective inset is a NEGATIVE 2px left / 2px bottom,
+      not a positive 2px. Ported as a margin, not padding.
+
+   3. SimpleIconButton padding. Styles_SimpleIconButton sets
+      Padding="0,3" (2769), but all three buttons in this
+      component override it with Padding="0" (7553, 7162, 7177).
+      No 3px outer margin anywhere here.
+
+   4. BlackoutDayStates (6914-6917). Both NormalDay and
+      BlackoutDay are declared as EMPTY VisualStates. Blackout
+      dates get no styling of their own; they fall through to
+      WPF's IsEnabled=false path.
+
+   5. CalendarButtonFocusStates (6902, 7033) and ActiveStates
+      (6906, 7037). All declared EMPTY. Day and month cells have
+      no focus ring in Master.
+
+   ---------------------------------------------
+   VALUES CLAMPED BY MinHeight / MinWidth
+   Declared one thing, renders another:
+
+   - Header title: Height="40" (7143) → 44px via implicit Button
+     MinHeight (2643). Also gains MinWidth 90 (2642).
+   - Prev / Next: Height="40" (7160, 7175) → 44px via
+     Styles_SimpleIconButton MinHeight (2768). Width stays 40.
+   - Field icon button: no Height declared → 44px min via 2768.
+
+   ---------------------------------------------
+   Interaction classes (state gallery / Blazor):
+     .is-hovered     simulated :hover
+     .is-focused     simulated :focus-visible
+     .is-pressed     simulated :active
+     .is-disabled    Disabled VisualState
+     .is-readonly    IsReadOnly=True — no highlight, grey text
+
+   Day cell modifiers:
+     .is-selected            Selected VisualState
+     .is-today               IsToday=True, IsSelected=False
+     .is-today.is-selected   IsToday=True, IsSelected=True
+     .is-inactive            IsInactive=True (adjacent month)
+     .is-blackout            outside DisplayDateStart/End
+   ============================================= */
+
+
+/* =============================================
+   COMPONENT TOKENS
+   On :root so isolated cells work outside a
+   .mob-calendar ancestor (state galleries, and
+   Blazor components that render a day cell alone).
+   Both values alias existing global tokens — no
+   new numbers invented.
+   ============================================= */
+
+:root {
+  /* 40px day cell / nav button width / label row.
+     XAML 6802, 7159, 7210. Exact match to --icon-btn-lg,
+     aliased because "icon button" is the wrong noun here.
+     SPEC open question C. */
+  --calendar-cell: var(--icon-btn-lg);
+
+  /* Inner circle inset. XAML 6806 Grid Margin="6" → 28x28 in a 40px cell. */
+  --calendar-day-inset: var(--size-6);
+
+  /* Hover ring inset. XAML 6816 Margin="-3" on the inner grid → 34x34. */
+  --calendar-hover-inset: var(--size-3);
+
+  /* Month/year cell inner inset. XAML 6956 Grid Margin="10". */
+  --calendar-month-inset: var(--spacing-gap-lg);
+
+  /* Two durations here have no global token. The --transition-*
+     family in spacingTokens.css covers 100/160/500ms only.
+     Worth promoting if another component needs them. SPEC §7. */
+  --transition-load: 300ms;   /* XAML 7322 — popup load fade */
+  --transition-zoom: 750ms;   /* XAML 7426 — DisplayMode scale 0.7 → 1 */
+
+  /* Focus ring geometry. Styles_FocusVisualStyle (36-48) is a
+     Border with Margin="0" BorderThickness="2" — the ring sits
+     exactly ON the control bounds, no offset. */
+  --calendar-focus-offset: 0;
+}
+
+
+/* =============================================
+   1. CLOSED FIELD
+   XAML: Templates_DatePicker 7492-7654
+
+   NESTING DEVIATION (SPEC open question F):
+   Master stacks three sibling Borders — _normalBorder
+   (7522), _inputMouseOverBorder (7528), _inputFocusBorder
+   (7536) — purely to cross-fade hover and focus at
+   different durations. All three paint the SAME border
+   colour, --MouseOverPrimary (7531, 7539), so hover and
+   focus are visually identical in Master; only duration
+   differs. Collapsed to one element with :hover /
+   :focus-within. Flagged rather than silently flattened.
+
+   NOT PORTED, deliberately:
+   - Rectangle _placementTarget (7591) — 1x1 transparent
+   - Grid PART_DisabledVisual (7611) — opacity 0
+     Both are WPF layout scaffolding with zero pixels.
+   - i:Interaction.Triggers (7502-7521) force MouseOver/
+     Normal on load because WPF VisualStates don't
+     evaluate until first transition. CSS :hover has no
+     such gap. Nothing to build.
+   ============================================= */
+
+.mob-datepicker {
+  display: inline-flex;
+  align-items: center;
+  box-sizing: border-box;
+  min-height: var(--touch);                        /* 44px — XAML 7498 TouchSize */
+  padding: 0 var(--spacing-label-to-control-sm);   /* XAML 7704 Padding="4,0" — L/R only */
+  background-color: var(--BackgroundInput);        /* XAML 7700 */
+  border: var(--border-width) solid var(--BackgroundInputOutline); /* XAML 7699, 7705 */
+  transition: border-color var(--transition-mouse-out); /* 500ms — XAML 7623 */
+
+  /* XAML 7708 sets Margin="0,-4,0,4" — a net-zero shift that only
+     matters inside a WPF vertical stack. Left off so the field sits
+     where its container puts it. Uncomment for exact WPF parity:
+     margin: -4px 0 4px; */
+}
+
+/* --- Calendar icon button. XAML PART_Button 7549 --- */
+.mob-datepicker__button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  min-height: var(--touch);                        /* 44px — XAML 2768 MinHeight clamp */
+  padding: 0;                                      /* XAML 7553 Padding="0" */
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: var(--ForegroundPrimary);                 /* XAML 7556 TemplateBinding →
+                                                      7698 ForegroundPrimaryBrush */
+  margin: -1px var(--spacing-label-to-control-sm) -1px 0; /* XAML 7552 "0,-1,4,-1" */
+  transition: color var(--transition-mouse-out);   /* 500ms */
+}
+
+.mob-datepicker__button::before {
+  content: "\e752";                                /* Calendar — XAML 7560 */
+  font: var(--font-icons);                         /* 20px/20px Mobius-System-Icons */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* --- Date text. XAML PART_TextBox 7564 → TouchTextBox 7577 --- */
+.mob-datepicker__text {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 0;                                      /* Padding="2,0" (634) never binds —
+                                                      see header note 2 */
+  margin: 0 0 -2px -2px;                           /* XAML 635-637 Tag Thickness
+                                                      "-2,0,0,-2" → _contentElement
+                                                      Margin (385) */
+  border: none;
+  background: transparent;                         /* XAML 7568, 7579 */
+  font: var(--font-default);                       /* 14px/20px — Typography.xaml 21-23 */
+  font-weight: var(--font-normal);
+  color: var(--ForegroundAction);                  /* XAML 641 */
+
+  /* No transition. Styles_OnDemandTextBox 642-649 uses plain Setters
+     inside Triggers, not storyboards — the colour change is instant
+     in Master. */
+}
+
+.mob-datepicker__text::placeholder {
+  /* Master has NO placeholder. Templates_OnDemandTextBox (359-410)
+     contains no placeholder element at all — that machinery lives
+     only in the two earlier TextBox templates. An empty date field
+     renders empty. Forced off in case a Blazor binding adds one. */
+  color: transparent;
+}
+
+
+/* --- Field: hover. XAML MouseOver VisualState 7627-7632 --- */
+.mob-datepicker:hover:not(.is-disabled):not(.is-readonly),
+.mob-datepicker.is-hovered {
+  border-color: var(--MouseOverPrimary);           /* XAML 7531 */
+  transition: border-color var(--transition-mouse-over); /* 160ms — XAML 7629 */
+}
+
+/* --- Field: focus. XAML Focused VisualState 7646-7650 ---
+   Same colour as hover (XAML 7539); only duration differs. */
+.mob-datepicker:focus-within:not(.is-disabled):not(.is-readonly),
+.mob-datepicker.is-focused {
+  border-color: var(--MouseOverPrimary);           /* XAML 7539 */
+  transition: border-color var(--transition-focus); /* 160ms — XAML 7648 */
+}
+
+/* --- Field: disabled. XAML Disabled VisualState 7633-7638 --- */
+.mob-datepicker.is-disabled {
+  opacity: var(--opacity-disabled);                /* 0.35 — XAML 7636 */
+  pointer-events: none;
+  transition: opacity var(--transition-disable);   /* 100ms — XAML 7636 */
+}
+
+.mob-datepicker.is-disabled .mob-datepicker__text {
+  color: var(--ForegroundPrimary);                 /* XAML 647 */
+}
+
+/* --- Field: read-only ---
+   Not a VisualState. XAML 7534 / 7542 collapse both highlight
+   borders when IsReadOnly=True, so the field never highlights.
+
+   LOWER CONFIDENCE: the grey text relies on Styles_OnDemandTextBox
+   trigger 644, but the template never binds IsReadOnly from the
+   DatePicker down to the inner TouchTextBox — it works only via
+   WPF inherited TextEditor.IsReadOnly metadata. Needs a runtime
+   check. SPEC open question H. */
+.mob-datepicker.is-readonly .mob-datepicker__text {
+  color: var(--ForegroundPrimary);                 /* XAML 644 */
+  cursor: default;
+}
+
+/* --- Icon button states. Templates_SimpleIconButton 1176-1242 ---
+   Not scoped to a .mob-datepicker ancestor, so a standalone icon
+   button behaves the same as one inside a field.
+   MouseOver, Pressed and Focused all resolve to the same colour;
+   Pressed and MouseOver are visually identical. */
+.mob-datepicker__button:hover:not(.is-disabled),
+.mob-datepicker__button.is-hovered {
+  color: var(--MouseOverPrimary);
+  transition: color var(--transition-mouse-over);  /* 160ms */
+}
+
+.mob-datepicker__button:active:not(.is-disabled),
+.mob-datepicker__button.is-pressed {
+  color: var(--MouseOverPrimary);
+  transition: color var(--transition-mouse-pressed); /* 160ms */
+}
+
+/* Focus ring — Styles_SimpleIconButton sets FocusVisualStyle
+   (2765) = Styles_FocusVisualStyle (36-48): a 2px
+   --MouseOverPrimary Border at Margin="0". These buttons DO
+   have a ring; only the calendar cells don't. */
+.mob-datepicker__button:focus-visible,
+.mob-datepicker__button.is-focused {
+  color: var(--MouseOverPrimary);
+  outline: var(--border-width-focused) solid var(--MouseOverPrimary); /* 2px — XAML 43 */
+  outline-offset: var(--calendar-focus-offset);    /* 0 — XAML 41 Margin="0" */
+  transition: color var(--transition-focus);       /* 160ms */
+}
+
+/* --- Icon button: disabled. XAML Disabled VisualState 1219-1224 --- */
+.mob-datepicker__button:disabled,
+.mob-datepicker__button.is-disabled {
+  opacity: var(--opacity-disabled);                /* 0.35 */
+  pointer-events: none;
+  transition: opacity var(--transition-disable);   /* 100ms */
+}
+
+
+/* =============================================
+   1b. LARGE VARIANT — ErrorReport.xaml
+   The only consumer that overrides the default size.
+   Every value here is hardcoded in ErrorReport.xaml with
+   no token behind it. SPEC open question B.
+   ============================================= */
+
+.mob-datepicker--lg {
+  width: var(--field-input-width);                 /* 220px — ErrorReport.xaml 260 */
+  height: 53px;                                    /* ErrorReport.xaml 261 Height="53" —
+                                                      a fixed height, not a minimum.
+                                                      No token; sits between
+                                                      --field-height 44 and
+                                                      --field-height-lg 58 */
+  min-height: 0;                                   /* release the 44px floor above */
+  padding: 15px 15px 16px 21px;                    /* ErrorReport.xaml 263 "21,15,15,16" (L,T,R,B) */
+  margin-top: 7px;                                 /* ErrorReport.xaml 262 "0,7,0,0" */
+  overflow: hidden;                                /* 15+16 padding + 22px line box + 2px
+                                                      border = 55px in 53px. WPF clips the
+                                                      same way. SPEC open question B. */
+}
+
+.mob-datepicker--lg .mob-datepicker__text {
+  font-size: var(--size-hdrSm);                    /* 18px — ErrorReport.xaml 264 */
+  line-height: var(--lh-hdrSm);
+}
+
+.mob-datepicker--lg .mob-datepicker__button {
+  min-height: 0;                                   /* the 44px clamp would exceed 53px
+                                                      minus 31px of padding */
+}
+
+/* Floating label + format hint. ErrorReport.xaml 216-226, 269, 270. */
+.mob-datepicker-field {
+  display: inline-flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.mob-datepicker-field__label {
+  position: absolute;
+  top: 0;
+  left: 14px;                                      /* ErrorReport.xaml 269 Margin="14,0,0,0" */
+  z-index: 1;
+  font-size: 12px;                                 /* ErrorReport.xaml 223 — no token
+                                                      (--size-Sm is 11px) */
+  color: var(--ForegroundPrimary);                 /* ErrorReport.xaml 219 */
+  background-color: var(--BackgroundPrimary);      /* ErrorReport.xaml 222 */
+  pointer-events: none;                            /* ErrorReport.xaml 224 IsHitTestVisible=False */
+}
+
+.mob-datepicker-field__hint {
+  margin-left: 14px;                               /* ErrorReport.xaml 270 */
+  font-size: 12px;                                 /* ErrorReport.xaml 270 */
+  color: var(--ForegroundDisabled);                /* ErrorReport.xaml 270 */
+}
+
+/* Disabled label — ErrorReport.xaml 236-242 animates to
+   ForegroundDisabled over GeneralDisableDuration. */
+.mob-datepicker-field.is-disabled .mob-datepicker-field__label {
+  color: var(--ForegroundDisabled);
+  transition: color var(--transition-disable);     /* 100ms */
+}
+
+
+/* =============================================
+   2. POPUP CALENDAR
+   XAML: Templates_Calendar 7474 + Templates_CalendarItem 7050
+
+   NO BORDER — see header note 1.
+   Width: 7 x 40px = 280px exactly.
+
+   NOT PORTED: Rectangle PART_DisabledVisual (7334) is
+   Collapsed — zero pixels.
+   ============================================= */
+
+.mob-calendar {
+  box-sizing: border-box;
+  width: calc(7 * var(--calendar-cell));           /* 280px — XAML 7276-7284 */
+  background-color: var(--BackgroundPrimary);      /* XAML 7126 */
+
+  /* BoxShadow.cs:12 Depth default 20 → 0 0 20px, spread outward via
+     EdgeMargin -20 (BoxShadow.cs:11).
+     NOTE: --shadow-lg carries --ShadowElements alpha 0.133
+     (LightTheme.css:44), while the XAML BoxShadow uses
+     ShadowOpacity 0.1 (LightTheme.xaml:2). The token is ~33%
+     stronger than Master. Pre-existing discrepancy in
+     box-shadow.css, not introduced here — flagging, not forking. */
+  box-shadow: var(--shadow-lg);
+
+  /* XAML 7316-7331 attaches the 300ms Loaded fade to the INNER Grid
+     (7127), below Border 7126. Applied to the host here, which also
+     fades the shadow in — a minor deviation that avoids adding a
+     wrapper element with no other purpose. */
+  animation: mob-calendar-load var(--transition-load) ease-out;
+}
+
+/* XAML 7480 Margin="20" reserves bleed room for the shadow, and the
+   Popup cancels it with HorizontalOffset/VerticalOffset -20 (7605,
+   7609). CSS box-shadow doesn't consume layout space, so both the
+   margin and the offsets are no-ops here. Nothing to port. */
+
+@keyframes mob-calendar-load {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* --- Popup: disabled. XAML CalendarItem VisualStates 7339-7350 ---
+   Duration is 00:00:00 — instant, no transition. */
+.mob-calendar.is-disabled {
+  opacity: var(--opacity-disabled);                /* 0.35 — XAML 7347 */
+  pointer-events: none;
+  animation: none;                                 /* else the load fade animates to 1
+                                                      before snapping back to 0.35 */
+}
+
+
+/* =============================================
+   2a. HEADER ROW
+   XAML 7132-7186. ClipToBounds (7134) → overflow hidden,
+   so the sliding title is masked at the edges.
+   Row is 44px, not the declared 40 — see header note.
+   ============================================= */
+
+.mob-calendar__header {
+  display: flex;
+  align-items: center;
+  height: var(--touch);                            /* 44px — clamped, see header note */
+  overflow: hidden;                                /* XAML 7134 ClipToBounds */
+}
+
+/* --- Title button. Templates_DateTitleButton 7055-7123 --- */
+.mob-calendar__title {
+  flex: 0 0 auto;                                  /* XAML 7146 HorizontalAlignment="Left" —
+                                                      auto width, does not stretch */
+  min-width: var(--btn-min-width);                 /* 90px — XAML 2642, inherited from the
+                                                      implicit Button style */
+  height: var(--touch);                            /* 44px — XAML 7143 clamped by 2643 */
+  margin: 1px 0 -1px 15px;                         /* XAML 7144 "15,1,0,-1" */
+  padding: 0;                                      /* XAML 7145 */
+  border: none;
+  background: none;
+  cursor: pointer;
+  font: var(--font-default);
+  font-weight: var(--font-normal);
+  color: var(--ForegroundAction);                  /* XAML 7149 */
+  transition: color var(--transition-mouse-out);   /* 500ms — XAML 7081 */
+
+  /* Slides in lockstep with the grid. XAML 7152-7154 binds this
+     button's TranslateTransform.Y to _calendarTranslate.Y. */
+  translate: 0 0;
+}
+
+.mob-calendar__title:hover,
+.mob-calendar__title.is-hovered {
+  color: var(--MouseOverPrimary);                  /* XAML 7087 */
+  transition: color var(--transition-mouse-over);  /* 160ms */
+}
+
+.mob-calendar__title:active,
+.mob-calendar__title.is-pressed {
+  color: var(--ForegroundAction);                  /* reverts to base — XAML 7093 */
+  opacity: var(--opacity-pressed);                 /* 0.8 — XAML 7094 */
+  transition: color var(--transition-mouse-pressed),
+              opacity var(--transition-mouse-pressed); /* 160ms both — XAML 7093-7094 */
+}
+
+.mob-calendar__title:focus-visible,
+.mob-calendar__title.is-focused {
+  color: var(--MouseOverPrimary);                  /* XAML 7112 */
+  outline: var(--border-width-focused) solid var(--MouseOverPrimary); /* 2px — XAML 2637 → 43 */
+  outline-offset: var(--calendar-focus-offset);    /* 0 — XAML 41 */
+  transition: color var(--transition-focus);       /* 160ms */
+}
+
+/* The disabled title is NOT dimmed. Alone among every surface in
+   this component, its Disabled VisualState animates root opacity
+   to 1.0 (XAML 7100). Disabled reads as a colour change only:
+   blue #0075A1 → grey #555555 at full opacity (XAML 7120). */
+.mob-calendar__title:disabled,
+.mob-calendar__title.is-disabled {
+  color: var(--ForegroundPrimary);                 /* XAML 7120 */
+  opacity: 1;                                      /* XAML 7100 — deliberate */
+  pointer-events: none;
+  transition: color var(--transition-disable);     /* 100ms */
+}
+
+/* --- Prev / Next. XAML 7156, 7171 ---
+   40 wide (declared) x 44 tall (MinHeight clamp, XAML 2768). */
+.mob-calendar__nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: var(--calendar-cell);                     /* 40px — XAML 7159, 7174 */
+  height: var(--touch);                            /* 44px — clamped from 40 */
+  padding: 0;                                      /* XAML 7162, 7177 */
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: var(--ForegroundPrimary);                 /* XAML 2770 */
+  transition: color var(--transition-mouse-out);   /* 500ms */
+}
+
+.mob-calendar__nav::before {
+  font: var(--font-icons);                         /* 20px */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.mob-calendar__nav--prev::before { content: "\e008"; } /* Arrow_PointerUpSm — XAML 7167 */
+.mob-calendar__nav--next::before { content: "\e00b"; } /* Arrow_PointerDownSm — XAML 7182 */
+
+.mob-calendar__nav:hover:not(.is-disabled),
+.mob-calendar__nav.is-hovered {
+  color: var(--MouseOverPrimary);
+  transition: color var(--transition-mouse-over);  /* 160ms */
+}
+
+.mob-calendar__nav:active:not(.is-disabled),
+.mob-calendar__nav.is-pressed {
+  color: var(--MouseOverPrimary);
+  transition: color var(--transition-mouse-pressed); /* 160ms */
+}
+
+.mob-calendar__nav:focus-visible,
+.mob-calendar__nav.is-focused {
+  color: var(--MouseOverPrimary);
+  outline: var(--border-width-focused) solid var(--MouseOverPrimary); /* 2px — XAML 2765 → 43 */
+  outline-offset: var(--calendar-focus-offset);    /* 0 — XAML 41 */
+  transition: color var(--transition-focus);       /* 160ms */
+}
+
+.mob-calendar__nav:disabled,
+.mob-calendar__nav.is-disabled {
+  opacity: var(--opacity-disabled);                /* 0.35 */
+  pointer-events: none;
+  transition: opacity var(--transition-disable);   /* 100ms */
+}
+
+
+/* =============================================
+   2b. GRID AREA
+   XAML 7187-7315. The Row 1 base fill is a separate
+   Border (7189) painting BackgroundStrong over the
+   popup's BackgroundPrimary.
+   ============================================= */
+
+.mob-calendar__body {
+  background-color: var(--BackgroundStrong);       /* #FFFFFF — XAML 7189 */
+  overflow: hidden;                                /* XAML 7255 ClipToBounds */
+}
+
+/* --- Day-of-week labels. XAML ExpanderItem 7197 → UniformGrid 7209 --- */
+.mob-calendar__weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, var(--calendar-cell)); /* XAML 7211 Columns="7" */
+  box-sizing: border-box;                          /* the divider is a sibling Border
+                                                      overlaying the same Grid cell in
+                                                      XAML (7204 vs 7209), so the line
+                                                      sits INSIDE the 40px */
+  height: var(--calendar-cell);                    /* 40px — XAML 7210 */
+
+  /* XAML 7205-7207: BorderThickness="0,0,0,1" with Opacity="0.5" on
+     the divider Border ONLY, not on the labels. color-mix keeps the
+     label text fully opaque while halving the line. */
+  border-bottom: var(--border-width) solid
+                 color-mix(in srgb, var(--InnerLines) 50%, transparent);
+
+  transition: height var(--transition-expand),
+              opacity var(--transition-expand);    /* 500ms ExpanderItem */
+}
+
+.mob-calendar__weekday {
+  display: flex;
+  justify-content: center;                         /* XAML 7214 HorizontalAlignment=Center */
+
+  /* XAML sets HorizontalAlignment only; VerticalAlignment defaults to
+     Stretch, so the TextBlock fills the 40px row and its text sits at
+     the TOP. Medium confidence — same class as SPEC open question D,
+     worth a screenshot check. */
+  align-items: flex-start;
+
+  font: var(--font-default);                       /* 14px — no override in 6790-7711 */
+  font-weight: var(--font-normal);
+  color: var(--ForegroundStrong);                  /* XAML 7215 */
+}
+
+/* Saturday + Sunday are dimmed. XAML 7216, 7247 Opacity="0.45".
+   No token exists for 0.45. */
+.mob-calendar__weekday--weekend {
+  opacity: 0.45;
+}
+
+/* The label row is closed by DEFAULT (XAML 7201 IsOpened="False");
+   only the Month DataTrigger opens it (7419). Year and Decade
+   simply never open it. */
+.mob-calendar--year .mob-calendar__weekdays,
+.mob-calendar--decade .mob-calendar__weekdays {
+  height: 0;
+  opacity: 0;
+  border-bottom-width: 0;
+  overflow: hidden;
+}
+
+
+/* =============================================
+   2c. VIEW GRIDS
+   XAML PART_MonthView 7271 (7 cols x 7 rows, Auto)
+        PART_YearView  7295 (4 cols x 3 rows, *)
+   Year and Decade share PART_YearView; only the button
+   content differs. XAML 7436-7437, 7454-7455.
+
+   Uses the individual `scale` and `translate` properties
+   rather than `transform`, so the DisplayMode zoom and the
+   prev/next slide can run independently — matching XAML
+   7261-7269, where ScaleTransform and TranslateTransform
+   sit in one TransformGroup and are driven separately.
+   A single `transform` shorthand cannot express that.
+   ============================================= */
+
+.mob-calendar__grid {
+  display: grid;
+  animation:
+    mob-calendar-zoom-fade var(--transition-unfocus) ease-out,    /* 500ms — XAML 7425 */
+    mob-calendar-zoom-scale var(--transition-zoom) ease-in-out;   /* 750ms — XAML 7426 */
+}
+
+.mob-calendar__grid--month {
+  grid-template-columns: repeat(7, var(--calendar-cell)); /* XAML 7276-7283 */
+
+  /* XAML 7285-7293 declares SEVEN Auto rows while shipping a separate
+     UniformGrid of day labels (7209). In stock WPF, CalendarItem
+     generates its own day titles into row 0 of PART_MonthView — if it
+     still does so here, Master's month view is one 40px row taller
+     than this grid. Unresolvable from XAML alone; left as implicit
+     rows pending a screenshot. SPEC open question I. */
+}
+
+.mob-calendar__grid--year {
+  grid-template-columns: repeat(4, 1fr);           /* XAML 7300-7305 Width="*" */
+  grid-template-rows: repeat(3, 1fr);              /* XAML 7306-7310 */
+}
+
+/* Entry animation, all three DisplayModes. XAML 7423-7432,
+   7441-7450, 7459-7468 — identical storyboards.
+   SmoothEase EaseInOut approximated with ease-in-out. */
+@keyframes mob-calendar-zoom-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes mob-calendar-zoom-scale {
+  from { scale: 0.7; }                             /* XAML 7426 From="0.7" */
+  to   { scale: 1; }
+}
+
+/* Navigation slide. XAML 7354-7385 (next) and 7386-7417 (prev):
+   3 keyframes over 500ms, BeginTime 00:00:00.03. QuinticEase
+   EaseOut is attached ONLY to the final keyframe (7377-7379,
+   7409-7411), so the 0→150ms segment is linear.
+   The two storyboards RemoveStoryboard each other (7356, 7388),
+   so rapid clicks cancel rather than queue.
+
+   Apply to BOTH the grid and the title — XAML 7152-7154 binds the
+   title's TranslateTransform.Y to the same _calendarTranslate.Y. */
+.mob-calendar__grid.is-sliding-next,
+.mob-calendar__title.is-sliding-next {
+  animation-name: mob-calendar-slide-next;
+  animation-duration: var(--transition-unfocus);   /* 500ms — XAML 7363 */
+  animation-delay: 30ms;                           /* XAML 7360 BeginTime 00:00:00.03 */
+  animation-timing-function: linear;               /* eased per-keyframe, not overall */
+  animation-fill-mode: backwards;
+}
+
+.mob-calendar__grid.is-sliding-prev,
+.mob-calendar__title.is-sliding-prev {
+  animation-name: mob-calendar-slide-prev;
+  animation-duration: var(--transition-unfocus);
+  animation-delay: 30ms;
+  animation-timing-function: linear;
+  animation-fill-mode: backwards;
+}
+
+@keyframes mob-calendar-slide-next {
+  0%   { translate: 0 60px; }                      /* XAML 7367 */
+  30%  { translate: 0 10px;                        /* XAML 7371 @ 150ms of 500ms */
+         animation-timing-function: cubic-bezier(0.23, 1, 0.32, 1); } /* QuinticEase
+                                                      EaseOut — XAML 7378 */
+  100% { translate: 0 0; }                         /* XAML 7375 */
+}
+
+@keyframes mob-calendar-slide-prev {
+  0%   { translate: 0 -60px; }                     /* XAML 7399 */
+  30%  { translate: 0 -10px;
+         animation-timing-function: cubic-bezier(0.23, 1, 0.32, 1); } /* XAML 7410 */
+  100% { translate: 0 0; }                         /* XAML 7407 */
+}
+
+
+/* =============================================
+   3. DAY CELL
+   XAML: Templates_CalendarDayButton 6796-6945
+
+   Master layers four absolutely-positioned Borders plus a
+   nested ContentControl pair. Rendered here as one button
+   with two pseudo-elements, because three of the four
+   Borders are mutually exclusive fills:
+     ::before  = state fill  (selected / today / today+selected)
+     ::after   = hover ring  (_mouseOverElement 6814)
+
+   PAINT ORDER matters. XAML child order inside the Margin="6"
+   Grid is: _selectedElement (6807) → _mouseOverElement (6814)
+   → _todayElement (6825) → _todaySelectedElement (6834).
+   So the hover ring sits BELOW both today layers but ABOVE
+   the plain selection fill. Reproduced with z-index:
+     plain selected fill   z 0   (below hover)
+     hover ring            z 0   (source order puts it above)
+     today fills           z 1   (above hover)
+     the number            z 2   (always on top)
+
+   Geometry, all from XAML:
+     cell         40 x 40      6802-6803
+     inner circle 28 x 28      6806 Margin="6"
+     hover ring   34 x 34      6816 Margin="-3" on the inner grid
+     radius       50%          6810 CornerRadius="100000"
+
+   NOT PORTED: common:Margin.Top="-3" (6846). That nudge
+   compensates for Roboto Condensed's baseline inside a WPF
+   ContentControl. Flexbox centring is correct in a browser;
+   re-adding it would push the number off-centre.
+   SPEC open question D — compare against a screenshot.
+   ============================================= */
+
+.mob-calendar__day {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: var(--calendar-cell);                     /* 40px — XAML 6802 */
+  height: var(--calendar-cell);                    /* 40px — XAML 6803 */
+  padding: 0;
+  border: none;
+  background: transparent;                         /* XAML 6804 — hit-test only */
+  cursor: pointer;
+  font: var(--font-default);                       /* 14px — no override in 6790-7711 */
+  font-weight: var(--font-normal);
+  color: var(--ForegroundPrimary);                 /* XAML 7660 */
+  transition: opacity var(--transition-mouse-out); /* 500ms — XAML 6865 */
+}
+
+/* State fill — _selectedElement 6807 / _todayElement 6825 /
+   _todaySelectedElement 6834. Transparent until a modifier
+   claims it. */
+.mob-calendar__day::before {
+  content: "";
+  position: absolute;
+  inset: var(--calendar-day-inset);                /* 6px → 28x28 — XAML 6806 */
+  border-radius: 50%;                              /* XAML 6810 */
+  z-index: 0;
+}
+
+/* Hover ring — _mouseOverElement 6814 wrapping a Border at
+   Opacity="0.2" (6822). Net alpha 0.2 of MouseOverPrimary. */
+.mob-calendar__day::after {
+  content: "";
+  position: absolute;
+  inset: var(--calendar-hover-inset);              /* 3px → 34x34 — XAML 6816 */
+  border-radius: 50%;                              /* XAML 6821 */
+  background-color: var(--MouseOverPrimary);       /* XAML 6820 */
+  opacity: 0;                                      /* XAML 6817 */
+  z-index: 0;
+  transition: opacity var(--transition-mouse-out); /* 500ms — XAML 6866 */
+}
+
+/* The number sits above every layer. */
+.mob-calendar__day > span,
+.mob-calendar__month > span {
+  position: relative;
+  z-index: 2;
+}
+
+/* --- Day: hover. XAML MouseOver 6869-6874 --- */
+.mob-calendar__day:hover:not(:disabled):not(.is-blackout)::after,
+.mob-calendar__day.is-hovered::after {
+  opacity: 0.2;                                    /* XAML 6822 — no token for 0.2 */
+  transition: opacity var(--transition-mouse-over); /* 160ms — XAML 6872 */
+}
+
+/* --- Day: pressed. XAML Pressed 6875-6880 ---
+   Identical fill to MouseOver; only the duration differs. */
+.mob-calendar__day:active:not(:disabled):not(.is-blackout)::after,
+.mob-calendar__day.is-pressed::after {
+  opacity: 0.2;
+  transition: opacity var(--transition-mouse-pressed); /* 160ms — XAML 6878 */
+}
+
+/* --- Day: disabled. XAML Disabled 6881-6886 --- */
+.mob-calendar__day:disabled,
+.mob-calendar__day.is-disabled {
+  opacity: var(--opacity-disabled);                /* 0.35 — XAML 6883 */
+  pointer-events: none;
+  transition: opacity var(--transition-disable);   /* 100ms */
+}
+
+/* --- Day: selected. XAML Selected 6895-6900 ---
+   Duration is 00:00:00 in Master — instant, NO transition. */
+.mob-calendar__day.is-selected {
+  color: var(--SelectionForeground);               /* #FFFFFF — XAML 6898 */
+}
+
+.mob-calendar__day.is-selected::before {
+  background-color: var(--SelectionSecondary);     /* #0078A4 — XAML 6809 */
+}
+
+/* --- Day: today, not selected. XAML MultiTrigger 6924-6933 ---
+   BackgroundStrong fill + 1px InformationRed border, the whole
+   layer at Opacity="0.35" (6831), with red text.
+   The 0.35 here coincidentally equals --opacity-disabled but is
+   a different concept — kept literal on purpose.
+   z-index 1 puts it above the hover ring, matching XAML order. */
+.mob-calendar__day.is-today:not(.is-selected) {
+  color: var(--InformationRed);                    /* #E62333 — XAML 6932 */
+}
+
+.mob-calendar__day.is-today:not(.is-selected)::before {
+  background-color: var(--BackgroundStrong);       /* XAML 6827 */
+  border: var(--border-width) solid var(--InformationRed); /* XAML 6828-6829 */
+  opacity: 0.35;                                   /* XAML 6831 — literal, not the token */
+  z-index: 1;                                      /* above _mouseOverElement — XAML 6825 */
+}
+
+/* --- Day: today AND selected. XAML MultiTrigger 6934-6943 ---
+   Solid red at full opacity. Today wins over the blue selection. */
+.mob-calendar__day.is-today.is-selected {
+  color: var(--SelectionForeground);               /* #FFFFFF — XAML 6942 */
+}
+
+.mob-calendar__day.is-today.is-selected::before {
+  background-color: var(--InformationRed);         /* #E62333 — XAML 6836 */
+  border: none;
+  opacity: 1;                                      /* XAML 6834 — no Opacity setter */
+  z-index: 1;                                      /* above _mouseOverElement — XAML 6834 */
+}
+
+/* --- Day: inactive (adjacent month). XAML Trigger 6921-6923 ---
+   Opacity 0.25 on the content only, NOT the 0.35 disabled value.
+   No token exists for 0.25. */
+.mob-calendar__day.is-inactive > span {
+  opacity: 0.25;                                   /* XAML 6922 */
+}
+
+/* --- Day: blackout (outside DisplayDateStart/End) ---
+   XAML BlackoutDayStates 6914-6917 declares NormalDay and
+   BlackoutDay as EMPTY VisualStates. Master gives blackout dates
+   no visual treatment of their own; they fall through to WPF's
+   IsEnabled=false path, i.e. the Disabled state above.
+   Mirroring Master exactly. */
+.mob-calendar__day.is-blackout {
+  opacity: var(--opacity-disabled);                /* 0.35 — via Disabled, not BlackoutDay */
+  pointer-events: none;
+}
+
+/* --- Day: focus ---
+   XAML CalendarButtonFocusStates 6902-6905 and ActiveStates
+   6906-6909 are BOTH declared EMPTY. Day cells have no focus
+   ring in Master. Tabbing into the grid shows nothing — a
+   WCAG 2.4.7 gap (the icon buttons and header DO get a ring
+   via FocusVisualStyle; only the cells don't).
+
+   Mirroring Master by default. Add .mob-calendar--a11y-focus
+   on the popup to opt into a ring. SPEC open question E. */
+.mob-calendar__day:focus-visible,
+.mob-calendar__month:focus-visible {
+  outline: none;                                   /* XAML: empty VisualState */
+}
+
+.mob-calendar--a11y-focus .mob-calendar__day:focus-visible,
+.mob-calendar--a11y-focus .mob-calendar__month:focus-visible {
+  /* DEVIATION FROM MASTER — not in the XAML. Opt-in only. */
+  outline: var(--border-width-focused) solid var(--MouseOverPrimary);
+  outline-offset: calc(-1 * var(--border-width-focused));
+  border-radius: 50%;
+}
+
+
+/* =============================================
+   4. MONTH / YEAR CELL
+   XAML: Templates_CalendarButton 6947-7048
+
+   Four differences from the day cell:
+     1. square, Height bound to own ActualWidth (6953) —
+        fills the 4x3 grid rather than a fixed 40px
+     2. inner inset 10px (6956), not 6px
+     3. no today layers; DayStates and BlackoutDayStates
+        groups are absent entirely
+     4. no Margin.Top="-3" baseline nudge (6975-6981)
+
+   Four VisualStateGroups here, not six.
+   CalendarButtonFocusStates (7033) and ActiveStates (7037)
+   are again EMPTY.
+   ============================================= */
+
+.mob-calendar__month {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  aspect-ratio: 1;                                 /* XAML 6953 Height=ActualWidth */
+  padding: 0;
+  border: none;
+  background: transparent;                         /* XAML 6954 */
+  cursor: pointer;
+  font: var(--font-default);
+  font-weight: var(--font-normal);
+  color: var(--ForegroundPrimary);                 /* XAML 7668 */
+  transition: opacity var(--transition-mouse-out); /* 500ms — XAML 6996 */
+  animation: mob-calendar-month-load var(--transition-unfocus) ease-out; /* 500ms — XAML 7674 */
+}
+
+/* Load fade. XAML Styles_CalendarButton EventTrigger Loaded
+   7671-7677: opacity 0 → 1 over 00:00:00.5. */
+@keyframes mob-calendar-month-load {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Selected fill — _selectedElement 6957 */
+.mob-calendar__month::before {
+  content: "";
+  position: absolute;
+  inset: var(--calendar-month-inset);              /* 10px — XAML 6956 */
+  border-radius: 50%;                              /* XAML 6960 */
+  z-index: 0;
+}
+
+/* Hover ring — _mouseOverElement 6964, inner Border Opacity 0.2 (6972) */
+.mob-calendar__month::after {
+  content: "";
+  position: absolute;
+  inset: calc(var(--calendar-month-inset) - var(--size-3)); /* 10 − 3 = 7px — XAML 6966 */
+  border-radius: 50%;                              /* XAML 6971 */
+  background-color: var(--MouseOverPrimary);       /* XAML 6970 */
+  opacity: 0;                                      /* XAML 6967 */
+  z-index: 0;
+  transition: opacity var(--transition-mouse-out); /* 500ms */
+}
+
+/* --- Month: hover / pressed. XAML 7000-7011 --- */
+.mob-calendar__month:hover:not(:disabled)::after,
+.mob-calendar__month.is-hovered::after {
+  opacity: 0.2;                                    /* XAML 6972 */
+  transition: opacity var(--transition-mouse-over); /* 160ms */
+}
+
+.mob-calendar__month:active:not(:disabled)::after,
+.mob-calendar__month.is-pressed::after {
+  opacity: 0.2;
+  transition: opacity var(--transition-mouse-pressed); /* 160ms */
+}
+
+/* --- Month: disabled. XAML 7012-7017 --- */
+.mob-calendar__month:disabled,
+.mob-calendar__month.is-disabled {
+  opacity: var(--opacity-disabled);                /* 0.35 — XAML 7014 */
+  pointer-events: none;
+  transition: opacity var(--transition-disable);   /* 100ms */
+}
+
+/* --- Month: selected. XAML 7026-7031 — instant, no transition --- */
+.mob-calendar__month.is-selected {
+  color: var(--SelectionForeground);               /* XAML 7029 */
+}
+
+.mob-calendar__month.is-selected::before {
+  background-color: var(--SelectionSecondary);     /* XAML 6959 */
+}
+
+/* --- Month: inactive. XAML Trigger 7044-7046 ---
+   0.35 here, NOT the day cell's 0.25. Different values for the
+   same concept in Master; both preserved. */
+.mob-calendar__month.is-inactive > span {
+  opacity: var(--opacity-disabled);                /* 0.35 — XAML 7045 */
+}

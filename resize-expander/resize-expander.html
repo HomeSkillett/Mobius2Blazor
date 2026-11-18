@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mobius — ResizeExpander</title>
+  <link id="mob-theme-link" rel="stylesheet" href="../styles/color-theme-tokens/LightTheme.css" />
+  <link rel="stylesheet" href="../styles/css/main.css" />
+  <link rel="stylesheet" href="resize-expander.css" />
+  <style>
+    body { margin: 0; }
+    h1 {
+      font: var(--font-hdrMd);
+      margin: 0 0 32px;
+      color: var(--ForegroundStrong);
+    }
+    h2 {
+      font: var(--font-hdrSm);
+      margin: 40px 0 16px;
+      color: var(--ForegroundStrong);
+    }
+    h2:first-of-type { margin-top: 0; }
+    .section-divider {
+      border: none;
+      border-top: var(--line-size) solid var(--InnerLines);
+      margin: 32px 0 0;
+    }
+    .demo-label {
+      font: var(--font-metaSm);
+      color: var(--ForegroundPrimary);
+      margin-bottom: var(--spacing-label-to-control-sm);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .demo-frame {
+      background: var(--BackgroundPrimary);
+      border: var(--border-width) solid var(--InnerLines);
+      display: inline-flex;
+      height: 400px;
+      width: 100%;
+      max-width: 700px;
+    }
+    .demo-spacer { height: 24px; }
+    .demo-note {
+      font: var(--font-metaSm);
+      color: var(--InformationGray);
+      margin-top: 8px;
+    }
+
+    /* Placeholder content styling for demo body */
+    .demo-section-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 16px 23px 8px;
+      font: var(--font-default);
+      font-weight: var(--font-bold);
+      color: var(--ForegroundPrimary);
+    }
+    .demo-section-title .mob-icon {
+      font: var(--font-icons);
+      color: var(--ForegroundPrimary);
+    }
+    .demo-section-link {
+      display: block;
+      padding: 10px 23px 10px 47px;
+      font: var(--font-default);
+      color: var(--ForegroundPrimary);
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+<div class="mob-layout">
+
+  <!-- Sidebar Navigation -->
+  <nav class="mob-nav" id="mob-nav"></nav>
+
+  <main class="mob-layout__content" style="padding: 40px;">
+    <h1>ResizeExpander (Horizontal Toggle)</h1>
+
+    <!-- =========================================================
+         EXPANDED STATE
+         ========================================================= -->
+    <h2>Expanded (default)</h2>
+    <p class="demo-label">IsExpanded = true — panel visible, arrow points left</p>
+
+    <div class="demo-frame">
+
+      <!-- XAML: Grid (root) — ResizeExpander.xaml line 13
+           Template: Mobius_UI_CustomControls_Templates_ResizeExpanderHorizontal -->
+      <div class="resize-expander is-expanded">
+
+        <!-- XAML: PART_ContentColumn (Col 0) — ResizeExpander.xaml line 19
+             Width=StartSize(324px), contains PART_ContentPlacement -->
+        <div class="resize-expander__panel">
+
+          <!-- XAML: PART_HeaderElement [Border] — ResizeExpander.xaml lines 31-46
+               Height=50, Margin="0,-50,0,0", Background=BackgroundInvertStepTwoBrush -->
+          <div class="resize-expander__header">
+
+            <!-- XAML: HeaderPlacement [ContentControl] — ResizeExpander.xaml lines 38-45
+                 Margin="23,4,40,3", VerticalAlignment=Center -->
+            <span class="resize-expander__header-text">Settings</span>
+
+            <!-- XAML: PART_ContentExpandToggleButton — ResizeExpander.xaml lines 82-107
+                 Width=20, Height=20, Margin="-40,0,0,0"
+                 TranslateTransform X=-10, Y=0 (expanded)
+                 Tooltip: "Show/hide this view" (LocalizedText.xaml line 28) -->
+            <button class="resize-expander__toggle"
+                    title="Show/hide this view"
+                    aria-expanded="true"
+                    aria-label="Show/hide this view">
+              <!-- XAML: Path — ResizeExpander.xaml lines 98-106
+                   Data=Icon_Arrow_PointerRight (Icons.xaml line 58)
+                   Font: Mobius-System-Icons, glyph \E00C
+                   Rotation: 180deg (Checked — DefaultControls.xaml line 2121) -->
+              <span class="resize-expander__toggle-icon" aria-hidden="true">&#xE00C;</span>
+            </button>
+
+          </div>
+
+          <!-- XAML: Border [Background, ClipToBounds] — ResizeExpander.xaml lines 47-60
+               ContentControl with TranslateTransform "TransformElement" -->
+          <div class="resize-expander__body">
+
+            <!-- Demo content matching the real app "Settings" panel -->
+            <div class="demo-section-title">
+              <!-- XAML: ExpanderItem chevron (Icon_Arrow_PointerDownSm) -->
+              <span class="mob-icon">&#xE00D;</span>
+              LOCAL
+            </div>
+            <a class="demo-section-link" href="#">Client logging</a>
+            <a class="demo-section-link" href="#">Client preferences</a>
+
+            <div class="demo-section-title">
+              <span class="mob-icon">&#xE00D;</span>
+              SITE ADMIN
+            </div>
+            <a class="demo-section-link" href="#">Assigner services</a>
+            <a class="demo-section-link" href="#">Database</a>
+
+          </div>
+
+        </div>
+
+        <!-- XAML: Border (ShadowEdgeBorderVertical) — ResizeExpander.xaml lines 77-81
+             Style: Mobius_UI_Resources_Styles_ShadowEdgeBorderVertical
+             DefaultControls.xaml line 775 — Width=1px, right-aligned -->
+        <div class="resize-expander__edge"></div>
+
+        <!-- XAML: PART_GridSplitter — ResizeExpander.xaml lines 62-76
+             Grid.RowSpan="2", Grid.Column="1"
+             Width=23px, Margin="-5,0,-18,0" (expanded) -->
+        <div class="resize-expander__splitter"></div>
+
+      </div>
+
+    </div>
+
+    <p class="demo-note">
+      Toggle uses Mobius-System-Icons glyph \E00C, rotated 180deg when expanded
+      (Checked state, DefaultControls.xaml line 2121).
+      Panel width: 324px (ResizeExpander.cs line 31).
+    </p>
+
+    <hr class="section-divider" />
+
+    <!-- =========================================================
+         COLLAPSED STATE
+         ========================================================= -->
+    <h2>Collapsed</h2>
+    <p class="demo-label">IsExpanded = false — panel hidden, arrow points right</p>
+
+    <div class="demo-frame">
+
+      <!-- XAML: Grid (root) — collapsed state
+           ResizeExpander.cs line 22 (CollapsedWidth=0)
+           ResizeExpander.xaml lines 133-155 (Collapsed VisualState) -->
+      <div class="resize-expander is-collapsed">
+
+        <!-- XAML: PART_ContentColumn — collapsed to 0px width
+             PART_ContentPlacement Visibility=Collapsed (ResizeExpander.cs line 156) -->
+        <div class="resize-expander__panel">
+
+          <div class="resize-expander__header">
+            <span class="resize-expander__header-text">Settings</span>
+            <button class="resize-expander__toggle"
+                    title="Show/hide this view"
+                    aria-expanded="false"
+                    aria-label="Show/hide this view">
+              <span class="resize-expander__toggle-icon" aria-hidden="true">&#xE00C;</span>
+            </button>
+          </div>
+
+          <div class="resize-expander__body">
+            <div class="demo-section-title">
+              <span class="mob-icon">&#xE00D;</span>
+              LOCAL
+            </div>
+            <a class="demo-section-link" href="#">Client logging</a>
+            <a class="demo-section-link" href="#">Client preferences</a>
+          </div>
+
+        </div>
+
+        <!-- XAML: ShadowEdgeBorderVertical -->
+        <div class="resize-expander__edge"></div>
+
+        <!-- XAML: PART_GridSplitter — collapsed
+             Width=23px, Margin="-15,0,-8,0" (ResizeExpander.xaml line 166) -->
+        <div class="resize-expander__splitter"></div>
+
+        <!-- SplitPanel.xaml lines 66-79: ExpanderItem + decorative Path
+             wrapping the toggle when collapsed. Path is 40x120,
+             Fill=BackgroundInvertStrongStepOneBrush, angled bottom-left.
+             NOT from ResizeExpander.xaml — from SplitPanel parent context. -->
+        <div class="resize-expander__tab">
+
+          <!-- XAML: PART_ContentExpandToggleButton — SplitPanel.xaml lines 84-107
+               Width=40, Height=50, HAlign=Right, VAlign=Top
+               Unchecked: rotation 0deg (DefaultControls.xaml line 2116) -->
+          <button class="resize-expander__toggle"
+                  title="Show/hide this view"
+                  aria-expanded="false"
+                  aria-label="Show/hide this view">
+            <span class="resize-expander__toggle-icon" aria-hidden="true">&#xE00C;</span>
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <p class="demo-note">
+      Arrow at 0deg (Unchecked, DefaultControls.xaml line 2116).
+      Toggle shifts down: translateY(10px) per ResizeExpander.xaml line 149.
+      Panel collapsed to 0px (ResizeExpander.cs line 22).
+    </p>
+
+    <hr class="section-divider" />
+
+    <!-- =========================================================
+         INTERACTIVE STATES
+         ========================================================= -->
+    <h2>Toggle Button States</h2>
+    <p class="demo-label">Hover, pressed, disabled — DefaultControls.xaml lines 2074-2125</p>
+
+    <div style="display: flex; gap: 40px; align-items: start; flex-wrap: wrap;">
+
+      <!-- Normal -->
+      <div>
+        <p class="demo-label">Normal</p>
+        <button class="resize-expander__toggle" style="position: static; transform: none; margin: 0;"
+                title="Show/hide this view">
+          <span class="resize-expander__toggle-icon" aria-hidden="true">&#xE00C;</span>
+        </button>
+      </div>
+
+      <!-- Hover (simulated) -->
+      <div>
+        <p class="demo-label">Hover</p>
+        <button class="resize-expander__toggle" style="position: static; transform: none; margin: 0;"
+                title="Show/hide this view">
+          <span class="resize-expander__toggle-icon" aria-hidden="true"
+                style="color: var(--MouseOverPrimary);">&#xE00C;</span>
+        </button>
+      </div>
+
+      <!-- Pressed (simulated) -->
+      <div>
+        <p class="demo-label">Pressed</p>
+        <button class="resize-expander__toggle" style="position: static; transform: none; margin: 0; opacity: 0.8;"
+                title="Show/hide this view">
+          <span class="resize-expander__toggle-icon" aria-hidden="true">&#xE00C;</span>
+        </button>
+      </div>
+
+      <!-- Disabled -->
+      <div>
+        <p class="demo-label">Disabled</p>
+        <button class="resize-expander__toggle" style="position: static; transform: none; margin: 0;"
+                title="Show/hide this view" disabled>
+          <span class="resize-expander__toggle-icon" aria-hidden="true">&#xE00C;</span>
+        </button>
+      </div>
+
+      <!-- Expanded rotation (180deg) -->
+      <div>
+        <p class="demo-label">Expanded (180&deg;)</p>
+        <button class="resize-expander__toggle" style="position: static; transform: none; margin: 0;"
+                title="Show/hide this view">
+          <span class="resize-expander__toggle-icon" aria-hidden="true"
+                style="transform: rotate(180deg);">&#xE00C;</span>
+        </button>
+      </div>
+
+    </div>
+
+    <div class="demo-spacer"></div>
+
+  </main>
+</div>
+
+<!-- Nav + Theme Switcher (shared across components) -->
+<script src="../js/nav.js"></script>
+<script src="../js/theme-switcher.js"></script>
+
+</body>
+</html>

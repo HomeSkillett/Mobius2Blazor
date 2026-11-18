@@ -27,7 +27,7 @@
       margin: 32px 0 0;
     }
     .note {
-      font: var(--font-bodySm);
+      font: var(--font-Sm);
       color: var(--ForegroundDisabled);
       max-width: 540px;
       margin: var(--size-6) 0 0;
@@ -72,24 +72,25 @@
 
 <div class="demo-center">
 
-  <!-- XAML: OkCancelDialog — common:UserWindow 400x300 -->
+  <!-- XAML: OkCancelDialog — common:UserWindow 400x300. This is a native OS
+       window; Title="{Binding DialogTitle}" is rendered by OS chrome, and
+       the close button is standard window chrome too. Neither has any
+       corresponding markup in the XAML content area, so there's nothing to
+       trace a custom titlebar/close-button to. Removed both rather than
+       keep inventing them — see note below. -->
   <div class="mob-dialog">
-    <!-- XAML: Title="{Binding DialogTitle}" — rendered as window chrome -->
-    <div class="mob-dialog__titlebar">
-      <span class="mob-dialog__title">Confirm Action</span>
-      <!-- XAML: Window close button (standard chrome) -->
-      <button class="mob-dialog__close" aria-label="Close">&#xE454;</button>
-    </div>
     <!-- XAML: TextBlock DialogText Margin="10,30,10,30" -->
     <div class="mob-dialog__body">
       Are you sure you want to remove this role assignment? This action cannot be undone.
     </div>
-    <!-- XAML: StackPanel Horizontal — OK + Cancel buttons -->
+    <!-- XAML: StackPanel Horizontal — OK + Cancel buttons. Neither has a
+         Style override in Master, so both render as identical default
+         buttons — no primary/outline distinction. -->
     <div class="mob-dialog__actions">
       <!-- XAML: OkButton, Content from LocalizedText.ConfigurationMode.RoleConfiguration.ConfirmationDialogOk -->
-      <button class="mob-btn mob-btn--primary">OK</button>
+      <button class="mob-btn">OK</button>
       <!-- XAML: CancelButton, Content from LocalizedText.ConfigurationMode.RoleConfiguration.ConfirmationDialogCancel -->
-      <button class="mob-btn mob-btn--outline">Cancel</button>
+      <button class="mob-btn">Cancel</button>
     </div>
   </div>
 
@@ -99,6 +100,13 @@
   Fixed 400&times;300 window. ResizeMode=NoResize. Centered on parent (CenterOwner).
   Closing the window fires OkCancelDialog_OnClosed. The dialog is modal &mdash; it blocks
   interaction with the parent window until OK or Cancel is clicked.
+</p>
+<p class="note">
+  <strong>Open question:</strong> Master shows a title and provides a window
+  close button via native OS chrome, which Blazor can't replicate directly.
+  This still needs a title/dismiss affordance from somewhere &mdash; likely a
+  shared modal-wrapper component rather than something invented in this file.
+  Flagging for a design decision rather than guessing at chrome again.
 </p>
 
 
@@ -134,16 +142,12 @@
   justify-content: center;
 ">
   <div class="mob-dialog" style="z-index: 9999;">
-    <div class="mob-dialog__titlebar">
-      <span class="mob-dialog__title">Confirm Action</span>
-      <button class="mob-dialog__close" id="demo-close" aria-label="Close">&#xE454;</button>
-    </div>
     <div class="mob-dialog__body">
       Are you sure you want to remove this role assignment? This action cannot be undone.
     </div>
     <div class="mob-dialog__actions">
-      <button class="mob-btn mob-btn--primary" id="demo-ok">OK</button>
-      <button class="mob-btn mob-btn--outline" id="demo-cancel">Cancel</button>
+      <button class="mob-btn" id="demo-ok">OK</button>
+      <button class="mob-btn" id="demo-cancel">Cancel</button>
     </div>
   </div>
 </div>
@@ -172,7 +176,6 @@
   document.getElementById('demo-open').addEventListener('click', openDialog);
   document.getElementById('demo-ok').addEventListener('click', function () { closeDialog('OK'); });
   document.getElementById('demo-cancel').addEventListener('click', function () { closeDialog('Cancel'); });
-  document.getElementById('demo-close').addEventListener('click', function () { closeDialog('Close (X)'); });
 
   /* Close on backdrop click (outside the dialog) */
   backdrop.addEventListener('click', function (e) {

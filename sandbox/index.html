@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>iPad Sandbox — Variants</title>
+  <link rel="stylesheet" href="../styles/color-theme-tokens/DarkTheme.css" />
+  <link rel="stylesheet" href="../styles/css/main.css" />
+  <link rel="stylesheet" href="index.css" />
+</head>
+<body class="sandbox-index">
+  <h1 class="sandbox-index__title">iPad Vehicle Drawer: animation variants</h1>
+  <p class="sandbox-index__note">Each variant is its own HTML + CSS pair. Frozen ones are never edited, so opening one is the roll back.</p>
+  <ul class="sandbox-index__list">
+    <li class="sandbox-index__item">
+      <a class="sandbox-index__link" href="v1-overlay.html">v1 Overlay</a> (frozen 2026-11-18)
+      <p class="sandbox-index__desc">Vehicles go from the row into the list column, the sheet rises, then the gauges slide up over the lower vehicles. Close is one move.</p>
+    </li>
+    <li class="sandbox-index__item">
+      <a class="sandbox-index__link" href="v2-straight-line.html">v2 Straight line</a> (from v1)
+      <p class="sandbox-index__desc">Each vehicle travels in a straight line from its place in the row to its place in the open list. Gauges and close are the same as v1.</p>
+    </li>
+    <li class="sandbox-index__item">
+      <a class="sandbox-index__link" href="v3-up-then-over.html">v3 Up then over</a> (from v2)
+      <p class="sandbox-index__desc">Each vehicle goes straight up to the height of its row, turns a right-angle corner, then goes straight left into the list. Nothing moves at an angle. Close is the same corner backwards. Ben: "not quite", see v4.</p>
+    </li>
+    <li class="sandbox-index__item">
+      <a class="sandbox-index__link" href="v4-corner-then-up.html">v4 Corner then up</a> (from v2)
+      <p class="sandbox-index__desc">Vehicles slide straight left and stack in the bottom left corner, then leave one at a time, straight up to their own row. Nothing moves at an angle. Close is the same path backwards.</p>
+    </li>
+    <li class="sandbox-index__item">
+      <a class="sandbox-index__link" href="v5-convoy.html">v5 Convoy</a> (from v4)
+      <p class="sandbox-index__desc">Same route as v4, but the vehicles drive it nose to tail like a convoy: along the row, round the corner, up the column, at one constant speed, never overlapping. The sheet itself slides open at finger speed (350ms). Close is the same thing backwards at the same speed.</p>
+    </li>
+    <li class="sandbox-index__item">
+      <a class="sandbox-index__link" href="v6-convoy-sound.html">v6 Convoy + sound</a> (v5 with sound, for fun)
+      <p class="sandbox-index__desc">Same motion as v5 (it shares v5's stylesheet). Adds a low swoosh as the sheet slides and a light tick as each vehicle turns the corner and parks. This is the only variant with JavaScript, and the script only makes sound.</p>
+    </li>
+  </ul>
+</body>
+</html>

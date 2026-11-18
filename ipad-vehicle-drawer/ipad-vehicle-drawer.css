@@ -1,0 +1,155 @@
+/* =============================================
+   iPAD VEHICLE DRAWER (EXPLORATION)
+   Source: Figma "iPad" file
+     node 1955:109797  "Vehicle Drawer - Open"  400 x 820
+     node 1949:104251  "Drawer Closed"          358 x 96
+
+   This is an exploration layout, not a master conversion.
+   Figma is the reference. It is assembled from library components:
+     split-panel (vertical)      split-panel/split-panel.css
+     ListBox vehicle item        listview/listview.css
+     DisplayGaugePanel + gauges  display-gauge-panel, indicator-gauge,
+                                 bar-gauge, text-gauge
+   Only the drawer shell, slide handle, section header and the
+   closed-state ring row are defined here.
+   ============================================= */
+
+
+/* --- Drawer shell ----------------------------------------------- */
+/* Figma: frame 400 x 820. Rounded top corners are read from the
+   Figma render (no radius value came through), so 14px is approximate.
+   Figma background is "iPadBackgroundStepOne90%" (#222222 at 90%),
+   which has no token. BackgroundInvertPrimary is the nearest one. */
+.ipad-drawer {
+  display: flex;
+  flex-direction: column;
+  width: 400px;                      /* Figma: 400 */
+  height: 820px;                     /* Figma: 820 */
+  overflow: hidden;
+  border-radius: 14px 14px 0 0;      /* approximate, from the Figma render */
+  background: var(--BackgroundInvertPrimary);
+  color: var(--ForegroundInvertPrimary);
+  box-shadow: var(--shadow-lg, 0 5px 15px rgba(0, 0, 0, 0.1));   /* Figma effect "Large": 0 5 15 #0000001A */
+}
+
+
+/* --- Slide handle ----------------------------------------------- */
+/* Figma: "Slide Handle" frame 400 x 25.7, pill 55.6 x 5.7 at y 10 */
+.ipad-drawer__handle {
+  flex: none;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  height: 26px;                      /* Figma: 25.7 */
+  padding: 10px 0 0;                 /* Figma: pill at y 10 */
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.ipad-drawer__handle-pill {
+  width: 56px;                       /* Figma: 55.6 */
+  height: 6px;                       /* Figma: 5.7 */
+  border-radius: 3px;
+  background: var(--ForegroundInvertWatermark);
+}
+
+
+/* --- Section header --------------------------------------------- */
+/* Figma: "Section Name" 44 tall, pl 28. Name is Roboto Condensed
+   Bold 16, count is ForegroundWatermark. Same idea as master's group
+   header (name + item count), without the upper-casing. */
+.ipad-drawer__section {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: var(--touch);              /* Figma: 44 = TouchSize */
+  padding: 0 10px 0 28px;            /* Figma: pl 28, pr 10 */
+  font: var(--font-default);
+  font-size: 16px;                   /* Figma: 16px, no token */
+  font-weight: var(--font-bold);
+}
+
+.ipad-drawer__section-count {
+  color: var(--ForegroundInvertWatermark);
+}
+
+
+/* --- Split panel host ------------------------------------------- */
+/* Figma: vehicles above, gauges below, tab on the divider.
+   Lower pane = Figma gauge body + pagination = 448px. */
+.ipad-drawer__split {
+  flex: 1;
+  min-height: 0;
+  --split-second-length: 448px;      /* Figma: 482 gauges frame minus the 34.5 tab */
+}
+
+/* The vehicle list scrolls inside the upper pane */
+.ipad-drawer__list {
+  flex: 1;
+  min-height: 0;
+  padding-top: 6px;                  /* Figma: first row at y 6 in the Vehicles frame */
+  border-right: 0;
+}
+
+/* Gauge host fills the lower pane */
+.ipad-drawer__gauges {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  min-height: 0;
+}
+
+/* Figma spreads the 4 gauge columns across 400px: 26px side padding,
+   ring pitch about 92px. Library cells stay 48 x 48, only the gaps
+   and padding change here. */
+.ipad-drawer__gauges .mob-display-gauge-panel__grid {
+  min-height: 0;
+  padding: 30px 26px;                /* Figma: px 26, py 15 + 15 */
+}
+
+.ipad-drawer__gauges .mob-display-gauge-panel__cells {
+  column-gap: 44px;                  /* Figma: column pitch 92.25 minus the 48 cell */
+  row-gap: 32px;                     /* Figma: row gap 30, nearest even step */
+}
+
+.ipad-drawer__gauges .mob-display-gauge-panel__page-dots {
+  margin: 0 16px;
+}
+
+
+/* --- Closed state ----------------------------------------------- */
+/* Figma: "Drawer Closed" 358 x 96: handle, then a centered row of
+   50px vehicle rings with 15px between them, 10px above. */
+.ipad-drawer__rings {
+  display: none;
+  justify-content: center;
+  gap: 15px;                         /* Figma: 65 pitch minus 50 */
+  padding: 10px 0 11px;              /* Figma: rings at y 10 in a 60 frame, 11 below */
+}
+
+.ipad-drawer.is-closed {
+  width: 358px;                      /* Figma: 358 */
+  height: auto;                      /* Figma: 96 */
+}
+
+.ipad-drawer.is-closed .ipad-drawer__rings {
+  display: flex;
+}
+
+.ipad-drawer.is-closed .ipad-drawer__section,
+.ipad-drawer.is-closed .ipad-drawer__split {
+  display: none;
+}
+
+/* Ring-only use of the vehicle thumbnail (no list row around it) */
+.ipad-drawer__ring[data-status="critical"] {
+  border-color: var(--MessageDeliveryIconCritical);
+  background: var(--MessageDeliveryBackgroundCritical);
+}
+
+.ipad-drawer__ring[data-status="warning"] {
+  border-color: var(--MessageDeliveryIconWarning);
+  background: var(--MessageDeliveryBackgroundWarning);
+}

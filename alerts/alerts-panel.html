@@ -27,7 +27,7 @@
       margin: 32px 0 0;
     }
     .note {
-      font: var(--font-bodySm);
+      font: var(--font-Sm);
       color: var(--ForegroundDisabled);
       max-width: 540px;
       margin: var(--size-6) 0 0;
@@ -45,7 +45,7 @@
       max-width: 540px;
     }
     .toggle-label {
-      font: var(--font-bodySm);
+      font: var(--font-Sm);
       color: var(--ForegroundPrimary);
       margin-top: 14px;
     }
@@ -149,11 +149,15 @@
         <button class="mob-notification-panel__filter-tab" data-filter="recent">Recent</button>
         <button class="mob-notification-panel__filter-tab" data-filter="dismissed">Dismissed</button>
       </div>
+      <!-- XAML: VehicleFilterButton uses Icon_VehicleAdorned (font "VehicleAdorned", 0xEC16, not 0xE532 "CollapseHorz").
+           TimeFilterButton uses Icon_Clock and DismissAllRecentNotificationsButton uses Icon_ClearNotifications —
+           neither has a matching glyph anywhere in mobius-system-icons.ttf. Left as-is and flagged, not guessed.
+           PopOutButton uses Icon_PopOut (font "PopOut", 0xE560, not 0xE447 "Status_Okay"). -->
       <div class="mob-notification-panel__actions">
-        <button class="mob-notification-panel__action-btn" aria-label="Filter by vehicle" title="Vehicle filter">&#xE532;</button>
+        <button class="mob-notification-panel__action-btn" aria-label="Filter by vehicle" title="Vehicle filter">&#xEC16;</button>
         <button class="mob-notification-panel__action-btn" aria-label="Filter by time" title="Time filter">&#xE401;</button>
         <button class="mob-notification-panel__action-btn" id="demo-dismiss-all" aria-label="Dismiss all" title="Clear all undismissed">&#xE403;</button>
-        <button class="mob-notification-panel__action-btn" aria-label="Pop out" title="Open in new window">&#xE447;</button>
+        <button class="mob-notification-panel__action-btn" aria-label="Pop out" title="Open in new window">&#xE560;</button>
       </div>
     </div>
 
@@ -168,7 +172,7 @@
           <span class="mob-notification__status-badge" data-status="new">New</span>
           <span class="mob-notification__level-label" data-level="critical">Critical</span>
           <span class="mob-notification__error-code">E-7001</span>
-          <button class="mob-notification__dismiss" aria-label="Dismiss">&#xE454;</button>
+          <button class="mob-notification__dismiss" aria-label="Dismiss">&#xE567;</button>
         </div>
         <p class="mob-notification__title">E-Stop activated on Vehicle 7</p>
         <div class="mob-notification__footer">
@@ -182,7 +186,7 @@
           <span class="mob-notification__status-badge" data-status="new">New</span>
           <span class="mob-notification__level-label" data-level="warning">Warning</span>
           <span class="mob-notification__error-code">W-4012</span>
-          <button class="mob-notification__dismiss" aria-label="Dismiss">&#xE454;</button>
+          <button class="mob-notification__dismiss" aria-label="Dismiss">&#xE567;</button>
         </div>
         <p class="mob-notification__title">Vehicle 12 — Low fuel</p>
         <div class="mob-notification__footer">
@@ -195,7 +199,7 @@
         <div class="mob-notification__header">
           <span class="mob-notification__status-badge" data-status="new">New</span>
           <span class="mob-notification__level-label" data-level="info">Info</span>
-          <button class="mob-notification__dismiss" aria-label="Dismiss">&#xE454;</button>
+          <button class="mob-notification__dismiss" aria-label="Dismiss">&#xE567;</button>
         </div>
         <p class="mob-notification__title">GPS signal restored on Vehicle 3</p>
         <div class="mob-notification__footer">

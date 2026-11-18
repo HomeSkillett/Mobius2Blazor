@@ -1,0 +1,41 @@
+/* Sandbox index page only. Tokens come from the Mobius2Blazor library. */
+.sandbox-index {
+  margin: 0;
+  min-height: 100vh;
+  padding: 32px;
+  background: var(--BackgroundStrong);
+  color: var(--ForegroundPrimary);
+  font: var(--font-default);
+}
+
+.sandbox-index__title {
+  margin: 0 0 8px;
+  font: var(--font-hdrSm);
+  color: var(--ForegroundStrong);
+}
+
+.sandbox-index__note {
+  margin: 0 0 24px;
+  color: var(--ForegroundDisabled);
+}
+
+.sandbox-index__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  max-width: 720px;
+}
+
+.sandbox-index__item {
+  padding: 16px 0;
+  border-top: var(--line-size) solid var(--InnerLines);
+}
+
+.sandbox-index__link {
+  font: var(--font-hdrSm);
+  color: var(--MouseOverPrimary);
+}
+
+.sandbox-index__desc {
+  margin: 4px 0 0;
+}

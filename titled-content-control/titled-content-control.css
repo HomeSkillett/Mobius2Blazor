@@ -1,0 +1,101 @@
+/* ==========================================================================
+   TitledContentControl — 50px panel title bar
+   Source: Common/Asi.CommonControls.Client.UI/TitledContentControl.xaml
+   Spec:   specs/TitledContentControl-SPEC.md
+
+   Classes
+     .titled-header                 DockPanel TitleBar (line 16-67)
+     .titled-header__nav            Button NavigationButton (line 29-44)
+     .titled-header__nav-icon       Path NavigationButtonIcon (line 39-43)
+     .titled-header__title          TextBlock StaticTitle (line 45-52)
+     .titled-header__title-input    FieldInput EditableTitle (line 53-66)
+     .titled-header--invert         Foreground=ForegroundInvertPrimary (ModeCommandAndControl.xaml:342)
+   ========================================================================== */
+
+/* XAML: DockPanel TitleBar — TitledContentControl.xaml lines 16-22 */
+.titled-header {
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  height: 50px;                                  /* Height="50" — line 18 */
+  padding-left: var(--size-24);                  /* Rectangle spacer Width="24" — line 25 */
+  background: var(--BackgroundInvertStepTwo);    /* default Background — line 73 */
+  color: var(--ForegroundPrimary);               /* Foreground is a TemplateBinding; primary is the common case */
+  overflow: hidden;                              /* DockPanel clips the editable input's -50 right overhang */
+}
+
+/* ModeCommandAndControl.xaml line 342: Foreground="ForegroundInvertPrimary" */
+.titled-header--invert {
+  color: var(--ForegroundInvertPrimary);
+}
+
+/* XAML: Button NavigationButton (IconButton style) — lines 29-44
+   IconButton: MinHeight=TouchSize, Padding="0,3" — DefaultControls.xaml lines 2782-2783 */
+.titled-header__nav {
+  flex: 0 0 var(--touch);                        /* Width="44" — line 31 */
+  width: var(--touch);
+  min-height: var(--touch);                      /* MinHeight=TouchSize — DefaultControls.xaml:2782 */
+  margin-left: calc(-1 * var(--size-12));        /* common:Margin.Left="-12" — line 32 */
+  padding: var(--size-3) 0;                      /* Padding="0,3" — DefaultControls.xaml:2783 */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  background: transparent;                       /* _templateRoot Background="Transparent" — DefaultControls.xaml:1327 */
+  color: inherit;                                /* Foreground={TemplateBinding Foreground} — line 35 */
+  cursor: pointer;
+  transition: color var(--transition-mouse-out); /* GeneralMouseOutDuration — DefaultControls.xaml:1346 */
+}
+
+/* IconButton MouseOver / Pressed → MouseOverPrimary — DefaultControls.xaml lines 1352, 1358 */
+.titled-header__nav:hover,
+.titled-header__nav:active {
+  color: var(--MouseOverPrimary);
+  transition: color var(--transition-mouse-over); /* GeneralMouseOverDuration — DefaultControls.xaml:1353 */
+}
+
+/* XAML: Path NavigationButtonIcon — lines 39-43
+   Default Data = Icon_Arrow_DirectionLeft (line 71) → Mobius-System-Icons glyph E013 */
+.titled-header__nav-icon {
+  font-family: var(--font-icon);
+  font-size: var(--icon);                        /* standard 20px icon size */
+  line-height: 1;
+  font-style: normal;
+}
+.titled-header__nav-icon::before {
+  content: "\E013";                              /* Arrow_DirectionLeft — font cmap */
+}
+
+/* XAML: TextBlock StaticTitle — lines 45-52
+   Style = TextBlock_HeadingSm (Light 18) — Typography.xaml lines 59-63 */
+.titled-header__title {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+  font: var(--font-hdrSm);                       /* HeadingSm: 300 18px/22px header-font */
+  color: inherit;                                /* Foreground={TemplateBinding Foreground} — line 47 */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;                       /* TextTrimming="CharacterEllipsis" — line 50 */
+}
+
+/* XAML: FieldInput EditableTitle — lines 53-66
+   Style = InlineFieldInput → OnDemandTextBox (FieldInput.xaml lines 510-514) */
+.titled-header__title-input {
+  flex: 0 0 333px;
+  width: 333px;                                  /* Width="333" — line 57 */
+  box-sizing: border-box;
+  margin: 0 calc(-1 * 50px) 0 calc(-1 * var(--size-20)); /* Margin="-20,0,-50,0" — line 58 */
+  align-self: stretch;                           /* VerticalAlignment="Stretch" — line 60 */
+  padding: 0 var(--size-20);                     /* offsets the -20 left margin so text aligns with StaticTitle */
+  border: var(--border-width) solid transparent; /* OnDemandTextBox: borderless until hover/focus */
+  background: transparent;
+  font: var(--font-hdrSm);                       /* title text keeps HeadingSm */
+  color: inherit;
+  outline: none;
+}
+.titled-header__title-input:hover,
+.titled-header__title-input:focus {
+  border-color: var(--BackgroundInputOutline);   /* OnDemand reveals outline on hover/focus */
+  background: var(--BackgroundInput);
+}

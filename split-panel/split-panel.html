@@ -116,6 +116,36 @@
       font: var(--font-icons);
       color: var(--ForegroundInvertWatermark);
     }
+
+    /* ========= Vertical demos ========= */
+    .demo-v-frame {
+      box-sizing: content-box;
+      width: 300px;                  /* ModeCommandAndControl.xaml line 333: column Width=300 */
+      height: 360px;
+      background: var(--BackgroundInvertPrimary);   /* ModeCommandAndControl.xaml line 335 */
+      border: var(--border-width) solid var(--InnerLines);
+    }
+    .demo-v-frame--room-above { margin-top: 56px; }   /* room for Toggle-C, which sits 42px above the panel */
+    .demo-v-frame--cc { height: 520px; }
+    .demo-v-first,
+    .demo-v-second,
+    .demo-v-gauge-host { flex: 1; min-height: 0; }
+    .demo-v-second,
+    .demo-v-gauge-host { background: var(--BackgroundInvertStepOne); }   /* ModeCommandAndControl.xaml line 617 */
+    .demo-v-label {
+      display: block;
+      padding: 16px 24px;
+      font: var(--font-default);
+      color: var(--ForegroundInvertPrimary);
+    }
+    .demo-v-noasset {
+      display: block;
+      margin: 24px;                  /* ModeCommandAndControl.xaml line 621: Margin.All=Size24 */
+      font: var(--font-hdrSm);       /* line 626: HeadingSm */
+      color: var(--ForegroundInvertPrimary);   /* line 622 */
+    }
+    /* Demo data only. Blazor binds this at runtime (SplitPanel.cs lines 324-326). */
+    .demo-v-second-376 { --split-second-length: 376px; }   /* ModeCommandAndControl.xaml line 450 */
   </style>
 </head>
 <body>
@@ -126,13 +156,13 @@
   <nav class="mob-nav" id="mob-nav"></nav>
 
   <main class="mob-layout__content" style="padding: 40px;">
-    <h1>SplitPanel (Horizontal)</h1>
+    <h1>SplitPanel</h1>
 
     <!-- =========================================================
          INTERACTIVE DEMO — Both panes open by default
          Click the toggle arrows to collapse/expand panes.
          ========================================================= -->
-    <h2>Interactive demo</h2>
+    <h2>Horizontal: interactive demo</h2>
     <p class="demo-label">Click the arrow toggles to collapse/expand panes</p>
 
     <div class="demo-frame">
@@ -259,7 +289,7 @@
     <!-- =========================================================
          TOGGLE BUTTON INTERACTIVE STATES
          ========================================================= -->
-    <h2>Toggle Button States</h2>
+    <h2>Horizontal: toggle button states</h2>
     <p class="demo-label">Hover, pressed, disabled — DefaultControls.xaml lines 2074-2125</p>
 
     <div style="display: flex; gap: 40px; align-items: start; flex-wrap: wrap;">
@@ -333,6 +363,236 @@
       </div>
 
     </div>
+
+
+    <hr class="section-divider" />
+
+    <!-- =========================================================
+         VERTICAL TEMPLATE
+         XAML: Mobius_UI_Common_Templates_SplitPanelVertical
+               SplitPanel.xaml lines 170-296
+         Static states. No JavaScript.
+         ========================================================= -->
+    <h2>Vertical: both panes open</h2>
+    <p class="demo-label">Default. Toggle-D sits on the divider, checked, arrow down. SplitPanel.xaml lines 252-294</p>
+    <div class="demo-v-frame">
+      <!-- XAML: Grid (root), SplitPanelVertical template (SplitPanel.xaml line 174) -->
+      <div class="split-panel split-panel--vertical first-open">
+
+        <!-- XAML: PART_FirstContent (lines 180-185) -->
+        <div class="split-panel__pane split-panel__pane--first">
+          <div class="demo-v-first">
+            <span class="demo-v-label">FirstContent</span>
+          </div>
+        </div>
+
+        <!-- XAML: PART_SecondContent (lines 186-191) -->
+        <div class="split-panel__pane split-panel__pane--second">
+          <div class="demo-v-second">
+            <span class="demo-v-label">SecondContent</span>
+          </div>
+        </div>
+
+        <!-- XAML: Rectangle, spacer (lines 192-198) -->
+        <div class="split-panel__spacer"></div>
+        <!-- XAML: PART_PanelSplitter (lines 199-208) -->
+        <div class="split-panel__splitter"></div>
+
+        <!-- XAML: Toggle-C Grid, Row 0 (lines 209-251). Visible when FirstContentIsOpen = false. -->
+        <div class="split-panel__toggle-area split-panel__toggle-area--first">
+          <!-- XAML: Path, tab shape 120 x 40 (lines 216-223) -->
+          <div class="split-panel__tab"></div>
+          <!-- XAML: PART_TOGGLE_BUTTON_C 50 x 40, IsChecked = FirstContentIsOpen (lines 228-250) -->
+          <button class="split-panel__toggle" type="button" title="Show/hide this view" aria-expanded="false">
+            <!-- XAML: Path Icon_Arrow_PointerUp (lines 242-248) -->
+            <span class="split-panel__toggle-icon" aria-hidden="true">&#xE007;</span>
+          </button>
+        </div>
+
+        <!-- XAML: Toggle-D Grid, Row 2 (lines 252-294). Visible when FirstContentIsOpen = true. -->
+        <div class="split-panel__toggle-area split-panel__toggle-area--second">
+          <!-- XAML: Path, tab shape 120 x 40 (lines 259-266) -->
+          <div class="split-panel__tab"></div>
+          <!-- XAML: PART_TOGGLE_BUTTON_D 50 x 40, IsChecked = SecondContentIsOpen (lines 271-293) -->
+          <button class="split-panel__toggle is-checked" type="button" title="Show/hide this view" aria-expanded="true">
+            <!-- XAML: Path Icon_Arrow_PointerUp (lines 285-291) -->
+            <span class="split-panel__toggle-icon" aria-hidden="true">&#xE007;</span>
+          </button>
+        </div>
+
+      </div>
+    </div>
+    <p class="demo-note">Rows * / 2 / *. The tab is 120 x 40 with a 50 x 40 toggle at its right. Margin 0,-42,0,0 puts its bottom edge on top of the 2px divider.</p>
+
+    <hr class="section-divider" />
+
+    <h2>Vertical: second pane collapsed</h2>
+    <p class="demo-label">SecondContentIsOpen = false. Toggle-D stays, unchecked, arrow up. SplitPanel.cs lines 430-431</p>
+    <div class="demo-v-frame">
+      <!-- XAML: Grid (root), SplitPanelVertical template (SplitPanel.xaml line 174) -->
+      <div class="split-panel split-panel--vertical second-collapsed">
+
+        <!-- XAML: PART_FirstContent (lines 180-185) -->
+        <div class="split-panel__pane split-panel__pane--first">
+          <div class="demo-v-first">
+            <span class="demo-v-label">FirstContent</span>
+          </div>
+        </div>
+
+        <!-- XAML: PART_SecondContent (lines 186-191) -->
+        <div class="split-panel__pane split-panel__pane--second">
+          <div class="demo-v-second">
+            <span class="demo-v-label">SecondContent</span>
+          </div>
+        </div>
+
+        <!-- XAML: Rectangle, spacer (lines 192-198) -->
+        <div class="split-panel__spacer"></div>
+        <!-- XAML: PART_PanelSplitter (lines 199-208) -->
+        <div class="split-panel__splitter"></div>
+
+        <!-- XAML: Toggle-C Grid, Row 0 (lines 209-251). Visible when FirstContentIsOpen = false. -->
+        <div class="split-panel__toggle-area split-panel__toggle-area--first">
+          <!-- XAML: Path, tab shape 120 x 40 (lines 216-223) -->
+          <div class="split-panel__tab"></div>
+          <!-- XAML: PART_TOGGLE_BUTTON_C 50 x 40, IsChecked = FirstContentIsOpen (lines 228-250) -->
+          <button class="split-panel__toggle" type="button" title="Show/hide this view" aria-expanded="false">
+            <!-- XAML: Path Icon_Arrow_PointerUp (lines 242-248) -->
+            <span class="split-panel__toggle-icon" aria-hidden="true">&#xE007;</span>
+          </button>
+        </div>
+
+        <!-- XAML: Toggle-D Grid, Row 2 (lines 252-294). Visible when FirstContentIsOpen = true. -->
+        <div class="split-panel__toggle-area split-panel__toggle-area--second">
+          <!-- XAML: Path, tab shape 120 x 40 (lines 259-266) -->
+          <div class="split-panel__tab"></div>
+          <!-- XAML: PART_TOGGLE_BUTTON_D 50 x 40, IsChecked = SecondContentIsOpen (lines 271-293) -->
+          <button class="split-panel__toggle" type="button" title="Show/hide this view" aria-expanded="false">
+            <!-- XAML: Path Icon_Arrow_PointerUp (lines 285-291) -->
+            <span class="split-panel__toggle-icon" aria-hidden="true">&#xE007;</span>
+          </button>
+        </div>
+
+      </div>
+    </div>
+    <p class="demo-note">Row 2 is 0, so the tab ends up at the bottom of the panel, over the first pane.</p>
+
+    <hr class="section-divider" />
+
+    <h2>Vertical: first pane collapsed</h2>
+    <p class="demo-label">FirstContentIsOpen = false. Toggle-C replaces Toggle-D, unchecked, arrow up. SplitPanel.xaml lines 209-251</p>
+    <div class="demo-v-frame demo-v-frame--room-above">
+      <!-- XAML: Grid (root), SplitPanelVertical template (SplitPanel.xaml line 174) -->
+      <div class="split-panel split-panel--vertical first-collapsed">
+
+        <!-- XAML: PART_FirstContent (lines 180-185) -->
+        <div class="split-panel__pane split-panel__pane--first">
+          <div class="demo-v-first">
+            <span class="demo-v-label">FirstContent</span>
+          </div>
+        </div>
+
+        <!-- XAML: PART_SecondContent (lines 186-191) -->
+        <div class="split-panel__pane split-panel__pane--second">
+          <div class="demo-v-second">
+            <span class="demo-v-label">SecondContent</span>
+          </div>
+        </div>
+
+        <!-- XAML: Rectangle, spacer (lines 192-198) -->
+        <div class="split-panel__spacer"></div>
+        <!-- XAML: PART_PanelSplitter (lines 199-208) -->
+        <div class="split-panel__splitter"></div>
+
+        <!-- XAML: Toggle-C Grid, Row 0 (lines 209-251). Visible when FirstContentIsOpen = false. -->
+        <div class="split-panel__toggle-area split-panel__toggle-area--first">
+          <!-- XAML: Path, tab shape 120 x 40 (lines 216-223) -->
+          <div class="split-panel__tab"></div>
+          <!-- XAML: PART_TOGGLE_BUTTON_C 50 x 40, IsChecked = FirstContentIsOpen (lines 228-250) -->
+          <button class="split-panel__toggle" type="button" title="Show/hide this view" aria-expanded="false">
+            <!-- XAML: Path Icon_Arrow_PointerUp (lines 242-248) -->
+            <span class="split-panel__toggle-icon" aria-hidden="true">&#xE007;</span>
+          </button>
+        </div>
+
+        <!-- XAML: Toggle-D Grid, Row 2 (lines 252-294). Visible when FirstContentIsOpen = true. -->
+        <div class="split-panel__toggle-area split-panel__toggle-area--second">
+          <!-- XAML: Path, tab shape 120 x 40 (lines 259-266) -->
+          <div class="split-panel__tab"></div>
+          <!-- XAML: PART_TOGGLE_BUTTON_D 50 x 40, IsChecked = SecondContentIsOpen (lines 271-293) -->
+          <button class="split-panel__toggle is-checked" type="button" title="Show/hide this view" aria-expanded="true">
+            <!-- XAML: Path Icon_Arrow_PointerUp (lines 285-291) -->
+            <span class="split-panel__toggle-icon" aria-hidden="true">&#xE007;</span>
+          </button>
+        </div>
+
+      </div>
+    </div>
+    <p class="demo-note">Row 0 is 0 and Toggle-C keeps its -42 margin, so in master the tab sticks out 42px above the top of the SplitPanel. The demo frame leaves room for it.</p>
+
+    <hr class="section-divider" />
+
+    <h2>Vertical: as used in Command and Control</h2>
+    <p class="demo-label">ModeCommandAndControl.xaml lines 445-688. 300 wide, SecondContentMinOpenLength 376, StartSnap SecondContentMin, pop-out bonus action</p>
+    <div class="demo-v-frame demo-v-frame--cc">
+      <!-- XAML: Grid (root), SplitPanelVertical template (SplitPanel.xaml line 174) -->
+      <div class="split-panel split-panel--vertical first-open demo-v-second-376">
+
+        <!-- XAML: PART_FirstContent (lines 180-185) -->
+        <div class="split-panel__pane split-panel__pane--first">
+          <div class="demo-v-first">
+            <span class="demo-v-label">FirstContent: SortableGroupListView "AssetListView", MinHeight 100</span>
+          </div>
+        </div>
+
+        <!-- XAML: PART_SecondContent (lines 186-191) -->
+        <div class="split-panel__pane split-panel__pane--second">
+          <!-- XAML: Grid Background=BackgroundInvertStepOneBrush (ModeCommandAndControl.xaml lines 614-618) -->
+          <div class="demo-v-gauge-host">
+            <!-- XAML: TextBlock Style=HeadingSm Margin=24 VerticalAlignment=Top
+                 Foreground=ForegroundInvertPrimaryBrush (ModeCommandAndControl.xaml lines 619-659) -->
+            <span class="demo-v-noasset">No asset selected</span>
+          </div>
+        </div>
+
+        <!-- XAML: Rectangle, spacer (lines 192-198) -->
+        <div class="split-panel__spacer"></div>
+        <!-- XAML: PART_PanelSplitter (lines 199-208) -->
+        <div class="split-panel__splitter"></div>
+
+        <!-- XAML: Toggle-C Grid, Row 0 (lines 209-251). Visible when FirstContentIsOpen = false. -->
+        <div class="split-panel__toggle-area split-panel__toggle-area--first">
+          <!-- XAML: Path, tab shape 120 x 40 (lines 216-223) -->
+          <div class="split-panel__tab"></div>
+          <!-- XAML: PART_TOGGLE_BUTTON_C 50 x 40, IsChecked = FirstContentIsOpen (lines 228-250) -->
+          <button class="split-panel__toggle" type="button" title="Show/hide this view" aria-expanded="false">
+            <!-- XAML: Path Icon_Arrow_PointerUp (lines 242-248) -->
+            <span class="split-panel__toggle-icon" aria-hidden="true">&#xE007;</span>
+          </button>
+        </div>
+
+        <!-- XAML: Toggle-D Grid, Row 2 (lines 252-294). Visible when FirstContentIsOpen = true. -->
+        <div class="split-panel__toggle-area split-panel__toggle-area--second">
+          <!-- XAML: Path, tab shape 120 x 40 (lines 259-266) -->
+          <div class="split-panel__tab"></div>
+            <!-- XAML: ContentPresenter Content=SecondContentBonusActions (lines 267-270).
+                 In Command and Control this is the pop-out gauges IconButton
+                 (ModeCommandAndControl.xaml lines 669-687). Icon_PopOut = \E560. -->
+            <div class="split-panel__bonus-actions">
+              <button class="demo-bonus-btn" type="button" title="Open gauges in a new window">
+                <span class="mob-icon" aria-hidden="true">&#xE560;</span>
+              </button>
+            </div>
+          <!-- XAML: PART_TOGGLE_BUTTON_D 50 x 40, IsChecked = SecondContentIsOpen (lines 271-293) -->
+          <button class="split-panel__toggle is-checked" type="button" title="Show/hide this view" aria-expanded="true">
+            <!-- XAML: Path Icon_Arrow_PointerUp (lines 285-291) -->
+            <span class="split-panel__toggle-icon" aria-hidden="true">&#xE007;</span>
+          </button>
+        </div>
+
+      </div>
+    </div>
+    <p class="demo-note">StartSnap = SecondContentMin sets row 2 to 376px and row 0 to * (SplitPanel.cs lines 324-326). The second pane is the gauge panel host, shown in its "No asset selected" state. The vehicle list and gauges are not composed in yet.</p>
 
     <div class="demo-spacer"></div>
 

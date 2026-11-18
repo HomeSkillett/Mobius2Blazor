@@ -33,7 +33,7 @@
       max-width: 460px;
     }
     .note {
-      font: var(--font-bodySm);
+      font: var(--font-Sm);
       color: var(--ForegroundDisabled);
       max-width: 540px;
       margin: var(--size-6) 0 0;
@@ -124,8 +124,8 @@
     <div class="mob-toast__level" data-level="info"></div>
     <div class="mob-toast__header">
       <span class="mob-toast__level-label" data-level="info">Info</span>
-      <!-- XAML: DismissButton — Icon_XSm, Opacity 0.5 default -->
-      <button class="mob-toast__dismiss" aria-label="Dismiss">&#xE454;</button>
+      <!-- XAML: DismissButton — Icon_XSm = font glyph "XSm" (0xE567), Opacity 0.5 default -->
+      <button class="mob-toast__dismiss" aria-label="Dismiss">&#xE567;</button>
     </div>
     <p class="mob-toast__title">GPS signal restored</p>
     <p class="mob-toast__time">a few seconds ago</p>
@@ -137,7 +137,7 @@
     <div class="mob-toast__level" data-level="success"></div>
     <div class="mob-toast__header">
       <span class="mob-toast__level-label" data-level="success">Success</span>
-      <button class="mob-toast__dismiss" aria-label="Dismiss">&#xE454;</button>
+      <button class="mob-toast__dismiss" aria-label="Dismiss">&#xE567;</button>
     </div>
     <p class="mob-toast__title">Configuration saved</p>
     <p class="mob-toast__time">just now</p>
@@ -149,7 +149,7 @@
     <div class="mob-toast__level" data-level="warning"></div>
     <div class="mob-toast__header">
       <span class="mob-toast__level-label" data-level="warning">Warning</span>
-      <button class="mob-toast__dismiss" aria-label="Dismiss">&#xE454;</button>
+      <button class="mob-toast__dismiss" aria-label="Dismiss">&#xE567;</button>
     </div>
     <p class="mob-toast__title">Vehicle 12 — Low fuel</p>
     <p class="mob-toast__message">Fuel level below 15%. Schedule refueling before next shift.</p>
@@ -162,7 +162,7 @@
     <div class="mob-toast__level" data-level="critical"></div>
     <div class="mob-toast__header">
       <span class="mob-toast__level-label" data-level="critical">Critical</span>
-      <button class="mob-toast__dismiss" aria-label="Dismiss">&#xE454;</button>
+      <button class="mob-toast__dismiss" aria-label="Dismiss">&#xE567;</button>
     </div>
     <p class="mob-toast__title">E-Stop activated on Vehicle 7</p>
     <p class="mob-toast__message">Emergency stop triggered. Vehicle is immobilized. Manual reset required.</p>
@@ -230,7 +230,7 @@
       '<div class="mob-toast__level" data-level="' + level + '"></div>' +
       '<div class="mob-toast__header">' +
         '<span class="mob-toast__level-label" data-level="' + level + '">' + level + '</span>' +
-        '<button class="mob-toast__dismiss" aria-label="Dismiss">\uE454</button>' +
+        '<button class="mob-toast__dismiss" aria-label="Dismiss">\uE567</button>' +
       '</div>' +
       '<p class="mob-toast__title">' + title + '</p>' +
       (msg ? '<p class="mob-toast__message">' + msg + '</p>' : '') +

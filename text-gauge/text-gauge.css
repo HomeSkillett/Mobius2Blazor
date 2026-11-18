@@ -1,93 +1,156 @@
 /* =============================================
    TEXT GAUGE
-   Source: TextGauge.xaml
+   Source: TextGauge.xaml + TextGauge.cs
    Asi.Gauges.Client.UI
 
-   A simple text-only gauge that displays a large
-   numeric value with optional label and unit.
+   A text-only gauge: label on top, large value, optional units.
 
-   Layout (from XAML ControlTemplate):
-     Grid — 3 rows: [12px] [8px gap] [*]
-       Row 0: LabelStatusIcon (label text)
-       Row 2: Grid — 2 columns: [*] [Auto]
-         Col 0: Viewbox > TextBlock FontSize=32 UltraLight (HeadingLg)
-         Col 1: Unit TextBlock, top-aligned, 3px left margin
+   Layout (TextGauge.xaml lines 15-70):
+     Grid rows 12 / 8 / *                                (lines 20-22)
+       Row 0: LabelStatusIcon, bottom aligned             (lines 24-37)
+       Row 2: Grid, left aligned, ClipToBounds            (lines 38-42)
+         Col 0 (*):    Viewbox > TextBlock (value)        (lines 47-60)
+         Col 1 (Auto): TextBlock (units), top aligned     (lines 61-69)
 
-   Gauge colors use the "GaugeInvert" token set.
+   Text metrics: Typography.xaml line 37 sets LineHeight="Auto", so WPF
+   uses the font's own line spacing. For the Roboto files in master
+   (Asi.Resources.Client.UI/Themes/Fonts) that is usWinAscent 1946 +
+   usWinDescent 512 over 2048 units = 1.2 x font size. The web font
+   files report a taller "normal" line height, so 1.2 is set explicitly.
+   ASSUMPTION: WPF reads the Windows metrics here. If it reads the hhea
+   table instead the factor is 1.172 (under half a pixel at 14px).
+
+   VIEWBOX NOTE: WPF scales the value text to fit row 2
+   (Viewbox Stretch="Uniform", line 50). CSS cannot measure text
+   without JavaScript, so:
+     - With no fixed height the value renders at its design size (32px).
+     - .mob-text-gauge--fit-48 applies the height-limited scale for a
+       48px tall gauge (one gauge panel cell). It does not shrink
+       further for values too wide for the gauge. That part of the
+       Viewbox behavior needs a runtime measurement in Blazor.
+
+   Gauge colors use the "GaugeInvert" set (TextGauge.xaml style setters).
    ============================================= */
 
 
-/* --- Root container --------------------------------------------- */
-/* XAML: ControlTemplate Grid — 3 rows [12px][8px][*] */
+/* --- Root -------------------------------------------------------- */
+/* XAML: Grid x:Name="_templateRoot" VerticalAlignment="Stretch"
+   rows 12 / 8 / * (lines 15-23) */
 .mob-text-gauge {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-rows: 12px 8px minmax(0, 1fr);   /* lines 20-22 */
+  font: var(--font-default);         /* Typography.xaml lines 21-23 */
+  line-height: 1.2;                  /* Typography.xaml line 37, see text metrics note */
 }
 
 
-/* --- Label row (Row 0) ------------------------------------------ */
-/* XAML: LabelStatusIcon — Row="0"
-   Margin="-2,-3,-2,-5", Foreground=GaugeInvertForeground */
+/* --- Label (row 0) ----------------------------------------------- */
+/* XAML: custom:LabelStatusIcon Grid.Row="0" Margin="-2,-3,-2,-5"
+   VerticalAlignment="Bottom" (lines 24-28). Label TextBlock inside it
+   has Margin="3,-6,0,0" (LabelStatusIcon.xaml line 73).
+   Result: text left = -2 + 3 = 1px, text bottom = 12 + 5 = y 17. */
 .mob-text-gauge__label {
-  font: var(--font-default);
-  color: var(--GaugeInvertForeground);
-  margin: -2px -3px -2px -5px;
-  line-height: 12px;
+  grid-row: 1;
+  align-self: end;
+  justify-self: start;
+  margin: 0 0 -5px 1px;              /* bottom: line 27. left: -2 (line 27) + 3 (LabelStatusIcon.xaml line 73) */
+  color: var(--GaugeInvertForeground);   /* line 29 */
+  white-space: nowrap;               /* Typography.xaml line 36 */
 }
 
-/* XAML: VisualState ShowLabel — label visible (default) */
-/* XAML: VisualState HideLabel — label collapsed */
+/* XAML: StringFormat={}{0}: (LabelStatusIcon.xaml line 76).
+   The control always appends a colon to the label. */
+.mob-text-gauge__label::after {
+  content: ":";
+}
+
+/* XAML: VisualState "HideLabel" collapses the label (lines 80-86).
+   Rows 0 and 1 keep their fixed heights. */
 .mob-text-gauge--hide-label .mob-text-gauge__label {
   display: none;
 }
 
 
-/* --- Spacer between label and value (Row 1) --------------------- */
-/* XAML: RowDefinition Height="8" — gap between label and value row */
-.mob-text-gauge__label + .mob-text-gauge__value-row {
-  margin-top: 8px;
-}
-
-/* When label is hidden, no gap needed */
-.mob-text-gauge--hide-label .mob-text-gauge__value-row {
-  margin-top: 0;
-}
-
-
-/* --- Value row (Row 2) ------------------------------------------ */
-/* XAML: Grid Row="2" — 2 columns [*][Auto] */
+/* --- Value row (row 2) ------------------------------------------- */
+/* XAML: Grid Grid.Row="2" HorizontalAlignment="Left"
+   ClipToBounds="True", columns * / Auto (lines 38-46) */
 .mob-text-gauge__value-row {
+  grid-row: 3;
+  justify-self: start;               /* line 40 */
   display: flex;
-  align-items: flex-start;
-  gap: 0;
+  align-items: flex-start;           /* Viewbox and units are both VerticalAlignment="Top", lines 49, 64 */
+  min-height: 0;
+  overflow: hidden;                  /* line 41: ClipToBounds */
 }
 
 
-/* --- Value text (Col 0) ----------------------------------------- */
+/* --- Value text -------------------------------------------------- */
 /* XAML: Viewbox > TextBlock FontSize="32" FontWeight="UltraLight"
-   Foreground=GaugeValueForegroundBrush, Style=HeadingLg */
+   Style=HeadingLg Foreground=GaugeValueForegroundBrush (lines 52-58).
+   HeadingLg sets FontStretch=Normal (Typography.xaml line 48), so
+   this is Roboto, not Roboto Condensed.
+   Margin = ValueTextMargin, default -1,0,-1,0 (TextGauge.cs line 14). */
 .mob-text-gauge__value {
-  font: var(--font-hdrLg);
-  font-weight: 200;
-  color: var(--GaugeInvertValueForeground);
-  line-height: 1;
+  grid-row: 3;
+  justify-self: start;
+  font-family: var(--header-font);   /* Typography.xaml line 48 */
+  font-size: 32px;                   /* line 54 */
+  font-weight: 200;                  /* line 55: UltraLight */
+  line-height: 1.2;                  /* Typography.xaml line 37, see text metrics note */
+  margin: 0 -1px;                    /* TextGauge.cs line 14: OtherThickness */
+  color: var(--GaugeInvertValueForeground);   /* line 56 */
+  white-space: nowrap;
+}
+
+/* XAML: when ValueString parses as a number, ValueTextMargin becomes
+   -1,-7,-1,-7 (TextGauge.cs lines 13 and 117). */
+.mob-text-gauge__value--number {
+  margin: -7px -1px;                 /* TextGauge.cs line 13: NumberThickness */
 }
 
 
-/* --- Unit text (Col 1) ------------------------------------------ */
-/* XAML: TextBlock VerticalAlignment="Top"
-   Margin.Left=3, Margin.Vertical=-2
-   Foreground=GaugeValueForegroundBrush */
+/* --- Units ------------------------------------------------------- */
+/* XAML: TextBlock x:Name="GaugeUnits" VerticalAlignment="Top"
+   Margin.Left="3" Margin.Vertical="-2"
+   Foreground=GaugeValueForegroundBrush, CaseConverter (lines 61-69).
+   CaseConverter with no parameter upper-cases (CaseConverter.cs line 23). */
 .mob-text-gauge__unit {
-  font: var(--font-default);
-  color: var(--GaugeInvertValueForeground);
-  margin-left: 3px;
-  margin-top: -2px;
-  margin-bottom: -2px;
+  margin: -2px 0 -2px 3px;           /* lines 65-66 */
+  color: var(--GaugeInvertValueForeground);   /* line 67 */
+  text-transform: uppercase;         /* line 68 */
+  white-space: nowrap;
 }
 
-/* XAML: VisualState ShowUnits — unit visible (default) */
-/* XAML: VisualState HideUnits — unit collapsed */
+/* XAML: VisualState "HideUnits" collapses the units (lines 89-95) */
 .mob-text-gauge--hide-units .mob-text-gauge__unit {
   display: none;
+}
+
+
+/* =================================================================
+   FIT TO A 48px GAUGE (one gauge panel cell)
+   Source: Viewbox Stretch="Uniform" (TextGauge.xaml line 50).
+
+   Row 2 is 48 - 12 - 8 = 28px tall. The Viewbox scales the value so
+   its box (text height plus vertical margins) fills those 28px.
+   Text height is 1.2 x font size (see the text metrics note above).
+
+     Text value:   box = 32 x 1.2           = 38.4px  scale 28 / 38.4
+     Number value: box = 38.4 - 7 - 7       = 24.4px  scale 28 / 24.4
+
+   Height-limited case only. See the VIEWBOX NOTE at the top.
+   ================================================================= */
+
+.mob-text-gauge--fit-48 {
+  height: 48px;                      /* GaugeManagerVMBase.cs line 406: CellHeight */
+}
+
+.mob-text-gauge--fit-48 .mob-text-gauge__value {
+  font-size: calc(32px * 28 / 38.4); /* = 23.3px */
+  margin: 0 calc(-1px * 28 / 38.4);
+}
+
+.mob-text-gauge--fit-48 .mob-text-gauge__value--number {
+  font-size: calc(32px * 28 / 24.4); /* = 36.7px */
+  margin: calc(-7px * 28 / 24.4) calc(-1px * 28 / 24.4);
 }

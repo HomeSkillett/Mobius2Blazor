@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mobius — Gauge Data Templates</title>
+  <link id="mob-theme-link" rel="stylesheet" href="../styles/color-theme-tokens/LightTheme.css" />
+  <link rel="stylesheet" href="../styles/css/main.css" />
+  <style>
+    body { margin: 0; }
+    h1 {
+      font: var(--font-hdrMd);
+      margin: 0 0 12px;
+      color: var(--ForegroundStrong);
+    }
+    .page-subtitle {
+      font: var(--font-default);
+      color: var(--ForegroundDisabled);
+      margin: 0 0 32px;
+    }
+    h2 {
+      font: var(--font-hdrSm);
+      margin: 48px 0 12px;
+      color: var(--ForegroundStrong);
+    }
+    h2:first-of-type { margin-top: 0; }
+    .section-divider {
+      border: none;
+      border-top: var(--line-size) solid var(--InnerLines);
+      margin: 32px 0 0;
+    }
+    .demo-caption {
+      font: var(--font-Sm);
+      color: var(--ForegroundDisabled);
+      margin-top: var(--spacing-label-to-control-sm);
+    }
+
+    /* Template registry table */
+    .template-table {
+      width: 100%;
+      max-width: 800px;
+      border-collapse: collapse;
+      margin: 16px 0;
+    }
+    .template-table th,
+    .template-table td {
+      text-align: left;
+      padding: 8px 16px;
+      border-bottom: 1px solid var(--InnerLines);
+      font: var(--font-bodySm);
+      color: var(--ForegroundPrimary);
+    }
+    .template-table th {
+      font: var(--font-hdrXs);
+      color: var(--ForegroundStrong);
+      text-transform: uppercase;
+    }
+    .template-table td:first-child {
+      font-family: monospace;
+      color: var(--InteractionPrimary);
+    }
+    .template-table td:nth-child(2) {
+      font-family: monospace;
+    }
+    .template-table a {
+      color: var(--InteractionPrimary);
+      text-decoration: none;
+    }
+    .template-table a:hover {
+      text-decoration: underline;
+    }
+    .mt-badge {
+      display: inline-block;
+      font: var(--font-Sm);
+      color: var(--ForegroundDisabled);
+      background: var(--BackgroundStepTwo);
+      padding: 1px 6px;
+      border-radius: 3px;
+      margin-left: 8px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="mob-layout">
+
+  <!-- Sidebar Navigation -->
+  <nav class="mob-nav" id="mob-nav"></nav>
+
+  <!-- Main Content -->
+  <main class="mob-layout__content">
+
+    <h1>Gauge Data Templates</h1>
+    <p class="page-subtitle">Source: GaugeDataTemplates.xaml — Registry that maps ViewModel types to gauge DataTemplates. Used by DisplayGaugePanel and EditableGaugePanel to resolve which visual to render for each gauge cell.</p>
+
+
+    <!-- ============================
+         TEMPLATE REGISTRY
+         ============================ -->
+    <hr class="section-divider">
+    <h2>Template → Gauge Mapping</h2>
+    <p class="demo-caption">Each row maps a DataTemplate key to the gauge control it instantiates. "MT" = has a MultiThreadVisual variant for off-thread rendering.</p>
+
+    <table class="template-table">
+      <thead>
+        <tr>
+          <th>DataTemplate Key</th>
+          <th>ViewModel Type</th>
+          <th>Gauge Component</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- XAML: DataTemplate x:Key="TextGaugeTemplate" DataType=ITextGaugeVM -->
+        <tr>
+          <td>TextGaugeTemplate</td>
+          <td>ITextGaugeVM</td>
+          <td><a href="../text-gauge/text-gauge.html">TextGauge</a> <span class="mt-badge">MT</span></td>
+        </tr>
+        <!-- XAML: DataTemplate x:Key="BarGaugeTemplate" DataType=BarGaugeVM -->
+        <tr>
+          <td>BarGaugeTemplate</td>
+          <td>BarGaugeVM</td>
+          <td><a href="../status-gauge/status-gauge.html">BarGauge</a> <span class="mt-badge">MT</span></td>
+        </tr>
+        <!-- XAML: DataTemplate x:Key="OdometerGaugeTemplate" DataType=IOdometerGaugeVM -->
+        <tr>
+          <td>OdometerGaugeTemplate</td>
+          <td>IOdometerGaugeVM</td>
+          <td><a href="../odometer-gauge/odometer-gauge.html">OdometerGauge</a> <span class="mt-badge">MT</span></td>
+        </tr>
+        <!-- XAML: DataTemplate x:Key="IndicatorGaugeTemplate" DataType=IIndicatorGaugeVM -->
+        <tr>
+          <td>IndicatorGaugeTemplate</td>
+          <td>IIndicatorGaugeVM</td>
+          <td><a href="../indicator-gauge/indicator-gauge.html">IndicatorGauge</a> <span class="mt-badge">MT</span></td>
+        </tr>
+        <!-- XAML: DataTemplate x:Key="ToggleSwitchGaugeTemplate" DataType=IToggleSwitchGaugeVM -->
+        <tr>
+          <td>ToggleSwitchGaugeTemplate</td>
+          <td>IToggleSwitchGaugeVM</td>
+          <td><a href="../indicator-gauge/indicator-gauge.html">IndicatorGauge (toggle variant)</a></td>
+        </tr>
+        <!-- XAML: DataTemplate x:Key="ButtonGaugeTemplate" DataType=IButtonGaugeVM -->
+        <tr>
+          <td>ButtonGaugeTemplate</td>
+          <td>IButtonGaugeVM</td>
+          <td><a href="../button-gauge/button-gauge.html">ButtonGauge</a></td>
+        </tr>
+        <!-- XAML: DataTemplate x:Key="ComboBoxGaugeTemplate" DataType=ComboBoxGaugeVM -->
+        <tr>
+          <td>ComboBoxGaugeTemplate</td>
+          <td>ComboBoxGaugeVM</td>
+          <td><a href="../combobox-gauge/combobox-gauge.html">ComboBoxGauge</a></td>
+        </tr>
+        <!-- XAML: DataTemplate x:Key="GPSGaugeTemplate" DataType=GpsGaugeVM -->
+        <tr>
+          <td>GPSGaugeTemplate</td>
+          <td>GpsGaugeVM</td>
+          <td><a href="../gps-gauge/gps-gauge.html">GPSGauge</a> <span class="mt-badge">MT</span></td>
+        </tr>
+        <!-- XAML: DataTemplate x:Key="BoomFeedbackGaugeTemplate" DataType=BoomFeedbackGaugeVM -->
+        <tr>
+          <td>BoomFeedbackGaugeTemplate</td>
+          <td>BoomFeedbackGaugeVM</td>
+          <td><a href="../boom-feedback-gauge/boom-feedback-gauge.html">BoomFeedbackGauge</a></td>
+        </tr>
+        <!-- XAML: DataTemplate x:Key="DegreeGaugeTemplate" DataType=IDegreeGaugeVM -->
+        <tr>
+          <td>DegreeGaugeTemplate</td>
+          <td>IDegreeGaugeVM</td>
+          <td><a href="../degree-gauge/degree-gauge.html">DegreeGauge</a> <span class="mt-badge">MT</span></td>
+        </tr>
+        <!-- XAML: DataTemplate x:Key="SliderGaugeTemplate" DataType=SliderGaugeVM -->
+        <tr>
+          <td>SliderGaugeTemplate</td>
+          <td>SliderGaugeVM</td>
+          <td><a href="../slider-gauge/slider-gauge.html">SliderGauge</a></td>
+        </tr>
+        <!-- XAML: DataTemplate x:Key="PrimaryGaugeTemplate" DataType=PrimaryVehicleGaugeVM -->
+        <tr>
+          <td>PrimaryGaugeTemplate</td>
+          <td>PrimaryVehicleGaugeVM</td>
+          <td><a href="../primary-vehicle-gauge/primary-vehicle-gauge.html">PrimaryVehicleGauge</a></td>
+        </tr>
+        <!-- XAML: DataTemplate x:Key="PrimaryTractorGaugeTemplate" DataType=PrimaryTractorGaugeVM -->
+        <tr>
+          <td>PrimaryTractorGaugeTemplate</td>
+          <td>PrimaryTractorGaugeVM</td>
+          <td><a href="../primary-tractor-gauge/primary-tractor-gauge.html">PrimaryTractorGauge</a></td>
+        </tr>
+        <!-- XAML: DataTemplate x:Key="ViewSwitchGaugeTemplate" DataType=ViewSwitchGaugeVM -->
+        <tr>
+          <td>ViewSwitchGaugeTemplate</td>
+          <td>ViewSwitchGaugeVM</td>
+          <td><a href="../view-switch-gauge/view-switch-gauge.html">ViewSwitchGauge</a></td>
+        </tr>
+        <!-- XAML: DataTemplate x:Key="MultipleRowGaugeTemplate" DataType=MultipleRowGaugeVM -->
+        <tr>
+          <td>MultipleRowGaugeTemplate</td>
+          <td>MultipleRowGaugeVM</td>
+          <td><a href="../multiple-row-gauge/multiple-row-gauge.html">MultipleRowGauge</a></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p class="demo-caption"><strong>MT</strong> = has a MultiThreadVisual wrapper variant (MultiThread*Template) for off-thread rendering. Visual output is identical.</p>
+
+  </main>
+
+</div>
+
+<script src="../js/nav.js"></script>
+</body>
+</html>

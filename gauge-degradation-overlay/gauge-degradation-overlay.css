@@ -1,0 +1,75 @@
+/* =============================================
+   GAUGE DEGRADATION OVERLAY
+   Source: GaugeDegradationOverlay.xaml
+   Asi.Gauges.Client.UI
+
+   A translucent overlay that covers a gauge cell
+   when its data is degraded or the gauge is not
+   configured / not supported. Two visual states:
+
+   data-state="degraded"       — Degraded / NotSupported
+   data-state="not-configured" — NotConfigured
+
+   Both show:
+     • 1px border in ForegroundInvertDisabled
+     • Semi-transparent fill (0.15 opacity)
+     • Overall overlay at 0.5 opacity
+     • Negative margin (−8px) to bleed past cell edges
+
+   The commented-out icon + shadow in XAML are kept
+   as reference but not rendered.
+   ============================================= */
+
+
+/* --- Overlay wrapper -------------------------------------------- */
+/* XAML: Grid — contains two Border elements toggled by GaugeState
+   Covers the entire gauge cell with negative margin */
+.mob-gauge-degradation-overlay {
+  position: absolute;
+  /* XAML: Margin="-8" — bleeds past gauge cell padding */
+  inset: -8px;                       /* GaugeDegradationOverlay.xaml line 23, 63 */
+  pointer-events: none;
+  z-index: 10;
+  display: none;
+}
+
+/* --- Degraded / NotSupported state ------------------------------ */
+/* XAML: Border x:Name="DegradedOverlay"
+   BorderBrush=ForegroundInvertDisabledBrush, BorderThickness=1
+   Opacity=0.5
+   Visibility bound to GaugeState == Degraded | NotSupported */
+.mob-gauge-degradation-overlay[data-state="degraded"],
+.mob-gauge-degradation-overlay[data-state="not-supported"] {
+  display: block;
+  opacity: 0.5;                      /* GaugeDegradationOverlay.xaml line 28 */
+  border: 1px solid var(--ForegroundInvertDisabled);  /* line 25–26 */
+}
+
+/* XAML: Rectangle Fill=ForegroundInvertDisabledBrush Opacity=0.15 */
+.mob-gauge-degradation-overlay[data-state="degraded"]::before,
+.mob-gauge-degradation-overlay[data-state="not-supported"]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--ForegroundInvertDisabled);    /* line 33 */
+  opacity: 0.15;                                  /* line 34 */
+}
+
+
+/* --- NotConfigured state ---------------------------------------- */
+/* XAML: Border x:Name="NotConfiguredOverlay"
+   Same visual treatment as Degraded.
+   Tooltip = "This gauge is not properly configured." */
+.mob-gauge-degradation-overlay[data-state="not-configured"] {
+  display: block;
+  opacity: 0.5;                      /* GaugeDegradationOverlay.xaml line 67 */
+  border: 1px solid var(--ForegroundInvertDisabled);  /* line 65–66 */
+}
+
+.mob-gauge-degradation-overlay[data-state="not-configured"]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--ForegroundInvertDisabled);    /* line 73 */
+  opacity: 0.15;                                  /* line 74 */
+}

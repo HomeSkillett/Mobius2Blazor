@@ -1,0 +1,226 @@
+/* =============================================
+   DISPLAY GAUGE PANEL
+   Source: DisplayGaugePanel.xaml
+   Asi.Gauges.Client.UI
+
+   Read-only gauge panel container. Displays a
+   grid of gauge cells with pagination. No drag,
+   resize, or edit-mode affordances — that's the
+   EditableGaugePanel.
+
+   Layout (from XAML):
+     Grid x:Name="Container" — MinWidth=264, MinHeight=374
+       Row 0 [*]: ScrollViewer → ListView → DisplayGaugePanelGrid
+         Margin="24" on the grid
+         CellWidth / CellHeight / CellSpacing from VM
+       Row 1 [Auto]: PageNavigation — 54px bar
+         Background = BackgroundInvertStepTwo
+         HorizontalDotListBox for page dots
+
+     Overlaid: CheckedOut message + ClearInactive button
+
+   Each gauge cell:
+     ListViewItem ControlTemplate — ContentPresenter
+       + GaugeDegradationOverlay
+       Opacity = MultiBoolAnd(IsSupported, !IsDataDegraded)
+         true → 1.0, false → 0.15
+   ============================================= */
+
+
+/* --- Panel root ------------------------------------------------- */
+/* XAML: Grid x:Name="Container" MinWidth="264" MinHeight="374" */
+.mob-display-gauge-panel {
+  display: flex;
+  flex-direction: column;
+  min-width: 264px;                  /* DisplayGaugePanel.xaml line 37 */
+  min-height: 374px;                 /* line 37 */
+  background: var(--GaugeInvertBackground);
+}
+
+
+/* --- Gauge grid area -------------------------------------------- */
+/* XAML: ScrollViewer → DisplayGaugePanelGrid Margin="24"
+   CellWidth/CellHeight/CellSpacing from VM bindings */
+.mob-display-gauge-panel__grid {
+  flex: 1;
+  overflow: auto;
+  box-sizing: border-box;
+  padding: 24px;                     /* line 86: Margin="24" */
+  min-height: 300px;                 /* line 49: MinHeight="300" */
+}
+
+
+/* --- Cell grid layout ------------------------------------------- */
+/* XAML: gauges:DisplayGaugePanelGrid (DisplayGaugePanel.xaml lines 84-102).
+   Cell size comes from the view model:
+     CellWidth 48, CellHeight 48, CellSpacing 24
+     (Asi.Gauges.Client/ViewModels/GaugeManagerVMBase.cs lines 405-407).
+   A gauge at Col c, Row r sits at left = c x 72, top = r x 72
+   (GaugeProxy.cs CalculatePosition). CSS Grid gives the same result.
+   Pages are always multiples of 4 columns and 4 rows
+   (GaugePanelConstants.cs lines 5-6).
+   The custom properties stay so older demos can override them. */
+.mob-display-gauge-panel__cells {
+  display: grid;
+  grid-template-columns: repeat(var(--panel-cols, 4), var(--cell-width, 48px));   /* GaugeManagerVMBase.cs line 405 */
+  grid-auto-rows: var(--cell-height, 48px);                                       /* GaugeManagerVMBase.cs line 406 */
+  gap: var(--cell-spacing, 24px);                                                 /* GaugeManagerVMBase.cs line 407 */
+}
+
+
+/* --- Cell placement (Col / Row / ColSpan from the gauge setup) --- */
+/* XAML: each gauge DTO carries Col, Row, ColSpan, RowSpan
+   (for example T8360-GaugeSetup.json). One class per value. */
+.mob-display-gauge-panel__cell--col-0 { grid-column-start: 1; }
+.mob-display-gauge-panel__cell--col-1 { grid-column-start: 2; }
+.mob-display-gauge-panel__cell--col-2 { grid-column-start: 3; }
+.mob-display-gauge-panel__cell--col-3 { grid-column-start: 4; }
+
+.mob-display-gauge-panel__cell--row-0 { grid-row-start: 1; }
+.mob-display-gauge-panel__cell--row-1 { grid-row-start: 2; }
+.mob-display-gauge-panel__cell--row-2 { grid-row-start: 3; }
+.mob-display-gauge-panel__cell--row-3 { grid-row-start: 4; }
+
+.mob-display-gauge-panel__cell--colspan-2 { grid-column-end: span 2; }   /* 48 + 24 + 48 = 120px */
+.mob-display-gauge-panel__cell--colspan-3 { grid-column-end: span 3; }   /* 192px */
+.mob-display-gauge-panel__cell--colspan-4 { grid-column-end: span 4; }   /* 264px */
+
+
+/* --- One 4 x 4 page ---------------------------------------------- */
+/* Width:  4 x 48 + 3 x 24 = 264 grid + 24 + 24 margin = 312px
+           (GaugeManagerVMBase.cs lines 405-407, DisplayGaugePanel.xaml line 86).
+   Height: 374px, the container MinHeight (DisplayGaugePanel.xaml line 37).
+           The content needs 312 + 54 = 366px, which is under the minimum. */
+.mob-display-gauge-panel--page-4x4 {
+  width: 312px;
+  height: 374px;
+}
+
+
+/* --- Individual gauge cell -------------------------------------- */
+/* XAML: ListViewItem ControlTemplate — Grid with ContentPresenter
+   + GaugeDegradationOverlay */
+.mob-display-gauge-panel__cell {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+}
+
+/* XAML: ContentPresenter.Opacity = MultiBoolAnd(IsSupported, !IsDataDegraded)
+   TrueValue=1.0, FalseValue=0.15 */
+.mob-display-gauge-panel__cell > * {
+  flex: 1 1 auto;                    /* ListViewItem HorizontalAlignment="Stretch", line 128 */
+  min-width: 0;
+}
+
+.mob-display-gauge-panel__cell--degraded {
+  opacity: 0.15;                     /* line 146–150 */
+}
+
+
+/* --- Page navigation bar ---------------------------------------- */
+/* XAML: Border x:Name="PageNavigation" Grid.Row="1" Height="54"
+   Background=BackgroundInvertStepTwoBrush (DisplayGaugePanel.xaml lines 167-172) */
+.mob-display-gauge-panel__page-nav {
+  flex: none;
+  height: 54px;                      /* line 170 */
+  background: var(--BackgroundInvertStepTwo);  /* line 171 */
+  display: flex;
+  align-items: center;               /* ListBox VerticalAlignment="Center", line 197 */
+  overflow-x: auto;                  /* ScrollViewer HorizontalScrollBarVisibility="Auto", line 174 */
+}
+
+
+/* --- Page dots --------------------------------------------------- */
+/* XAML: ListBox x:Name="PageListBox" Margin="16,0"
+   HorizontalAlignment="Left" Style=HorizontalDotListBox
+   (DisplayGaugePanel.xaml lines 193-202).
+   Items sit in a horizontal WrapPanel
+   (Asi.Resources.Client.UI/DefaultControls.xaml line 3925). */
+.mob-display-gauge-panel__page-dots {
+  display: flex;
+  margin: 0 16px;                    /* DisplayGaugePanel.xaml line 195 */
+}
+
+/* XAML: ControlTemplate ListBoxItemDotHorizontal
+   (DefaultControls.xaml lines 4004-4072).
+   Ellipse x:Name="baseDot" Width=16 Height=16 Margin=8 Fill=Transparent
+   Stroke=SelectionSecondaryBrush StrokeThickness=1 (lines 4009-4017). */
+.mob-display-gauge-panel__dot {
+  position: relative;
+  flex: none;
+  box-sizing: border-box;
+  width: 16px;                       /* DefaultControls.xaml line 4011 */
+  height: 16px;                      /* line 4012 */
+  margin: 8px;                       /* line 4013 */
+  border: 1px solid var(--SelectionSecondary);   /* lines 4015-4016 */
+  border-radius: 50%;
+  padding: 0;                        /* reset for <button> */
+  background: transparent;           /* line 4014 */
+  cursor: pointer;
+  transition: background-color var(--transition-unselect) ease-out;   /* line 4049 */
+}
+
+/* XAML: Ellipse x:Name="selectionDot" Fill=SelectionSecondaryBrush,
+   Opacity 1 in VisualState "Selected" (lines 4018-4024, 4052-4056) */
+.mob-display-gauge-panel__dot.is-active {
+  background: var(--SelectionSecondary);
+  transition-duration: var(--transition-select);   /* line 4054 */
+}
+
+/* XAML: Ellipse x:Name="mouseOverDot" Fill=MouseOverPrimaryBrush drawn
+   over the other two (lines 4025-4031). Opacity 0 in Normal (line 4036),
+   0.5 in MouseOver (line 4041), 1.0 in Focused (line 4066). */
+.mob-display-gauge-panel__dot::after {
+  content: "";
+  position: absolute;
+  inset: -1px;                       /* cover the full 16 x 16 ellipse, border included */
+  border-radius: 50%;
+  background: var(--MouseOverPrimary);
+  opacity: 0;                        /* line 4036 */
+  transition: opacity var(--transition-mouse-out) ease-out;   /* line 4036 */
+}
+
+.mob-display-gauge-panel__dot:hover::after {
+  opacity: 0.5;                      /* line 4041 */
+  transition-duration: var(--transition-mouse-over);
+}
+
+.mob-display-gauge-panel__dot:focus-visible::after {
+  opacity: 1;                        /* line 4066 */
+  transition-duration: var(--transition-focus);
+}
+
+
+/* --- Checked-out message overlay -------------------------------- */
+/* XAML: TextBlock Name="CheckoutMsgTxt" Grid.Row="0"
+   Margin="24,24,48,24" Style=HeadingSm
+   Foreground=ForegroundInvertPrimaryBrush */
+.mob-display-gauge-panel__checkout-msg {
+  position: absolute;
+  top: 24px;                         /* line 221: Margin top */
+  left: 24px;                        /* line 221: Margin left */
+  right: 48px;                       /* line 221: Margin right */
+  font: var(--font-hdrSm);
+  color: var(--ForegroundInvertPrimary);
+}
+
+/* XAML: Cooldown period text — StackPanel Row="1" Margin="24,0,24,-20" */
+.mob-display-gauge-panel__cooldown {
+  font: var(--font-default);
+  color: var(--ForegroundInvertPrimary);
+  padding: 0 24px;
+}
+
+/* XAML: ConfirmCommandButton Grid.Row="2" — clear vehicle button */
+.mob-display-gauge-panel__clear-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;                         /* TextBlock Margin="10,0,0,0" — line 264 */
+  margin: 20px 0 0 -1px;            /* Margin="-1,20,0,0" — line 247 */
+  color: var(--ForegroundInvertPrimary);
+  font: var(--font-default);
+  background: none;
+  border: none;
+  cursor: pointer;
+}

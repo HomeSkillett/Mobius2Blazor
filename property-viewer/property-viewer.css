@@ -1,0 +1,128 @@
+/* =============================================
+   PROPERTY VIEWER
+   Source: PropertyViewer.xaml
+   Asi.Gauges.Client.UI
+
+   A scrollable properties panel used inside
+   EditableGaugePanelControl (docked right, 400px).
+   Displays gauge configuration fields using
+   shared-size-group columns:
+
+     [LabelWidthGroup] [SymbolWidthGroup] [*] [UnitWidthGroup]
+
+   Field types (DataTemplates):
+     TextPropertyVM              → Label + TextBox
+     BooleanPropertyVM           → Label + SwitchToggle (Yes/No)
+     SimpleEnumeratedPropertyVM  → Label + ComboBox
+     SearchableEnumeratedPropertyVM → Label + searchable ComboBox
+     IntegerPropertyVM           → FieldInput (decimal=0)
+
+   Layout:
+     Border Margin="12"
+       ScrollViewer (vertical auto)
+         StackPanel
+           Title (HeadingSm)
+           ItemsControl (properties list)
+           ErrorText (if HasErrors)
+   ============================================= */
+
+
+/* --- Viewer root ------------------------------------------------ */
+/* XAML: Border x:Name="Container" Margin="12" */
+.mob-property-viewer {
+  padding: 12px;                     /* PropertyViewer.xaml line 152: Margin="12" */
+}
+
+
+/* --- Scrollable content ----------------------------------------- */
+/* XAML: ScrollViewer VerticalScrollBarVisibility="Auto"
+   StackPanel Width=ViewportWidth Margin="0,0,20,0" */
+.mob-property-viewer__scroll {
+  overflow-y: auto;
+  padding-right: 20px;              /* StackPanel Margin right — line 163 */
+}
+
+
+/* --- Title ------------------------------------------------------ */
+/* XAML: TextBlock Style=HeadingSm Margin.Bottom=MarginBottom(12) */
+.mob-property-viewer__title {
+  font: var(--font-hdrSm);
+  color: var(--ForegroundStrong);
+  margin: 0 0 12px;                 /* MarginBottom resource = 12 — line 20 */
+}
+
+
+/* --- Property row (shared layout) ------------------------------- */
+/* XAML: Grid with 4 SharedSizeGroup columns
+   Margin.Bottom = 12 (system:Double resource) */
+.mob-property-viewer__field {
+  display: grid;
+  grid-template-columns: auto auto 1fr auto;
+  gap: 0 8px;
+  align-items: center;
+  margin-bottom: 12px;              /* line 20: MarginBottom = 12 */
+}
+
+
+/* --- Label ------------------------------------------------------ */
+/* XAML: TextBlock Style=TextBlock_Label — column 0 */
+.mob-property-viewer__label {
+  font: var(--font-default);
+  color: var(--ForegroundSecondary);
+  grid-column: 1;
+  white-space: nowrap;
+}
+
+
+/* --- Text input ------------------------------------------------- */
+/* XAML: TextBox — column 2, spans 2 */
+.mob-property-viewer__text-input {
+  grid-column: 3 / 5;
+  font: var(--font-default);
+  color: var(--ForegroundPrimary);
+  background: var(--BackgroundField);
+  border: 1px solid var(--InnerLines);
+  padding: 4px 8px;
+}
+
+
+/* --- Toggle (Boolean) ------------------------------------------- */
+/* XAML: SwitchToggle Style=OnOffToggleButton — column 2, spans 2
+   ActiveLabelString="Yes" OffLabelString="No" */
+.mob-property-viewer__toggle {
+  grid-column: 3 / 5;
+  /* Use existing mob-switch-toggle component */
+}
+
+
+/* --- Dropdown (Enumerated) -------------------------------------- */
+/* XAML: ComboBox — column 2, spans 2 */
+.mob-property-viewer__select {
+  grid-column: 3 / 5;
+  font: var(--font-default);
+  color: var(--ForegroundPrimary);
+  background: var(--BackgroundField);
+  border: 1px solid var(--InnerLines);
+  padding: 4px 8px;
+}
+
+
+/* --- Numeric input (Integer) ------------------------------------ */
+/* XAML: FieldInput — DecimalPlaces=0, full row */
+.mob-property-viewer__number-input {
+  grid-column: 3 / 5;
+  font: var(--font-default);
+  color: var(--ForegroundPrimary);
+  background: var(--BackgroundField);
+  border: 1px solid var(--InnerLines);
+  padding: 4px 8px;
+}
+
+
+/* --- Error state ------------------------------------------------ */
+/* XAML: TextBlock TextWrapping=Wrap — shown when HasErrors=true */
+.mob-property-viewer__error {
+  font: var(--font-default);
+  color: var(--StatusCritical);
+  margin-top: 12px;
+}

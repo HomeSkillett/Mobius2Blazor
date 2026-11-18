@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mobius — Display Gauge Panel</title>
+  <link id="mob-theme-link" rel="stylesheet" href="../styles/color-theme-tokens/LightTheme.css" />
+  <link rel="stylesheet" href="../styles/css/main.css" />
+  <link rel="stylesheet" href="../status-icon/status-icon.css" />
+  <link rel="stylesheet" href="display-gauge-panel.css" />
+  <link rel="stylesheet" href="../gauge-degradation-overlay/gauge-degradation-overlay.css" />
+  <link rel="stylesheet" href="../text-gauge/text-gauge.css" />
+  <link rel="stylesheet" href="../indicator-gauge/indicator-gauge.css" />
+  <style>
+    body { margin: 0; }
+    h1 {
+      font: var(--font-hdrMd);
+      margin: 0 0 32px;
+      color: var(--ForegroundStrong);
+    }
+    h2 {
+      font: var(--font-hdrSm);
+      margin: 48px 0 12px;
+      color: var(--ForegroundStrong);
+    }
+    h2:first-of-type { margin-top: 0; }
+    .section-divider {
+      border: none;
+      border-top: var(--line-size) solid var(--InnerLines);
+      margin: 32px 0 0;
+    }
+    .demo-caption {
+      font: var(--font-Sm);
+      color: var(--ForegroundDisabled);
+      margin-top: var(--spacing-label-to-control-sm);
+    }
+    /* Constrain panel demo width */
+    .panel-demo {
+      max-width: 700px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="mob-layout">
+
+  <!-- Sidebar Navigation -->
+  <nav class="mob-nav" id="mob-nav"></nav>
+
+  <!-- Main Content -->
+  <main class="mob-layout__content">
+
+    <h1>Display Gauge Panel</h1>
+    <p class="demo-caption">Source: DisplayGaugePanel.xaml — Read-only container that renders a paginated grid of gauge cells.</p>
+
+
+    <!-- ============================
+         DEFAULT — 4-COLUMN GRID
+         ============================ -->
+    <hr class="section-divider">
+    <h2>Default — 4-Column Grid with Page Nav</h2>
+    <p class="demo-caption">XAML: DisplayGaugePanelGrid with CellWidth/CellHeight/CellSpacing. Page navigation bar at bottom (54px, BackgroundInvertStepTwo).</p>
+
+    <div class="panel-demo">
+      <!-- XAML: Grid x:Name="Container" MinWidth="264" MinHeight="374" -->
+      <div class="mob-display-gauge-panel" style="height: 400px;">
+
+        <!-- XAML: ScrollViewer → DisplayGaugePanelGrid Margin="24" -->
+        <div class="mob-display-gauge-panel__grid">
+          <div class="mob-display-gauge-panel__cells" style="--panel-cols: 4; --cell-width: 132px; --cell-height: 56px; --cell-spacing: 8px;">
+
+            <!-- Cell 1 — normal gauge -->
+            <!-- XAML: ListViewItem → ContentPresenter + GaugeDegradationOverlay -->
+            <div class="mob-display-gauge-panel__cell">
+              <div class="mob-text-gauge" data-status="ok">
+                <span class="mob-text-gauge__label">ENGINE SPEED</span>
+                <span class="mob-text-gauge__value">1,842</span>
+              </div>
+            </div>
+
+            <!-- Cell 2 -->
+            <div class="mob-display-gauge-panel__cell">
+              <div class="mob-text-gauge" data-status="ok">
+                <span class="mob-text-gauge__label">HYDRAULIC TEMP</span>
+                <span class="mob-text-gauge__value">185°</span>
+              </div>
+            </div>
+
+            <!-- Cell 3 -->
+            <div class="mob-display-gauge-panel__cell">
+              <div class="mob-text-gauge" data-status="warning">
+                <span class="mob-text-gauge__label">FUEL LEVEL</span>
+                <span class="mob-text-gauge__value">12%</span>
+              </div>
+            </div>
+
+            <!-- Cell 4 -->
+            <div class="mob-display-gauge-panel__cell">
+              <div class="mob-text-gauge" data-status="ok">
+                <span class="mob-text-gauge__label">COOLANT TEMP</span>
+                <span class="mob-text-gauge__value">192°</span>
+              </div>
+            </div>
+
+            <!-- Cell 5 — degraded (opacity 0.15) -->
+            <!-- XAML: ContentPresenter Opacity = MultiBoolAnd → 0.15 -->
+            <div class="mob-display-gauge-panel__cell mob-display-gauge-panel__cell--degraded">
+              <div class="mob-text-gauge">
+                <span class="mob-text-gauge__label">OIL PRESSURE</span>
+                <span class="mob-text-gauge__value">--</span>
+              </div>
+              <!-- XAML: GaugeDegradationOverlay -->
+              <div class="mob-gauge-degradation-overlay" data-state="degraded"
+                   title="This gauge's data is degraded."></div>
+            </div>
+
+            <!-- Cell 6 -->
+            <div class="mob-display-gauge-panel__cell">
+              <div class="mob-text-gauge" data-status="ok">
+                <span class="mob-text-gauge__label">BATTERY</span>
+                <span class="mob-text-gauge__value">13.2V</span>
+              </div>
+            </div>
+
+            <!-- Cell 7 -->
+            <div class="mob-display-gauge-panel__cell">
+              <div class="mob-text-gauge" data-status="critical">
+                <span class="mob-text-gauge__label">BRAKE PRESSURE</span>
+                <span class="mob-text-gauge__value">LOW</span>
+              </div>
+            </div>
+
+            <!-- Cell 8 -->
+            <div class="mob-display-gauge-panel__cell">
+              <div class="mob-text-gauge" data-status="ok">
+                <span class="mob-text-gauge__label">TRANS TEMP</span>
+                <span class="mob-text-gauge__value">165°</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- XAML: Border x:Name="PageNavigation" Height="54"
+             Background=BackgroundInvertStepTwoBrush -->
+        <div class="mob-display-gauge-panel__page-nav">
+          <!-- XAML: ListBox Style=HorizontalDotListBox -->
+          <div class="mob-display-gauge-panel__page-dots">
+            <div class="mob-display-gauge-panel__dot is-active"></div>
+            <div class="mob-display-gauge-panel__dot"></div>
+            <div class="mob-display-gauge-panel__dot"></div>
+          </div>
+        </div>
+
+      </div>
+      <p class="demo-caption">4 columns × 2 rows. Cell 5 has degradation overlay. Page dots: 3 pages, page 1 active.</p>
+    </div>
+
+
+    <!-- ============================
+         CHECKED-OUT STATE
+         ============================ -->
+    <hr class="section-divider">
+    <h2>Checked-Out Message</h2>
+    <p class="demo-caption">XAML: TextBlock "CheckoutMsgTxt" — shown when ShowCheckedOutMessage is true. Includes cooldown timer and clear button.</p>
+
+    <div class="panel-demo">
+      <div class="mob-display-gauge-panel" style="height: 200px; position: relative;">
+        <div class="mob-display-gauge-panel__grid">
+          <!-- Empty grid — vehicle checked out -->
+        </div>
+
+        <!-- XAML: CheckoutMsgTxt Margin="24,24,48,24" Style=HeadingSm -->
+        <div class="mob-display-gauge-panel__checkout-msg">
+          This vehicle is checked out by another operator.
+        </div>
+
+        <!-- XAML: Cooldown StackPanel Margin="24,0,24,-20" -->
+        <div class="mob-display-gauge-panel__cooldown" style="position: absolute; bottom: 60px; left: 0;">
+          Cooldown period remaining: <strong>02:45</strong>
+        </div>
+
+        <!-- XAML: ConfirmCommandButton — clear checked-out vehicle -->
+        <button class="mob-display-gauge-panel__clear-btn" style="position: absolute; bottom: 24px; left: 24px;">
+          <!-- XAML: Path Data=Icon_X Width=20 Height=20 -->
+          <span style="font-family: var(--font-icon); font-size: 20px;">&#xE5CD;</span>
+          Clear Checked Out Vehicle
+        </button>
+      </div>
+      <p class="demo-caption">Checked-out state with cooldown timer and clear button.</p>
+    </div>
+
+  </main>
+
+</div>
+
+<script src="../js/nav.js"></script>
+</body>
+</html>

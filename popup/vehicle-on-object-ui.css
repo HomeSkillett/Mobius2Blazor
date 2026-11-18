@@ -1,0 +1,505 @@
+/* =============================================
+   VehicleOnObjectUI — Map callout / on-object UI
+   Source: Asi.Maps.Client/UI/VehicleOnObjectUI.xaml
+   ============================================= */
+
+
+/* --- Root: Grid#_templateRoot (XAML lines 36-45) ---
+   Width varies per OnObjectState animation.
+   padding = VehicleOouiBaseGrid Margin=20 (line 83).
+   box-sizing:border-box so width includes padding.
+   drop-shadow = Grid.Effect DropShadowEffect (lines 514-516). */
+.voui {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding: var(--size-20);                               /* 20px — XAML line 83: Margin="20" */
+  box-sizing: border-box;
+  filter: drop-shadow(0 2px 4px var(--ShadowElements)); /* XAML lines 514-516 */
+}
+
+
+/* --- Status detail row (FullInterface Row 0) ---
+   XAML: _vehicleStatusDetailExpander → Border (lines 99-101) → Grid (lines 103-168)
+   Border wraps Grid: BorderThickness="1,1,1,0", MapLabelOutline.
+   Grid: Height=TouchSize(44px), bg=BackgroundStepTwo. */
+.voui__status-detail-row {
+  display: flex;
+  align-items: center;
+  height: var(--touch);                                  /* 44px — XAML line 104: TouchSize */
+  background: var(--BackgroundStepTwo);                  /* XAML line 105 */
+  border: var(--border-width) solid var(--MapLabelOutline); /* XAML lines 100-101 */
+  border-bottom: none;                                   /* XAML line 100: BorderThickness="1,1,1,0" */
+  box-sizing: border-box;
+}
+
+/* Status detail labels (Row 0, col 2)
+   XAML: StackPanel#_vehicleStatusPanel (line 122-138)
+   Margin="0,1,0,-1" (line 125).
+   Left gap = col 1 width = LabelToControlDistanceMedium = 16px (line 109). */
+.voui__status-detail-labels {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: 1px 0 -1px;                                   /* XAML line 125 */
+  margin-left: var(--spacing-label-to-control-md);       /* 16px — XAML line 109 */
+  min-width: 0;
+  overflow: hidden;
+}
+
+/* Status detail GPS/Signal (Row 0, col 3)
+   XAML: StackPanel (lines 139-155), Margin="4,0", Horizontal.
+   GPS has Margin="0,0,10,0" (line 146). */
+.voui__status-detail-indicators {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-gap-lg);                            /* 10px — XAML line 146: GPS Margin right */
+  padding: 0 var(--spacing-label-to-control-sm);         /* 4px — XAML line 141: Margin="4,0" */
+  flex-shrink: 0;
+}
+
+/* Close button (Row 0, col 4)
+   XAML: ToggleButton (lines 156-167), TouchSize x TouchSize. */
+.voui__close-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--touch);                                   /* 44px — XAML line 158 */
+  height: var(--touch);                                  /* 44px — XAML line 159 */
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: var(--ForegroundPrimary);
+  padding: 0;
+  flex-shrink: 0;
+}
+.voui__close-btn:hover {
+  background: var(--MouseOverBackground);
+}
+
+
+/* --- Main content grid (Row 2) ---
+   XAML: Grid#_mainContentGrid (lines 193-198)
+   Height=60 (line 196), bg=BackgroundStrong (line 197).
+   1px outline from overlay Border#_mainContentBorder (lines 472-478).
+   Using box-shadow:inset to avoid layout impact (matches WPF overlay). */
+.voui__main-content {
+  display: flex;
+  height: 60px;                                          /* XAML line 196 */
+  background: var(--BackgroundStrong);                   /* XAML line 197 */
+  box-shadow: inset 0 0 0 var(--border-width) var(--MapLabelOutline); /* XAML lines 472-478: overlay border */
+  overflow: hidden;                                      /* clip if content exceeds width (matches WPF) */
+  box-sizing: border-box;
+}
+/* SmallInterface: Height=46
+   XAML: anim line 677 */
+.voui__main-content--short {
+  height: 46px;
+}
+
+
+/* --- Details section (left side of main content) ---
+   XAML: Grid#_controlledDetailsExpander (lines 219-333)
+   Width animated per state. flex-shrink:0 preserves exact width. */
+.voui__details-section {
+  display: flex;
+  align-items: stretch;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+/* SmallInterface: Width=140
+   XAML: anim line 674 */
+.voui__details-section--sm {
+  width: 140px;                                          /* XAML anim line 674 */
+}
+/* SmallInterfaceWithButton: Width=140
+   XAML: anim line 808 */
+.voui__details-section--swb {
+  width: 140px;                                          /* XAML anim line 808 */
+}
+/* FullInterface: Width=161
+   XAML: anim line 864 */
+.voui__details-section--full {
+  width: 161px;                                          /* XAML anim line 864 */
+}
+
+
+/* --- Productivity status indicator (4px vertical strip) ---
+   XAML: ProductivityStatusIndicator (lines 114, 233-246), Width=4.
+   In main content, _detailsStatusIndicator has Margin.Left=1 (line 238).
+   In status detail row, no left margin (col 0, line 114). */
+.voui__status-indicator {
+  width: 4px;                                            /* XAML line 236: Width="4" */
+  align-self: stretch;
+  flex-shrink: 0;
+}
+.voui__details-section .voui__status-indicator {
+  margin-left: var(--size-1);                            /* 1px — XAML line 238: Margin.Left="1" */
+}
+.voui__status-detail-row .voui__status-indicator {
+  margin-left: 0;                                        /* XAML line 114: no margin */
+}
+.voui__status-indicator--active   { background: var(--InformationGreen); }
+.voui__status-indicator--warning  { background: var(--InformationYellow); }
+.voui__status-indicator--critical { background: var(--InformationRed); }
+.voui__status-indicator--thinking { background: var(--InformationBlue); }
+.voui__status-indicator--inactive { background: var(--ForegroundDisabled); }
+
+
+/* --- Labels area (wraps one labels-panel) ---
+   Default Margin=16,0,16,0 (XAML line 257).
+   In WPF, two panels (_controlledLabelsPanel + _detailsLabelsPanel) crossfade
+   on an 11s cycle. Static HTML shows one panel per instance. */
+.voui__labels-area {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  padding: 0 var(--spacing-label-to-control-md);         /* 16px — XAML line 257 */
+  min-width: 0;
+  overflow: hidden;
+}
+/* SmallInterface: Margin=8,0,8,0, MaxWidth=116
+   XAML: anim lines 660, 662 */
+.voui__labels-area--sm {
+  padding: 0 8px;                                        /* XAML anim line 660 */
+}
+.voui__labels-area--sm .voui__labels-panel {
+  max-width: 116px;                                      /* XAML anim line 662 */
+}
+/* SmallInterfaceWithButton: Margin=16,0,16,0, MaxWidth=100
+   XAML: anim lines 794, 796 */
+.voui__labels-area--swb .voui__labels-panel {
+  max-width: 100px;                                      /* XAML anim line 796 */
+}
+/* FullInterface: Margin=16,0,16,0, MaxWidth=128
+   XAML: anim lines 850, 852 */
+.voui__labels-area--full .voui__labels-panel {
+  max-width: 128px;                                      /* XAML anim line 852 */
+}
+
+
+/* --- Labels panel (name/status text stack) ---
+   XAML: StackPanel#_controlledLabelsPanel / _detailsLabelsPanel */
+.voui__labels-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+}
+
+/* Name row with link icon (FullInterface)
+   XAML: Grid inside _controlledLabelsPanel (lines 262-292) */
+.voui__name-row {
+  display: flex;
+  align-items: center;
+  gap: var(--size-6);                                    /* 6px — XAML line 275: Margin="0,0,6,0" */
+}
+
+
+/* --- Text styles --- */
+.voui__vehicle-name {
+  font: var(--font-default);
+  color: var(--ForegroundPrimary);                       /* XAML line 288 */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;                               /* XAML line 290: TextTrimming="CharacterEllipsis" */
+}
+.voui__user-name {
+  font: var(--font-default);
+  color: var(--ForegroundPrimary);                       /* XAML line 295 */
+}
+.voui__vehicle-status-text {
+  font: var(--font-default);
+  color: var(--ForegroundPrimary);                       /* XAML line 312 */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;                               /* XAML line 314: TextTrimming */
+}
+.voui__vehicle-status-message {
+  font: var(--font-default);
+  color: var(--ForegroundPrimary);                       /* XAML line 318 */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
+/* --- Icons (Mobius-System-Icons font) --- */
+.voui__icon {
+  font-family: var(--font-icon);                         /* fontTokens: "Mobius-System-Icons" */
+  font-size: var(--size-icons);                          /* 20px */
+  line-height: var(--lh-icons);                          /* 20px */
+  color: var(--ForegroundPrimary);
+  display: inline-block;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Link icon: 12x12, disabled opacity
+   XAML: lines 271-283 */
+.voui__icon--link {
+  font-size: var(--icon-sm);                             /* 12px — XAML lines 273-274 */
+  line-height: var(--icon-sm);
+  opacity: var(--opacity-disabled);                      /* 0.35 — XAML line 280 */
+}
+
+/* GPS/Signal standard size (status detail row)
+   Color reflects connection quality — green = good.
+   In Blazor, color will be data-bound. Static demo shows good-signal state. */
+.voui__icon--gps,
+.voui__icon--signal {
+  font-size: var(--size-icons);                          /* 20px */
+  color: var(--InformationGreen);                        /* good-signal default */
+}
+
+/* Small GPS/Signal (connection column)
+   XAML: lines 453-461, Width=10, Height=10 */
+.voui__icon--gps-sm,
+.voui__icon--signal-sm {
+  font-size: 10px;                                       /* XAML lines 454-455: Width="10" Height="10" */
+  line-height: 10px;
+  color: var(--InformationGreen);                        /* default good-signal color */
+}
+
+/* Action button icon */
+.voui__icon--action {
+  font-size: var(--size-icons);                          /* 20px */
+  color: var(--ForegroundPrimary);
+}
+
+/* Layered icon (ClearAssignmentCommandVM)
+   XAML: DataTemplate lines 18-30 — two Paths in a Grid */
+.voui__icon-layered {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--size-icons);                              /* 20px */
+  height: var(--size-icons);
+}
+/* Red X adorner overlay
+   XAML: lines 24-27, Fill=InformationRedBrush, Style=PathIconAdorner
+   DefaultControls.xaml line 841-847: 8x8, HorizontalAlignment=Right, VerticalAlignment=Top */
+.voui__icon--adorner-x {
+  position: absolute;
+  right: 0;
+  top: 0;
+  font-size: var(--icon-adorner);                        /* 8px — line 842 */
+  line-height: var(--icon-adorner);
+  color: var(--InformationRed);                          /* XAML line 26 */
+}
+
+
+/* --- Details divider (right border of details section) ---
+   XAML: Border#_controlledDetailsBorder (lines 204-217)
+   BorderThickness="0,0,1,0" MapLabelOutline.
+   Opacity=0 in SmallInterface/SingleButton.
+   Opacity=1 in SmallInterfaceWithButton/FullInterface. */
+.voui__details-divider {
+  width: var(--border-width);                            /* 1px — XAML line 208 */
+  align-self: stretch;
+  background: var(--MapLabelOutline);
+  flex-shrink: 0;
+}
+
+
+/* --- Extra details (right side: alt-labels + buttons + connection) ---
+   XAML: Grid#_extraDetails (lines 335-470) */
+.voui__extra-details {
+  display: flex;
+  align-items: stretch;
+  flex: 1;
+  min-width: 0;
+}
+
+
+/* --- Action button area ---
+   XAML: ExpanderItem#_primaryButtonExpander (lines 390-414)
+   Grid#_primaryButtonGrid MinWidth=60 (line 399) — default.
+   FullInterface animates to MinWidth=80 (line 865). */
+.voui__button-area {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 60px;                                       /* XAML line 399 */
+}
+.voui__button-area--full {
+  min-width: 80px;                                       /* XAML FullInterface anim line 865 */
+}
+/* Clear button area
+   XAML: _clearButtonExpander → Border (lines 422-424), BorderThickness="1,0,0,0".
+   Button#_clearButton MinWidth=60 (line 428), FullInterface→80 (line 866). */
+.voui__button-area--clear {
+  border-left: var(--border-width) solid var(--MapLabelOutline); /* XAML line 424 */
+  min-width: 60px;                                       /* XAML line 428 */
+}
+.voui--full-interface .voui__button-area--clear {
+  min-width: 80px;                                       /* XAML FullInterface anim line 866 */
+}
+
+.voui__action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 46px;                                          /* XAML lines 403, 408: Height="46" */
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+}
+.voui__action-btn:hover {
+  background: var(--MouseOverBackground);
+}
+
+
+/* --- Alt labels (MANUAL / TELEOP / MONITORED) ---
+   XAML: Grid#_altLabels → TextBlocks (lines 351-388)
+   Style=Font_Meta, ForegroundStrong, uppercase via CaseConverter.
+   Spans column 0+1, centered. */
+.voui__alt-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 60px;
+  padding: 0 var(--spacing-label-to-control);            /* 10px */
+  font-family: var(--default-font);
+  font-size: var(--size-meta);                           /* 14px — XAML line 364: Font_Meta */
+  line-height: var(--lh-meta);
+  color: var(--ForegroundStrong);                        /* XAML line 362 */
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+
+/* --- Connection column (small GPS + Signal) ---
+   XAML: Border#_smallConnectionStatusColumn (lines 443-469)
+   Width=22 (animated), bg=BackgroundStepTwo (line 447).
+   GPS: 10x10, Margin="0,0,0,6" (line 456). */
+.voui__connection-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--size-6);                                    /* 6px — XAML line 456 */
+  width: 22px;                                           /* XAML anim line 679 */
+  background: var(--BackgroundStepTwo);                  /* XAML line 447 */
+  flex-shrink: 0;
+}
+
+
+/* --- Callout triangle (SVG in HTML) ---
+   XAML: Path#_calloutTrianglePath (lines 496-513)
+   Data="M 0 0 L 0 1 L 1 0", Stretch=Uniform → right triangle.
+   Fill=BackgroundStrong, Stroke=MapLabelOutline, StrokeThickness=1.
+   Margin.Top="-1" (line 503) — overlaps card bottom border.
+   Path#_calloutTrianglePathTopStroke (lines 479-494) bridges the top edge.
+   Positioned with margin-left per state. */
+.voui__callout {
+  margin-top: -1px;                                      /* XAML line 503: Margin.Top="-1" */
+  align-self: flex-start;
+  flex-shrink: 0;
+  display: block;
+}
+
+/* Callout horizontal position per state.
+   XAML: Margin.Left bound to _controlledDetailsBorder.ActualWidth + TranslateTransform X.
+   Values = detailsExpanderWidth + calloutPathTranslateX. */
+.voui--small-interface .voui__callout {
+  margin-left: 80px;                                     /* 140 + (-60) — XAML lines 674, 671 */
+}
+.voui--single-button .voui__callout {
+  margin-left: 0;                                        /* 0 + (-1) ≈ 0 — XAML lines 730, 726 */
+}
+.voui--small-with-button .voui__callout {
+  margin-left: 139px;                                    /* 140 + (-1) — XAML lines 808, 804 */
+}
+.voui--full-interface .voui__callout {
+  margin-left: 160px;                                    /* 161 + (-1) — XAML lines 864, 861 */
+}
+
+
+/* =============================================
+   STATE MODIFIERS — OnObject Display States
+   Width = _templateRoot animated Width (includes 40px padding).
+   ============================================= */
+
+/* SmallInterface: _templateRoot Width=202
+   XAML: anim line 673 */
+.voui--small-interface {
+  width: 202px;
+}
+
+/* SingleButtonInterface: _templateRoot Width=100
+   XAML: anim line 729 */
+.voui--single-button {
+  width: 100px;
+}
+
+/* SmallInterfaceWithButton: _templateRoot Width=262
+   XAML: anim line 807 */
+.voui--small-with-button {
+  width: 262px;
+}
+
+/* FullInterface: _templateRoot Width=360
+   XAML: anim line 863 */
+.voui--full-interface {
+  width: 360px;
+}
+
+
+/* =============================================
+   STATE MODIFIER — Non-autonomous modes
+   XAML: AutonomousState group (lines 900-996).
+   Buttons get opacity:0 and disabled. Alt label shown instead.
+   ============================================= */
+.voui--non-auto .voui__button-area {
+  display: none;
+}
+
+
+/* =============================================
+   Interactive Panel — demo-only styles
+   ============================================= */
+
+.interactive-panel {
+  display: flex;
+  gap: 40px;
+  margin-top: var(--spacing-label-to-control-md);
+}
+.interactive-panel__controls {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-label-to-control-md);
+  min-width: 200px;
+}
+.interactive-panel__preview {
+  flex: 1;
+}
+.interactive-panel__fieldset {
+  border: var(--border-width) solid var(--InnerLines);
+  border-radius: 4px;
+  padding: var(--spacing-label-to-control) var(--spacing-label-to-control-md);
+  margin: 0;
+}
+.interactive-panel__legend {
+  font: var(--font-default);
+  font-weight: var(--font-bold);
+  color: var(--ForegroundStrong);
+  padding: 0 var(--spacing-label-to-control-sm);
+}
+.interactive-panel__radio {
+  display: flex;
+  align-items: center;
+  gap: var(--size-6);
+  font: var(--font-default);
+  color: var(--ForegroundPrimary);
+  cursor: pointer;
+  padding: 2px 0;
+}
+.interactive-panel__radio input[type="radio"] {
+  accent-color: var(--SelectionPrimary);
+}

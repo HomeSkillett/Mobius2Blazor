@@ -306,3 +306,213 @@
   outline: 2px solid var(--MouseOverPrimary);
   outline-offset: 2px;
 }
+
+
+/* #############################################################
+   VERTICAL TEMPLATE
+   Source: Common/Asi.CommonControls.Client.UI/SplitPanel.xaml
+           lines 170-296 (Mobius_UI_Common_Templates_SplitPanelVertical)
+           Selected by Orientation="Vertical" (lines 298-305).
+           Common/Asi.CommonControls.Client.UI/SplitPanel.cs
+
+   Add .split-panel--vertical to the root. Same child classes as
+   the horizontal template.
+
+   XAML Grid layout, all children share the root Grid:
+   ┌──────────────────────────────────────────┐
+   │ Row 0 (*)   PART_FirstContent            │
+   │             Toggle-C Grid (overlay)      │
+   ├──────────────────────────────────────────┤  Row 1 (2px)
+   │ Row 2 (*)   PART_SecondContent           │  Rectangle + GridSplitter
+   │             Toggle-D Grid (overlay)      │
+   └──────────────────────────────────────────┘
+
+   Both toggle grids have Margin="0,-42,0,0", so the 40px tab sits
+   above the top of its row with its bottom edge 2px above the row.
+   Toggle-D therefore sits on top of the divider line, over the
+   bottom of the first pane. Toggle-C sticks out above the panel.
+
+   State classes on the root (same names as horizontal):
+     .first-open         both panes open (default)
+     .second-collapsed   SecondContentIsOpen = false
+     .first-collapsed    FirstContentIsOpen = false
+
+   Row heights are set in code (SplitPanel.cs lines 314-349), so
+   they are passed in:
+     --split-first-length    height of row 0 (default 1fr)
+     --split-second-length   height of row 2 (default 1fr)
+   ############################################################# */
+
+
+/* =============================================================
+   ROOT
+   XAML: Grid, RowDefinitions * / 2 / *   (lines 174-179)
+   ============================================================= */
+
+.split-panel--vertical {
+  grid-template-columns: 1fr;
+  grid-template-rows:
+    minmax(0, var(--split-first-length, 1fr))            /* line 176: PART_FirstContentRow Height="*" */
+    2px                                                  /* line 177 */
+    minmax(0, var(--split-second-length, 1fr));          /* line 178: PART_SecondContentRow Height="*" */
+}
+
+/* XAML: FirstContentIsOpen = false. Row 0 animates to 0, row 2
+   becomes 1* (SplitPanel.cs lines 415-416) */
+.split-panel--vertical.first-collapsed {
+  grid-template-columns: 1fr;
+  grid-template-rows: 0 2px minmax(0, 1fr);
+}
+
+/* XAML: SecondContentIsOpen = false. Row 2 animates to 0, row 0
+   becomes 1* (SplitPanel.cs lines 430-431) */
+.split-panel--vertical.second-collapsed {
+  grid-template-columns: 1fr;
+  grid-template-rows: minmax(0, 1fr) 2px 0;
+}
+
+
+/* =============================================================
+   PANES
+   XAML: PART_FirstContent  Grid.Row="0" (lines 180-185)
+         PART_SecondContent Grid.Row="2" (lines 186-191)
+   ============================================================= */
+
+.split-panel--vertical .split-panel__pane {
+  min-height: 0;
+}
+
+.split-panel--vertical .split-panel__pane--first {
+  grid-column: 1;
+  grid-row: 1;                                           /* line 182 (Grid.Row="0") */
+}
+
+.split-panel--vertical .split-panel__pane--second {
+  grid-column: 1;
+  grid-row: 3;                                           /* line 188 (Grid.Row="2") */
+}
+
+
+/* =============================================================
+   SPACER + SPLITTER
+   XAML: Rectangle Grid.Row="1" Fill=BackgroundInvertStrongStepOneBrush
+         (lines 192-198)
+         GridSplitter x:Name="PART_PanelSplitter" Grid.Row="1"
+         Margin="0,-8" Background="Transparent" (lines 199-208)
+   ============================================================= */
+
+.split-panel--vertical .split-panel__spacer {
+  grid-column: 1;
+  grid-row: 2;                                           /* line 193 (Grid.Row="1") */
+}
+
+.split-panel--vertical .split-panel__splitter {
+  grid-column: 1;
+  grid-row: 2;                                           /* line 201 (Grid.Row="1") */
+  margin: -8px 0;                                        /* line 202 (Margin="0,-8"): 18px tall drag target */
+  cursor: row-resize;
+}
+
+
+/* =============================================================
+   TOGGLE AREAS
+   XAML: Toggle-C Grid Grid.Row="0" Margin="0,-42,0,0"
+         HAlign=Right VAlign=Top (lines 209-215)
+         Visible when FirstContentIsOpen = false (line 214, inverted)
+         Toggle-D Grid Grid.Row="2" Margin="0,-42,0,0"
+         HAlign=Right VAlign=Top (lines 252-258)
+         Visible when FirstContentIsOpen = true (line 257)
+   The grid is sized by its largest child, the 120 x 40 Path.
+   ============================================================= */
+
+.split-panel--vertical .split-panel__toggle-area {
+  grid-column: 1;
+  justify-self: end;                                     /* lines 212, 255 (HAlign=Right) */
+  align-self: start;                                     /* lines 213, 256 (VAlign=Top) */
+  width: 120px;                                          /* lines 217, 260 (Path Width) */
+  height: 40px;                                          /* lines 218, 261 (Path Height) */
+  margin: -42px 0 0 0;                                   /* lines 211, 254 (Margin="0,-42,0,0") */
+}
+
+/* Toggle-C: row 0, hidden unless the first pane is collapsed */
+.split-panel.split-panel--vertical .split-panel__toggle-area--first {
+  grid-row: 1;                                           /* line 210 (Grid.Row="0") */
+  display: none;                                         /* line 214 */
+}
+
+.split-panel.split-panel--vertical.first-collapsed .split-panel__toggle-area--first {
+  display: block;                                        /* line 214: FirstContentIsOpen = false */
+}
+
+/* Toggle-D: row 2, shown unless the first pane is collapsed */
+.split-panel.split-panel--vertical .split-panel__toggle-area--second {
+  grid-row: 3;                                           /* line 253 (Grid.Row="2") */
+  display: block;                                        /* line 257: FirstContentIsOpen = true */
+}
+
+.split-panel.split-panel--vertical.first-collapsed .split-panel__toggle-area--second {
+  display: none;                                         /* line 257 */
+}
+
+
+/* =============================================================
+   TAB SHAPE
+   XAML: Path Width="120" Height="40" Stretch="Fill"
+         Data="M 40,0 ... -10,0 ... -50,40 ... 40,40 ... z"
+         Fill=BackgroundInvertStrongStepOneBrush (lines 216-223, 259-266)
+   Geometry bounds are x -50 to 40 (90 wide), y 0 to 40.
+   Stretch=Fill maps them onto 120 x 40:
+     (-10,0)  -> x = 40 / 90 x 120 = 53.33px = 44.444%
+     (-50,40) -> x = 0
+   The vertical template has no ExpanderItem around the tab, so the
+   tab shows whenever its toggle grid shows.
+   ============================================================= */
+
+.split-panel.split-panel--vertical .split-panel__toggle-area .split-panel__tab {
+  display: block;
+  width: 120px;                                          /* lines 217, 260 */
+  height: 40px;                                          /* lines 218, 261 */
+  clip-path: polygon(44.444% 0, 100% 0, 100% 100%, 0 100%);   /* lines 219, 262 with Stretch=Fill */
+}
+
+
+/* =============================================================
+   BONUS ACTIONS
+   XAML: ContentPresenter HorizontalAlignment="Center"
+         Content=SecondContentBonusActions (lines 224-227, 267-270)
+   Centered across the 120px tab grid, full 40px height.
+   No visibility rule of its own in the vertical template.
+   ============================================================= */
+
+.split-panel.split-panel--vertical .split-panel__toggle-area .split-panel__bonus-actions {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  justify-content: center;                               /* lines 225, 268 (HAlign=Center) */
+  gap: 0;
+  width: auto;
+  padding: 0;
+}
+
+
+/* =============================================================
+   TOGGLE BUTTON
+   XAML: PART_TOGGLE_BUTTON_C / D Width="50" Height="40"
+         HAlign=Right VAlign=Top Background=Transparent
+         Foreground=ForegroundInvertWatermarkBrush
+         Style=ExpandToggleButton (lines 228-250, 271-293)
+         C: IsChecked <-> FirstContentIsOpen  (line 236)
+         D: IsChecked <-> SecondContentIsOpen (line 279)
+   Icon: Icon_Arrow_PointerUp 20 x 20 (lines 242-248, 285-291)
+         = Mobius-System-Icons \E007 (Arrow_PointerUp).
+   Checked rotates the arrow 180deg (DefaultControls.xaml line 2121),
+   so an open pane shows a down arrow. Position (absolute, top 0,
+   right 0), colors and states come from the shared rules above.
+   ============================================================= */
+
+.split-panel--vertical .split-panel__toggle {
+  width: 50px;                                           /* lines 230, 273 */
+  height: 40px;                                          /* lines 231, 274 */
+}

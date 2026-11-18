@@ -33,7 +33,7 @@
       max-width: 680px;
     }
     .note {
-      font: var(--font-bodySm);
+      font: var(--font-Sm);
       color: var(--ForegroundDisabled);
       max-width: 540px;
       margin: var(--size-6) 0 0;
@@ -75,7 +75,8 @@
     <div class="mob-active-alert__progress">
       <div class="mob-active-alert__progress-fill" style="width: 72%;"></div>
     </div>
-    <span class="mob-active-alert__icon">&#xE44B;</span>
+    <!-- Icon_Status_Info = font glyph "Status_Info" (0xE416); 0xE44B is "TireSlippage", unrelated -->
+    <span class="mob-active-alert__icon">&#xE416;</span>
     <span class="mob-active-alert__text">GPS accuracy reduced — operating in degraded mode</span>
   </article>
 
@@ -86,7 +87,8 @@
     <div class="mob-active-alert__progress">
       <div class="mob-active-alert__progress-fill" style="width: 45%;"></div>
     </div>
-    <span class="mob-active-alert__icon">&#xE450;</span>
+    <!-- Icon_Status_Warning = font glyph "Status_Warning" (0xE410); 0xE450 is "Status_WarningSm", a different (smaller-badge) variant -->
+    <span class="mob-active-alert__icon">&#xE410;</span>
     <span class="mob-active-alert__text">Obstacle detected ahead — reducing speed</span>
   </article>
 
@@ -97,7 +99,8 @@
     <div class="mob-active-alert__progress">
       <div class="mob-active-alert__progress-fill" style="width: 88%;"></div>
     </div>
-    <span class="mob-active-alert__icon">&#xE441;</span>
+    <!-- Icon_Status_Critical = font glyph "Status_Critical" (0xE412); 0xE441 is "Status_CriticalSm", a different (smaller-badge) variant -->
+    <span class="mob-active-alert__icon">&#xE412;</span>
     <span class="mob-active-alert__text">E-Stop activated — vehicle immobilized, manual reset required</span>
   </article>
 
@@ -105,7 +108,8 @@
   <!-- XAML: InactiveVisual — Background: MessageDeliveryBackgroundOkBrush
        Icon: Icon_Status_OkayThin, no ProgressBar -->
   <article class="mob-active-alert" data-level="ok">
-    <span class="mob-active-alert__icon">&#xE449;</span>
+    <!-- Icon_Status_OkayThin = font glyph "Status_OkayThin" (0xE44A); 0xE449 is "Status_OkaySm", a different (smaller-badge) variant -->
+    <span class="mob-active-alert__icon">&#xE44A;</span>
     <span class="mob-active-alert__text">All clear — autonomous operation normal</span>
   </article>
 
@@ -151,7 +155,7 @@
   <div class="mob-active-alert__progress">
     <div class="mob-active-alert__progress-fill" id="demo-progress" style="width: 100%; transition: width 0.1s linear;"></div>
   </div>
-  <span class="mob-active-alert__icon" id="demo-alert-icon">&#xE44B;</span>
+  <span class="mob-active-alert__icon" id="demo-alert-icon">&#xE416;</span>
   <span class="mob-active-alert__text" id="demo-alert-text">GPS accuracy reduced — operating in degraded mode</span>
 </article>
 
@@ -172,10 +176,10 @@
   var pct = 100;
 
   var levels = {
-    info:     { icon: '\uE44B', text: 'GPS accuracy reduced \u2014 operating in degraded mode' },
-    warning:  { icon: '\uE450', text: 'Obstacle detected ahead \u2014 reducing speed' },
-    critical: { icon: '\uE441', text: 'E-Stop activated \u2014 vehicle immobilized, manual reset required' },
-    ok:       { icon: '\uE449', text: 'All clear \u2014 autonomous operation normal' }
+    info:     { icon: '\uE416', text: 'GPS accuracy reduced \u2014 operating in degraded mode' },
+    warning:  { icon: '\uE410', text: 'Obstacle detected ahead \u2014 reducing speed' },
+    critical: { icon: '\uE412', text: 'E-Stop activated \u2014 vehicle immobilized, manual reset required' },
+    ok:       { icon: '\uE44A', text: 'All clear \u2014 autonomous operation normal' }
   };
 
   function show() {

@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mobius — VehicleOnObjectUI</title>
+  <link id="mob-theme-link" rel="stylesheet" href="../styles/color-theme-tokens/LightTheme.css" />
+  <link rel="stylesheet" href="../styles/css/main.css" />
+  <link rel="stylesheet" href="vehicle-on-object-ui.css" />
+  <style>
+    body { margin: 0; }
+    h1 {
+      font: var(--font-hdrMd);
+      margin: 0 0 32px;
+      color: var(--ForegroundStrong);
+    }
+    h2 {
+      font: var(--font-hdrSm);
+      margin: 40px 0 16px;
+      color: var(--ForegroundStrong);
+    }
+    h2:first-of-type { margin-top: 0; }
+    .demo-label {
+      font: var(--font-captionSm);
+      color: var(--ForegroundPrimary);
+      margin-bottom: var(--spacing-label-to-control-sm);
+    }
+    .section-divider {
+      border: none;
+      border-top: var(--line-size) solid var(--InnerLines);
+      margin: 32px 0 0;
+    }
+    code {
+      font-family: "Roboto Mono", monospace;
+      font-size: 12px;
+      background: var(--BackgroundStepOne);
+      padding: 2px 6px;
+      border-radius: 3px;
+    }
+    .xaml-note {
+      font: var(--font-captionSm);
+      color: var(--ForegroundWatermark);
+      margin-top: var(--spacing-label-to-control-sm);
+    }
+    .demo-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--spacing-section-to-section);
+      align-items: flex-start;
+      margin-top: var(--spacing-label-to-control-md);
+    }
+    .demo-block {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-label-to-control-sm);
+    }
+    .demo-block__label {
+      font: var(--font-captionSm);
+      font-weight: var(--font-bold);
+      color: var(--ForegroundStrong);
+    }
+    .demo-arena {
+      padding: 40px;
+      background: var(--MapBackground);
+      border-radius: 4px;
+      min-height: 120px;
+      position: relative;
+    }
+  </style>
+</head>
+<body>
+
+<div class="mob-layout">
+
+  <!-- Sidebar Navigation -->
+  <nav class="mob-nav" id="mob-nav"></nav>
+
+  <!-- Main Content -->
+  <main class="mob-layout__content">
+
+  <h1>VehicleOnObjectUI</h1>
+  <p class="demo-label">
+    Map callout bubble anchored to a vehicle icon. Shows vehicle name, status, action buttons, and connectivity.
+    <br>Source: <code>Asi.Maps.Client/UI/VehicleOnObjectUI.xaml</code>
+  </p>
+
+  <!-- ============================================================
+       SECTION 1: OnObject Display States
+       ============================================================ -->
+  <hr class="section-divider">
+  <h2>OnObject Display States</h2>
+  <p class="demo-label">Five progressive disclosure levels. Width = _templateRoot (includes 20px padding each side).</p>
+
+  <!-- ── FullInterface (default) ── -->
+  <div class="demo-row">
+    <div class="demo-block">
+      <span class="demo-block__label">FullInterface (360px)</span>
+      <div class="demo-arena">
+        <!-- XAML: _templateRoot Width=360 → visible card = 320px -->
+        <div class="voui voui--full-interface">
+          <!-- XAML: _vehicleStatusDetailExpander IsOpened=True (anim line 885-887) -->
+          <div class="voui__status-detail-row">
+            <!-- XAML: ProductivityStatusIndicator col 0, Width=4 (line 114) -->
+            <div class="voui__status-indicator voui__status-indicator--active"></div>
+            <!-- spacer col 1 = 16px (LabelToControlDistanceMedium, line 109) -->
+            <!-- XAML: _vehicleStatusPanel col 2 (lines 122-138) -->
+            <div class="voui__status-detail-labels">
+              <span class="voui__vehicle-status-text">Moving</span>
+              <span class="voui__vehicle-status-message">Path 002 (revision 83)</span>
+            </div>
+            <!-- XAML: GPS+Signal StackPanel col 3 (lines 139-155) -->
+            <div class="voui__status-detail-indicators">
+              <span class="voui__icon voui__icon--gps" title="GPS Strength">&#xE762;</span>
+              <span class="voui__icon voui__icon--signal" title="Signal Strength">&#xE401;</span>
+            </div>
+            <!-- XAML: ToggleButton col 4 (lines 156-167) -->
+            <button class="voui__close-btn" title="Close">
+              <span class="voui__icon">&#xEA06;</span>
+            </button>
+          </div>
+          <!-- XAML: _mainContentGrid Row 2, Height=60 (line 196) -->
+          <div class="voui__main-content">
+            <!-- XAML: _controlledDetailsExpander Width=161 (anim line 864) -->
+            <div class="voui__details-section voui__details-section--full">
+              <!-- XAML: _detailsStatusIndicator, Margin.Left=1 (line 238) -->
+              <div class="voui__status-indicator voui__status-indicator--active"></div>
+              <!-- XAML: _controlledLabelsPanel Opacity=1 (anim line 847), Margin=16,0,16,0, MaxWidth=128 -->
+              <div class="voui__labels-area voui__labels-area--full">
+                <div class="voui__labels-panel">
+                  <div class="voui__name-row">
+                    <!-- XAML: Link icon 12x12, opacity=0.35 (lines 271-283) -->
+                    <span class="voui__icon voui__icon--link" title="Linked asset">&#xE525;</span>
+                    <span class="voui__vehicle-name">Deere8R_Juno_0</span>
+                  </div>
+                  <span class="voui__user-name">Unassigned</span>
+                </div>
+              </div>
+            </div>
+            <!-- XAML: _controlledDetailsBorder Opacity=1 (anim line 868) -->
+            <div class="voui__details-divider"></div>
+            <!-- XAML: _extraDetails (lines 335-470) -->
+            <div class="voui__extra-details">
+              <!-- XAML: _primaryButtonGrid MinWidth=80 (anim line 865) -->
+              <div class="voui__button-area voui__button-area--full">
+                <button class="voui__action-btn" title="Pause">
+                  <span class="voui__icon voui__icon--action">&#xE115;</span>
+                </button>
+              </div>
+              <!-- XAML: _clearButtonExpander IsOpened=True (anim line 888-890) -->
+              <!-- XAML: Border BorderThickness=1,0,0,0 (line 424), _clearButton MinWidth=80 (line 866) -->
+              <div class="voui__button-area voui__button-area--clear">
+                <button class="voui__action-btn voui__action-btn--clear" title="Clear Assignment">
+                  <!-- XAML: ClearAssignmentCommandVM DataTemplate (lines 18-30) -->
+                  <span class="voui__icon-layered">
+                    <span class="voui__icon voui__icon--action">&#xEC1A;</span>
+                    <span class="voui__icon voui__icon--adorner-x">&#xEB19;</span>
+                  </span>
+                </button>
+              </div>
+            </div>
+          </div>
+          <svg class="voui__callout" width="20" height="20" viewBox="0 0 20 20" overflow="visible" xmlns="http://www.w3.org/2000/svg">
+            <path d="M 0 0 L 0 20 L 20 0 Z" fill="var(--BackgroundStrong)"/>
+            <path d="M 0 1 L 0 20 L 20 0" stroke="var(--MapLabelOutline)" stroke-width="1" fill="none"/>
+          </svg>
+        </div>
+        <p class="xaml-note">Full: status bar + labels + primary + clear buttons + close.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SmallInterfaceWithButton ── -->
+  <div class="demo-row">
+    <div class="demo-block">
+      <span class="demo-block__label">SmallInterfaceWithButton (262px) — name cycle</span>
+      <div class="demo-arena">
+        <!-- XAML: _templateRoot Width=262 → visible card = 222px -->
+        <div class="voui voui--small-with-button">
+          <!-- XAML: _mainContentGrid Height=60 (anim line 811) -->
+          <div class="voui__main-content">
+            <!-- XAML: _controlledDetailsExpander Width=140 (anim line 808) -->
+            <div class="voui__details-section voui__details-section--swb">
+              <div class="voui__status-indicator voui__status-indicator--active"></div>
+              <!-- XAML: Margin=16,0,16,0 (anim line 794), MaxWidth=100 (line 796) -->
+              <div class="voui__labels-area voui__labels-area--swb">
+                <div class="voui__labels-panel">
+                  <span class="voui__vehicle-name">Deere8R_Juno_0</span>
+                  <span class="voui__user-name">Unassigned</span>
+                </div>
+              </div>
+            </div>
+            <!-- XAML: _controlledDetailsBorder Opacity=1.0 (anim line 812), right border -->
+            <div class="voui__details-divider"></div>
+            <div class="voui__extra-details">
+              <!-- XAML: _primaryButtonExpander IsOpened=True, MinWidth=60 (anim line 809) -->
+              <div class="voui__button-area">
+                <button class="voui__action-btn" title="Pause">
+                  <span class="voui__icon voui__icon--action">&#xE115;</span>
+                </button>
+              </div>
+              <!-- XAML: _smallConnectionStatusColumn Width=22 (anim line 813) -->
+              <div class="voui__connection-column">
+                <span class="voui__icon voui__icon--gps-sm" title="GPS">&#xE762;</span>
+                <span class="voui__icon voui__icon--signal-sm" title="Signal">&#xE401;</span>
+              </div>
+            </div>
+          </div>
+          <svg class="voui__callout" width="20" height="20" viewBox="0 0 20 20" overflow="visible" xmlns="http://www.w3.org/2000/svg">
+            <path d="M 0 0 L 0 20 L 20 0 Z" fill="var(--BackgroundStrong)"/>
+            <path d="M 0 1 L 0 20 L 20 0" stroke="var(--MapLabelOutline)" stroke-width="1" fill="none"/>
+          </svg>
+        </div>
+        <p class="xaml-note">Labels + single button + connectivity. Divider visible.</p>
+      </div>
+    </div>
+
+    <div class="demo-block">
+      <span class="demo-block__label">SmallInterfaceWithButton — status cycle</span>
+      <div class="demo-arena">
+        <div class="voui voui--small-with-button">
+          <div class="voui__main-content">
+            <div class="voui__details-section voui__details-section--swb">
+              <div class="voui__status-indicator voui__status-indicator--active"></div>
+              <div class="voui__labels-area voui__labels-area--swb">
+                <div class="voui__labels-panel">
+                  <span class="voui__vehicle-status-text">Moving</span>
+                  <span class="voui__vehicle-status-message">Path 002 (revision 83)</span>
+                </div>
+              </div>
+            </div>
+            <div class="voui__details-divider"></div>
+            <div class="voui__extra-details">
+              <div class="voui__button-area">
+                <button class="voui__action-btn" title="Pause">
+                  <span class="voui__icon voui__icon--action">&#xE115;</span>
+                </button>
+              </div>
+              <div class="voui__connection-column">
+                <span class="voui__icon voui__icon--gps-sm" title="GPS">&#xE762;</span>
+                <span class="voui__icon voui__icon--signal-sm" title="Signal">&#xE401;</span>
+              </div>
+            </div>
+          </div>
+          <svg class="voui__callout" width="20" height="20" viewBox="0 0 20 20" overflow="visible" xmlns="http://www.w3.org/2000/svg">
+            <path d="M 0 0 L 0 20 L 20 0 Z" fill="var(--BackgroundStrong)"/>
+            <path d="M 0 1 L 0 20 L 20 0" stroke="var(--MapLabelOutline)" stroke-width="1" fill="none"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SmallInterface ── -->
+  <div class="demo-row">
+    <div class="demo-block">
+      <span class="demo-block__label">SmallInterface (202px) — name cycle</span>
+      <div class="demo-arena">
+        <!-- XAML: _templateRoot Width=202, VehicleOouiBaseGrid Margin=20 → visible card = 162px -->
+        <div class="voui voui--small-interface">
+          <!-- XAML: _mainContentGrid Row 2, Height=46 in SmallInterface (anim line 677) -->
+          <div class="voui__main-content voui__main-content--short">
+            <!-- XAML: _controlledDetailsExpander Col 0, Width=140 (anim line 674) -->
+            <div class="voui__details-section voui__details-section--sm">
+              <!-- XAML: _detailsStatusIndicator, Width=4, Margin.Left=1 (line 238) -->
+              <div class="voui__status-indicator voui__status-indicator--active"></div>
+              <!-- XAML: _controlledLabelsPanel, Margin=8,0,8,0 (anim line 660), MaxWidth=116 (line 662) -->
+              <div class="voui__labels-area voui__labels-area--sm">
+                <div class="voui__labels-panel">
+                  <!-- XAML: _vehicleName TextBlock (line 286-291) -->
+                  <span class="voui__vehicle-name">Deere8R_Juno_0</span>
+                  <!-- XAML: _userName TextBlock (line 293-298) -->
+                  <span class="voui__user-name">Unassigned</span>
+                </div>
+              </div>
+            </div>
+            <!-- XAML: _extraDetails Grid Col 1 (lines 335-470) -->
+            <div class="voui__extra-details">
+              <!-- XAML: _smallConnectionStatusColumn Width=22 (anim line 679), bg=BackgroundStepTwo -->
+              <div class="voui__connection-column">
+                <!-- XAML: GPSStrength 10x10, Margin=0,0,0,6 (lines 453-457) -->
+                <span class="voui__icon voui__icon--gps-sm" title="GPS Strength">&#xE762;</span>
+                <!-- XAML: SignalStrength small template (lines 463-467) -->
+                <span class="voui__icon voui__icon--signal-sm" title="Signal Strength">&#xE401;</span>
+              </div>
+            </div>
+          </div>
+          <!-- XAML: _calloutTrianglePath, 10x10 in SmallInterface (anim lines 664-665) -->
+          <svg class="voui__callout" width="10" height="10" viewBox="0 0 10 10" overflow="visible" xmlns="http://www.w3.org/2000/svg">
+            <path d="M 0 0 L 0 10 L 10 0 Z" fill="var(--BackgroundStrong)"/>
+            <path d="M 0 1 L 0 10 L 10 0" stroke="var(--MapLabelOutline)" stroke-width="1" fill="none"/>
+          </svg>
+        </div>
+        <p class="xaml-note">First half of 11s crossfade cycle. Buttons hidden. Callout 10x10.</p>
+      </div>
+    </div>
+
+    <div class="demo-block">
+      <span class="demo-block__label">SmallInterface — status cycle</span>
+      <div class="demo-arena">
+        <div class="voui voui--small-interface">
+          <div class="voui__main-content voui__main-content--short">
+            <div class="voui__details-section voui__details-section--sm">
+              <div class="voui__status-indicator voui__status-indicator--active"></div>
+              <!-- XAML: _detailsLabelsPanel, Margin=8,0,8,0 (anim line 661), MaxWidth=116 (line 663) -->
+              <div class="voui__labels-area voui__labels-area--sm">
+                <div class="voui__labels-panel">
+                  <span class="voui__vehicle-status-text">Moving</span>
+                  <span class="voui__vehicle-status-message">Path 002 (revision 83)</span>
+                </div>
+              </div>
+            </div>
+            <div class="voui__extra-details">
+              <div class="voui__connection-column">
+                <span class="voui__icon voui__icon--gps-sm" title="GPS">&#xE762;</span>
+                <span class="voui__icon voui__icon--signal-sm" title="Signal">&#xE401;</span>
+              </div>
+            </div>
+          </div>
+          <svg class="voui__callout" width="10" height="10" viewBox="0 0 10 10" overflow="visible" xmlns="http://www.w3.org/2000/svg">
+            <path d="M 0 0 L 0 10 L 10 0 Z" fill="var(--BackgroundStrong)"/>
+            <path d="M 0 1 L 0 10 L 10 0" stroke="var(--MapLabelOutline)" stroke-width="1" fill="none"/>
+          </svg>
+        </div>
+        <p class="xaml-note">Second half of 11s cycle: vehicle status + path info.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SingleButtonInterface ── -->
+  <div class="demo-row">
+    <div class="demo-block">
+      <span class="demo-block__label">SingleButtonInterface (100px)</span>
+      <div class="demo-arena">
+        <!-- XAML: _templateRoot Width=100 → visible card = 60px -->
+        <div class="voui voui--single-button">
+          <!-- XAML: _mainContentGrid Height=60 (anim line 733) -->
+          <div class="voui__main-content">
+            <!-- XAML: _extraDetails (no details section, _controlledDetailsExpander Width=0) -->
+            <div class="voui__extra-details">
+              <!-- XAML: _primaryButtonExpander IsOpened=True, _primaryButtonGrid MinWidth=60 (anim line 731) -->
+              <div class="voui__button-area">
+                <button class="voui__action-btn" title="Pause">
+                  <span class="voui__icon voui__icon--action">&#xE115;</span>
+                </button>
+              </div>
+            </div>
+          </div>
+          <!-- XAML: callout 20x20 (anim lines 720-723) -->
+          <svg class="voui__callout" width="20" height="20" viewBox="0 0 20 20" overflow="visible" xmlns="http://www.w3.org/2000/svg">
+            <path d="M 0 0 L 0 20 L 20 0 Z" fill="var(--BackgroundStrong)"/>
+            <path d="M 0 1 L 0 20 L 20 0" stroke="var(--MapLabelOutline)" stroke-width="1" fill="none"/>
+          </svg>
+        </div>
+        <p class="xaml-note">Compact: one action button. No labels, no connectivity.</p>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ============================================================
+       SECTION 2: Autonomous Control States
+       ============================================================ -->
+  <hr class="section-divider">
+  <h2>Autonomous Control States</h2>
+  <p class="demo-label">Non-autonomous modes hide buttons and show a mode label instead. Shown on FullInterface.</p>
+
+  <div class="demo-row">
+    <!-- Autonomous -->
+    <div class="demo-block">
+      <span class="demo-block__label">Autonomous</span>
+      <div class="demo-arena">
+        <div class="voui voui--full-interface">
+          <div class="voui__status-detail-row">
+            <div class="voui__status-indicator voui__status-indicator--active"></div>
+            <div class="voui__status-detail-labels">
+              <span class="voui__vehicle-status-text">Moving</span>
+              <span class="voui__vehicle-status-message">Path 002 (revision 83)</span>
+            </div>
+            <div class="voui__status-detail-indicators">
+              <span class="voui__icon voui__icon--gps" title="GPS">&#xE762;</span>
+              <span class="voui__icon voui__icon--signal" title="Signal">&#xE401;</span>
+            </div>
+            <button class="voui__close-btn" title="Close"><span class="voui__icon">&#xEA06;</span></button>
+          </div>
+          <div class="voui__main-content">
+            <div class="voui__details-section voui__details-section--full">
+              <div class="voui__status-indicator voui__status-indicator--active"></div>
+              <div class="voui__labels-area voui__labels-area--full">
+                <div class="voui__labels-panel">
+                  <div class="voui__name-row">
+                    <span class="voui__icon voui__icon--link">&#xE525;</span>
+                    <span class="voui__vehicle-name">CAT_745_01</span>
+                  </div>
+                  <span class="voui__user-name">Unassigned</span>
+                </div>
+              </div>
+            </div>
+            <div class="voui__details-divider"></div>
+            <div class="voui__extra-details">
+              <div class="voui__button-area voui__button-area--full">
+                <button class="voui__action-btn" title="Pause"><span class="voui__icon voui__icon--action">&#xE115;</span></button>
+              </div>
+              <div class="voui__button-area voui__button-area--clear">
+                <button class="voui__action-btn voui__action-btn--clear" title="Clear Assignment">
+                  <span class="voui__icon-layered">
+                    <span class="voui__icon voui__icon--action">&#xEC1A;</span>
+                    <span class="voui__icon voui__icon--adorner-x">&#xEB19;</span>
+                  </span>
+                </button>
+              </div>
+            </div>
+          </div>
+          <svg class="voui__callout" width="20" height="20" viewBox="0 0 20 20" overflow="visible" xmlns="http://www.w3.org/2000/svg"><path d="M 0 0 L 0 20 L 20 0 Z" fill="var(--BackgroundStrong)"/><path d="M 0 1 L 0 20 L 20 0" stroke="var(--MapLabelOutline)" stroke-width="1" fill="none"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- TeleOp -->
+    <div class="demo-block">
+      <span class="demo-block__label">TeleOp</span>
+      <div class="demo-arena">
+        <div class="voui voui--full-interface voui--non-auto">
+          <div class="voui__status-detail-row">
+            <div class="voui__status-indicator voui__status-indicator--thinking"></div>
+            <div class="voui__status-detail-labels">
+              <span class="voui__vehicle-status-text">TeleOp Active</span>
+              <span class="voui__vehicle-status-message">Remote operator connected</span>
+            </div>
+            <div class="voui__status-detail-indicators">
+              <span class="voui__icon voui__icon--gps" title="GPS">&#xE762;</span>
+              <span class="voui__icon voui__icon--signal" title="Signal">&#xE401;</span>
+            </div>
+            <button class="voui__close-btn" title="Close"><span class="voui__icon">&#xEA06;</span></button>
+          </div>
+          <div class="voui__main-content">
+            <div class="voui__details-section voui__details-section--full">
+              <div class="voui__status-indicator voui__status-indicator--thinking"></div>
+              <div class="voui__labels-area voui__labels-area--full">
+                <div class="voui__labels-panel">
+                  <div class="voui__name-row">
+                    <span class="voui__icon voui__icon--link">&#xE525;</span>
+                    <span class="voui__vehicle-name">CAT_745_01</span>
+                  </div>
+                  <span class="voui__user-name">operator_jsmith</span>
+                </div>
+              </div>
+            </div>
+            <div class="voui__details-divider"></div>
+            <div class="voui__extra-details">
+              <div class="voui__alt-label">TELEOP</div>
+            </div>
+          </div>
+          <svg class="voui__callout" width="20" height="20" viewBox="0 0 20 20" overflow="visible" xmlns="http://www.w3.org/2000/svg"><path d="M 0 0 L 0 20 L 20 0 Z" fill="var(--BackgroundStrong)"/><path d="M 0 1 L 0 20 L 20 0" stroke="var(--MapLabelOutline)" stroke-width="1" fill="none"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Manual -->
+    <div class="demo-block">
+      <span class="demo-block__label">Manual</span>
+      <div class="demo-arena">
+        <div class="voui voui--full-interface voui--non-auto">
+          <div class="voui__status-detail-row">
+            <div class="voui__status-indicator voui__status-indicator--inactive"></div>
+            <div class="voui__status-detail-labels">
+              <span class="voui__vehicle-status-text">Manual Control</span>
+              <span class="voui__vehicle-status-message">Operator in cab</span>
+            </div>
+            <div class="voui__status-detail-indicators">
+              <span class="voui__icon voui__icon--gps" title="GPS">&#xE762;</span>
+              <span class="voui__icon voui__icon--signal" title="Signal">&#xE401;</span>
+            </div>
+            <button class="voui__close-btn" title="Close"><span class="voui__icon">&#xEA06;</span></button>
+          </div>
+          <div class="voui__main-content">
+            <div class="voui__details-section voui__details-section--full">
+              <div class="voui__status-indicator voui__status-indicator--inactive"></div>
+              <div class="voui__labels-area voui__labels-area--full">
+                <div class="voui__labels-panel">
+                  <div class="voui__name-row">
+                    <span class="voui__icon voui__icon--link">&#xE525;</span>
+                    <span class="voui__vehicle-name">JD_8400R_02</span>
+                  </div>
+                  <span class="voui__user-name">operator_jdoe</span>
+                </div>
+              </div>
+            </div>
+            <div class="voui__details-divider"></div>
+            <div class="voui__extra-details">
+              <div class="voui__alt-label">MANUAL</div>
+            </div>
+          </div>
+          <svg class="voui__callout" width="20" height="20" viewBox="0 0 20 20" overflow="visible" xmlns="http://www.w3.org/2000/svg"><path d="M 0 0 L 0 20 L 20 0 Z" fill="var(--BackgroundStrong)"/><path d="M 0 1 L 0 20 L 20 0" stroke="var(--MapLabelOutline)" stroke-width="1" fill="none"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Monitored -->
+    <div class="demo-block">
+      <span class="demo-block__label">Monitored</span>
+      <div class="demo-arena">
+        <div class="voui voui--full-interface voui--non-auto">
+          <div class="voui__status-detail-row">
+            <div class="voui__status-indicator voui__status-indicator--active"></div>
+            <div class="voui__status-detail-labels">
+              <span class="voui__vehicle-status-text">Monitored Auto</span>
+              <span class="voui__vehicle-status-message">Supervisor override</span>
+            </div>
+            <div class="voui__status-detail-indicators">
+              <span class="voui__icon voui__icon--gps" title="GPS">&#xE762;</span>
+              <span class="voui__icon voui__icon--signal" title="Signal">&#xE401;</span>
+            </div>
+            <button class="voui__close-btn" title="Close"><span class="voui__icon">&#xEA06;</span></button>
+          </div>
+          <div class="voui__main-content">
+            <div class="voui__details-section voui__details-section--full">
+              <div class="voui__status-indicator voui__status-indicator--active"></div>
+              <div class="voui__labels-area voui__labels-area--full">
+                <div class="voui__labels-panel">
+                  <div class="voui__name-row">
+                    <span class="voui__icon voui__icon--link">&#xE525;</span>
+                    <span class="voui__vehicle-name">CAT_D11_03</span>
+                  </div>
+                  <span class="voui__user-name">supervisor_mlee</span>
+                </div>
+              </div>
+            </div>
+            <div class="voui__details-divider"></div>
+            <div class="voui__extra-details">
+              <div class="voui__alt-label">MONITORED</div>
+            </div>
+          </div>
+          <svg class="voui__callout" width="20" height="20" viewBox="0 0 20 20" overflow="visible" xmlns="http://www.w3.org/2000/svg"><path d="M 0 0 L 0 20 L 20 0 Z" fill="var(--BackgroundStrong)"/><path d="M 0 1 L 0 20 L 20 0" stroke="var(--MapLabelOutline)" stroke-width="1" fill="none"/></svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ============================================================
+       SECTION 3: Activity / Productivity States
+       ============================================================ -->
+  <hr class="section-divider">
+  <h2>Activity State Indicators</h2>
+  <p class="demo-label">The 4px vertical status strip maps ActivityState to a color. Shown on FullInterface.</p>
+
+  <div class="demo-row">
+    <div class="demo-block">
+      <span class="demo-block__label">Active (Moving)</span>
+      <div class="demo-arena">
+        <div class="voui voui--full-interface">
+          <div class="voui__status-detail-row">
+            <div class="voui__status-indicator voui__status-indicator--active"></div>
+            <div class="voui__status-detail-labels">
+              <span class="voui__vehicle-status-text">Moving</span>
+              <span class="voui__vehicle-status-message">Path 002 (revision 83)</span>
+            </div>
+            <div class="voui__status-detail-indicators">
+              <span class="voui__icon voui__icon--gps">&#xE762;</span>
+              <span class="voui__icon voui__icon--signal">&#xE401;</span>
+            </div>
+            <button class="voui__close-btn"><span class="voui__icon">&#xEA06;</span></button>
+          </div>
+          <div class="voui__main-content">
+            <div class="voui__details-section voui__details-section--full">
+              <div class="voui__status-indicator voui__status-indicator--active"></div>
+              <div class="voui__labels-area voui__labels-area--full"><div class="voui__labels-panel"><div class="voui__name-row"><span class="voui__icon voui__icon--link">&#xE525;</span><span class="voui__vehicle-name">CAT_745_01</span></div><span class="voui__user-name">Unassigned</span></div></div>
+            </div>
+            <div class="voui__details-divider"></div>
+            <div class="voui__extra-details">
+              <div class="voui__button-area voui__button-area--full"><button class="voui__action-btn" title="Pause"><span class="voui__icon voui__icon--action">&#xE115;</span></button></div>
+              <div class="voui__button-area voui__button-area--clear"><button class="voui__action-btn voui__action-btn--clear" title="Clear"><span class="voui__icon-layered"><span class="voui__icon voui__icon--action">&#xEC1A;</span><span class="voui__icon voui__icon--adorner-x">&#xEB19;</span></span></button></div>
+            </div>
+          </div>
+          <svg class="voui__callout" width="20" height="20" viewBox="0 0 20 20" overflow="visible" xmlns="http://www.w3.org/2000/svg"><path d="M 0 0 L 0 20 L 20 0 Z" fill="var(--BackgroundStrong)"/><path d="M 0 1 L 0 20 L 20 0" stroke="var(--MapLabelOutline)" stroke-width="1" fill="none"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="demo-block">
+      <span class="demo-block__label">Warning</span>
+      <div class="demo-arena">
+        <div class="voui voui--full-interface">
+          <div class="voui__status-detail-row">
+            <div class="voui__status-indicator voui__status-indicator--warning"></div>
+            <div class="voui__status-detail-labels">
+              <span class="voui__vehicle-status-text">Conditional Stop</span>
+              <span class="voui__vehicle-status-message">Obstacle detected</span>
+            </div>
+            <div class="voui__status-detail-indicators">
+              <span class="voui__icon voui__icon--gps">&#xE762;</span>
+              <span class="voui__icon voui__icon--signal">&#xE401;</span>
+            </div>
+            <button class="voui__close-btn"><span class="voui__icon">&#xEA06;</span></button>
+          </div>
+          <div class="voui__main-content">
+            <div class="voui__details-section voui__details-section--full">
+              <div class="voui__status-indicator voui__status-indicator--warning"></div>
+              <div class="voui__labels-area voui__labels-area--full"><div class="voui__labels-panel"><div class="voui__name-row"><span class="voui__icon voui__icon--link">&#xE525;</span><span class="voui__vehicle-name">CAT_745_01</span></div><span class="voui__user-name">Unassigned</span></div></div>
+            </div>
+            <div class="voui__details-divider"></div>
+            <div class="voui__extra-details">
+              <div class="voui__button-area voui__button-area--full"><button class="voui__action-btn" title="Play"><span class="voui__icon voui__icon--action">&#xE114;</span></button></div>
+              <div class="voui__button-area voui__button-area--clear"><button class="voui__action-btn voui__action-btn--clear" title="Clear"><span class="voui__icon-layered"><span class="voui__icon voui__icon--action">&#xEC1A;</span><span class="voui__icon voui__icon--adorner-x">&#xEB19;</span></span></button></div>
+            </div>
+          </div>
+          <svg class="voui__callout" width="20" height="20" viewBox="0 0 20 20" overflow="visible" xmlns="http://www.w3.org/2000/svg"><path d="M 0 0 L 0 20 L 20 0 Z" fill="var(--BackgroundStrong)"/><path d="M 0 1 L 0 20 L 20 0" stroke="var(--MapLabelOutline)" stroke-width="1" fill="none"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="demo-block">
+      <span class="demo-block__label">Critical (E-Stop)</span>
+      <div class="demo-arena">
+        <div class="voui voui--full-interface">
+          <div class="voui__status-detail-row">
+            <div class="voui__status-indicator voui__status-indicator--critical"></div>
+            <div class="voui__status-detail-labels">
+              <span class="voui__vehicle-status-text">E-Stop</span>
+              <span class="voui__vehicle-status-message">Emergency stop triggered</span>
+            </div>
+            <div class="voui__status-detail-indicators">
+              <span class="voui__icon voui__icon--gps">&#xE762;</span>
+              <span class="voui__icon voui__icon--signal">&#xE401;</span>
+            </div>
+            <button class="voui__close-btn"><span class="voui__icon">&#xEA06;</span></button>
+          </div>
+          <div class="voui__main-content">
+            <div class="voui__details-section voui__details-section--full">
+              <div class="voui__status-indicator voui__status-indicator--critical"></div>
+              <div class="voui__labels-area voui__labels-area--full"><div class="voui__labels-panel"><div class="voui__name-row"><span class="voui__icon voui__icon--link">&#xE525;</span><span class="voui__vehicle-name">CAT_745_01</span></div><span class="voui__user-name">Unassigned</span></div></div>
+            </div>
+            <div class="voui__details-divider"></div>
+            <div class="voui__extra-details">
+              <div class="voui__button-area voui__button-area--full"><button class="voui__action-btn" title="Play"><span class="voui__icon voui__icon--action">&#xE114;</span></button></div>
+              <div class="voui__button-area voui__button-area--clear"><button class="voui__action-btn voui__action-btn--clear" title="Clear"><span class="voui__icon-layered"><span class="voui__icon voui__icon--action">&#xEC1A;</span><span class="voui__icon voui__icon--adorner-x">&#xEB19;</span></span></button></div>
+            </div>
+          </div>
+          <svg class="voui__callout" width="20" height="20" viewBox="0 0 20 20" overflow="visible" xmlns="http://www.w3.org/2000/svg"><path d="M 0 0 L 0 20 L 20 0 Z" fill="var(--BackgroundStrong)"/><path d="M 0 1 L 0 20 L 20 0" stroke="var(--MapLabelOutline)" stroke-width="1" fill="none"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="demo-block">
+      <span class="demo-block__label">Thinking (Idle)</span>
+      <div class="demo-arena">
+        <div class="voui voui--full-interface">
+          <div class="voui__status-detail-row">
+            <div class="voui__status-indicator voui__status-indicator--thinking"></div>
+            <div class="voui__status-detail-labels">
+              <span class="voui__vehicle-status-text">Idle</span>
+              <span class="voui__vehicle-status-message">Waiting for assignment</span>
+            </div>
+            <div class="voui__status-detail-indicators">
+              <span class="voui__icon voui__icon--gps">&#xE762;</span>
+              <span class="voui__icon voui__icon--signal">&#xE401;</span>
+            </div>
+            <button class="voui__close-btn"><span class="voui__icon">&#xEA06;</span></button>
+          </div>
+          <div class="voui__main-content">
+            <div class="voui__details-section voui__details-section--full">
+              <div class="voui__status-indicator voui__status-indicator--thinking"></div>
+              <div class="voui__labels-area voui__labels-area--full"><div class="voui__labels-panel"><div class="voui__name-row"><span class="voui__icon voui__icon--link">&#xE525;</span><span class="voui__vehicle-name">CAT_745_01</span></div><span class="voui__user-name">Unassigned</span></div></div>
+            </div>
+            <div class="voui__details-divider"></div>
+            <div class="voui__extra-details">
+              <div class="voui__button-area voui__button-area--full"><button class="voui__action-btn" title="Pause"><span class="voui__icon voui__icon--action">&#xE115;</span></button></div>
+              <div class="voui__button-area voui__button-area--clear"><button class="voui__action-btn voui__action-btn--clear" title="Clear"><span class="voui__icon-layered"><span class="voui__icon voui__icon--action">&#xEC1A;</span><span class="voui__icon voui__icon--adorner-x">&#xEB19;</span></span></button></div>
+            </div>
+          </div>
+          <svg class="voui__callout" width="20" height="20" viewBox="0 0 20 20" overflow="visible" xmlns="http://www.w3.org/2000/svg"><path d="M 0 0 L 0 20 L 20 0 Z" fill="var(--BackgroundStrong)"/><path d="M 0 1 L 0 20 L 20 0" stroke="var(--MapLabelOutline)" stroke-width="1" fill="none"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="demo-block">
+      <span class="demo-block__label">Inactive / Off</span>
+      <div class="demo-arena">
+        <div class="voui voui--full-interface">
+          <div class="voui__status-detail-row">
+            <div class="voui__status-indicator voui__status-indicator--inactive"></div>
+            <div class="voui__status-detail-labels">
+              <span class="voui__vehicle-status-text">Offline</span>
+              <span class="voui__vehicle-status-message">Vehicle powered down</span>
+            </div>
+            <div class="voui__status-detail-indicators">
+              <span class="voui__icon voui__icon--gps">&#xE762;</span>
+              <span class="voui__icon voui__icon--signal">&#xE401;</span>
+            </div>
+            <button class="voui__close-btn"><span class="voui__icon">&#xEA06;</span></button>
+          </div>
+          <div class="voui__main-content">
+            <div class="voui__details-section voui__details-section--full">
+              <div class="voui__status-indicator voui__status-indicator--inactive"></div>
+              <div class="voui__labels-area voui__labels-area--full"><div class="voui__labels-panel"><div class="voui__name-row"><span class="voui__icon voui__icon--link">&#xE525;</span><span class="voui__vehicle-name">CAT_745_01</span></div><span class="voui__user-name">Unassigned</span></div></div>
+            </div>
+            <div class="voui__details-divider"></div>
+            <div class="voui__extra-details">
+              <div class="voui__button-area voui__button-area--full"><button class="voui__action-btn" title="Power On"><span class="voui__icon voui__icon--action">&#xE40B;</span></button></div>
+              <div class="voui__button-area voui__button-area--clear"><button class="voui__action-btn voui__action-btn--clear" title="Clear"><span class="voui__icon-layered"><span class="voui__icon voui__icon--action">&#xEC1A;</span><span class="voui__icon voui__icon--adorner-x">&#xEB19;</span></span></button></div>
+            </div>
+          </div>
+          <svg class="voui__callout" width="20" height="20" viewBox="0 0 20 20" overflow="visible" xmlns="http://www.w3.org/2000/svg"><path d="M 0 0 L 0 20 L 20 0 Z" fill="var(--BackgroundStrong)"/><path d="M 0 1 L 0 20 L 20 0" stroke="var(--MapLabelOutline)" stroke-width="1" fill="none"/></svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ============================================================
+       SECTION 4: Command Button States
+       ============================================================ -->
+  <hr class="section-divider">
+  <h2>Command Button States</h2>
+  <p class="demo-label">Play, Pause, and Power buttons swap based on ActiveCommandStates. Shown on SingleButtonInterface.</p>
+
+  <div class="demo-row">
+    <div class="demo-block">
+      <span class="demo-block__label">ShowPlay</span>
+      <div class="demo-arena">
+        <div class="voui voui--single-button">
+          <div class="voui__main-content"><div class="voui__extra-details"><div class="voui__button-area"><button class="voui__action-btn" title="Play"><span class="voui__icon voui__icon--action">&#xE114;</span></button></div></div></div>
+          <svg class="voui__callout" width="20" height="20" viewBox="0 0 20 20" overflow="visible" xmlns="http://www.w3.org/2000/svg"><path d="M 0 0 L 0 20 L 20 0 Z" fill="var(--BackgroundStrong)"/><path d="M 0 1 L 0 20 L 20 0" stroke="var(--MapLabelOutline)" stroke-width="1" fill="none"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="demo-block">
+      <span class="demo-block__label">ShowPause</span>
+      <div class="demo-arena">
+        <div class="voui voui--single-button">
+          <div class="voui__main-content"><div class="voui__extra-details"><div class="voui__button-area"><button class="voui__action-btn" title="Pause"><span class="voui__icon voui__icon--action">&#xE115;</span></button></div></div></div>
+          <svg class="voui__callout" width="20" height="20" viewBox="0 0 20 20" overflow="visible" xmlns="http://www.w3.org/2000/svg"><path d="M 0 0 L 0 20 L 20 0 Z" fill="var(--BackgroundStrong)"/><path d="M 0 1 L 0 20 L 20 0" stroke="var(--MapLabelOutline)" stroke-width="1" fill="none"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="demo-block">
+      <span class="demo-block__label">ShowPower</span>
+      <div class="demo-arena">
+        <div class="voui voui--single-button">
+          <div class="voui__main-content"><div class="voui__extra-details"><div class="voui__button-area"><button class="voui__action-btn" title="Power On"><span class="voui__icon voui__icon--action">&#xE40B;</span></button></div></div></div>
+          <svg class="voui__callout" width="20" height="20" viewBox="0 0 20 20" overflow="visible" xmlns="http://www.w3.org/2000/svg"><path d="M 0 0 L 0 20 L 20 0 Z" fill="var(--BackgroundStrong)"/><path d="M 0 1 L 0 20 L 20 0" stroke="var(--MapLabelOutline)" stroke-width="1" fill="none"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="demo-block">
+      <span class="demo-block__label">Clear Assignment</span>
+      <div class="demo-arena">
+        <div class="voui voui--single-button">
+          <div class="voui__main-content">
+            <div class="voui__extra-details">
+              <div class="voui__button-area">
+                <button class="voui__action-btn voui__action-btn--clear" title="Clear Assignment">
+                  <span class="voui__icon-layered">
+                    <span class="voui__icon voui__icon--action">&#xEC1A;</span>
+                    <span class="voui__icon voui__icon--adorner-x">&#xEB19;</span>
+                  </span>
+                </button>
+              </div>
+            </div>
+          </div>
+          <svg class="voui__callout" width="20" height="20" viewBox="0 0 20 20" overflow="visible" xmlns="http://www.w3.org/2000/svg"><path d="M 0 0 L 0 20 L 20 0 Z" fill="var(--BackgroundStrong)"/><path d="M 0 1 L 0 20 L 20 0" stroke="var(--MapLabelOutline)" stroke-width="1" fill="none"/></svg>
+        </div>
+        <p class="xaml-note">ClearAssignmentCommandVM: PathAdorned + red Adorner_Status_X overlay.</p>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ============================================================
+       SECTION 5: Interactive State Switcher
+       ============================================================ -->
+  <hr class="section-divider">
+  <h2>Interactive</h2>
+  <p class="demo-label">Combine display state, control mode, activity, and command button on a single live component.</p>
+
+  <div class="interactive-panel">
+    <div class="interactive-panel__controls">
+      <fieldset class="interactive-panel__fieldset">
+        <legend class="interactive-panel__legend">Display State</legend>
+        <label class="interactive-panel__radio"><input type="radio" name="display-state" value="small-interface" onchange="updateInteractive()"><span>SmallInterface</span></label>
+        <label class="interactive-panel__radio"><input type="radio" name="display-state" value="single-button" onchange="updateInteractive()"><span>SingleButton</span></label>
+        <label class="interactive-panel__radio"><input type="radio" name="display-state" value="small-with-button" onchange="updateInteractive()"><span>SmallWithButton</span></label>
+        <label class="interactive-panel__radio"><input type="radio" name="display-state" value="full-interface" checked onchange="updateInteractive()"><span>FullInterface</span></label>
+      </fieldset>
+
+      <fieldset class="interactive-panel__fieldset">
+        <legend class="interactive-panel__legend">Control Mode</legend>
+        <label class="interactive-panel__radio"><input type="radio" name="control-mode" value="autonomous" checked onchange="updateInteractive()"><span>Autonomous</span></label>
+        <label class="interactive-panel__radio"><input type="radio" name="control-mode" value="teleop" onchange="updateInteractive()"><span>TeleOp</span></label>
+        <label class="interactive-panel__radio"><input type="radio" name="control-mode" value="manual" onchange="updateInteractive()"><span>Manual</span></label>
+        <label class="interactive-panel__radio"><input type="radio" name="control-mode" value="monitored" onchange="updateInteractive()"><span>Monitored</span></label>
+      </fieldset>
+
+      <fieldset class="interactive-panel__fieldset">
+        <legend class="interactive-panel__legend">Activity State</legend>
+        <label class="interactive-panel__radio"><input type="radio" name="activity-state" value="active" checked onchange="updateInteractive()"><span>Active</span></label>
+        <label class="interactive-panel__radio"><input type="radio" name="activity-state" value="warning" onchange="updateInteractive()"><span>Warning</span></label>
+        <label class="interactive-panel__radio"><input type="radio" name="activity-state" value="critical" onchange="updateInteractive()"><span>Critical</span></label>
+        <label class="interactive-panel__radio"><input type="radio" name="activity-state" value="thinking" onchange="updateInteractive()"><span>Thinking</span></label>
+        <label class="interactive-panel__radio"><input type="radio" name="activity-state" value="inactive" onchange="updateInteractive()"><span>Inactive</span></label>
+      </fieldset>
+
+      <fieldset class="interactive-panel__fieldset">
+        <legend class="interactive-panel__legend">Command Button</legend>
+        <label class="interactive-panel__radio"><input type="radio" name="command-btn" value="pause" checked onchange="updateInteractive()"><span>Pause</span></label>
+        <label class="interactive-panel__radio"><input type="radio" name="command-btn" value="play" onchange="updateInteractive()"><span>Play</span></label>
+        <label class="interactive-panel__radio"><input type="radio" name="command-btn" value="power" onchange="updateInteractive()"><span>Power</span></label>
+      </fieldset>
+    </div>
+
+    <div class="interactive-panel__preview">
+      <div class="demo-arena" style="min-height: 160px; display: flex; align-items: center; justify-content: center;">
+        <div id="int-root"></div>
+      </div>
+    </div>
+  </div>
+
+  </main>
+</div>
+
+<script src="../js/nav.js"></script>
+<script>
+/* Interactive state switcher — demo-only JS.
+   In Blazor, state transitions are handled by C# code-behind. */
+
+var ICON_MAP = {
+  pause: '',   /* Media_Pause */
+  play:  '',   /* Media_Play */
+  power: ''    /* Power */
+};
+
+/* SVG callout templates matching XAML Path data */
+var CALLOUT_20 = '<svg class="voui__callout" width="20" height="20" viewBox="0 0 20 20" overflow="visible" xmlns="http://www.w3.org/2000/svg"><path d="M 0 0 L 0 20 L 20 0 Z" fill="var(--BackgroundStrong)"/><path d="M 0 1 L 0 20 L 20 0" stroke="var(--MapLabelOutline)" stroke-width="1" fill="none"/></svg>';
+var CALLOUT_10 = '<svg class="voui__callout" width="10" height="10" viewBox="0 0 10 10" overflow="visible" xmlns="http://www.w3.org/2000/svg"><path d="M 0 0 L 0 10 L 10 0 Z" fill="var(--BackgroundStrong)"/><path d="M 0 1 L 0 10 L 10 0" stroke="var(--MapLabelOutline)" stroke-width="1" fill="none"/></svg>';
+
+function getVal(name) {
+  var el = document.querySelector('input[name="' + name + '"]:checked');
+  return el ? el.value : '';
+}
+
+function updateInteractive() {
+  var ds   = getVal('display-state');
+  var cm   = getVal('control-mode');
+  var act  = getVal('activity-state');
+  var cmd  = getVal('command-btn');
+  var root = document.getElementById('int-root');
+
+  var isAuto   = (cm === 'autonomous');
+  var showBtn  = (ds !== 'small-interface') && isAuto;
+  var showClear = (ds === 'full-interface') && isAuto;
+  var showConn  = (ds === 'small-interface' || ds === 'small-with-button');
+  var showLabels = (ds !== 'single-button');
+  var showStatusRow = (ds === 'full-interface');
+  var showDivider = (ds === 'small-with-button' || ds === 'full-interface');
+  var showAlt   = !isAuto && (ds !== 'single-button');
+  var isSmall   = (ds === 'small-interface');
+
+  var indicatorClass = 'voui__status-indicator voui__status-indicator--' + act;
+
+  /* Detail section size class */
+  var detailSizeClass = '';
+  if (ds === 'small-interface') detailSizeClass = ' voui__details-section--sm';
+  else if (ds === 'small-with-button') detailSizeClass = ' voui__details-section--swb';
+  else if (ds === 'full-interface') detailSizeClass = ' voui__details-section--full';
+
+  /* Labels area class */
+  var labelAreaClass = 'voui__labels-area';
+  if (ds === 'small-interface') labelAreaClass += ' voui__labels-area--sm';
+  else if (ds === 'small-with-button') labelAreaClass += ' voui__labels-area--swb';
+  else if (ds === 'full-interface') labelAreaClass += ' voui__labels-area--full';
+
+  var html = '';
+
+  /* Status detail row (FullInterface only) */
+  if (showStatusRow) {
+    html += '<div class="voui__status-detail-row">';
+    html += '  <div class="' + indicatorClass + '"></div>';
+    html += '  <div class="voui__status-detail-labels">';
+    html += '    <span class="voui__vehicle-status-text">Moving</span>';
+    html += '    <span class="voui__vehicle-status-message">Path 002 (revision 83)</span>';
+    html += '  </div>';
+    html += '  <div class="voui__status-detail-indicators">';
+    html += '    <span class="voui__icon voui__icon--gps"></span>';
+    html += '    <span class="voui__icon voui__icon--signal"></span>';
+    html += '  </div>';
+    html += '  <button class="voui__close-btn"><span class="voui__icon"></span></button>';
+    html += '</div>';
+  }
+
+  /* Main content row */
+  var mainClass = 'voui__main-content';
+  if (isSmall) mainClass += ' voui__main-content--short';
+  html += '<div class="' + mainClass + '">';
+
+  if (showLabels) {
+    html += '<div class="voui__details-section' + detailSizeClass + '">';
+    html += '  <div class="' + indicatorClass + '"></div>';
+    html += '  <div class="' + labelAreaClass + '">';
+    html += '    <div class="voui__labels-panel">';
+    if (ds === 'full-interface') {
+      html += '    <div class="voui__name-row">';
+      html += '      <span class="voui__icon voui__icon--link"></span>';
+      html += '      <span class="voui__vehicle-name">Deere8R_Juno_0</span>';
+      html += '    </div>';
+    } else {
+      html += '    <span class="voui__vehicle-name">Deere8R_Juno_0</span>';
+    }
+    html += '      <span class="voui__user-name">Unassigned</span>';
+    html += '    </div>';
+    html += '  </div>';
+    html += '</div>';
+
+    if (showDivider) html += '<div class="voui__details-divider"></div>';
+  }
+
+  html += '<div class="voui__extra-details">';
+
+  if (showAlt) {
+    html += '<div class="voui__alt-label">' + cm.toUpperCase() + '</div>';
+  }
+
+  if (showBtn || ds === 'single-button') {
+    var btnClass = (ds === 'full-interface') ? 'voui__button-area voui__button-area--full' : 'voui__button-area';
+    html += '<div class="' + btnClass + '">';
+    html += '  <button class="voui__action-btn">';
+    html += '    <span class="voui__icon voui__icon--action">' + ICON_MAP[cmd] + '</span>';
+    html += '  </button>';
+    html += '</div>';
+  }
+
+  if (showClear) {
+    html += '<div class="voui__button-area voui__button-area--clear">';
+    html += '  <button class="voui__action-btn voui__action-btn--clear">';
+    html += '    <span class="voui__icon-layered">';
+    html += '      <span class="voui__icon voui__icon--action"></span>';
+    html += '      <span class="voui__icon voui__icon--adorner-x"></span>';
+    html += '    </span>';
+    html += '  </button>';
+    html += '</div>';
+  }
+
+  if (showConn) {
+    html += '<div class="voui__connection-column">';
+    html += '  <span class="voui__icon voui__icon--gps-sm"></span>';
+    html += '  <span class="voui__icon voui__icon--signal-sm"></span>';
+    html += '</div>';
+  }
+
+  html += '</div>'; /* extra-details */
+  html += '</div>'; /* main-content */
+
+  /* Callout triangle — 10x10 for SmallInterface, 20x20 otherwise */
+  html += isSmall ? CALLOUT_10 : CALLOUT_20;
+
+  /* Apply classes to root */
+  var rootClass = 'voui voui--' + ds;
+  if (!isAuto && ds !== 'single-button') rootClass += ' voui--non-auto';
+  root.className = rootClass;
+  root.innerHTML = html;
+}
+
+updateInteractive();
+</script>
+</body>
+</html>

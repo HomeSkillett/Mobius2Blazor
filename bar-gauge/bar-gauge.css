@@ -1,0 +1,601 @@
+/* =============================================
+   BAR GAUGE
+   Source: BarGauge.xaml + BarGauge.xaml.cs
+   Asi.Gauges.Client.UI
+
+   Horizontal template: Mobius_UI_Gauges_Templates_BarGaugeTemplateHorizontal
+   (BarGauge.xaml lines 15-376). Fully traced below.
+
+   Vertical template: lines 378-728. The vertical rules at the
+   bottom of this file were moved here unchanged from
+   status-gauge.css and have NOT been re-traced yet.
+
+   Resolved geometry (y measured from the top of the gauge):
+     Root grid rows 12 / 13 / 1 / 10 / 12 = 48px      (lines 21-25)
+     Row 0   y  0-12   label (left) + value (right)
+     Row 1   y 12-25   tick overhang
+     Row 2   y 25-26   1px spacer
+     Row 3   y 26-36   bar track, ticks, ranges, progress
+     Row 4   y 36-48   min / max labels
+
+   Text overflows the 48px box on purpose (negative XAML margins).
+   Do not clip it.
+
+   Text metrics: Typography.xaml line 37 sets LineHeight="Auto", so WPF
+   uses the font's own line spacing. For the Roboto files in master
+   (Asi.Resources.Client.UI/Themes/Fonts) that is usWinAscent 1946 +
+   usWinDescent 512 over 2048 units = 1.2 x font size. The web font
+   files report a taller "normal" line height, so 1.2 is set explicitly.
+   ASSUMPTION: WPF reads the Windows metrics here. If it reads the hhea
+   table instead the factor is 1.172 (under half a pixel at 14px).
+
+   Width of ranges and progress is computed in code
+   (BarGauge.xaml.cs lines 73-94), so it is passed in:
+     --bar-progress            width of PART_Indicator (0% - 100%)
+     left / right / width on each __range element
+   ============================================= */
+
+
+/* --- Root -------------------------------------------------------- */
+/* XAML: Grid x:Name="_templateRoot" (line 19) */
+.mob-bar-gauge:not(.mob-bar-gauge--vertical) {
+  position: relative;
+  width: 100%;
+  height: 48px;                      /* 12+13+1+10+12, lines 21-25 */
+  font: var(--font-default);         /* Typography.xaml lines 21-23: Condensed, 14, Regular */
+  line-height: 1.2;                  /* Typography.xaml line 37: LineHeight="Auto", see text metrics note */
+}
+
+
+/* --- Row 0: label + value ---------------------------------------- */
+/* XAML: Grid Grid.Row="0" (line 29). The row has no size of its own
+   in CSS; label and value are placed from the root. */
+.mob-bar-gauge:not(.mob-bar-gauge--vertical) .mob-bar-gauge__header {
+  position: static;
+}
+
+/* XAML: custom:LabelStatusIcon Margin="0,-4,0,-4" (line 40) in a 12px row
+   = box y -4 to 16. Label TextBlock Margin="3,-6,0,0"
+   (LabelStatusIcon.xaml line 73), VerticalAlignment=Center
+   (Typography.xaml line 27) = centered in y -10 to 16. */
+.mob-bar-gauge:not(.mob-bar-gauge--vertical) .mob-bar-gauge__label-group {
+  position: absolute;
+  left: 0;
+  top: -10px;                        /* -4 (line 40) + -6 (LabelStatusIcon.xaml line 73) */
+  height: 26px;                      /* y -10 to 16 */
+  max-width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+/* XAML: StatusIcon Width=12 Height=12 Margin="2,0,2,4"
+   (LabelStatusIcon.xaml lines 32-34). Box y -4 to 12, center y 4.
+   The flex line is centered on y 3, so shift 1px down. */
+.mob-bar-gauge:not(.mob-bar-gauge--vertical) .mob-bar-gauge__label-group > .mob-status-icon {
+  position: relative;
+  top: 1px;                          /* center y 4 vs flex center y 3 */
+  margin: 0 2px;                     /* LabelStatusIcon.xaml line 34 */
+}
+
+/* XAML: Path x:Name="_labelIcon" Width=20 Height=20 Margin="0,-4,2,0"
+   (LabelStatusIcon.xaml lines 62-64). Box y -8 to 16, center y 4.
+   Fill=IconForegroundBrush = GaugeValueForegroundBrush (BarGauge.xaml line 42). */
+.mob-bar-gauge:not(.mob-bar-gauge--vertical) .mob-bar-gauge__icon {
+  position: relative;
+  top: 1px;                          /* center y 4 vs flex center y 3 */
+  margin-right: 2px;                 /* LabelStatusIcon.xaml line 64 */
+  font: var(--font-icons);           /* 20px Mobius-System-Icons */
+  color: var(--GaugeInvertValueForeground);
+}
+
+/* XAML: TextBlock x:Name="_labelString" Margin="3,-6,0,0"
+   Foreground=GaugeForegroundBrush (BarGauge.xaml line 41) */
+.mob-bar-gauge:not(.mob-bar-gauge--vertical) .mob-bar-gauge__label {
+  margin-left: 3px;                  /* LabelStatusIcon.xaml line 73 */
+  color: var(--GaugeInvertForeground);
+  white-space: nowrap;               /* Typography.xaml line 36 */
+  overflow: hidden;
+  text-overflow: ellipsis;           /* Typography.xaml line 33 */
+}
+
+/* XAML: StringFormat={}{0}: (LabelStatusIcon.xaml line 76).
+   The control always appends a colon to the label. */
+.mob-bar-gauge:not(.mob-bar-gauge--vertical) .mob-bar-gauge__label::after {
+  content: ":";
+}
+
+/* XAML: TextBlock x:Name="_displayValue" Margin="0,0,5,-3"
+   HorizontalAlignment=Right VerticalAlignment=Bottom (lines 51-57).
+   Bottom edge = row 0 bottom (12) + 3 = y 15. */
+.mob-bar-gauge:not(.mob-bar-gauge--vertical) .mob-bar-gauge__value {
+  position: absolute;
+  right: 5px;                        /* line 54 */
+  bottom: 33px;                      /* 48 - 15 */
+  color: var(--GaugeInvertValueForeground);
+  white-space: nowrap;
+  transition: color var(--transition-fade) ease-out;
+}
+
+
+/* --- Row 3: track assembly --------------------------------------- */
+/* XAML: Grid Grid.Row="3" Margin="0" (lines 86-89), y 26 to 36 */
+.mob-bar-gauge:not(.mob-bar-gauge--vertical) .mob-bar-gauge__track-wrapper {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 26px;                         /* rows 12+13+1, lines 21-23 */
+  height: 10px;                      /* line 24 */
+}
+
+/* XAML: Rectangle Grid.Row="0" Grid.RowSpan="2" Width="1"
+   HorizontalAlignment="Right" (lines 69-75), y 0 to 25 */
+.mob-bar-gauge:not(.mob-bar-gauge--vertical) .mob-bar-gauge__tick--edge-right {
+  position: absolute;
+  right: 0;
+  top: -26px;                        /* wrapper starts at y 26 */
+  width: 1px;                        /* line 72 */
+  height: 25px;                      /* rows 12+13, lines 21-22 */
+  background: var(--GaugeInvertDataTick);
+}
+
+/* XAML: Rectangle Grid.Row="1" Width="1" Height="7"
+   HorizontalAlignment="Left" VerticalAlignment="Bottom" (lines 76-83),
+   y 18 to 25 */
+.mob-bar-gauge:not(.mob-bar-gauge--vertical) .mob-bar-gauge__tick--edge-left {
+  position: absolute;
+  left: 0;
+  top: -8px;                         /* y 18, wrapper starts at y 26 */
+  width: 1px;                        /* line 78 */
+  height: 7px;                       /* line 79 */
+  background: var(--GaugeInvertDataTick);
+}
+
+/* XAML: Rectangle Grid.ColumnSpan="9" Fill=GaugeDataBackgroundBrush
+   (lines 102-106) */
+.mob-bar-gauge:not(.mob-bar-gauge--vertical) .mob-bar-gauge__track {
+  position: absolute;
+  inset: 0;
+  background: var(--GaugeInvertDataBackground);
+}
+
+
+/* --- Tick groups ------------------------------------------------- */
+/* XAML: 9 columns Auto,*,Auto,*,Auto,*,Auto,*,Auto (lines 90-100).
+   Auto columns hold the tick groups, * columns are the 4 equal segments.
+     Col 0: tick + gap        = 2px (lines 108-121)
+     Col 2, 4, 6: gap + tick + gap = 3px (lines 122-172)
+     Col 8: gap + tick        = 2px (lines 173-186)
+   Gaps are 1px GaugeBackgroundBrush painted over the track. */
+.mob-bar-gauge:not(.mob-bar-gauge--vertical) .mob-bar-gauge__ticks {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: 2px 1fr 3px 1fr 3px 1fr 3px 1fr 2px;
+}
+
+.mob-bar-gauge:not(.mob-bar-gauge--vertical) .mob-bar-gauge__tick {
+  box-sizing: border-box;
+  border: 0 solid var(--GaugeInvertBackground);  /* gap rectangles, lines 117-120 */
+  border-width: 0 1px;               /* 1px gap each side, lines 126-137 */
+  background: var(--GaugeInvertDataTick);
+  transition: background-color var(--transition-fade) ease-out;
+}
+
+.mob-bar-gauge:not(.mob-bar-gauge--vertical) .mob-bar-gauge__tick:nth-child(1) {
+  grid-column: 1;
+  border-left-width: 0;              /* _leftEdgeLine has no gap on its left, lines 112-116 */
+}
+.mob-bar-gauge:not(.mob-bar-gauge--vertical) .mob-bar-gauge__tick:nth-child(2) { grid-column: 3; }
+.mob-bar-gauge:not(.mob-bar-gauge--vertical) .mob-bar-gauge__tick:nth-child(3) { grid-column: 5; }
+.mob-bar-gauge:not(.mob-bar-gauge--vertical) .mob-bar-gauge__tick:nth-child(4) { grid-column: 7; }
+.mob-bar-gauge:not(.mob-bar-gauge--vertical) .mob-bar-gauge__tick:nth-child(5) {
+  grid-column: 9;
+  border-right-width: 0;             /* _rightEdgeLine has no gap on its right, lines 181-185 */
+}
+
+
+/* --- Range bands ------------------------------------------------- */
+/* XAML: Grid Grid.Row="3" Margin="2,0" > Grid x:Name="PART_RangeBar"
+   (lines 190-226). Band widths are set in BarGauge.xaml.cs lines 91-94. */
+.mob-bar-gauge:not(.mob-bar-gauge--vertical) .mob-bar-gauge__ranges {
+  position: absolute;
+  inset: 0 2px;                      /* line 192 */
+}
+
+.mob-bar-gauge:not(.mob-bar-gauge--vertical) .mob-bar-gauge__range {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  transition: opacity var(--transition-fade) ease-out;
+}
+
+/* XAML: PART_CriticalMinimum / PART_CriticalMaximum Opacity="0.5"
+   Fill=GaugeStatusCriticalRangeBrush (lines 214-225).
+   NOTE: the theme files have no GaugeInvertStatusCriticalRange token,
+   so GaugeInvertStatusCritical is used. */
+.mob-bar-gauge:not(.mob-bar-gauge--vertical) .mob-bar-gauge__range--critical-min,
+.mob-bar-gauge:not(.mob-bar-gauge--vertical) .mob-bar-gauge__range--critical-max {
+  background: var(--GaugeInvertStatusCritical);
+  opacity: 0.5;                      /* lines 218, 224 */
+}
+
+/* XAML: PART_WarningMinimum / PART_WarningMaximum Opacity="0.0"
+   Fill=GaugeStatusWarningRangeBrush (lines 202-213).
+   NOTE: no GaugeInvertStatusWarningRange token in the theme files,
+   so GaugeInvertStatusWarning is used. */
+.mob-bar-gauge:not(.mob-bar-gauge--vertical) .mob-bar-gauge__range--warning-min,
+.mob-bar-gauge:not(.mob-bar-gauge--vertical) .mob-bar-gauge__range--warning-max {
+  background: var(--GaugeInvertStatusWarning);
+  opacity: 0;                        /* lines 206, 212 */
+}
+
+
+/* --- Progress indicator ------------------------------------------ */
+/* XAML: ProgressBar Margin="-2,0" inside the Margin="2,0" grid = full
+   track width (lines 227-229). Template Grid x:Name="Background"
+   Margin="0,-6,0,-2" (line 238) = y 20 to 38, 18px tall. */
+.mob-bar-gauge:not(.mob-bar-gauge--vertical) .mob-bar-gauge__fill-area {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -6px;                         /* line 238 */
+  bottom: -2px;                      /* line 238 */
+}
+
+/* XAML: Grid x:Name="PART_Indicator" MinWidth="4"
+   HorizontalAlignment="Left" (lines 241-245) */
+.mob-bar-gauge:not(.mob-bar-gauge--vertical) .mob-bar-gauge__fill {
+  position: relative;
+  width: var(--bar-progress, 0%);
+  min-width: 4px;                    /* line 243 */
+  height: 100%;
+}
+
+/* XAML: Rectangle Height="10" Margin="2,0,4,-4" Opacity="0.5"
+   Fill=GaugeDataForegroundBrush (lines 246-252). Centered in
+   18 + 4 = 22px, so it starts 6px down = flush with the track. */
+.mob-bar-gauge:not(.mob-bar-gauge--vertical) .mob-bar-gauge__fill-bar {
+  position: absolute;
+  left: 2px;                         /* line 248 */
+  right: 4px;                        /* line 248 */
+  top: 6px;                          /* (18 + 4 - 10) / 2, lines 247-248 */
+  height: 10px;                      /* line 247 */
+  background: var(--GaugeInvertDataForeground);
+  opacity: 0.5;                      /* line 250 */
+}
+
+/* XAML: Rectangle Width="2" Height="14" Margin="1,0"
+   HorizontalAlignment="Right" Fill=GaugeValueForegroundBrush
+   (lines 260-266). Centered in 18px = 2px down, y 22 to 36.
+   The two 1 x 14 GaugeBackgroundBrush rectangles either side
+   (lines 253-259 and 267-273) are drawn as the box-shadow. */
+.mob-bar-gauge:not(.mob-bar-gauge--vertical) .mob-bar-gauge__needle {
+  position: absolute;
+  right: 1px;                        /* line 263 */
+  top: 2px;                          /* (18 - 14) / 2 */
+  width: 2px;                        /* line 261 */
+  height: 14px;                      /* line 262 */
+  background: var(--GaugeInvertValueForeground);
+  box-shadow: -1px 0 0 var(--GaugeInvertBackground),
+               1px 0 0 var(--GaugeInvertBackground);
+}
+
+/* XAML: ProgressBarVisibility=false collapses only the fill
+   rectangle (line 251). The needle stays. */
+.mob-bar-gauge--no-progress .mob-bar-gauge__fill-bar {
+  display: none;
+}
+
+
+/* --- Row 4: min / max labels ------------------------------------- */
+/* XAML: TextBlock Grid.Row="4" Margin="0,-10" VerticalAlignment="Bottom"
+   Opacity="0.8" Foreground=GaugeForegroundBrush (lines 282-313).
+   Bottom edge = 48 + 10 = y 58. */
+.mob-bar-gauge:not(.mob-bar-gauge--vertical) .mob-bar-gauge__range-labels {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -10px;                     /* lines 284, 300 */
+  display: flex;
+  justify-content: space-between;    /* Left (line 285) and Right (line 301) */
+}
+
+.mob-bar-gauge:not(.mob-bar-gauge--vertical) .mob-bar-gauge__range-label {
+  color: var(--GaugeInvertForeground);
+  opacity: 0.8;                      /* lines 288, 304 */
+  white-space: nowrap;
+}
+
+
+/* =================================================================
+   STATUS STATES
+   Source: VisualStateGroup "StatusIndicatorStates" (lines 316-374).
+   Each state recolors _leftEdgeLine and _rightEdgeLine (the first
+   and last tick inside the track, NOT the two overhang ticks above
+   it), recolors _displayValue, and sets the range band opacity.
+   Unknown and OK look the same apart from the status icon.
+   ================================================================= */
+
+/* XAML: VisualState "Warning" (lines 345-358) */
+.mob-bar-gauge[data-status="warning"]:not(.mob-bar-gauge--vertical) .mob-bar-gauge__tick:nth-child(1),
+.mob-bar-gauge[data-status="warning"]:not(.mob-bar-gauge--vertical) .mob-bar-gauge__tick:nth-child(5) {
+  background: var(--GaugeInvertStatusWarning);   /* lines 354-355 */
+}
+
+.mob-bar-gauge[data-status="warning"]:not(.mob-bar-gauge--vertical) .mob-bar-gauge__value {
+  color: var(--GaugeInvertStatusWarning);        /* line 356 */
+}
+
+.mob-bar-gauge[data-status="warning"]:not(.mob-bar-gauge--vertical) .mob-bar-gauge__range--warning-min,
+.mob-bar-gauge[data-status="warning"]:not(.mob-bar-gauge--vertical) .mob-bar-gauge__range--warning-max {
+  opacity: 1;                                    /* lines 350-351 */
+}
+
+/* XAML: VisualState "Critical" (lines 359-372) */
+.mob-bar-gauge[data-status="critical"]:not(.mob-bar-gauge--vertical) .mob-bar-gauge__tick:nth-child(1),
+.mob-bar-gauge[data-status="critical"]:not(.mob-bar-gauge--vertical) .mob-bar-gauge__tick:nth-child(5) {
+  background: var(--GaugeInvertStatusCritical);  /* lines 368-369 */
+}
+
+.mob-bar-gauge[data-status="critical"]:not(.mob-bar-gauge--vertical) .mob-bar-gauge__value {
+  color: var(--GaugeInvertStatusCritical);       /* line 370 */
+}
+
+.mob-bar-gauge[data-status="critical"]:not(.mob-bar-gauge--vertical) .mob-bar-gauge__range--critical-min,
+.mob-bar-gauge[data-status="critical"]:not(.mob-bar-gauge--vertical) .mob-bar-gauge__range--critical-max {
+  opacity: 1;                                    /* lines 366-367 */
+}
+
+
+/* =================================================================
+   VERTICAL ORIENTATION (LEGACY, NOT RE-TRACED)
+   Source: Mobius_UI_Gauges_Templates_BarGaugeTemplateVertical
+   (BarGauge.xaml lines 378-728).
+
+   Everything below was moved unchanged from status-gauge.css so the
+   vertical demos keep rendering exactly as before. The first block is
+   the old shared base, now scoped to .mob-bar-gauge--vertical. The
+   second block is the old vertical overrides. None of these values
+   have been checked against the XAML line by line yet.
+   ================================================================= */
+
+.mob-bar-gauge--vertical {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  position: relative;
+}
+
+.mob-bar-gauge--vertical .mob-bar-gauge__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  height: 12px;
+  margin-bottom: 1px;
+}
+
+.mob-bar-gauge--vertical .mob-bar-gauge__label-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+}
+
+.mob-bar-gauge--vertical .mob-bar-gauge__icon {
+  font-family: var(--font-icon);
+  font-size: var(--icon-sm);
+  line-height: 1;
+  color: var(--GaugeInvertValueForeground);
+}
+
+.mob-bar-gauge--vertical .mob-bar-gauge__label {
+  font: var(--font-Sm);
+  color: var(--GaugeInvertForeground);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mob-bar-gauge--vertical .mob-bar-gauge__value {
+  font: var(--font-Sm);
+  color: var(--GaugeInvertValueForeground);
+  white-space: nowrap;
+  margin-right: 5px;
+}
+
+.mob-bar-gauge--vertical .mob-bar-gauge__track-wrapper {
+  position: relative;
+  height: 10px;
+  margin-top: 13px;
+}
+
+.mob-bar-gauge--vertical .mob-bar-gauge__track {
+  position: absolute;
+  inset: 0;
+  background: var(--GaugeInvertDataBackground);
+}
+
+.mob-bar-gauge--vertical .mob-bar-gauge__ticks {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  justify-content: space-between;
+  pointer-events: none;
+}
+
+.mob-bar-gauge--vertical .mob-bar-gauge__tick {
+  width: 1px;
+  height: 100%;
+  background: var(--GaugeInvertDataTick);
+}
+
+.mob-bar-gauge--vertical .mob-bar-gauge__tick--edge-left,
+.mob-bar-gauge--vertical .mob-bar-gauge__tick--edge-right {
+  position: absolute;
+  width: 1px;
+  background: var(--GaugeInvertDataTick);
+  transition: background-color var(--transition-fade) ease-out;
+}
+
+.mob-bar-gauge--vertical .mob-bar-gauge__tick--edge-right {
+  top: -25px;
+  right: 0;
+  height: 25px;
+}
+
+.mob-bar-gauge--vertical .mob-bar-gauge__tick--edge-left {
+  bottom: 0;
+  left: 0;
+  height: 17px;
+}
+
+.mob-bar-gauge--vertical .mob-bar-gauge__ranges {
+  position: absolute;
+  inset: 0 2px;
+  pointer-events: none;
+}
+
+.mob-bar-gauge--vertical .mob-bar-gauge__range {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  transition: opacity var(--transition-fade) ease-out;
+}
+
+.mob-bar-gauge--vertical .mob-bar-gauge__range--critical-min,
+.mob-bar-gauge--vertical .mob-bar-gauge__range--critical-max {
+  background: var(--GaugeInvertStatusCritical);
+  opacity: 0.5;
+}
+
+.mob-bar-gauge--vertical .mob-bar-gauge__range--warning-min,
+.mob-bar-gauge--vertical .mob-bar-gauge__range--warning-max {
+  background: var(--GaugeInvertStatusWarning);
+  opacity: 0;
+}
+
+.mob-bar-gauge--vertical .mob-bar-gauge__fill-area {
+  position: absolute;
+  top: 0;
+  left: 2px;
+  right: 2px;
+  height: 100%;
+  overflow: visible;
+}
+
+.mob-bar-gauge--vertical .mob-bar-gauge__fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: var(--bar-progress, 0%);
+  min-width: 4px;
+}
+
+.mob-bar-gauge--vertical .mob-bar-gauge__fill-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 4px;
+  height: 100%;
+  background: var(--GaugeInvertDataForeground);
+  opacity: 0.5;
+}
+
+.mob-bar-gauge--vertical .mob-bar-gauge__needle {
+  position: absolute;
+  top: -2px;
+  right: 0;
+  width: 2px;
+  height: 14px;
+  background: var(--GaugeInvertValueForeground);
+}
+
+.mob-bar-gauge--vertical .mob-bar-gauge__range-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 2px;
+}
+
+.mob-bar-gauge--vertical .mob-bar-gauge__range-label {
+  font: var(--font-Sm);
+  color: var(--GaugeInvertForeground);
+  opacity: 0.8;
+}
+
+.mob-bar-gauge--vertical[data-status="warning"] .mob-bar-gauge__tick--edge-left,
+.mob-bar-gauge--vertical[data-status="warning"] .mob-bar-gauge__tick--edge-right {
+  background: var(--GaugeInvertStatusWarning);
+}
+
+.mob-bar-gauge--vertical[data-status="warning"] .mob-bar-gauge__value {
+  color: var(--GaugeInvertStatusWarning);
+}
+
+.mob-bar-gauge--vertical[data-status="warning"] .mob-bar-gauge__range--warning-min,
+.mob-bar-gauge--vertical[data-status="warning"] .mob-bar-gauge__range--warning-max {
+  opacity: 1;
+}
+
+.mob-bar-gauge--vertical[data-status="critical"] .mob-bar-gauge__tick--edge-left,
+.mob-bar-gauge--vertical[data-status="critical"] .mob-bar-gauge__tick--edge-right {
+  background: var(--GaugeInvertStatusCritical);
+}
+
+.mob-bar-gauge--vertical[data-status="critical"] .mob-bar-gauge__value {
+  color: var(--GaugeInvertStatusCritical);
+}
+
+.mob-bar-gauge--vertical[data-status="critical"] .mob-bar-gauge__range--critical-min,
+.mob-bar-gauge--vertical[data-status="critical"] .mob-bar-gauge__range--critical-max {
+  opacity: 1;
+}
+
+/* =================================================================
+   BAR GAUGE — VERTICAL ORIENTATION
+   Source: Mobius_UI_Gauges_Templates_BarGaugeTemplateVertical
+   Style.Trigger: Orientation=Vertical swaps template.
+
+   Row heights:
+     Row 0: 12px — label
+     Row 1: 24px — value
+     Row 2: 12px — max label
+     Row 3: 5px  — spacer
+     Row 4: *    — bar (fill available)
+     Row 5: 12px — min label
+   ================================================================= */
+
+.mob-bar-gauge--vertical {
+  width: auto;
+  align-items: center;
+  min-height: 120px;
+}
+
+/* XAML: LabelStatusIcon Row="0" HorizontalAlignment="Center" */
+.mob-bar-gauge--vertical .mob-bar-gauge__header {
+  justify-content: center;
+  height: auto;
+  margin-bottom: 0;
+}
+
+/* XAML: TextBlock Row="1" HorizontalAlignment="Center" */
+.mob-bar-gauge--vertical .mob-bar-gauge__value {
+  text-align: center;
+  margin: 3px 0;
+}
+
+/* Vertical track — 10px wide, fills available height */
+.mob-bar-gauge--vertical .mob-bar-gauge__track-wrapper {
+  width: 10px;
+  height: 100%;
+  min-height: 60px;
+  margin-top: 5px;
+  flex: 1;
+}
+
+/* Range labels stack vertically: max on top, min on bottom */
+.mob-bar-gauge--vertical .mob-bar-gauge__range-labels {
+  flex-direction: column-reverse;
+  align-items: center;
+  margin-top: 0;
+}

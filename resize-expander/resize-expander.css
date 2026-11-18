@@ -1,0 +1,337 @@
+/*
+  resize-expander.css — ResizeExpander (Horizontal Toggle)
+  Source: Common/Asi.CustomControls.Client.UI/ResizeExpander.xaml
+          Common/Asi.CustomControls.Client.UI/ResizeExpander.cs
+          Common/Asi.Resources.Client.UI/DefaultControls.xaml lines 2049-2127
+          Common/Asi.Resources.Client.UI/DefaultControls.xaml line 775
+          Common/Asi.Resources.Client.UI/DefaultControls.xaml line 2919
+
+  XAML: Asi.CustomControls.Client.UI.ResizeExpander
+  Template: Mobius_UI_CustomControls_Templates_ResizeExpanderHorizontal
+
+  Layout (from screenshots + XAML):
+  ┌──────────────────────────────────┬──┐
+  │  Header text              < btn  │░░│  ← Row 0: 50px
+  ├──────────────────────────────────┤░░│  ← splitter overlaps edge
+  │                                  │░░│
+  │  Body / drawer content           │  │
+  │                                  │  │  ← Row 1: fill
+  └──────────────────────────────────┴──┘
+       Col 0 (324px panel)       Col1+2
+
+  Collapsed:
+  ┌──┐
+  │ >│  ← toggle only, Col 0 = 0
+  │  │
+  └──┘
+*/
+
+
+/* =============================================================
+   ROOT CONTAINER
+   XAML: Grid (root) — ResizeExpander.xaml line 13
+         Rows: 50px | *
+         Cols: StartSize(324) | Auto(splitter) | Auto(toggle)
+   ============================================================= */
+
+.resize-expander {
+  display: flex;                                       /* Horizontal: panel + edge + toggle */
+  height: 100%;
+  position: relative;
+  background: var(--BackgroundInvertStepTwo);           /* NOT in XAML root Grid — sourced from parent context (SplitPanel) */
+                                                       /* Style line 453 sets Background=BackgroundInvertStepTwoBrush but */
+                                                       /* only TemplateBinding-consumed in header/body, not root Grid.    */
+                                                       /* Applied here for visual parity with running app.                */
+}
+
+
+/* =============================================================
+   PANEL (Col 0 — content column)
+   XAML: PART_ContentColumn — ResizeExpander.xaml line 19
+         Width=StartSize(324px), MinWidth=0, MaxWidth=626px
+   Contains PART_ContentPlacement (Row 1) which holds
+   both the header (via negative margin into Row 0) and body.
+   ============================================================= */
+
+.resize-expander__panel {
+  width: 324px;                                        /* ResizeExpander.cs line 31 (StartSize=324) */
+  min-width: 0;                                        /* ResizeExpander.xaml line 19 */
+  max-width: 626px;                                    /* ResizeExpander.cs line 32 (MaxExpanderSize) */
+  display: flex;
+  flex-direction: column;
+  background: var(--BackgroundInvertStepTwo);           /* Style line 453-454 (Background + BorderBrush) */
+  overflow: hidden;
+}
+
+/* Collapsed: panel disappears */
+/* XAML: ResizeExpander.cs line 22 (CollapsedWidth=0) */
+/* XAML: ResizeExpander.cs line 156 (Visibility=Collapsed) */
+.resize-expander.is-collapsed .resize-expander__panel {
+  display: none;
+}
+
+
+/* =============================================================
+   SHADOW EDGE BORDER
+   XAML: Border — ResizeExpander.xaml lines 77-81
+         Style: Mobius_UI_Resources_Styles_ShadowEdgeBorderVertical
+         DefaultControls.xaml line 775
+         Width=1px (SizesNew.xaml line 17), right-aligned in Col 0
+   ============================================================= */
+
+.resize-expander__edge {
+  width: 1px;                                          /* DefaultControls.xaml line 781 (Doubles_Size1=1) */
+  align-self: stretch;
+  background: var(--InnerLineDividers);                 /* DefaultControls.xaml line 782 */
+  pointer-events: none;                                /* DefaultControls.xaml line 784 (IsHitTestVisible=False) */
+  flex-shrink: 0;
+}
+
+
+/* =============================================================
+   HEADER
+   XAML: PART_HeaderElement [Border] — ResizeExpander.xaml lines 31-46
+         Height=50, Margin="0,-50,0,0" (pulls into Row 0 visually)
+         Background=TemplateBinding BorderBrush → BackgroundInvertStepTwo
+   In the running app, the header row contains the title text
+   on the left and the toggle chevron on the right.
+   ============================================================= */
+
+.resize-expander__header {
+  height: 50px;                                        /* ResizeExpander.xaml line 33 */
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  cursor: pointer;                                     /* ResizeExpander.cs line 293 (header click toggles) */
+}
+
+
+/* =============================================================
+   HEADER TEXT
+   XAML: HeaderPlacement [ContentControl] — ResizeExpander.xaml lines 38-45
+         Margin="23,4,40,3", VerticalAlignment=Center
+         Foreground=ForegroundInvertPrimaryBrush
+   ============================================================= */
+
+.resize-expander__header-text {
+  flex: 1;
+  margin: 4px 0 3px 23px;                             /* ResizeExpander.xaml line 40 (top, right reserved for toggle, bottom, left) */
+  color: var(--ForegroundInvertPrimary);                /* Style: Foreground=ForegroundInvertPrimaryBrush, line 455 */
+  font: var(--font-default);
+}
+
+
+/* =============================================================
+   BODY (scrollable drawer content)
+   XAML: Border [Background=TemplateBinding, ClipToBounds]
+         — ResizeExpander.xaml lines 47-60
+         ContentControl with TranslateTransform "TransformElement"
+   ============================================================= */
+
+.resize-expander__body {
+  flex: 1;
+  overflow: hidden;                                    /* ResizeExpander.xaml line 49 (ClipToBounds=true) */
+  overflow-y: auto;
+}
+
+
+/* =============================================================
+   SPLITTER (resize handle)
+   XAML: PART_GridSplitter — ResizeExpander.xaml lines 62-76
+         Grid.Row="0", Grid.RowSpan="2", Grid.Column="1"
+         Width=23px, transparent, overlaps via negative margins
+   ============================================================= */
+
+.resize-expander__splitter {
+  width: 0;                                            /* ResizeExpander.xaml line 67 (Width="0") */
+  align-self: stretch;
+  cursor: col-resize;
+  background: transparent;                              /* ResizeExpander.xaml line 72 */
+  flex-shrink: 0;
+}
+
+/* Expanded: Width=23, Margin="-5,0,-18,0" */
+/* XAML: ResizeExpander.xaml lines 161-162 */
+.resize-expander.is-expanded .resize-expander__splitter {
+  width: 23px;                                         /* ResizeExpander.xaml line 161 */
+  margin: 0 -18px 0 -5px;                             /* ResizeExpander.xaml line 162 */
+}
+
+/* Collapsed: Width=23, Margin="-15,0,-8,0" */
+/* XAML: ResizeExpander.xaml lines 165-166 */
+.resize-expander.is-collapsed .resize-expander__splitter {
+  width: 23px;                                         /* ResizeExpander.xaml line 165 */
+  margin: 0 -8px 0 -15px;                             /* ResizeExpander.xaml line 166 */
+}
+
+
+/* =============================================================
+   TOGGLE BUTTON
+   XAML: PART_ContentExpandToggleButton — ResizeExpander.xaml lines 82-107
+         Grid.Row="0", Grid.Column="2"
+         Width=20, Height=20, Margin="-40,0,0,0"
+         TranslateTransform X=-10, Y varies by state
+         Style: Mobius_UI_Resources_Styles_ExpandToggleButton
+         Template: Mobius_UI_Resources_Templates_ExpandToggleButton
+
+   When expanded: toggle sits visually at the right edge of the
+   header bar (pulled left via -40px margin + -10px transform).
+   When collapsed: toggle is the only visible element, shifted
+   down 10px on Y.
+   ============================================================= */
+
+.resize-expander__toggle {
+  width: 20px;                                         /* ResizeExpander.xaml line 86 */
+  height: 20px;                                        /* ResizeExpander.xaml line 87 */
+  flex-shrink: 0;
+  align-self: flex-start;
+  margin-top: 15px;                                    /* Vertically center in 50px header: (50 - 20) / 2 = 15 */
+  background: transparent;                              /* ResizeExpander.xaml line 89 */
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 100ms cubic-bezier(0.23, 1, 0.32, 1); /* 100ms QuinticEase — ResizeExpander.xaml line 121 */
+}
+
+/* Expanded: pull toggle left into header area */
+/* XAML: Margin="-40,0,0,0" + TranslateTransform X=-10, Y=0 */
+.resize-expander.is-expanded .resize-expander__toggle {
+  margin-left: -40px;                                  /* ResizeExpander.xaml line 88 */
+  transform: translateX(-10px);                        /* ResizeExpander.xaml line 96 (TransformToggleButton X=-10) */
+}
+
+/* Collapsed: toggle sits inside the angled tab, centered in the top 50px */
+.resize-expander.is-collapsed .resize-expander__toggle {
+  margin-left: 0;
+  margin-top: 15px;                                    /* Center 20px icon in 50px top zone: (50-20)/2 */
+  transform: none;
+}
+
+
+/* =============================================================
+   COLLAPSED TAB SHAPE
+   NOT from ResizeExpander.xaml — sourced from SplitPanel.xaml
+   lines 66-79 for visual parity with running app.
+
+   SplitPanel wraps the ResizeExpander toggle in a Grid containing:
+     - ExpanderItem with decorative Path (40x120, Stretch=Fill)
+     - Path Data: M 0,0 ... polygon with angled bottom-left
+     - Fill: BackgroundInvertStrongStepOneBrush
+     - ToggleButton: 40x50, HAlign=Right, VAlign=Top
+
+   Shape = rectangle with diagonal bottom-left corner:
+     (0,0) → (100%,0) → (100%,100%) → (0,55.6%)
+   ============================================================= */
+
+.resize-expander__tab {
+  width: 40px;                                         /* SplitPanel.xaml line 72 (Path Width=40) */
+  height: 120px;                                       /* SplitPanel.xaml line 73 (Path Height=120) */
+  flex-shrink: 0;
+  align-self: flex-start;
+  background: var(--BackgroundInvertStrongStepOne);     /* SplitPanel.xaml line 75 */
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 55.6%); /* Path Data mapped to polygon: (0,0)(40,0)(40,120)(0,66.7) */
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 0;
+}
+
+/* Hide tab in expanded state — only visible when collapsed */
+.resize-expander.is-expanded .resize-expander__tab {
+  display: none;
+}
+
+
+/* =============================================================
+   TOGGLE ICON (font glyph)
+   XAML: Path — ResizeExpander.xaml lines 98-106
+         Data=Icon_Arrow_PointerRight (Icons.xaml line 58)
+         Width=20, Height=20, Stretch=None
+         Fill inherits from ToggleButton Foreground
+
+   CheckStates (DefaultControls.xaml lines 2113-2124):
+         Unchecked → rotation 0deg (instant)
+         Checked → rotation 180deg (instant)
+
+   Font: Mobius-System-Icons, glyph \E00C (user-specified)
+   ============================================================= */
+
+.resize-expander__toggle-icon {
+  font: var(--font-icons);                             /* 20px/20px "Mobius-System-Icons" — font-tokens.css line 35 */
+  color: var(--ForegroundInvertWatermark);              /* ResizeExpander.xaml line 90 — rgba(112, 112, 112, 1) */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transform-origin: center center;                     /* DefaultControls.xaml line 2064 (RenderTransformOrigin="0.5,0.5") */
+}
+
+/* Expanded: arrow rotated 180deg (points left — "collapse") */
+/* XAML: CheckStates Checked — DefaultControls.xaml line 2121 (Angle → 180.0, instant) */
+.resize-expander.is-expanded .resize-expander__toggle-icon {
+  transform: rotate(180deg);
+}
+
+/* Collapsed: arrow at 0deg (points right — "expand") */
+/* XAML: CheckStates Unchecked — DefaultControls.xaml line 2116 (Angle → 0.0, instant) */
+.resize-expander.is-collapsed .resize-expander__toggle-icon {
+  transform: rotate(0deg);
+}
+
+
+/* =============================================================
+   INTERACTIVE STATES — ExpandToggleButton
+   XAML: DefaultControls.xaml lines 2074-2125
+         CommonStates: Normal, MouseOver, Pressed, Disabled
+   ============================================================= */
+
+/* MouseOver: foreground → MouseOverPrimary */
+/* XAML: DefaultControls.xaml line 2084 */
+.resize-expander__toggle:hover .resize-expander__toggle-icon {
+  color: var(--MouseOverPrimary);                      /* rgba(12, 208, 255, 1) */
+}
+
+/* Pressed: opacity → 0.8 */
+/* XAML: DefaultControls.xaml line 2091 */
+.resize-expander__toggle:active {
+  opacity: 0.8;
+}
+
+/* Disabled: opacity → DisabledOpacity (0.35) */
+/* XAML: DefaultControls.xaml line 2097 */
+.resize-expander__toggle:disabled {
+  opacity: var(--opacity-disabled);                    /* 0.35 — spacingTokens.css line 121 */
+  cursor: default;
+  pointer-events: none;
+}
+
+/* Focus visible: standard Mobius focus ring */
+/* XAML: DefaultControls.xaml line 2920 (FocusVisualStyle) */
+.resize-expander__toggle:focus-visible {
+  outline: 2px solid var(--MouseOverPrimary);
+  outline-offset: 2px;
+}
+
+
+/* =============================================================
+   CONTENT SLIDE ANIMATION
+   XAML: ResizeExpander.cs lines 332-356
+         AnimationSpan=700ms, SmoothEase EaseOut
+         Fade out first ~467ms, fade in last ~233ms
+   ============================================================= */
+
+@keyframes resize-expander-slide-in {
+  0% {
+    opacity: 0;                                        /* ResizeExpander.cs line 341 (opacity 0 → 0 first 2/3) */
+    transform: translateX(-100px);                     /* ResizeExpander.xaml line 116 (TransformElement X from -100) */
+  }
+  67% {
+    opacity: 0;                                        /* Fade out holds through first ~467ms */
+    transform: translateX(-20px);
+  }
+  100% {
+    opacity: 1;                                        /* ResizeExpander.cs line 342 (opacity 0 → 1 last 1/3) */
+    transform: translateX(0);                          /* ResizeExpander.xaml line 116 (TransformElement X to 0) */
+  }
+}

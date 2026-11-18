@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mobius — Image Confirmation (Obstacle Detected)</title>
+  <link id="mob-theme-link" rel="stylesheet" href="../styles/color-theme-tokens/LightTheme.css" />
+  <link rel="stylesheet" href="../styles/css/main.css" />
+  <link rel="stylesheet" href="image-confirmation.css" />
+  <style>
+    body { margin: 0; padding: 40px; background: var(--BackgroundPrimary); }
+    h1 { font: var(--font-hdrMd); margin: 0 0 8px; color: var(--ForegroundStrong); }
+    h2 { font: var(--font-hdrSm); margin: 40px 0 4px; color: var(--ForegroundStrong); }
+    .page-note { font: var(--font-default); color: var(--ForegroundPrimary); margin: 0 0 24px; max-width: 640px; }
+    .state-note { font: var(--font-Sm); color: var(--ForegroundPrimary); margin: 0 0 8px; }
+  </style>
+</head>
+<body>
+
+  <h1>Image Confirmation — obstacle detected</h1>
+  <p class="page-note">
+    ImageConfirmationControl.xaml as configured by ImageConfirmationObstacleControl.xaml:
+    AlwaysOpen=&quot;True&quot;, Ready=&quot;True&quot;, RequireImageConfirmation=&quot;True&quot;, Timeout=&quot;1&quot;.
+    The three content states are mutually exclusive at runtime and shown stacked here.
+    LightTheme. See specs/ImageConfirmation-SPEC.md.
+  </p>
+
+  <!-- ====================================================================
+       STATE 1 — Grid#ReviewingImages  (ICC.xaml:129-236)
+       ==================================================================== -->
+  <h2>State 1 — ReviewingImages</h2>
+  <p class="state-note">ConfirmationState = ReviewingImage</p>
+
+  <!-- XAML: ImageConfirmationControl.ConfirmationInternals > Grid#ConfirmationPopupGrid -->
+  <div class="ic-shadow-frame">
+    <!-- XAML: common:BoxShadow -->
+    <div class="ic-shadow"></div>
+
+    <!-- XAML: Grid (Background=BackgroundStrongBrush) -->
+    <div class="ic-dialog">
+
+      <!-- XAML: custom:ProductivityStatusIndicator ProductivityStatus="Warning" -->
+      <div class="ic-status-bar"></div>
+
+      <!-- XAML: Grid#Header -->
+      <div class="ic-header">
+        <!-- XAML: Path Data=Icon_ObstacleDetected (Stretch="Fill", 50x40 over a 20x20 geometry) -->
+        <svg class="ic-header-icon" viewBox="0 0 20 20" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M20,9V0H0v9h3v10H1v1h5v-1H4V9h12v10h-2v1h5v-1h-2V9H20z M19,8h-1l1-1V8z M1,1h2L1,3V1z M1,8V5l4-4h3L1,8z M3.1,8l7-7H13 L6,8H3.1z M8,8l7-7h3l-7,7H8z M16,8L16,8h-2.9L19,2.1V5L16,8z" />
+        </svg>
+        <!-- XAML: TextBlock Text={Binding HeaderText} (HeadingLg) -->
+        <div class="ic-header-text">Obstacle detected</div>
+      </div>
+
+      <!-- XAML: StackPanel#Banner -->
+      <div class="ic-banner">
+        <!-- XAML: Path Data=Icon_Status_Info -->
+        <svg class="ic-banner-icon" viewBox="0 0 20 20" aria-hidden="true">
+          <path d="M10,0C4.48,0,0,4.48,0,10c0,5.52,4.48,10,10,10s10-4.48,10-10C20,4.48,15.52,0,10,0z M11.67,16.66H8.33V10H6.67V8.33h5 V16.66z M11.67,6.67H8.33V3.33h3.33V6.67z" />
+        </svg>
+        <!-- XAML: TextBlock Text=LocalizedText.ImageConfirmation.IsThereAnObstacle (HeadingMd) -->
+        <div class="ic-banner-text">Is there an obstacle in this image?</div>
+      </div>
+
+      <!-- XAML: Grid#Content -->
+      <div class="ic-content">
+        <!-- XAML: Grid#ReviewingImages -->
+        <div class="ic-reviewing">
+
+          <!-- XAML: ScrollViewer#ImageCarousel -->
+          <div class="ic-carousel">
+            <!-- XAML: ItemsControl ItemsSource={Binding Images} > StackPanel Orientation="Horizontal" -->
+            <div class="ic-carousel-track">
+              <!-- XAML: Image Source={Binding BitmapImage} — placeholder, see SPEC 9.1 -->
+              <div class="ic-image ic-image--placeholder"></div>
+            </div>
+          </div>
+
+          <!-- XAML: Grid#Dots -->
+          <div class="ic-dots">
+            <!-- XAML: ListBox#ImageDots (HorizontalDotListBox) -->
+            <ul class="ic-dot-list">
+              <li class="ic-dot is-selected"></li>
+              <li class="ic-dot"></li>
+              <li class="ic-dot"></li>
+            </ul>
+          </div>
+
+          <!-- XAML: TextBlock MultiBinding(Timeout, LocalizedText.ImageConfirmation.Timeout) -->
+          <p class="ic-timeout">1 seconds remaining</p>
+
+          <!-- XAML: Grid#Buttons
+               Button#NotSureButton ("Unsure", col 2) is OMITTED. Its Visibility binds to
+               RequestImagesCommand through NullToVisibilityConverter (ICC.xaml:227).
+               ImageConfirmationObstacleControl.xaml never sets that property and its
+               DependencyProperty default is null (.cs:42), so the button is Collapsed
+               in the obstacle-detected configuration. Only No and Yes render. -->
+          <div class="ic-review-buttons">
+            <!-- XAML: Button Grid.Column="0" Command=NoObstacleCommand (OutlineButton) -->
+            <button class="ic-button ic-button--outline ic-button--no" type="button">No</button>
+            <!-- XAML: Button Grid.Column="4" Command=ObstaclePresentCommand -->
+            <button class="ic-button ic-button--yes" type="button">Yes</button>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       STATE 2 — Grid#ClassifyingImages  (ICC.xaml:237-268)
+       ==================================================================== -->
+  <h2>State 2 — ClassifyingImages</h2>
+  <p class="state-note">ConfirmationState = ClassifyingImage. Order from ObstacleClassification.DisplayOrder, None filtered.</p>
+
+  <!-- XAML: Grid#ConfirmationPopupGrid -->
+  <div class="ic-shadow-frame">
+    <!-- XAML: common:BoxShadow -->
+    <div class="ic-shadow"></div>
+
+    <!-- XAML: Grid (Background=BackgroundStrongBrush) -->
+    <div class="ic-dialog">
+
+      <!-- XAML: custom:ProductivityStatusIndicator -->
+      <div class="ic-status-bar"></div>
+
+      <!-- XAML: Grid#Header -->
+      <div class="ic-header">
+        <!-- XAML: Path Data=Icon_ObstacleDetected -->
+        <svg class="ic-header-icon" viewBox="0 0 20 20" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M20,9V0H0v9h3v10H1v1h5v-1H4V9h12v10h-2v1h5v-1h-2V9H20z M19,8h-1l1-1V8z M1,1h2L1,3V1z M1,8V5l4-4h3L1,8z M3.1,8l7-7H13 L6,8H3.1z M8,8l7-7h3l-7,7H8z M16,8L16,8h-2.9L19,2.1V5L16,8z" />
+        </svg>
+        <!-- XAML: TextBlock Text={Binding HeaderText} -->
+        <div class="ic-header-text">Obstacle detected</div>
+      </div>
+
+      <!-- XAML: StackPanel#Banner -->
+      <div class="ic-banner">
+        <!-- XAML: Path Data=Icon_Status_Info -->
+        <svg class="ic-banner-icon" viewBox="0 0 20 20" aria-hidden="true">
+          <path d="M10,0C4.48,0,0,4.48,0,10c0,5.52,4.48,10,10,10s10-4.48,10-10C20,4.48,15.52,0,10,0z M11.67,16.66H8.33V10H6.67V8.33h5 V16.66z M11.67,6.67H8.33V3.33h3.33V6.67z" />
+        </svg>
+        <!-- XAML: TextBlock Text=LocalizedText.ImageConfirmation.IsThereAnObstacle -->
+        <div class="ic-banner-text">Is there an obstacle in this image?</div>
+      </div>
+
+      <!-- XAML: Grid#Content -->
+      <div class="ic-content">
+        <!-- XAML: Grid#ClassifyingImages -->
+        <div class="ic-classifying">
+
+          <!-- XAML: ItemsControl ItemsSource={Binding ListOfObstacleClassifications} -->
+          <div class="ic-classify-list">
+            <button class="ic-button" type="button">Person</button>
+            <button class="ic-button" type="button">Vehicle</button>
+            <button class="ic-button" type="button">Stationary Object</button>
+            <button class="ic-button" type="button">Other</button>
+          </div>
+
+          <!-- XAML: Button Command=GoBackToReviewCommand (LinkButton) -->
+          <button class="ic-link-button" type="button">Back</button>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       STATE 3 — Grid#ShowClearObstacleInstructions  (ICC.xaml:269-317)
+       Variant shown: ConfirmedObstacleClassification = Person
+       ==================================================================== -->
+  <h2>State 3 — ShowClearObstacleInstructions (Person)</h2>
+  <p class="state-note">
+    Maximal variant. Row 2 needs ShowResetInstructions (classification != Other).
+    Row 4 is non-empty only for Person. See SPEC 7.3 for the other three variants.
+  </p>
+
+  <!-- XAML: Grid#ConfirmationPopupGrid -->
+  <div class="ic-shadow-frame">
+    <!-- XAML: common:BoxShadow -->
+    <div class="ic-shadow"></div>
+
+    <!-- XAML: Grid (Background=BackgroundStrongBrush) -->
+    <div class="ic-dialog">
+
+      <!-- XAML: custom:ProductivityStatusIndicator -->
+      <div class="ic-status-bar"></div>
+
+      <!-- XAML: Grid#Header -->
+      <div class="ic-header">
+        <!-- XAML: Path Data=Icon_ObstacleDetected -->
+        <svg class="ic-header-icon" viewBox="0 0 20 20" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M20,9V0H0v9h3v10H1v1h5v-1H4V9h12v10h-2v1h5v-1h-2V9H20z M19,8h-1l1-1V8z M1,1h2L1,3V1z M1,8V5l4-4h3L1,8z M3.1,8l7-7H13 L6,8H3.1z M8,8l7-7h3l-7,7H8z M16,8L16,8h-2.9L19,2.1V5L16,8z" />
+        </svg>
+        <!-- XAML: TextBlock Text={Binding HeaderText} -->
+        <div class="ic-header-text">Obstacle detected</div>
+      </div>
+
+      <!-- XAML: StackPanel#Banner -->
+      <div class="ic-banner">
+        <!-- XAML: Path Data=Icon_Status_Info -->
+        <svg class="ic-banner-icon" viewBox="0 0 20 20" aria-hidden="true">
+          <path d="M10,0C4.48,0,0,4.48,0,10c0,5.52,4.48,10,10,10s10-4.48,10-10C20,4.48,15.52,0,10,0z M11.67,16.66H8.33V10H6.67V8.33h5 V16.66z M11.67,6.67H8.33V3.33h3.33V6.67z" />
+        </svg>
+        <!-- XAML: TextBlock Text=LocalizedText.ImageConfirmation.IsThereAnObstacle -->
+        <div class="ic-banner-text">Is there an obstacle in this image?</div>
+      </div>
+
+      <!-- XAML: Grid#Content -->
+      <div class="ic-content">
+        <!-- XAML: Grid#ShowClearObstacleInstructions > Grid (Width=450) -->
+        <div class="ic-instructions-inner">
+
+          <!-- XAML: TextBlock Text=LocalizedText.ImageConfirmation.ClearObstacleInstructions -->
+          <p class="ic-instruction-text">Remove the obstacle.</p>
+
+          <!-- XAML: TextBlock Text=LocalizedText.ImageConfirmation.ResetInstructions (ShowResetInstructions) -->
+          <p class="ic-instruction-text">Reset the system by moving the Auto/Manual switch to Manual and then back to Auto.</p>
+
+          <!-- XAML: TextBlock Text={Binding ClearObstacleInstructions} — Person string -->
+          <p class="ic-instruction-text">Verbally instruct the person to stay at least 10 meters from the mower.</p>
+
+          <!-- XAML: Button Command=CloseButtonCommand -->
+          <button class="ic-button" type="button">Close</button>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</body>
+</html>

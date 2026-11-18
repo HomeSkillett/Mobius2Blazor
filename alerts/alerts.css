@@ -13,14 +13,15 @@
    Levels: Info, Success, Warning, Critical
    ============================================================= */
 
+/* XAML: ToastNotificationDataTemplate wraps NotificationItem with Width="314"
+   (NotificationDataTemplates.xaml:38) — this is a fixed width, not a range. */
 .mob-toast {
   position: relative;
   display: grid;
   grid-template-columns: 14px 1fr 20px;
   grid-template-rows: auto auto auto auto;
   background: var(--BackgroundInvertStrong);
-  min-width: 320px;
-  max-width: 420px;
+  width: 314px;
   overflow: hidden;
 }
 
@@ -80,7 +81,7 @@
 .mob-toast__message {
   grid-column: 2;
   grid-row: 3;
-  font: var(--font-bodyMd);
+  font: var(--font-default);
   color: var(--ForegroundInvertStrong);
   padding: 0 var(--size-6) var(--size-6) var(--size-6);
 }
@@ -89,7 +90,7 @@
 .mob-toast__time {
   grid-column: 2;
   grid-row: 4;
-  font: var(--font-bodySm);
+  font: var(--font-Sm);
   color: var(--ForegroundInvertDisabled);
   padding: 0 var(--size-6) var(--size-6) var(--size-6);
 }
@@ -108,8 +109,18 @@
   grid-template-rows: auto auto auto auto auto;
   background: transparent;
   cursor: pointer;
-  transition: background var(--duration-mouse-over);
+  transition: background var(--transition-mouse-over); /* --duration-mouse-over doesn't exist; correct token is --transition-mouse-over (GeneralMouseOverDuration, Sizes.xaml:78 = 160ms) */
 }
+
+/* XAML: ListBox ItemContainerStyle="AlternatingContentListBoxItem" AlternationCount="2"
+   (InternalNotificationPanel.xaml:474-475). Rows alternate background — this wasn't
+   in the previous CSS at all, so the list rendered as a flat, ungrouped block instead
+   of the zebra-striped list the real app shows.
+   AlternationIndex 0 → BackgroundPrimary, AlternationIndex 1 → BackgroundStrong
+   (DefaultControls.xaml:5010-5019). */
+.mob-notification:nth-child(odd)  { background: var(--BackgroundPrimary); }
+.mob-notification:nth-child(even) { background: var(--BackgroundStrong); }
+
 .mob-notification:hover {
   background: color-mix(in srgb, var(--MouseOverPrimary) 10%, transparent);
 }
@@ -126,14 +137,24 @@
 .mob-notification__level[data-level="critical"] { background: var(--MessageDeliveryIconCritical); }
 .mob-notification__level[data-level="dismissed"] { background: var(--ForegroundDisabled); }
 
-/* XAML: Row 0 — StatusLabel + LevelLabel + ErrorCode + DismissButton */
+/* XAML: Row 0 — StatusLabel + LevelLabel + ErrorCode + DismissButton
+   (NotificationItem.xaml:98-154). The label-side StackPanel has
+   Margin="0,10" (line 100) plus an attached Margin.Bottom=Size6
+   (line 101), so real spacing is: top 10, bottom 10+6=16, left/right 0.
+   The error-code side has its own Margin="0,10,10,0" (line 128), giving
+   10px on the right. There's no left/right padding on the label side in
+   Master — collapsing this into one padding value that also covers the
+   dismiss button (Margin="0,-8", line 139, an oversized hit target) is
+   still an approximation, but this traces closer than a flat 6px all around.
+   NOTE: DismissButton's -8px vertical overflow (larger click target than
+   visual size) isn't replicated here — flagging, not silently dropping it. */
 .mob-notification__header {
   grid-column: 2;
   grid-row: 1;
   display: flex;
   align-items: center;
   gap: var(--size-3);
-  padding: 10px var(--size-6) var(--size-6) var(--size-6);
+  padding: 10px 10px 16px 0;
 }
 
 .mob-notification__status-badge {
@@ -153,7 +174,7 @@
 .mob-notification__level-label[data-level="critical"] { color: var(--MessageDeliveryIconCritical); }
 
 .mob-notification__error-code {
-  font: var(--font-bodySm);
+  font: var(--font-Sm);
   color: var(--ForegroundDisabled);
   margin-left: auto;
 }
@@ -185,7 +206,7 @@
 .mob-notification__message {
   grid-column: 2;
   grid-row: 3;
-  font: var(--font-bodyMd);
+  font: var(--font-default);
   color: var(--ForegroundStrong);
   padding: 0 var(--size-6) var(--size-12) var(--size-6);
 }
@@ -200,7 +221,7 @@
   padding: 0 var(--size-6) 0 var(--size-6);
 }
 .mob-notification__action-link {
-  font: var(--font-bodySm);
+  font: var(--font-Sm);
   color: var(--ForegroundAction);
   background: none;
   border: none;
@@ -223,7 +244,7 @@
 }
 
 .mob-notification__time {
-  font: var(--font-bodySm);
+  font: var(--font-Sm);
   color: var(--ForegroundDisabled);
 }
 
@@ -270,7 +291,7 @@
   border: none;
   cursor: pointer;
   color: var(--ForegroundPrimary);
-  transition: opacity var(--duration-mouse-over);
+  transition: opacity var(--transition-mouse-over);
 }
 
 /* XAML: _mouseOverElement — 4px left bar */
@@ -283,7 +304,7 @@
   width: 4px;
   background: var(--MouseOverPrimary);
   opacity: 0;
-  transition: opacity var(--duration-mouse-over);
+  transition: opacity var(--transition-mouse-over);
 }
 .mob-notification-toggle:hover::before { opacity: 1; }
 
@@ -296,18 +317,26 @@
   color: var(--SelectionPrimary);
 }
 
-/* XAML: Icon_Notifications */
+/* XAML: Icon_Notifications, Canvas Margin="0,0,0,2" (NotificationToggleButton.xaml:101)
+   nudges the icon ~1px above dead-center in its 50px-tall container. */
 .mob-notification-toggle__icon {
   font-family: 'mobius-system-icons';
   font-size: var(--size-20);
   line-height: 1;
+  margin-bottom: 2px;
 }
 
-/* XAML: _alertCountVisualElement */
+/* XAML: _alertCountVisualElement — this is a font-overlay badge, not a
+   corner badge (see project StatusIcon pattern). It's nested at
+   Canvas.Left=12, Canvas.Top=12 (NotificationToggleButton.xaml:125-126)
+   inside the 20x20 icon canvas, which is centered in a 50x50 box
+   (Margin="6,0" inset, lines 88-91) centered in the 62px-wide button.
+   Icon canvas top-left = (6 + (50-20)/2, (50-20-2)/2) = (21, 14).
+   Badge top-left = icon canvas origin + (12,12) = (33, 26). */
 .mob-notification-toggle__badge {
   position: absolute;
-  top: 8px;
-  right: 10px;
+  left: 33px;
+  top: 26px;
   font: var(--font-meta);
   color: var(--ForegroundPrimary);
   min-width: 12px;
@@ -371,14 +400,14 @@
   gap: 0;
 }
 .mob-notification-panel__filter-tab {
-  font: var(--font-bodySm);
+  font: var(--font-Sm);
   color: var(--ForegroundPrimary);
   background: none;
   border: none;
   padding: var(--size-6) var(--size-12);
   cursor: pointer;
   border-bottom: 2px solid transparent;
-  transition: color var(--duration-mouse-over), border-color var(--duration-mouse-over);
+  transition: color var(--transition-mouse-over), border-color var(--transition-mouse-over);
 }
 .mob-notification-panel__filter-tab:hover {
   color: var(--MouseOverPrimary);
@@ -422,7 +451,7 @@
 
 /* XAML: Empty state text */
 .mob-notification-panel__empty {
-  font: var(--font-bodyMd);
+  font: var(--font-default);
   color: var(--ForegroundStrong);
   padding: 8px var(--size-24);
 }
@@ -451,7 +480,7 @@
 .mob-notification-panel__history-table {
   width: 100%;
   border-collapse: collapse;
-  font: var(--font-bodySm);
+  font: var(--font-Sm);
   color: var(--ForegroundPrimary);
 }
 
@@ -531,7 +560,7 @@
 
 /* XAML: TextBlock — col 1 */
 .mob-active-alert__text {
-  font: var(--font-bodyMd);
+  font: var(--font-default);
   color: var(--MessageDeliveryForeground);
   padding-right: var(--size-20);
   overflow: hidden;
@@ -581,55 +610,48 @@
 
 /* =============================================================
    6. OK / CANCEL DIALOG (OkCancelDialog.xaml)
-   Source: OkCancelDialog.xaml
-   Simple modal confirmation. Fixed 400x300.
+   Source: OkCancelDialog.xaml — this is a native WPF Window
+   (common:UserWindow, Width=400 Height=300, ResizeMode=NoResize,
+   WindowStartupLocation=CenterOwner). The title bar, close button,
+   and drop shadow are all OS-drawn window chrome — there is NO
+   XAML markup for them, so there's nothing to trace a title bar,
+   close icon, or box-shadow to. Previous version invented all
+   three; removed them here. The content area is just:
+     StackPanel Vertical
+       TextBlock (DialogText) — Margin 10,30,10,30
+       StackPanel Horizontal — OK, Cancel (both default Button
+         style, no Style override, so identical appearance)
+
+   OPEN QUESTION: Blazor can't spawn a real OS window, so this
+   component still needs *some* way to show a title and let the
+   user close/dismiss it without OK/Cancel. That's a design
+   decision (likely belongs in a shared modal-wrapper component,
+   not invented here) — flagging for follow-up rather than
+   guessing at chrome again.
    ============================================================= */
 
 .mob-dialog {
   width: 400px;
   max-height: 300px;
   background: var(--BackgroundStrong);
-  box-shadow: var(--shadow-lg-offset);
   display: flex;
   flex-direction: column;
 }
 
-/* XAML: Title bar — window chrome */
-.mob-dialog__titlebar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: var(--size-6) var(--size-12);
-  background: var(--BackgroundStrongStepOne);
-  border-bottom: 1px solid var(--InnerLines);
-}
-.mob-dialog__title {
-  font: var(--font-hdrSm);
-  color: var(--ForegroundStrong);
-}
-.mob-dialog__close {
-  font-family: 'mobius-system-icons';
-  font-size: var(--size-20);
-  color: var(--ForegroundPrimary);
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  line-height: 1;
-}
-.mob-dialog__close:hover { color: var(--MouseOverPrimary); }
-
-/* XAML: DialogText — Margin 10,30 */
+/* XAML: DialogText — Margin="10,30,10,30" (OkCancelDialog.xaml:21) */
 .mob-dialog__body {
   flex: 1;
   padding: 30px 10px;
-  font: var(--font-bodyMd);
+  font: var(--font-default);
   color: var(--ForegroundPrimary);
 }
 
-/* XAML: Button row — OK + Cancel */
+/* XAML: StackPanel Horizontal — OkButton Margin="10,0,10,0" (line 28),
+   CancelButton Margin="10,0,10,0" (line 34). Real gap between the two
+   buttons is 10+10=20px, not 10. Left/right edge padding is the same
+   10px from each button's own margin. */
 .mob-dialog__actions {
   display: flex;
-  gap: 10px;
+  gap: 20px;
   padding: 0 10px 10px;
 }

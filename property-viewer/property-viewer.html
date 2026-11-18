@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mobius — Property Viewer</title>
+  <link id="mob-theme-link" rel="stylesheet" href="../styles/color-theme-tokens/LightTheme.css" />
+  <link rel="stylesheet" href="../styles/css/main.css" />
+  <link rel="stylesheet" href="property-viewer.css" />
+  <style>
+    body { margin: 0; }
+    h1 {
+      font: var(--font-hdrMd);
+      margin: 0 0 32px;
+      color: var(--ForegroundStrong);
+    }
+    h2 {
+      font: var(--font-hdrSm);
+      margin: 48px 0 12px;
+      color: var(--ForegroundStrong);
+    }
+    h2:first-of-type { margin-top: 0; }
+    .section-divider {
+      border: none;
+      border-top: var(--line-size) solid var(--InnerLines);
+      margin: 32px 0 0;
+    }
+    .demo-caption {
+      font: var(--font-Sm);
+      color: var(--ForegroundDisabled);
+      margin-top: var(--spacing-label-to-control-sm);
+    }
+    .viewer-demo {
+      max-width: 400px;
+      background: var(--BackgroundPrimary);
+      border: 1px solid var(--InnerLines);
+    }
+  </style>
+</head>
+<body>
+
+<div class="mob-layout">
+
+  <!-- Sidebar Navigation -->
+  <nav class="mob-nav" id="mob-nav"></nav>
+
+  <!-- Main Content -->
+  <main class="mob-layout__content">
+
+    <h1>Property Viewer</h1>
+    <p class="demo-caption">Source: PropertyViewer.xaml — Scrollable configuration panel docked right inside EditableGaugePanelControl. Shows editable gauge properties using shared-column layout.</p>
+
+
+    <!-- ============================
+         DEFAULT — MIXED FIELD TYPES
+         ============================ -->
+    <hr class="section-divider">
+    <h2>Mixed Field Types</h2>
+    <p class="demo-caption">XAML: ItemsControl with DataTemplate-driven field types: text, boolean toggle, dropdown, integer.</p>
+
+    <div class="viewer-demo">
+      <!-- XAML: Border Margin="12" → ScrollViewer → StackPanel -->
+      <div class="mob-property-viewer">
+        <div class="mob-property-viewer__scroll">
+
+          <!-- XAML: TextBlock Style=HeadingSm -->
+          <h3 class="mob-property-viewer__title">Engine Speed Gauge</h3>
+
+          <!-- XAML: DataTemplate DataType=TextPropertyVM
+               Grid [LabelWidthGroup][SymbolWidthGroup][*][UnitWidthGroup]
+               TextBlock Label + TextBox -->
+          <div class="mob-property-viewer__field">
+            <span class="mob-property-viewer__label">Label</span>
+            <input class="mob-property-viewer__text-input" type="text" value="ENGINE SPEED" />
+          </div>
+
+          <!-- XAML: DataTemplate DataType=SimpleEnumeratedPropertyVM
+               TextBlock Label + ComboBox -->
+          <div class="mob-property-viewer__field">
+            <span class="mob-property-viewer__label">Orientation</span>
+            <select class="mob-property-viewer__select">
+              <option selected>Horizontal</option>
+              <option>Vertical</option>
+              <option>Square</option>
+            </select>
+          </div>
+
+          <!-- XAML: DataTemplate DataType=BooleanPropertyVM
+               TextBlock Label + SwitchToggle (Yes/No) -->
+          <div class="mob-property-viewer__field">
+            <span class="mob-property-viewer__label">Show Label</span>
+            <div class="mob-property-viewer__toggle">
+              <!-- Simplified toggle representation -->
+              <label style="font: var(--font-default); color: var(--ForegroundPrimary); cursor: pointer;">
+                <input type="checkbox" checked /> Yes
+              </label>
+            </div>
+          </div>
+
+          <!-- XAML: DataTemplate DataType=IntegerPropertyVM
+               FieldInput DecimalPlaces=0 -->
+          <div class="mob-property-viewer__field">
+            <span class="mob-property-viewer__label">Tick Count</span>
+            <input class="mob-property-viewer__number-input" type="number" value="5" min="0" step="1" />
+          </div>
+
+          <!-- XAML: DataTemplate DataType=TextPropertyVM -->
+          <div class="mob-property-viewer__field">
+            <span class="mob-property-viewer__label">Units</span>
+            <input class="mob-property-viewer__text-input" type="text" value="RPM" />
+          </div>
+
+          <!-- XAML: DataTemplate DataType=SearchableEnumeratedPropertyVM
+               IsTextSearchEnabled ComboBox -->
+          <div class="mob-property-viewer__field">
+            <span class="mob-property-viewer__label">Data Source</span>
+            <select class="mob-property-viewer__select">
+              <option selected>EngineRPM</option>
+              <option>HydraulicTemp</option>
+              <option>FuelLevel</option>
+              <option>CoolantTemp</option>
+            </select>
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <p class="demo-caption">400px panel with 6 fields: 2 text, 1 boolean, 1 integer, 2 dropdown.</p>
+
+
+    <!-- ============================
+         ERROR STATE
+         ============================ -->
+    <hr class="section-divider">
+    <h2>Error State</h2>
+    <p class="demo-caption">XAML: HasErrors = true — shows error text instead of property fields.</p>
+
+    <div class="viewer-demo">
+      <div class="mob-property-viewer">
+        <div class="mob-property-viewer__scroll">
+          <h3 class="mob-property-viewer__title">Gauge Properties</h3>
+          <!-- XAML: TextBlock TextWrapping=Wrap
+               Visibility bound to HasErrors -->
+          <p class="mob-property-viewer__error">Unable to load gauge properties. The selected gauge configuration may be corrupted or incompatible with the current vehicle profile.</p>
+        </div>
+      </div>
+    </div>
+    <p class="demo-caption">Error message replaces property fields when HasErrors is true.</p>
+
+  </main>
+
+</div>
+
+<script src="../js/nav.js"></script>
+</body>
+</html>

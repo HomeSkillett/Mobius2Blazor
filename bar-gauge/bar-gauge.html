@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mobius — Bar Gauge</title>
+  <link id="mob-theme-link" rel="stylesheet" href="../styles/color-theme-tokens/LightTheme.css" />
+  <link rel="stylesheet" href="../styles/css/main.css" />
+  <link rel="stylesheet" href="../status-icon/status-icon.css" />
+  <link rel="stylesheet" href="bar-gauge.css" />
+  <style>
+    body { margin: 0; }
+    h1 { font: var(--font-hdrMd); margin: 0 0 12px; color: var(--ForegroundStrong); }
+    h2 { font: var(--font-hdrSm); margin: 40px 0 16px; color: var(--ForegroundStrong); }
+    .demo-list { display: flex; flex-direction: column; max-width: 540px; }
+    .section-divider { border: none; border-top: var(--line-size) solid var(--InnerLines); margin: 32px 0 0; }
+    .demo-caption { font: var(--font-Sm); color: var(--ForegroundDisabled); margin: var(--spacing-label-to-control-sm) 0 32px; }
+
+    /* Demo stage. The gauge draws on GaugeInvertBackground in master.
+       Padding leaves room for the label (7px above) and the min/max
+       labels (10px below) that overflow the 48px gauge box. */
+    .bar-demo { box-sizing: content-box; padding: 24px; background: var(--GaugeInvertBackground); border: 1px solid var(--InnerLines); }
+    .bar-demo--w192 { width: 192px; }   /* ColSpan 3: 3 x 48 + 2 x 24 */
+    .bar-demo--w264 { width: 264px; }   /* ColSpan 4: 4 x 48 + 3 x 24 */
+
+    /* Demo data only. Blazor binds these at runtime
+       (BarGauge.xaml.cs lines 73-94 compute them in WPF). */
+    .bar-demo-progress-40  { --bar-progress: 40%; }
+    .bar-demo-progress-50  { --bar-progress: 50%; }
+    .bar-demo-progress-64  { --bar-progress: 64%; }
+    .bar-demo-progress-72  { --bar-progress: 72%; }
+    .bar-demo-progress-85  { --bar-progress: 85%; }
+    .bar-demo-progress-96  { --bar-progress: 96%; }
+    .bar-demo-progress-100 { --bar-progress: 100%; }
+    .bar-demo-range-crit-min { left: 0; width: 10%; }
+    .bar-demo-range-warn-min { left: 10%; width: 10%; }
+    .bar-demo-range-warn-max { right: 10%; width: 10%; }
+    .bar-demo-range-crit-max { right: 0; width: 10%; }
+  </style>
+</head>
+<body>
+
+<div class="mob-layout">
+
+  <!-- Sidebar Navigation -->
+  <nav class="mob-nav" id="mob-nav"></nav>
+
+  <!-- Main Content -->
+  <main class="mob-layout__content">
+
+<h1>Bar Gauge</h1>
+<p class="demo-caption">Source: BarGauge.xaml, horizontal template (lines 15-376). 48px tall: rows 12 / 13 / 1 / 10 / 12. Width comes from the gauge panel cell span.</p>
+
+
+<!-- =========================================================
+     SECTION 1: AS CONFIGURED IN MASTER
+     Source: GaugeSetup JSON files in Asi.CoreMobius.Server
+     ========================================================= -->
+<hr class="section-divider" />
+<h2>As Configured in Master</h2>
+
+<div class="demo-list">
+
+  <!-- XAML: BarGauge. T8360-GaugeSetup.json Gauges[5]: Label "Progress", Min 0, Max 100, ColSpan 3 (192px), no icon, no ranges, value 0 -->
+  <div class="bar-demo bar-demo--w192">
+    <!-- XAML: BarGauge._templateRoot (BarGauge.xaml line 19) -->
+    <div class="mob-bar-gauge" data-status="unknown">
+      <!-- XAML: BarGauge Grid Row 0 (line 29) -->
+      <div class="mob-bar-gauge__header">
+        <!-- XAML: BarGauge._labelStatusIcon (line 38) -->
+        <div class="mob-bar-gauge__label-group">
+          <!-- XAML: LabelStatusIcon._labelString (LabelStatusIcon.xaml line 69) -->
+          <span class="mob-bar-gauge__label">Progress</span>
+        </div>
+        <!-- XAML: BarGauge._displayValue (line 51) -->
+        <span class="mob-bar-gauge__value">0</span>
+      </div>
+      <!-- XAML: BarGauge Grid Row 3 (line 86) -->
+      <div class="mob-bar-gauge__track-wrapper">
+        <!-- XAML: BarGauge edge tick, right (line 69) -->
+        <div class="mob-bar-gauge__tick--edge-right"></div>
+        <!-- XAML: BarGauge edge tick, left (line 76) -->
+        <div class="mob-bar-gauge__tick--edge-left"></div>
+        <!-- XAML: BarGauge bar background (line 102) -->
+        <div class="mob-bar-gauge__track"></div>
+        <!-- XAML: BarGauge tick StackPanels, columns 0, 2, 4, 6, 8 (lines 108-186) -->
+        <div class="mob-bar-gauge__ticks">
+          <span class="mob-bar-gauge__tick"></span>
+          <span class="mob-bar-gauge__tick"></span>
+          <span class="mob-bar-gauge__tick"></span>
+          <span class="mob-bar-gauge__tick"></span>
+          <span class="mob-bar-gauge__tick"></span>
+        </div>
+        <!-- XAML: BarGauge ProgressBar template Grid "Background" (line 236) -->
+        <div class="mob-bar-gauge__fill-area">
+          <!-- XAML: BarGauge PART_Indicator (line 241) -->
+          <div class="mob-bar-gauge__fill">
+            <!-- XAML: BarGauge fill Rectangle (line 246) -->
+            <div class="mob-bar-gauge__fill-bar"></div>
+            <!-- XAML: BarGauge needle Rectangle (line 260) -->
+            <div class="mob-bar-gauge__needle"></div>
+          </div>
+        </div>
+      </div>
+      <!-- XAML: BarGauge min / max TextBlocks (lines 282, 298) -->
+      <div class="mob-bar-gauge__range-labels">
+        <span class="mob-bar-gauge__range-label">0</span>
+        <span class="mob-bar-gauge__range-label">100</span>
+      </div>
+    </div>
+  </div>
+  <p class="demo-caption">T8360 "Progress" at 0. ColSpan 3 = 192px. At value 0 the indicator is its 4px minimum width, so the needle sits 1px in from the left.</p>
+
+  <!-- XAML: BarGauge. Same gauge at value 64 -->
+  <div class="bar-demo bar-demo--w192">
+    <!-- XAML: BarGauge._templateRoot (BarGauge.xaml line 19) -->
+    <div class="mob-bar-gauge" data-status="ok">
+      <!-- XAML: BarGauge Grid Row 0 (line 29) -->
+      <div class="mob-bar-gauge__header">
+        <!-- XAML: BarGauge._labelStatusIcon (line 38) -->
+        <div class="mob-bar-gauge__label-group">
+          <!-- XAML: LabelStatusIcon._labelString (LabelStatusIcon.xaml line 69) -->
+          <span class="mob-bar-gauge__label">Progress</span>
+        </div>
+        <!-- XAML: BarGauge._displayValue (line 51) -->
+        <span class="mob-bar-gauge__value">64</span>
+      </div>
+      <!-- XAML: BarGauge Grid Row 3 (line 86) -->
+      <div class="mob-bar-gauge__track-wrapper">
+        <!-- XAML: BarGauge edge tick, right (line 69) -->
+        <div class="mob-bar-gauge__tick--edge-right"></div>
+        <!-- XAML: BarGauge edge tick, left (line 76) -->
+        <div class="mob-bar-gauge__tick--edge-left"></div>
+        <!-- XAML: BarGauge bar background (line 102) -->
+        <div class="mob-bar-gauge__track"></div>
+        <!-- XAML: BarGauge tick StackPanels, columns 0, 2, 4, 6, 8 (lines 108-186) -->
+        <div class="mob-bar-gauge__ticks">
+          <span class="mob-bar-gauge__tick"></span>
+          <span class="mob-bar-gauge__tick"></span>
+          <span class="mob-bar-gauge__tick"></span>
+          <span class="mob-bar-gauge__tick"></span>
+          <span class="mob-bar-gauge__tick"></span>
+        </div>
+        <!-- XAML: BarGauge ProgressBar template Grid "Background" (line 236) -->
+        <div class="mob-bar-gauge__fill-area">
+          <!-- XAML: BarGauge PART_Indicator (line 241) -->
+          <div class="mob-bar-gauge__fill bar-demo-progress-64">
+            <!-- XAML: BarGauge fill Rectangle (line 246) -->
+            <div class="mob-bar-gauge__fill-bar"></div>
+            <!-- XAML: BarGauge needle Rectangle (line 260) -->
+            <div class="mob-bar-gauge__needle"></div>
+          </div>
+        </div>
+      </div>
+      <!-- XAML: BarGauge min / max TextBlocks (lines 282, 298) -->
+      <div class="mob-bar-gauge__range-labels">
+        <span class="mob-bar-gauge__range-label">0</span>
+        <span class="mob-bar-gauge__range-label">100</span>
+      </div>
+    </div>
+  </div>
+  <p class="demo-caption">Same gauge at 64. Fill is GaugeDataForeground at 0.5 opacity, needle is 2 x 14.</p>
+
+  <!-- XAML: BarGauge. T8360-GaugeSetup.json Gauges[14]: Label "Fuel", MinimumLabel "Empty", MaximumLabel "Full", WarningMinimum 20, CriticalMinimum 10, ColSpan 4 (264px). Icon omitted: no matching Mobius-System-Icons glyph confirmed yet. -->
+  <div class="bar-demo bar-demo--w264">
+    <!-- XAML: BarGauge._templateRoot (BarGauge.xaml line 19) -->
+    <div class="mob-bar-gauge" data-status="ok">
+      <!-- XAML: BarGauge Grid Row 0 (line 29) -->
+      <div class="mob-bar-gauge__header">
+        <!-- XAML: BarGauge._labelStatusIcon (line 38) -->
+        <div class="mob-bar-gauge__label-group">
+          <!-- XAML: LabelStatusIcon._labelString (LabelStatusIcon.xaml line 69) -->
+          <span class="mob-bar-gauge__label">Fuel</span>
+        </div>
+        <!-- XAML: BarGauge._displayValue (line 51) -->
+        <span class="mob-bar-gauge__value">72</span>
+      </div>
+      <!-- XAML: BarGauge Grid Row 3 (line 86) -->
+      <div class="mob-bar-gauge__track-wrapper">
+        <!-- XAML: BarGauge edge tick, right (line 69) -->
+        <div class="mob-bar-gauge__tick--edge-right"></div>
+        <!-- XAML: BarGauge edge tick, left (line 76) -->
+        <div class="mob-bar-gauge__tick--edge-left"></div>
+        <!-- XAML: BarGauge bar background (line 102) -->
+        <div class="mob-bar-gauge__track"></div>
+        <!-- XAML: BarGauge tick StackPanels, columns 0, 2, 4, 6, 8 (lines 108-186) -->
+        <div class="mob-bar-gauge__ticks">
+          <span class="mob-bar-gauge__tick"></span>
+          <span class="mob-bar-gauge__tick"></span>
+          <span class="mob-bar-gauge__tick"></span>
+          <span class="mob-bar-gauge__tick"></span>
+          <span class="mob-bar-gauge__tick"></span>
+        </div>
+      <!-- XAML: BarGauge.PART_RangeBar (line 194) -->
+      <div class="mob-bar-gauge__ranges">
+        <!-- XAML: BarGauge.PART_CriticalMinimum (line 214). CriticalMinimumValue 10 of 100. -->
+        <div class="mob-bar-gauge__range mob-bar-gauge__range--critical-min bar-demo-range-crit-min"></div>
+        <!-- XAML: BarGauge.PART_WarningMinimum (line 202). WarningMinimumValue 20 of 100. -->
+        <div class="mob-bar-gauge__range mob-bar-gauge__range--warning-min bar-demo-range-warn-min"></div>
+      </div>
+        <!-- XAML: BarGauge ProgressBar template Grid "Background" (line 236) -->
+        <div class="mob-bar-gauge__fill-area">
+          <!-- XAML: BarGauge PART_Indicator (line 241) -->
+          <div class="mob-bar-gauge__fill bar-demo-progress-72">
+            <!-- XAML: BarGauge fill Rectangle (line 246) -->
+            <div class="mob-bar-gauge__fill-bar"></div>
+            <!-- XAML: BarGauge needle Rectangle (line 260) -->
+            <div class="mob-bar-gauge__needle"></div>
+          </div>
+        </div>
+      </div>
+      <!-- XAML: BarGauge min / max TextBlocks (lines 282, 298) -->
+      <div class="mob-bar-gauge__range-labels">
+        <span class="mob-bar-gauge__range-label">Empty</span>
+        <span class="mob-bar-gauge__range-label">Full</span>
+      </div>
+    </div>
+  </div>
+  <p class="demo-caption">T8360 "Fuel". ColSpan 4 = 264px. Text min/max labels. Critical band 0 to 10 at 0.5 opacity. Warning band 10 to 20 is hidden until the Warning state. The master config also shows an icon before the label, left out here until the glyph is confirmed.</p>
+
+</div>
+
+
+<!-- =========================================================
+     SECTION 2: STATUS STATES
+     Source: VisualStateGroup "StatusIndicatorStates" (lines 316-374)
+     ========================================================= -->
+<hr class="section-divider" />
+<h2>Status States</h2>
+
+<div class="demo-list">
+
+  <!-- XAML: BarGauge. VisualState "Unknown" (lines 317-330), StatusIconVisibility=True -->
+  <div class="bar-demo bar-demo--w192">
+    <!-- XAML: BarGauge._templateRoot (BarGauge.xaml line 19) -->
+    <div class="mob-bar-gauge" data-status="unknown">
+      <!-- XAML: BarGauge Grid Row 0 (line 29) -->
+      <div class="mob-bar-gauge__header">
+        <!-- XAML: BarGauge._labelStatusIcon (line 38) -->
+        <div class="mob-bar-gauge__label-group">
+        <!-- XAML: LabelStatusIcon._statusIcon (LabelStatusIcon.xaml line 29) -->
+        <span class="mob-status-icon mob-status-icon--sm" data-status="unknown" aria-label="unknown"></span>
+          <!-- XAML: LabelStatusIcon._labelString (LabelStatusIcon.xaml line 69) -->
+          <span class="mob-bar-gauge__label">Engine Temp</span>
+        </div>
+        <!-- XAML: BarGauge._displayValue (line 51) -->
+        <span class="mob-bar-gauge__value">50</span>
+      </div>
+      <!-- XAML: BarGauge Grid Row 3 (line 86) -->
+      <div class="mob-bar-gauge__track-wrapper">
+        <!-- XAML: BarGauge edge tick, right (line 69) -->
+        <div class="mob-bar-gauge__tick--edge-right"></div>
+        <!-- XAML: BarGauge edge tick, left (line 76) -->
+        <div class="mob-bar-gauge__tick--edge-left"></div>
+        <!-- XAML: BarGauge bar background (line 102) -->
+        <div class="mob-bar-gauge__track"></div>
+        <!-- XAML: BarGauge tick StackPanels, columns 0, 2, 4, 6, 8 (lines 108-186) -->
+        <div class="mob-bar-gauge__ticks">
+          <span class="mob-bar-gauge__tick"></span>
+          <span class="mob-bar-gauge__tick"></span>
+          <span class="mob-bar-gauge__tick"></span>
+          <span class="mob-bar-gauge__tick"></span>
+          <span class="mob-bar-gauge__tick"></span>
+        </div>
+      <!-- XAML: BarGauge.PART_RangeBar (line 194) -->
+      <div class="mob-bar-gauge__ranges">
+        <!-- XAML: BarGauge.PART_CriticalMinimum (line 214). CriticalMinimumValue 10 of 100. -->
+        <div class="mob-bar-gauge__range mob-bar-gauge__range--critical-min bar-demo-range-crit-min"></div>
+        <!-- XAML: BarGauge.PART_WarningMinimum (line 202). WarningMinimumValue 20 of 100. -->
+        <div class="mob-bar-gauge__range mob-bar-gauge__range--warning-min bar-demo-range-warn-min"></div>
+        <!-- XAML: BarGauge.PART_WarningMaximum (line 208). WarningMaximumValue 80 of 100. -->
+        <div class="mob-bar-gauge__range mob-bar-gauge__range--warning-max bar-demo-range-warn-max"></div>
+        <!-- XAML: BarGauge.PART_CriticalMaximum (line 220). CriticalMaximumValue 90 of 100. -->
+        <div class="mob-bar-gauge__range mob-bar-gauge__range--critical-max bar-demo-range-crit-max"></div>
+      </div>
+        <!-- XAML: BarGauge ProgressBar template Grid "Background" (line 236) -->
+        <div class="mob-bar-gauge__fill-area">
+          <!-- XAML: BarGauge PART_Indicator (line 241) -->
+          <div class="mob-bar-gauge__fill bar-demo-progress-50">
+            <!-- XAML: BarGauge fill Rectangle (line 246) -->
+            <div class="mob-bar-gauge__fill-bar"></div>
+            <!-- XAML: BarGauge needle Rectangle (line 260) -->
+            <div class="mob-bar-gauge__needle"></div>
+          </div>
+        </div>
+      </div>
+      <!-- XAML: BarGauge min / max TextBlocks (lines 282, 298) -->
+      <div class="mob-bar-gauge__range-labels">
+        <span class="mob-bar-gauge__range-label">0</span>
+        <span class="mob-bar-gauge__range-label">100</span>
+      </div>
+    </div>
+  </div>
+  <p class="demo-caption">Unknown. Critical bands at 0.5 opacity, warning bands hidden, ticks and value in their default colors.</p>
+
+  <!-- XAML: BarGauge. VisualState "OK" (lines 331-344) -->
+  <div class="bar-demo bar-demo--w192">
+    <!-- XAML: BarGauge._templateRoot (BarGauge.xaml line 19) -->
+    <div class="mob-bar-gauge" data-status="ok">
+      <!-- XAML: BarGauge Grid Row 0 (line 29) -->
+      <div class="mob-bar-gauge__header">
+        <!-- XAML: BarGauge._labelStatusIcon (line 38) -->
+        <div class="mob-bar-gauge__label-group">
+        <!-- XAML: LabelStatusIcon._statusIcon (LabelStatusIcon.xaml line 29) -->
+        <span class="mob-status-icon mob-status-icon--sm" data-status="ok" aria-label="ok"></span>
+          <!-- XAML: LabelStatusIcon._labelString (LabelStatusIcon.xaml line 69) -->
+          <span class="mob-bar-gauge__label">Engine Temp</span>
+        </div>
+        <!-- XAML: BarGauge._displayValue (line 51) -->
+        <span class="mob-bar-gauge__value">50</span>
+      </div>
+      <!-- XAML: BarGauge Grid Row 3 (line 86) -->
+      <div class="mob-bar-gauge__track-wrapper">
+        <!-- XAML: BarGauge edge tick, right (line 69) -->
+        <div class="mob-bar-gauge__tick--edge-right"></div>
+        <!-- XAML: BarGauge edge tick, left (line 76) -->
+        <div class="mob-bar-gauge__tick--edge-left"></div>
+        <!-- XAML: BarGauge bar background (line 102) -->
+        <div class="mob-bar-gauge__track"></div>
+        <!-- XAML: BarGauge tick StackPanels, columns 0, 2, 4, 6, 8 (lines 108-186) -->
+        <div class="mob-bar-gauge__ticks">
+          <span class="mob-bar-gauge__tick"></span>
+          <span class="mob-bar-gauge__tick"></span>
+          <span class="mob-bar-gauge__tick"></span>
+          <span class="mob-bar-gauge__tick"></span>
+          <span class="mob-bar-gauge__tick"></span>
+        </div>
+      <!-- XAML: BarGauge.PART_RangeBar (line 194) -->
+      <div class="mob-bar-gauge__ranges">
+        <!-- XAML: BarGauge.PART_CriticalMinimum (line 214). CriticalMinimumValue 10 of 100. -->
+        <div class="mob-bar-gauge__range mob-bar-gauge__range--critical-min bar-demo-range-crit-min"></div>
+        <!-- XAML: BarGauge.PART_WarningMinimum (line 202). WarningMinimumValue 20 of 100. -->
+        <div class="mob-bar-gauge__range mob-bar-gauge__range--warning-min bar-demo-range-warn-min"></div>
+        <!-- XAML: BarGauge.PART_WarningMaximum (line 208). WarningMaximumValue 80 of 100. -->
+        <div class="mob-bar-gauge__range mob-bar-gauge__range--warning-max bar-demo-range-warn-max"></div>
+        <!-- XAML: BarGauge.PART_CriticalMaximum (line 220). CriticalMaximumValue 90 of 100. -->
+        <div class="mob-bar-gauge__range mob-bar-gauge__range--critical-max bar-demo-range-crit-max"></div>
+      </div>
+        <!-- XAML: BarGauge ProgressBar template Grid "Background" (line 236) -->
+        <div class="mob-bar-gauge__fill-area">
+          <!-- XAML: BarGauge PART_Indicator (line 241) -->
+          <div class="mob-bar-gauge__fill bar-demo-progress-50">
+            <!-- XAML: BarGauge fill Rectangle (line 246) -->
+            <div class="mob-bar-gauge__fill-bar"></div>
+            <!-- XAML: BarGauge needle Rectangle (line 260) -->
+            <div class="mob-bar-gauge__needle"></div>
+          </div>
+        </div>
+      </div>
+      <!-- XAML: BarGauge min / max TextBlocks (lines 282, 298) -->
+      <div class="mob-bar-gauge__range-labels">
+        <span class="mob-bar-gauge__range-label">0</span>
+        <span class="mob-bar-gauge__range-label">100</span>
+      </div>
+    </div>
+  </div>
+  <p class="demo-caption">OK. Same as Unknown apart from the status icon.</p>
+
+  <!-- XAML: BarGauge. VisualState "Warning" (lines 345-358) -->
+  <div class="bar-demo bar-demo--w192">
+    <!-- XAML: BarGauge._templateRoot (BarGauge.xaml line 19) -->
+    <div class="mob-bar-gauge" data-status="warning">
+      <!-- XAML: BarGauge Grid Row 0 (line 29) -->
+      <div class="mob-bar-gauge__header">
+        <!-- XAML: BarGauge._labelStatusIcon (line 38) -->
+        <div class="mob-bar-gauge__label-group">
+        <!-- XAML: LabelStatusIcon._statusIcon (LabelStatusIcon.xaml line 29) -->
+        <span class="mob-status-icon mob-status-icon--sm" data-status="warning" aria-label="warning"></span>
+          <!-- XAML: LabelStatusIcon._labelString (LabelStatusIcon.xaml line 69) -->
+          <span class="mob-bar-gauge__label">Engine Temp</span>
+        </div>
+        <!-- XAML: BarGauge._displayValue (line 51) -->
+        <span class="mob-bar-gauge__value">85</span>
+      </div>
+      <!-- XAML: BarGauge Grid Row 3 (line 86) -->
+      <div class="mob-bar-gauge__track-wrapper">
+        <!-- XAML: BarGauge edge tick, right (line 69) -->
+        <div class="mob-bar-gauge__tick--edge-right"></div>
+        <!-- XAML: BarGauge edge tick, left (line 76) -->
+        <div class="mob-bar-gauge__tick--edge-left"></div>
+        <!-- XAML: BarGauge bar background (line 102) -->
+        <div class="mob-bar-gauge__track"></div>
+        <!-- XAML: BarGauge tick StackPanels, columns 0, 2, 4, 6, 8 (lines 108-186) -->
+        <div class="mob-bar-gauge__ticks">
+          <span class="mob-bar-gauge__tick"></span>
+          <span class="mob-bar-gauge__tick"></span>
+          <span class="mob-bar-gauge__tick"></span>
+          <span class="mob-bar-gauge__tick"></span>
+          <span class="mob-bar-gauge__tick"></span>
+        </div>
+      <!-- XAML: BarGauge.PART_RangeBar (line 194) -->
+      <div class="mob-bar-gauge__ranges">
+        <!-- XAML: BarGauge.PART_CriticalMinimum (line 214). CriticalMinimumValue 10 of 100. -->
+        <div class="mob-bar-gauge__range mob-bar-gauge__range--critical-min bar-demo-range-crit-min"></div>
+        <!-- XAML: BarGauge.PART_WarningMinimum (line 202). WarningMinimumValue 20 of 100. -->
+        <div class="mob-bar-gauge__range mob-bar-gauge__range--warning-min bar-demo-range-warn-min"></div>
+        <!-- XAML: BarGauge.PART_WarningMaximum (line 208). WarningMaximumValue 80 of 100. -->
+        <div class="mob-bar-gauge__range mob-bar-gauge__range--warning-max bar-demo-range-warn-max"></div>
+        <!-- XAML: BarGauge.PART_CriticalMaximum (line 220). CriticalMaximumValue 90 of 100. -->
+        <div class="mob-bar-gauge__range mob-bar-gauge__range--critical-max bar-demo-range-crit-max"></div>
+      </div>
+        <!-- XAML: BarGauge ProgressBar template Grid "Background" (line 236) -->
+        <div class="mob-bar-gauge__fill-area">
+          <!-- XAML: BarGauge PART_Indicator (line 241) -->
+          <div class="mob-bar-gauge__fill bar-demo-progress-85">
+            <!-- XAML: BarGauge fill Rectangle (line 246) -->
+            <div class="mob-bar-gauge__fill-bar"></div>
+            <!-- XAML: BarGauge needle Rectangle (line 260) -->
+            <div class="mob-bar-gauge__needle"></div>
+          </div>
+        </div>
+      </div>
+      <!-- XAML: BarGauge min / max TextBlocks (lines 282, 298) -->
+      <div class="mob-bar-gauge__range-labels">
+        <span class="mob-bar-gauge__range-label">0</span>
+        <span class="mob-bar-gauge__range-label">100</span>
+      </div>
+    </div>
+  </div>
+  <p class="demo-caption">Warning. Warning bands go to full opacity. First and last track tick and the value turn GaugeStatusWarning.</p>
+
+  <!-- XAML: BarGauge. VisualState "Critical" (lines 359-372) -->
+  <div class="bar-demo bar-demo--w192">
+    <!-- XAML: BarGauge._templateRoot (BarGauge.xaml line 19) -->
+    <div class="mob-bar-gauge" data-status="critical">
+      <!-- XAML: BarGauge Grid Row 0 (line 29) -->
+      <div class="mob-bar-gauge__header">
+        <!-- XAML: BarGauge._labelStatusIcon (line 38) -->
+        <div class="mob-bar-gauge__label-group">
+        <!-- XAML: LabelStatusIcon._statusIcon (LabelStatusIcon.xaml line 29) -->
+        <span class="mob-status-icon mob-status-icon--sm" data-status="critical" aria-label="critical"></span>
+          <!-- XAML: LabelStatusIcon._labelString (LabelStatusIcon.xaml line 69) -->
+          <span class="mob-bar-gauge__label">Engine Temp</span>
+        </div>
+        <!-- XAML: BarGauge._displayValue (line 51) -->
+        <span class="mob-bar-gauge__value">96</span>
+      </div>
+      <!-- XAML: BarGauge Grid Row 3 (line 86) -->
+      <div class="mob-bar-gauge__track-wrapper">
+        <!-- XAML: BarGauge edge tick, right (line 69) -->
+        <div class="mob-bar-gauge__tick--edge-right"></div>
+        <!-- XAML: BarGauge edge tick, left (line 76) -->
+        <div class="mob-bar-gauge__tick--edge-left"></div>
+        <!-- XAML: BarGauge bar background (line 102) -->
+        <div class="mob-bar-gauge__track"></div>
+        <!-- XAML: BarGauge tick StackPanels, columns 0, 2, 4, 6, 8 (lines 108-186) -->
+        <div class="mob-bar-gauge__ticks">
+          <span class="mob-bar-gauge__tick"></span>
+          <span class="mob-bar-gauge__tick"></span>
+          <span class="mob-bar-gauge__tick"></span>
+          <span class="mob-bar-gauge__tick"></span>
+          <span class="mob-bar-gauge__tick"></span>
+        </div>
+      <!-- XAML: BarGauge.PART_RangeBar (line 194) -->
+      <div class="mob-bar-gauge__ranges">
+        <!-- XAML: BarGauge.PART_CriticalMinimum (line 214). CriticalMinimumValue 10 of 100. -->
+        <div class="mob-bar-gauge__range mob-bar-gauge__range--critical-min bar-demo-range-crit-min"></div>
+        <!-- XAML: BarGauge.PART_WarningMinimum (line 202). WarningMinimumValue 20 of 100. -->
+        <div class="mob-bar-gauge__range mob-bar-gauge__range--warning-min bar-demo-range-warn-min"></div>
+        <!-- XAML: BarGauge.PART_WarningMaximum (line 208). WarningMaximumValue 80 of 100. -->
+        <div class="mob-bar-gauge__range mob-bar-gauge__range--warning-max bar-demo-range-warn-max"></div>
+        <!-- XAML: BarGauge.PART_CriticalMaximum (line 220). CriticalMaximumValue 90 of 100. -->
+        <div class="mob-bar-gauge__range mob-bar-gauge__range--critical-max bar-demo-range-crit-max"></div>
+      </div>
+        <!-- XAML: BarGauge ProgressBar template Grid "Background" (line 236) -->
+        <div class="mob-bar-gauge__fill-area">
+          <!-- XAML: BarGauge PART_Indicator (line 241) -->
+          <div class="mob-bar-gauge__fill bar-demo-progress-96">
+            <!-- XAML: BarGauge fill Rectangle (line 246) -->
+            <div class="mob-bar-gauge__fill-bar"></div>
+            <!-- XAML: BarGauge needle Rectangle (line 260) -->
+            <div class="mob-bar-gauge__needle"></div>
+          </div>
+        </div>
+      </div>
+      <!-- XAML: BarGauge min / max TextBlocks (lines 282, 298) -->
+      <div class="mob-bar-gauge__range-labels">
+        <span class="mob-bar-gauge__range-label">0</span>
+        <span class="mob-bar-gauge__range-label">100</span>
+      </div>
+    </div>
+  </div>
+  <p class="demo-caption">Critical. Critical bands go to full opacity, warning bands hide. First and last track tick and the value turn GaugeStatusCritical.</p>
+
+</div>
+
+
+<!-- =========================================================
+     SECTION 3: OPTIONS
+     ========================================================= -->
+<hr class="section-divider" />
+<h2>Options</h2>
+
+<div class="demo-list">
+
+  <!-- XAML: BarGauge. ProgressBarVisibility=False collapses the fill rectangle only (line 251) -->
+  <div class="bar-demo bar-demo--w192">
+    <!-- XAML: BarGauge._templateRoot (BarGauge.xaml line 19) -->
+    <div class="mob-bar-gauge mob-bar-gauge--no-progress" data-status="ok">
+      <!-- XAML: BarGauge Grid Row 0 (line 29) -->
+      <div class="mob-bar-gauge__header">
+        <!-- XAML: BarGauge._labelStatusIcon (line 38) -->
+        <div class="mob-bar-gauge__label-group">
+          <!-- XAML: LabelStatusIcon._labelString (LabelStatusIcon.xaml line 69) -->
+          <span class="mob-bar-gauge__label">Hitch Position</span>
+        </div>
+        <!-- XAML: BarGauge._displayValue (line 51) -->
+        <span class="mob-bar-gauge__value">40</span>
+      </div>
+      <!-- XAML: BarGauge Grid Row 3 (line 86) -->
+      <div class="mob-bar-gauge__track-wrapper">
+        <!-- XAML: BarGauge edge tick, right (line 69) -->
+        <div class="mob-bar-gauge__tick--edge-right"></div>
+        <!-- XAML: BarGauge edge tick, left (line 76) -->
+        <div class="mob-bar-gauge__tick--edge-left"></div>
+        <!-- XAML: BarGauge bar background (line 102) -->
+        <div class="mob-bar-gauge__track"></div>
+        <!-- XAML: BarGauge tick StackPanels, columns 0, 2, 4, 6, 8 (lines 108-186) -->
+        <div class="mob-bar-gauge__ticks">
+          <span class="mob-bar-gauge__tick"></span>
+          <span class="mob-bar-gauge__tick"></span>
+          <span class="mob-bar-gauge__tick"></span>
+          <span class="mob-bar-gauge__tick"></span>
+          <span class="mob-bar-gauge__tick"></span>
+        </div>
+        <!-- XAML: BarGauge ProgressBar template Grid "Background" (line 236) -->
+        <div class="mob-bar-gauge__fill-area">
+          <!-- XAML: BarGauge PART_Indicator (line 241) -->
+          <div class="mob-bar-gauge__fill bar-demo-progress-40">
+            <!-- XAML: BarGauge fill Rectangle (line 246) -->
+            <div class="mob-bar-gauge__fill-bar"></div>
+            <!-- XAML: BarGauge needle Rectangle (line 260) -->
+            <div class="mob-bar-gauge__needle"></div>
+          </div>
+        </div>
+      </div>
+      <!-- XAML: BarGauge min / max TextBlocks (lines 282, 298) -->
+      <div class="mob-bar-gauge__range-labels">
+        <span class="mob-bar-gauge__range-label">0</span>
+        <span class="mob-bar-gauge__range-label">100</span>
+      </div>
+    </div>
+  </div>
+  <p class="demo-caption">ProgressBarVisibility = false. The fill is hidden, the needle stays.</p>
+
+  <!-- XAML: BarGauge. Value at maximum -->
+  <div class="bar-demo bar-demo--w192">
+    <!-- XAML: BarGauge._templateRoot (BarGauge.xaml line 19) -->
+    <div class="mob-bar-gauge" data-status="ok">
+      <!-- XAML: BarGauge Grid Row 0 (line 29) -->
+      <div class="mob-bar-gauge__header">
+        <!-- XAML: BarGauge._labelStatusIcon (line 38) -->
+        <div class="mob-bar-gauge__label-group">
+          <!-- XAML: LabelStatusIcon._labelString (LabelStatusIcon.xaml line 69) -->
+          <span class="mob-bar-gauge__label">Progress</span>
+        </div>
+        <!-- XAML: BarGauge._displayValue (line 51) -->
+        <span class="mob-bar-gauge__value">100</span>
+      </div>
+      <!-- XAML: BarGauge Grid Row 3 (line 86) -->
+      <div class="mob-bar-gauge__track-wrapper">
+        <!-- XAML: BarGauge edge tick, right (line 69) -->
+        <div class="mob-bar-gauge__tick--edge-right"></div>
+        <!-- XAML: BarGauge edge tick, left (line 76) -->
+        <div class="mob-bar-gauge__tick--edge-left"></div>
+        <!-- XAML: BarGauge bar background (line 102) -->
+        <div class="mob-bar-gauge__track"></div>
+        <!-- XAML: BarGauge tick StackPanels, columns 0, 2, 4, 6, 8 (lines 108-186) -->
+        <div class="mob-bar-gauge__ticks">
+          <span class="mob-bar-gauge__tick"></span>
+          <span class="mob-bar-gauge__tick"></span>
+          <span class="mob-bar-gauge__tick"></span>
+          <span class="mob-bar-gauge__tick"></span>
+          <span class="mob-bar-gauge__tick"></span>
+        </div>
+        <!-- XAML: BarGauge ProgressBar template Grid "Background" (line 236) -->
+        <div class="mob-bar-gauge__fill-area">
+          <!-- XAML: BarGauge PART_Indicator (line 241) -->
+          <div class="mob-bar-gauge__fill bar-demo-progress-100">
+            <!-- XAML: BarGauge fill Rectangle (line 246) -->
+            <div class="mob-bar-gauge__fill-bar"></div>
+            <!-- XAML: BarGauge needle Rectangle (line 260) -->
+            <div class="mob-bar-gauge__needle"></div>
+          </div>
+        </div>
+      </div>
+      <!-- XAML: BarGauge min / max TextBlocks (lines 282, 298) -->
+      <div class="mob-bar-gauge__range-labels">
+        <span class="mob-bar-gauge__range-label">0</span>
+        <span class="mob-bar-gauge__range-label">100</span>
+      </div>
+    </div>
+  </div>
+  <p class="demo-caption">Value at maximum. Needle sits 1px in from the right edge.</p>
+
+</div>
+
+<hr class="section-divider" />
+<h2>Vertical</h2>
+<p class="demo-caption">The vertical template (BarGauge.xaml lines 378-728) has not been re-traced yet. The existing vertical demos are on the <a href="../status-gauge/status-gauge.html">StatusGauge page</a>.</p>
+
+  </main>
+
+</div>
+
+<script src="../js/nav.js"></script>
+</body>
+</html>

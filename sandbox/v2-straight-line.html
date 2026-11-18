@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>iPad Sandbox — v2 Straight line</title>
+
+  <!-- Mobius2Blazor library CSS. This page is NOT part of the library
+       (no nav, not listed in nav.js). It only borrows the stylesheets,
+       so library changes show up here on reload. -->
+  <link id="mob-theme-link" rel="stylesheet" href="../styles/color-theme-tokens/DarkTheme.css" />
+  <link rel="stylesheet" href="../styles/css/main.css" />
+  <link rel="stylesheet" href="../ipad-vehicle-drawer/ipad-vehicle-drawer.css" />
+
+  <!-- Sandbox-only styles. Try things here before they go in the library.
+       This page has no JavaScript. Open/close, the gauges tab and vehicle
+       selection are hidden checkboxes and radios read by CSS :has(). -->
+  <link rel="stylesheet" href="v2-straight-line.css" />
+</head>
+<body class="sandbox">
+
+  <!-- Variant: v2 Straight line. All variants are listed in index.html. -->
+
+  <!-- Device stage. Stands in for the iPad screen with the map behind the drawer. -->
+  <main class="sandbox-stage">
+    <div class="sandbox-device">
+      <!-- State, CSS only. In Blazor these are bound properties (IsOpen, SecondContentIsOpen). -->
+      <input class="sandbox-input" type="checkbox" id="sandbox-drawer-open" aria-label="Vehicle drawer open">
+      <input class="sandbox-input" type="checkbox" id="sandbox-gauges" aria-label="Show gauges" checked>
+
+    <!-- Figma: "Vehicle Drawer - Open" (1955:109797) / "Drawer Closed" (1949:104251) -->
+    <div class="ipad-drawer">
+
+      <!-- Figma: "Slide Handle" -->
+      <label class="ipad-drawer__handle" for="sandbox-drawer-open" title="Open or close the vehicle drawer">
+        <span class="ipad-drawer__handle-pill"></span>
+      </label>
+
+      <!-- Figma: "Vehicles" row in the closed drawer. Shown only when closed. -->
+      <div class="ipad-drawer__rings">
+        <span class="mob-listbox__vehicle-thumb ipad-drawer__ring" data-status="critical"><img class="mob-listbox__vehicle-img" src="../assets/Vehicle%20Icons/Vehicle%3Dtractor-Case-QuadTrac.svg" alt=""></span>
+        <span class="mob-listbox__vehicle-thumb ipad-drawer__ring" data-status="warning"><img class="mob-listbox__vehicle-img" src="../assets/Vehicle%20Icons/Vehicle%3Dtractor-Case-Magnum-210.svg" alt=""></span>
+        <span class="mob-listbox__vehicle-thumb ipad-drawer__ring"><img class="mob-listbox__vehicle-img" src="../assets/Vehicle%20Icons/Vehicle%3DNewHolland-T8360.svg" alt=""></span>
+        <span class="mob-listbox__vehicle-thumb ipad-drawer__ring"><img class="mob-listbox__vehicle-img" src="../assets/Vehicle%20Icons/Vehicle%3DTractor-new-holland-t4-050.svg" alt=""></span>
+        <span class="mob-listbox__vehicle-thumb ipad-drawer__ring"><img class="mob-listbox__vehicle-img" src="../assets/Vehicle%20Icons/Vehicle%3DNewHolland-T8360.svg" alt=""></span>
+        <span class="mob-listbox__vehicle-thumb ipad-drawer__ring"><img class="mob-listbox__vehicle-img" src="../assets/Vehicle%20Icons/Vehicle%3Dtractor-Case-Magnum-210.svg" alt=""></span>
+      </div>
+
+      <!-- Header ("My Vehicles 6") removed in the sandbox, Ben 2026-11-18 -->
+
+      <!-- Library: SplitPanel, vertical template (SplitPanel.xaml line 174) -->
+      <div class="split-panel split-panel--vertical first-open ipad-drawer__split">
+
+        <!-- XAML: PART_FirstContent. Vehicle list. -->
+        <div class="split-panel__pane split-panel__pane--first">
+          <!-- Library: ListBox (invert) with vehicle items -->
+          <div class="mob-listbox mob-listbox--invert ipad-drawer__list" role="radiogroup" aria-label="My Vehicles">
+            <!-- Figma: "Options" row. Library: ListBoxItem, vehicle variant. -->
+            <label class="mob-listbox__item mob-listbox__item--invert mob-listbox__item--vehicle" data-status="critical">
+              <input class="sandbox-input sandbox-radio" type="radio" name="sandbox-vehicle">
+              <!-- Figma: "Status Rings" + "Vechicle Icons" -->
+              <span class="mob-listbox__vehicle-thumb"><img class="mob-listbox__vehicle-img" src="../assets/Vehicle%20Icons/Vehicle%3Dtractor-Case-QuadTrac.svg" alt=""></span>
+              <span class="mob-listbox__vehicle-text">
+                <span class="mob-listbox__vehicle-name">Deere9R_Sugar_Daddy</span>
+                <span class="mob-listbox__vehicle-status">e-Stop</span>
+              </span>
+            </label>
+            <!-- Figma: "Options" row. Library: ListBoxItem, vehicle variant. -->
+            <label class="mob-listbox__item mob-listbox__item--invert mob-listbox__item--vehicle" data-status="warning">
+              <input class="sandbox-input sandbox-radio" type="radio" name="sandbox-vehicle">
+              <!-- Figma: "Status Rings" + "Vechicle Icons" -->
+              <span class="mob-listbox__vehicle-thumb"><img class="mob-listbox__vehicle-img" src="../assets/Vehicle%20Icons/Vehicle%3Dtractor-Case-Magnum-210.svg" alt=""></span>
+              <span class="mob-listbox__vehicle-text">
+                <span class="mob-listbox__vehicle-name">Deere_FN</span>
+                <span class="mob-listbox__vehicle-status">Some status reason</span>
+              </span>
+            </label>
+            <!-- Figma: "Options" row. Library: ListBoxItem, vehicle variant. -->
+            <label class="mob-listbox__item mob-listbox__item--invert mob-listbox__item--vehicle">
+              <input class="sandbox-input sandbox-radio" type="radio" name="sandbox-vehicle" checked>
+              <!-- Figma: "Status Rings" + "Vechicle Icons" -->
+              <span class="mob-listbox__vehicle-thumb"><img class="mob-listbox__vehicle-img" src="../assets/Vehicle%20Icons/Vehicle%3DNewHolland-T8360.svg" alt=""></span>
+              <span class="mob-listbox__vehicle-text">
+                <span class="mob-listbox__vehicle-name">Lamborghini_Spark_R</span>
+                <span class="mob-listbox__vehicle-status">Running</span>
+              </span>
+            </label>
+            <!-- Figma: "Options" row. Library: ListBoxItem, vehicle variant. -->
+            <label class="mob-listbox__item mob-listbox__item--invert mob-listbox__item--vehicle">
+              <input class="sandbox-input sandbox-radio" type="radio" name="sandbox-vehicle">
+              <!-- Figma: "Status Rings" + "Vechicle Icons" -->
+              <span class="mob-listbox__vehicle-thumb"><img class="mob-listbox__vehicle-img" src="../assets/Vehicle%20Icons/Vehicle%3DTractor-new-holland-t4-050.svg" alt=""></span>
+              <span class="mob-listbox__vehicle-text">
+                <span class="mob-listbox__vehicle-name">JD_8R</span>
+                <span class="mob-listbox__vehicle-status">Idle</span>
+              </span>
+            </label>
+            <!-- Figma: "Options" row. Library: ListBoxItem, vehicle variant. -->
+            <label class="mob-listbox__item mob-listbox__item--invert mob-listbox__item--vehicle">
+              <input class="sandbox-input sandbox-radio" type="radio" name="sandbox-vehicle">
+              <!-- Figma: "Status Rings" + "Vechicle Icons" -->
+              <span class="mob-listbox__vehicle-thumb"><img class="mob-listbox__vehicle-img" src="../assets/Vehicle%20Icons/Vehicle%3DNewHolland-T8360.svg" alt=""></span>
+              <span class="mob-listbox__vehicle-text">
+                <span class="mob-listbox__vehicle-name">JD_9R</span>
+                <span class="mob-listbox__vehicle-status">Idle</span>
+              </span>
+            </label>
+            <!-- Figma: "Options" row. Library: ListBoxItem, vehicle variant. -->
+            <label class="mob-listbox__item mob-listbox__item--invert mob-listbox__item--vehicle">
+              <input class="sandbox-input sandbox-radio" type="radio" name="sandbox-vehicle">
+              <!-- Figma: "Status Rings" + "Vechicle Icons" -->
+              <span class="mob-listbox__vehicle-thumb"><img class="mob-listbox__vehicle-img" src="../assets/Vehicle%20Icons/Vehicle%3Dtractor-Case-Magnum-210.svg" alt=""></span>
+              <span class="mob-listbox__vehicle-text">
+                <span class="mob-listbox__vehicle-name">Magnum_340</span>
+                <span class="mob-listbox__vehicle-status">Idle</span>
+              </span>
+            </label>
+          </div>
+        </div>
+
+        <!-- XAML: PART_SecondContent. Gauge panel. -->
+        <div class="split-panel__pane split-panel__pane--second">
+          <!-- Library: DisplayGaugePanel with T8360 page 1 gauges. Figma: "AG Guages" body + pagination. -->
+          <div class="mob-display-gauge-panel ipad-drawer__gauges">
+            <!-- XAML: DisplayGaugePanel.GaugeScrollViewer (line 47) -->
+            <div class="mob-display-gauge-panel__grid">
+              <!-- XAML: DisplayGaugePanel.GaugePanelGrid (line 84) -->
+              <div class="mob-display-gauge-panel__cells">
+
+              <!-- T8360-GaugeSetup.json Gauges[0] IndicatorGaugeDto_V1, Col 0, Row 0. Label "RPM", units hidden. -->
+              <!-- XAML: ListViewItem (DisplayGaugePanel.xaml line 135) -->
+              <div class="mob-display-gauge-panel__cell mob-display-gauge-panel__cell--col-0 mob-display-gauge-panel__cell--row-0">
+                <!-- XAML: IndicatorGauge._templateRoot (IndicatorGauge.xaml line 14), HideIcons state -->
+                <div class="mob-indicator-gauge mob-indicator-gauge--cell">
+                  <!-- XAML: IndicatorGauge._primaryContainer (line 24) -->
+                  <div class="mob-indicator-gauge__circle">
+                    <!-- XAML: IndicatorGauge._gaugeValueLarge > _inGaugeText (lines 137-149) -->
+                    <span class="mob-indicator-gauge__ring-value mob-indicator-gauge__ring-value--fit-3">787</span>
+                  </div>
+                  <!-- XAML: IndicatorGauge._labelBorder > StackPanel (lines 174-218) -->
+                  <div class="mob-indicator-gauge__label-strip"><span class="mob-indicator-gauge__strip-text">RPM</span></div>
+                </div>
+              </div>
+
+              <!-- T8360-GaugeSetup.json Gauges[1] IndicatorGaugeDto_V1, Col 1, Row 0. Label hidden, Units "MPH". -->
+              <!-- XAML: ListViewItem (DisplayGaugePanel.xaml line 135) -->
+              <div class="mob-display-gauge-panel__cell mob-display-gauge-panel__cell--col-1 mob-display-gauge-panel__cell--row-0">
+                <!-- XAML: IndicatorGauge._templateRoot (IndicatorGauge.xaml line 14), HideIcons state -->
+                <div class="mob-indicator-gauge mob-indicator-gauge--cell">
+                  <!-- XAML: IndicatorGauge._primaryContainer (line 24) -->
+                  <div class="mob-indicator-gauge__circle">
+                    <!-- XAML: IndicatorGauge._gaugeValueLarge > _inGaugeText (lines 137-149) -->
+                    <span class="mob-indicator-gauge__ring-value mob-indicator-gauge__ring-value--fit-4">0.00</span>
+                  </div>
+                  <!-- XAML: IndicatorGauge._labelBorder > StackPanel (lines 174-218) -->
+                  <div class="mob-indicator-gauge__label-strip"><span class="mob-indicator-gauge__strip-text">MPH</span></div>
+                </div>
+              </div>
+
+              <!-- T8360-GaugeSetup.json Gauges[2] IndicatorGaugeDto_V1, Col 2, Row 0. Label "XTE" + Units "in". -->
+              <!-- XAML: ListViewItem (DisplayGaugePanel.xaml line 135) -->
+              <div class="mob-display-gauge-panel__cell mob-display-gauge-panel__cell--col-2 mob-display-gauge-panel__cell--row-0">
+                <!-- XAML: IndicatorGauge._templateRoot (IndicatorGauge.xaml line 14), HideIcons state -->
+                <div class="mob-indicator-gauge mob-indicator-gauge--cell">
+                  <!-- XAML: IndicatorGauge._primaryContainer (line 24) -->
+                  <div class="mob-indicator-gauge__circle">
+                    <!-- XAML: IndicatorGauge._gaugeValueLarge > _inGaugeText (lines 137-149) -->
+                    <span class="mob-indicator-gauge__ring-value mob-indicator-gauge__ring-value--fit-4">-7.49</span>
+                  </div>
+                  <!-- XAML: IndicatorGauge._labelBorder > StackPanel (lines 174-218) -->
+                  <div class="mob-indicator-gauge__label-strip"><span class="mob-indicator-gauge__strip-text">XTE</span><span class="mob-indicator-gauge__strip-text">in</span></div>
+                </div>
+              </div>
+
+              <!-- T8360-GaugeSetup.json Gauges[8] IndicatorGaugeDto_V1, Col 3, Row 0. Label "GPS", units hidden. -->
+              <!-- XAML: ListViewItem (DisplayGaugePanel.xaml line 135) -->
+              <div class="mob-display-gauge-panel__cell mob-display-gauge-panel__cell--col-3 mob-display-gauge-panel__cell--row-0">
+                <!-- XAML: IndicatorGauge._templateRoot (IndicatorGauge.xaml line 14), HideIcons state -->
+                <div class="mob-indicator-gauge mob-indicator-gauge--cell">
+                  <!-- XAML: IndicatorGauge._primaryContainer (line 24) -->
+                  <div class="mob-indicator-gauge__circle">
+                    <!-- XAML: IndicatorGauge._gaugeValueLarge > _inGaugeText (lines 137-149) -->
+                    <span class="mob-indicator-gauge__ring-value mob-indicator-gauge__ring-value--fit-8">Rtk Fixed</span>
+                  </div>
+                  <!-- XAML: IndicatorGauge._labelBorder > StackPanel (lines 174-218) -->
+                  <div class="mob-indicator-gauge__label-strip"><span class="mob-indicator-gauge__strip-text">GPS</span></div>
+                </div>
+              </div>
+
+              <!-- T8360-GaugeSetup.json Gauges[10] IndicatorGaugeDto_V1, Col 0, Row 1. Label hidden, Units "Gear". -->
+              <!-- XAML: ListViewItem (DisplayGaugePanel.xaml line 135) -->
+              <div class="mob-display-gauge-panel__cell mob-display-gauge-panel__cell--col-0 mob-display-gauge-panel__cell--row-1">
+                <!-- XAML: IndicatorGauge._templateRoot (IndicatorGauge.xaml line 14), HideIcons state -->
+                <div class="mob-indicator-gauge mob-indicator-gauge--cell">
+                  <!-- XAML: IndicatorGauge._primaryContainer (line 24) -->
+                  <div class="mob-indicator-gauge__circle">
+                    <!-- XAML: IndicatorGauge._gaugeValueLarge > _inGaugeText (lines 137-149) -->
+                    <span class="mob-indicator-gauge__ring-value mob-indicator-gauge__ring-value--fit-1">0</span>
+                  </div>
+                  <!-- XAML: IndicatorGauge._labelBorder > StackPanel (lines 174-218) -->
+                  <div class="mob-indicator-gauge__label-strip"><span class="mob-indicator-gauge__strip-text">Gear</span></div>
+                </div>
+              </div>
+
+              <!-- T8360-GaugeSetup.json Gauges[5] BarGaugeDto_V1, Col 1, Row 1, ColSpan 3.
+                   Min 0, Max 100, no icon, no status icon, no range bands. -->
+              <!-- XAML: ListViewItem (DisplayGaugePanel.xaml line 135) -->
+              <div class="mob-display-gauge-panel__cell mob-display-gauge-panel__cell--col-1 mob-display-gauge-panel__cell--row-1 mob-display-gauge-panel__cell--colspan-3">
+                <!-- XAML: BarGauge._templateRoot (BarGauge.xaml line 19) -->
+                <div class="mob-bar-gauge" data-status="unknown">
+                  <!-- XAML: BarGauge Grid Row 0 (line 29) -->
+                  <div class="mob-bar-gauge__header">
+                    <!-- XAML: BarGauge._labelStatusIcon (line 38) -->
+                    <div class="mob-bar-gauge__label-group">
+                      <!-- XAML: LabelStatusIcon._labelString (LabelStatusIcon.xaml line 69) -->
+                      <span class="mob-bar-gauge__label">Progress</span>
+                    </div>
+                    <!-- XAML: BarGauge._displayValue (line 51) -->
+                    <span class="mob-bar-gauge__value">0</span>
+                  </div>
+                  <!-- XAML: BarGauge Grid Row 3 (line 86) -->
+                  <div class="mob-bar-gauge__track-wrapper">
+                    <!-- XAML: BarGauge edge tick, right (line 69) -->
+                    <div class="mob-bar-gauge__tick--edge-right"></div>
+                    <!-- XAML: BarGauge edge tick, left (line 76) -->
+                    <div class="mob-bar-gauge__tick--edge-left"></div>
+                    <!-- XAML: BarGauge bar background (line 102) -->
+                    <div class="mob-bar-gauge__track"></div>
+                    <!-- XAML: BarGauge tick StackPanels, columns 0, 2, 4, 6, 8 (lines 108-186) -->
+                    <div class="mob-bar-gauge__ticks">
+                      <span class="mob-bar-gauge__tick"></span>
+                      <span class="mob-bar-gauge__tick"></span>
+                      <span class="mob-bar-gauge__tick"></span>
+                      <span class="mob-bar-gauge__tick"></span>
+                      <span class="mob-bar-gauge__tick"></span>
+                    </div>
+                    <!-- XAML: BarGauge ProgressBar template Grid "Background" (line 236) -->
+                    <div class="mob-bar-gauge__fill-area">
+                      <!-- XAML: BarGauge PART_Indicator (line 241). Value 0 = MinWidth 4. -->
+                      <div class="mob-bar-gauge__fill">
+                        <!-- XAML: BarGauge fill Rectangle (line 246) -->
+                        <div class="mob-bar-gauge__fill-bar"></div>
+                        <!-- XAML: BarGauge needle Rectangle (line 260) -->
+                        <div class="mob-bar-gauge__needle"></div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- XAML: BarGauge min / max TextBlocks (lines 282, 298) -->
+                  <div class="mob-bar-gauge__range-labels">
+                    <span class="mob-bar-gauge__range-label">0</span>
+                    <span class="mob-bar-gauge__range-label">100</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- T8360-GaugeSetup.json Gauges[3] TextGaugeDto_V1, Col 0, Row 2, ColSpan 2 -->
+              <!-- XAML: ListViewItem (DisplayGaugePanel.xaml line 135) -->
+              <div class="mob-display-gauge-panel__cell mob-display-gauge-panel__cell--col-0 mob-display-gauge-panel__cell--row-2 mob-display-gauge-panel__cell--colspan-2">
+                <!-- XAML: TextGauge._templateRoot (TextGauge.xaml line 15) -->
+                <div class="mob-text-gauge mob-text-gauge--fit-48">
+                  <!-- XAML: TextGauge.GaugeLabel (line 24) -->
+                  <span class="mob-text-gauge__label">Remaining</span>
+                  <!-- XAML: TextGauge Grid Row 2 (line 38) -->
+                  <div class="mob-text-gauge__value-row">
+                    <!-- XAML: TextGauge Viewbox > TextBlock (lines 47-59) -->
+                    <span class="mob-text-gauge__value">00:00:00</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- T8360-GaugeSetup.json Gauges[4] TextGaugeDto_V1, Col 2, Row 2, ColSpan 2 -->
+              <!-- XAML: ListViewItem (DisplayGaugePanel.xaml line 135) -->
+              <div class="mob-display-gauge-panel__cell mob-display-gauge-panel__cell--col-2 mob-display-gauge-panel__cell--row-2 mob-display-gauge-panel__cell--colspan-2">
+                <!-- XAML: TextGauge._templateRoot (TextGauge.xaml line 15) -->
+                <div class="mob-text-gauge mob-text-gauge--fit-48">
+                  <!-- XAML: TextGauge.GaugeLabel (line 24) -->
+                  <span class="mob-text-gauge__label">Area Completed</span>
+                  <!-- XAML: TextGauge Grid Row 2 (line 38) -->
+                  <div class="mob-text-gauge__value-row">
+                    <!-- XAML: TextGauge Viewbox > TextBlock (lines 47-59) -->
+                    <span class="mob-text-gauge__value mob-text-gauge__value--number">0.00</span>
+                    <!-- XAML: TextGauge.GaugeUnits (line 61) -->
+                    <span class="mob-text-gauge__unit">Acres</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- T8360-GaugeSetup.json Gauges[9] TextGaugeDto_V1, Col 0, Row 3, ColSpan 2 -->
+              <!-- XAML: ListViewItem (DisplayGaugePanel.xaml line 135) -->
+              <div class="mob-display-gauge-panel__cell mob-display-gauge-panel__cell--col-0 mob-display-gauge-panel__cell--row-3 mob-display-gauge-panel__cell--colspan-2">
+                <!-- XAML: TextGauge._templateRoot (TextGauge.xaml line 15) -->
+                <div class="mob-text-gauge mob-text-gauge--fit-48">
+                  <!-- XAML: TextGauge.GaugeLabel (line 24) -->
+                  <span class="mob-text-gauge__label">In Work</span>
+                </div>
+              </div>
+
+              <!-- T8360-GaugeSetup.json Gauges[6] IndicatorGaugeDto_V1, Col 2, Row 3.
+                   Label "Lift", Units "Lower", commandable, icon from CustomIconPaths.
+                   Icon uses Mobius-System-Icons Arrow_DirectionDown (U+E016) in place of the JSON path data. -->
+              <!-- XAML: ListViewItem (DisplayGaugePanel.xaml line 135) -->
+              <div class="mob-display-gauge-panel__cell mob-display-gauge-panel__cell--col-2 mob-display-gauge-panel__cell--row-3">
+                <!-- XAML: IndicatorGauge._templateRoot + _commandButton (lines 14, 221), ShowIcons + CanCommandButton + IconOff states -->
+                <button class="mob-indicator-gauge mob-indicator-gauge--cell mob-indicator-gauge--commandable" type="button" data-icon-state="off">
+                  <!-- XAML: IndicatorGauge._primaryContainer (line 24) -->
+                  <span class="mob-indicator-gauge__circle">
+                    <!-- XAML: IndicatorGauge._inactiveIcon (line 99) -->
+                    <span class="mob-indicator-gauge__icon" aria-hidden="true">&#xE016;</span>
+                  </span>
+                  <!-- XAML: IndicatorGauge._labelBorder > _gaugeUnits (lines 174, 211). Label is collapsed in ShowIcons (line 287). -->
+                  <span class="mob-indicator-gauge__label-strip"><span class="mob-indicator-gauge__strip-text">Lower</span></span>
+                </button>
+              </div>
+
+              <!-- T8360-GaugeSetup.json Gauges[7] IndicatorGaugeDto_V1, Col 3, Row 3.
+                   Label "Lift", Units "Lift", commandable, icon from CustomIconPaths.
+                   Icon uses Mobius-System-Icons Arrow_DirectionUp (U+E011) in place of the JSON path data. -->
+              <!-- XAML: ListViewItem (DisplayGaugePanel.xaml line 135) -->
+              <div class="mob-display-gauge-panel__cell mob-display-gauge-panel__cell--col-3 mob-display-gauge-panel__cell--row-3">
+                <!-- XAML: IndicatorGauge._templateRoot + _commandButton (lines 14, 221), ShowIcons + CanCommandButton + IconOff states -->
+                <button class="mob-indicator-gauge mob-indicator-gauge--cell mob-indicator-gauge--commandable" type="button" data-icon-state="off">
+                  <!-- XAML: IndicatorGauge._primaryContainer (line 24) -->
+                  <span class="mob-indicator-gauge__circle">
+                    <!-- XAML: IndicatorGauge._inactiveIcon (line 99) -->
+                    <span class="mob-indicator-gauge__icon" aria-hidden="true">&#xE011;</span>
+                  </span>
+                  <!-- XAML: IndicatorGauge._labelBorder > _gaugeUnits (lines 174, 211). Label is collapsed in ShowIcons (line 287). -->
+                  <span class="mob-indicator-gauge__label-strip"><span class="mob-indicator-gauge__strip-text">Lift</span></span>
+                </button>
+              </div>
+
+              </div>
+            </div>
+            <!-- XAML: DisplayGaugePanel.PageNavigation (line 167) -->
+            <div class="mob-display-gauge-panel__page-nav">
+              <!-- XAML: DisplayGaugePanel.PageListBox (line 193). 8 x 8 gauge layout = 4 pages. -->
+              <div class="mob-display-gauge-panel__page-dots">
+                <!-- XAML: ListBoxItem, ListBoxItemDotHorizontal template (DefaultControls.xaml line 4004) -->
+                <button class="mob-display-gauge-panel__dot is-active" type="button" aria-label="Page 1" aria-current="true"></button>
+                <button class="mob-display-gauge-panel__dot" type="button" aria-label="Page 2"></button>
+                <button class="mob-display-gauge-panel__dot" type="button" aria-label="Page 3"></button>
+                <button class="mob-display-gauge-panel__dot" type="button" aria-label="Page 4"></button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- XAML: Rectangle, spacer -->
+        <div class="split-panel__spacer"></div>
+        <!-- XAML: PART_PanelSplitter -->
+        <div class="split-panel__splitter"></div>
+
+        <!-- XAML: Toggle-D Grid. Figma: "Tab Guages" with the chevron. -->
+        <div class="split-panel__toggle-area split-panel__toggle-area--second">
+          <div class="split-panel__tab"></div>
+          <label class="split-panel__toggle" for="sandbox-gauges" title="Show/hide this view">
+            <span class="split-panel__toggle-icon" aria-hidden="true">&#xE007;</span>
+          </label>
+        </div>
+
+      </div>
+    </div>
+    </div>
+  </main>
+
+</body>
+</html>

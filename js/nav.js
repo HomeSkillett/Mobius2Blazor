@@ -95,6 +95,7 @@
       links: [
         { label: "FieldInput",    href: "field-input/field-input.html" },
         { label: "ComboBox",      href: "combobox/combobox.html" },
+        { label: "DatePicker",    href: "date-picker/date-picker.html" },
         { label: "Switch Toggle", href: "switch-toggle/switch-toggle.html" },
         { label: "Radio Button",  href: "radio-button/radio-button.html" },
         { label: "Checkbox",      href: "checkbox/checkbox.html" },
@@ -188,6 +189,8 @@
     {
       title: "Gauges",
       links: [
+        { label: "All",                   href: "gauges/gauges.html" },
+        { label: "BarGauge",              href: "bar-gauge/bar-gauge.html" },
         { label: "StatusGauge",           href: "status-gauge/status-gauge.html" },
         { label: "TextGauge",             href: "text-gauge/text-gauge.html" },
         { label: "OdometerGauge",         href: "odometer-gauge/odometer-gauge.html" },
@@ -202,6 +205,22 @@
         { label: "PrimaryTractorGauge",   href: "primary-tractor-gauge/primary-tractor-gauge.html" },
         { label: "PrimaryVehicleGauge",   href: "primary-vehicle-gauge/primary-vehicle-gauge.html" },
         { label: "ViewSwitchGauge",       href: "view-switch-gauge/view-switch-gauge.html" }
+      ]
+    },
+    {
+      title: "Container / Panel Controls",
+      links: [
+        { label: "GaugeDegradationOverlay", href: "gauge-degradation-overlay/gauge-degradation-overlay.html" },
+        { label: "DisplayGaugePanel",       href: "display-gauge-panel/display-gauge-panel.html" },
+        { label: "EditableGaugePanel",      href: "editable-gauge-panel/editable-gauge-panel.html" },
+        { label: "PropertyViewer",          href: "property-viewer/property-viewer.html" },
+        { label: "GaugeDataTemplates",      href: "gauge-data-templates/gauge-data-templates.html" }
+      ]
+    },
+    {
+      title: "Explorations",
+      links: [
+        { label: "iPad Vehicle Drawer",     href: "ipad-vehicle-drawer/ipad-vehicle-drawer.html" }
       ]
     },
     {

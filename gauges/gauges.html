@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mobius — All Gauges</title>
+  <link id="mob-theme-link" rel="stylesheet" href="../styles/color-theme-tokens/LightTheme.css" />
+  <link rel="stylesheet" href="../styles/css/main.css" />
+  <!-- Individual gauge CSS (most imported via base.css, extras linked here) -->
+  <link rel="stylesheet" href="../status-icon/status-icon.css" />
+  <style>
+    body { margin: 0; }
+
+    h1 {
+      font: var(--font-hdrMd);
+      margin: 0 0 12px;
+      color: var(--ForegroundStrong);
+    }
+    .page-subtitle {
+      font: var(--font-default);
+      color: var(--ForegroundDisabled);
+      margin: 0 0 40px;
+    }
+
+    /* --- Section headings --- */
+    h2 {
+      font: var(--font-hdrSm);
+      margin: 48px 0 8px;
+      color: var(--ForegroundStrong);
+    }
+    h2:first-of-type { margin-top: 0; }
+    .section-desc {
+      font: var(--font-bodySm);
+      color: var(--ForegroundDisabled);
+      margin: 0 0 20px;
+    }
+
+    .section-divider {
+      border: none;
+      border-top: var(--line-size) solid var(--InnerLines);
+      margin: 48px 0 0;
+    }
+
+    /* --- Gauge card grid --- */
+    .gauge-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 32px;
+    }
+
+    .gauge-card {
+      border: 1px solid var(--InnerLines);
+      border-radius: var(--border-radius-md, 4px);
+      padding: 24px;
+      background: var(--GaugeInvertBackground);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .gauge-card__title {
+      font: var(--font-hdrSm);
+      color: var(--ForegroundStrong);
+      margin: 0;
+    }
+    .gauge-card__link {
+      font: var(--font-bodySm);
+      color: var(--GaugeInvertInteraction);
+      text-decoration: none;
+    }
+    .gauge-card__link:hover {
+      text-decoration: underline;
+    }
+    .gauge-card__demo {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 80px;
+    }
+
+    /* --- Full-width cards for wider gauges --- */
+    .gauge-card--wide {
+      grid-column: span 2;
+    }
+    .gauge-card--full {
+      grid-column: 1 / -1;
+    }
+
+    /* Demo sizing helpers */
+    .gauge-card__demo--left {
+      justify-content: flex-start;
+    }
+    .gauge-card__demo--column {
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* Constrain circular gauges */
+    .gauge-card .mob-degree-gauge,
+    .gauge-card .mob-vehicle-gauge {
+      width: 160px;
+    }
+
+    /* Give the multi-row gauge some height */
+    .gauge-card .mob-multi-row-gauge {
+      width: 100%;
+    }
+    .gauge-card .mob-multi-row-gauge__bar-track {
+      min-height: 80px;
+    }
+
+    /* BarGauge card: 3-cell wide gauge (192px) with room for the
+       min/max labels that hang 10px below the 48px gauge */
+    .gauge-card__demo--bar {
+      justify-content: flex-start;
+      padding: 10px 0;
+    }
+    .gauge-card__demo--bar .mob-bar-gauge {
+      width: 192px;
+    }
+    /* Demo data only. Blazor binds --bar-progress at runtime. */
+    .gauge-demo-progress-64 {
+      --bar-progress: 64%;
+    }
+
+    /* View switch gauge needs width */
+    .gauge-card .mob-view-switch-gauge {
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+
+<div class="mob-layout">
+
+  <!-- Sidebar Navigation -->
+  <nav class="mob-nav" id="mob-nav"></nav>
+
+  <!-- Main Content -->
+  <main class="mob-layout__content">
+  <h1>All Gauges</h1>
+  <p class="page-subtitle">Every Mobius gauge component in one view. Click the link on each card to see full demos and state variations.</p>
+
+
+  <!-- ============================================================
+       SECTION 1: VALUE DISPLAY GAUGES
+       ============================================================ -->
+  <h2>Value Display</h2>
+  <p class="section-desc">Gauges that show a single data value: text readout, odometer counter, GPS status.</p>
+
+  <div class="gauge-grid">
+
+    <!-- TextGauge -->
+    <div class="gauge-card">
+      <h3 class="gauge-card__title">TextGauge</h3>
+      <div class="gauge-card__demo gauge-card__demo--left">
+        <!-- XAML: TextGauge ControlTemplate — 3-row grid (label / spacer / value+unit) -->
+        <div class="mob-text-gauge">
+          <span class="mob-text-gauge__label">Engine Speed</span>
+          <div class="mob-text-gauge__value-row">
+            <span class="mob-text-gauge__value">1,842</span>
+            <span class="mob-text-gauge__unit">RPM</span>
+          </div>
+        </div>
+      </div>
+      <a class="gauge-card__link" href="../text-gauge/text-gauge.html">View TextGauge demos &rarr;</a>
+    </div>
+
+    <!-- OdometerGauge -->
+    <div class="gauge-card">
+      <h3 class="gauge-card__title">OdometerGauge</h3>
+      <div class="gauge-card__demo">
+        <!-- XAML: OdometerGauge ControlTemplate — 7 digit cells (26x34px) + label/unit row -->
+        <div class="mob-odometer-gauge">
+          <div class="mob-odometer-gauge__digits">
+            <span class="mob-odometer-gauge__digit">0</span>
+            <span class="mob-odometer-gauge__digit">0</span>
+            <span class="mob-odometer-gauge__digit">1</span>
+            <span class="mob-odometer-gauge__digit">2</span>
+            <span class="mob-odometer-gauge__digit">3</span>
+            <span class="mob-odometer-gauge__digit">4</span>
+            <span class="mob-odometer-gauge__digit mob-odometer-gauge__digit--tenths">5</span>
+          </div>
+          <div class="mob-odometer-gauge__info">
+            <span class="mob-odometer-gauge__label">Odometer</span>
+            <span class="mob-odometer-gauge__unit">miles</span>
+          </div>
+        </div>
+      </div>
+      <a class="gauge-card__link" href="../odometer-gauge/odometer-gauge.html">View OdometerGauge demos &rarr;</a>
+    </div>
+
+    <!-- GPSGauge -->
+    <div class="gauge-card">
+      <h3 class="gauge-card__title">GPSGauge</h3>
+      <div class="gauge-card__demo gauge-card__demo--left">
+        <!-- XAML: GPSGauge ControlTemplate — horizontal StackPanel (icon + label + sat count + mode) -->
+        <div class="mob-gps-gauge">
+          <span class="mob-gps-gauge__icon" aria-hidden="true">
+            <svg viewBox="0 0 40 24">
+              <circle cx="20" cy="12" r="4" stroke="currentColor" stroke-width="1.5" fill="none"/>
+              <path d="M20 2v4M20 18v4M2 12h4M34 12h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              <circle cx="20" cy="12" r="10" stroke="currentColor" stroke-width="1" fill="none" opacity="0.4"/>
+            </svg>
+          </span>
+          <span class="mob-gps-gauge__label">GPS</span>
+          <span class="mob-gps-gauge__sat-count">
+            <span class="mob-gps-gauge__sat-value">12</span>
+          </span>
+          <span class="mob-gps-gauge__mode">RTK Fixed</span>
+        </div>
+      </div>
+      <a class="gauge-card__link" href="../gps-gauge/gps-gauge.html">View GPSGauge demos &rarr;</a>
+    </div>
+
+  </div>
+
+
+  <!-- ============================================================
+       SECTION 2: STATUS & BAR GAUGES
+       ============================================================ -->
+  <hr class="section-divider" />
+  <h2>Status &amp; Range</h2>
+  <p class="section-desc">Composite gauges with bar fills, range zones, and status indicators.</p>
+
+  <div class="gauge-grid">
+
+    <!-- BarGauge -->
+    <div class="gauge-card">
+      <h3 class="gauge-card__title">BarGauge</h3>
+      <div class="gauge-card__demo gauge-card__demo--bar">
+        <!-- XAML: BarGauge horizontal template, 5-row grid 12 / 13 / 1 / 10 / 12 (BarGauge.xaml lines 15-376) -->
+        <div class="mob-bar-gauge" data-status="ok">
+          <div class="mob-bar-gauge__header">
+            <div class="mob-bar-gauge__label-group">
+              <span class="mob-bar-gauge__label">Progress</span>
+            </div>
+            <span class="mob-bar-gauge__value">64</span>
+          </div>
+          <div class="mob-bar-gauge__track-wrapper">
+            <div class="mob-bar-gauge__tick--edge-right"></div>
+            <div class="mob-bar-gauge__tick--edge-left"></div>
+            <div class="mob-bar-gauge__track"></div>
+            <div class="mob-bar-gauge__ticks">
+              <span class="mob-bar-gauge__tick"></span>
+              <span class="mob-bar-gauge__tick"></span>
+              <span class="mob-bar-gauge__tick"></span>
+              <span class="mob-bar-gauge__tick"></span>
+              <span class="mob-bar-gauge__tick"></span>
+            </div>
+            <div class="mob-bar-gauge__fill-area">
+              <div class="mob-bar-gauge__fill gauge-demo-progress-64">
+                <div class="mob-bar-gauge__fill-bar"></div>
+                <div class="mob-bar-gauge__needle"></div>
+              </div>
+            </div>
+          </div>
+          <div class="mob-bar-gauge__range-labels">
+            <span class="mob-bar-gauge__range-label">0</span>
+            <span class="mob-bar-gauge__range-label">100</span>
+          </div>
+        </div>
+      </div>
+      <a class="gauge-card__link" href="../bar-gauge/bar-gauge.html">View BarGauge demos &rarr;</a>
+    </div>
+
+    <!-- StatusGauge -->
+    <div class="gauge-card gauge-card--wide">
+      <h3 class="gauge-card__title">StatusGauge</h3>
+      <div class="gauge-card__demo gauge-card__demo--left">
+        <!-- XAML: StatusGauge ControlTemplate — 3-column grid [display][gap][info] -->
+        <div class="mob-status-gauge">
+          <div class="mob-status-gauge__display">
+            <div class="mob-bar-gauge" data-status="ok">
+              <div class="mob-bar-gauge__header">
+                <div class="mob-bar-gauge__label-group">
+                  <span class="mob-status-icon mob-status-icon--sm" data-status="ok" aria-label="OK"></span>
+                  <span class="mob-bar-gauge__label">Engine Speed</span>
+                </div>
+                <span class="mob-bar-gauge__value">72</span>
+              </div>
+              <div class="mob-bar-gauge__track-wrapper">
+                <div class="mob-bar-gauge__tick--edge-right"></div>
+                <div class="mob-bar-gauge__tick--edge-left"></div>
+                <div class="mob-bar-gauge__track"></div>
+                <div class="mob-bar-gauge__ticks">
+                  <span class="mob-bar-gauge__tick"></span>
+                  <span class="mob-bar-gauge__tick"></span>
+                  <span class="mob-bar-gauge__tick"></span>
+                  <span class="mob-bar-gauge__tick"></span>
+                  <span class="mob-bar-gauge__tick"></span>
+                </div>
+                <div class="mob-bar-gauge__ranges">
+                  <div class="mob-bar-gauge__range mob-bar-gauge__range--critical-min" style="left: 0%; width: 10%;"></div>
+                  <div class="mob-bar-gauge__range mob-bar-gauge__range--warning-min" style="left: 10%; width: 10%;"></div>
+                  <div class="mob-bar-gauge__range mob-bar-gauge__range--warning-max" style="right: 5%; width: 10%;"></div>
+                  <div class="mob-bar-gauge__range mob-bar-gauge__range--critical-max" style="right: 0%; width: 5%;"></div>
+                </div>
+                <div class="mob-bar-gauge__fill-area">
+                  <div class="mob-bar-gauge__fill" style="--bar-progress: 72%;">
+                    <div class="mob-bar-gauge__fill-bar"></div>
+                    <div class="mob-bar-gauge__needle"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="mob-bar-gauge__range-labels">
+                <span class="mob-bar-gauge__range-label">0</span>
+                <span class="mob-bar-gauge__range-label">100</span>
+              </div>
+            </div>
+          </div>
+          <div class="mob-status-gauge__info">
+            <div class="mob-status-gauge__value-row">
+              <span class="mob-status-gauge__value">72</span>
+              <span class="mob-status-gauge__unit">RPM</span>
+            </div>
+            <div class="mob-status-gauge__label-row">
+              <span class="mob-status-icon mob-status-icon--sm" data-status="ok" aria-label="OK"></span>
+              <span class="mob-status-gauge__label">ENGINE SPEED</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <a class="gauge-card__link" href="../status-gauge/status-gauge.html">View StatusGauge demos &rarr;</a>
+    </div>
+
+    <!-- SliderGauge -->
+    <div class="gauge-card gauge-card--wide">
+      <h3 class="gauge-card__title">SliderGauge</h3>
+      <div class="gauge-card__demo gauge-card__demo--left" style="width: 100%;">
+        <!-- XAML: SliderGauge ControlTemplate — 5-row grid like BarGauge + draggable thumb -->
+        <div class="mob-slider-gauge" style="width: 100%;">
+          <div class="mob-slider-gauge__header">
+            <div class="mob-slider-gauge__label-group">
+              <span class="mob-slider-gauge__status-icon mob-slider-gauge__status-icon--ok"></span>
+              <span class="mob-slider-gauge__label">Engine Speed</span>
+            </div>
+            <span class="mob-slider-gauge__value">65</span>
+          </div>
+          <div class="mob-slider-gauge__track-wrapper">
+            <div class="mob-slider-gauge__track"></div>
+            <div class="mob-slider-gauge__ranges">
+              <div class="mob-slider-gauge__range mob-slider-gauge__range--critical-min" style="left: 0%; width: 10%;"></div>
+              <div class="mob-slider-gauge__range mob-slider-gauge__range--warning-min" style="left: 10%; width: 10%;"></div>
+              <div class="mob-slider-gauge__range mob-slider-gauge__range--warning-max" style="left: 85%; width: 10%;"></div>
+              <div class="mob-slider-gauge__range mob-slider-gauge__range--critical-max" style="left: 95%; width: 5%;"></div>
+            </div>
+            <div class="mob-slider-gauge__ticks">
+              <span class="mob-slider-gauge__tick"></span>
+              <span class="mob-slider-gauge__tick"></span>
+              <span class="mob-slider-gauge__tick"></span>
+              <span class="mob-slider-gauge__tick"></span>
+              <span class="mob-slider-gauge__tick"></span>
+            </div>
+            <div class="mob-slider-gauge__progress" style="--slider-progress: 65%;"></div>
+            <div class="mob-slider-gauge__thumb" style="--slider-progress: 65%;"></div>
+          </div>
+          <div class="mob-slider-gauge__footer">
+            <span class="mob-slider-gauge__min">0</span>
+            <span class="mob-slider-gauge__max">100</span>
+          </div>
+        </div>
+      </div>
+      <a class="gauge-card__link" href="../slider-gauge/slider-gauge.html">View SliderGauge demos &rarr;</a>
+    </div>
+
+  </div>
+
+
+  <!-- ============================================================
+       SECTION 3: INDICATOR & BUTTON GAUGES
+       ============================================================ -->
+  <hr class="section-divider" />
+  <h2>Indicators &amp; Buttons</h2>
+  <p class="section-desc">Circular indicators, toggle buttons, and action controls.</p>
+
+  <div class="gauge-grid">
+
+    <!-- IndicatorGauge -->
+    <div class="gauge-card">
+      <h3 class="gauge-card__title">IndicatorGauge</h3>
+      <div class="gauge-card__demo gauge-card__demo--column">
+        <!-- XAML: IndicatorGauge ControlTemplate — 48px circle + icon states + label -->
+        <div style="display: flex; gap: 16px; align-items: flex-end;">
+          <div class="mob-indicator-gauge" data-status="ok">
+            <div class="mob-indicator-gauge__circle">
+              <span class="mob-indicator-gauge__icon mob-indicator-gauge__icon--on" aria-hidden="true">&#x25CF;</span>
+            </div>
+            <span class="mob-indicator-gauge__label">On</span>
+          </div>
+          <div class="mob-indicator-gauge" data-status="unknown">
+            <div class="mob-indicator-gauge__circle">
+              <span class="mob-indicator-gauge__icon mob-indicator-gauge__icon--off" aria-hidden="true">&#x25CF;</span>
+            </div>
+            <span class="mob-indicator-gauge__label">Off</span>
+          </div>
+          <div class="mob-indicator-gauge" data-status="warning">
+            <div class="mob-indicator-gauge__circle">
+              <span class="mob-indicator-gauge__icon mob-indicator-gauge__icon--warning" aria-hidden="true">&#x25B2;</span>
+            </div>
+            <span class="mob-indicator-gauge__label">Warning</span>
+          </div>
+          <div class="mob-indicator-gauge" data-status="critical">
+            <div class="mob-indicator-gauge__circle">
+              <span class="mob-indicator-gauge__icon mob-indicator-gauge__icon--error" aria-hidden="true">&#x2716;</span>
+            </div>
+            <span class="mob-indicator-gauge__label">Error</span>
+          </div>
+        </div>
+      </div>
+      <a class="gauge-card__link" href="../indicator-gauge/indicator-gauge.html">View IndicatorGauge demos &rarr;</a>
+    </div>
+
+    <!-- ButtonGauge -->
+    <div class="gauge-card">
+      <h3 class="gauge-card__title">ButtonGauge</h3>
+      <div class="gauge-card__demo">
+        <!-- XAML: ButtonGauge ControlTemplate — 48px circle button + icon + label -->
+        <div style="display: flex; gap: 20px; align-items: flex-end;">
+          <div class="mob-button-gauge">
+            <button class="mob-button-gauge__button" aria-label="Power">
+              <svg class="mob-button-gauge__icon" viewBox="0 0 20 20" aria-hidden="true">
+                <path d="M10 2v8M6.5 4.5a6 6 0 1 0 7 0" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              </svg>
+            </button>
+            <span class="mob-button-gauge__label">Power</span>
+          </div>
+          <div class="mob-button-gauge">
+            <button class="mob-button-gauge__button" aria-label="Home">
+              <svg class="mob-button-gauge__icon" viewBox="0 0 20 20" aria-hidden="true">
+                <path d="M3 10l7-7 7 7M5 8v7a1 1 0 001 1h3v-4h2v4h3a1 1 0 001-1V8" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <span class="mob-button-gauge__label">Home</span>
+          </div>
+        </div>
+      </div>
+      <a class="gauge-card__link" href="../button-gauge/button-gauge.html">View ButtonGauge demos &rarr;</a>
+    </div>
+
+    <!-- ComboBoxGauge -->
+    <div class="gauge-card">
+      <h3 class="gauge-card__title">ComboBoxGauge</h3>
+      <div class="gauge-card__demo gauge-card__demo--left" style="width: 100%;">
+        <!-- XAML: ComboBoxGauge ControlTemplate — 2-column grid [label][combobox] -->
+        <div class="mob-combobox-gauge" style="width: 100%;">
+          <span class="mob-combobox-gauge__label">Gear</span>
+          <select class="mob-combobox-gauge__select">
+            <option>Park</option>
+            <option>Reverse</option>
+            <option>Neutral</option>
+            <option selected>Drive</option>
+            <option>Low</option>
+          </select>
+        </div>
+      </div>
+      <a class="gauge-card__link" href="../combobox-gauge/combobox-gauge.html">View ComboBoxGauge demos &rarr;</a>
+    </div>
+
+  </div>
+
+
+  <!-- ============================================================
+       SECTION 4: CIRCULAR / DIAL GAUGES
+       ============================================================ -->
+  <hr class="section-divider" />
+  <h2>Circular &amp; Dial</h2>
+  <p class="section-desc">Rotary dials, speedometers, and compass-style gauges.</p>
+
+  <div class="gauge-grid">
+
+    <!-- DegreeGauge -->
+    <div class="gauge-card">
+      <h3 class="gauge-card__title">DegreeGauge</h3>
+      <div class="gauge-card__demo gauge-card__demo--column">
+        <!-- XAML: DegreeGauge ControlTemplate — circular dial with needle + ticks -->
+        <div class="mob-degree-gauge">
+          <div class="mob-degree-gauge__dial" style="--needle-angle: 45deg; --degree-fill: 45deg;">
+            <div class="mob-degree-gauge__track"></div>
+            <div class="mob-degree-gauge__fill" style="--degree-fill: 45deg;"></div>
+            <div class="mob-degree-gauge__ticks">
+              <span class="mob-degree-gauge__tick"></span>
+              <span class="mob-degree-gauge__tick"></span>
+              <span class="mob-degree-gauge__tick"></span>
+              <span class="mob-degree-gauge__tick"></span>
+              <span class="mob-degree-gauge__tick"></span>
+              <span class="mob-degree-gauge__tick"></span>
+              <span class="mob-degree-gauge__tick"></span>
+              <span class="mob-degree-gauge__tick"></span>
+            </div>
+            <div class="mob-degree-gauge__needle" style="--needle-angle: 45deg;"></div>
+            <div class="mob-degree-gauge__center">
+              <svg class="mob-degree-gauge__icon" viewBox="0 0 24 24">
+                <path d="M12 2L4.5 20.3l.7.7L12 18l6.8 3 .7-.7z"/>
+              </svg>
+            </div>
+            <svg class="mob-degree-gauge__arrow mob-degree-gauge__arrow--front" viewBox="0 0 12 12">
+              <path d="M6 0L10 6H2z"/>
+            </svg>
+          </div>
+          <span class="mob-degree-gauge__value">45&deg;</span>
+          <span class="mob-degree-gauge__label">Heading</span>
+        </div>
+      </div>
+      <a class="gauge-card__link" href="../degree-gauge/degree-gauge.html">View DegreeGauge demos &rarr;</a>
+    </div>
+
+    <!-- PrimaryVehicleGauge -->
+    <div class="gauge-card">
+      <h3 class="gauge-card__title">PrimaryVehicleGauge</h3>
+      <div class="gauge-card__demo gauge-card__demo--column">
+        <!-- XAML: PrimaryVehicleGauge ControlTemplate — circular speedometer with arc fill + needle -->
+        <div class="mob-vehicle-gauge">
+          <div class="mob-vehicle-gauge__dial">
+            <div class="mob-vehicle-gauge__track"></div>
+            <div class="mob-vehicle-gauge__fill" style="--gauge-fill: 157deg;"></div>
+            <div class="mob-vehicle-gauge__redzone" style="--redzone-start: 224deg;"></div>
+            <div class="mob-vehicle-gauge__needle" style="--needle-angle: 22deg;"></div>
+            <div class="mob-vehicle-gauge__inner-ring"></div>
+            <div class="mob-vehicle-gauge__inner-bg"></div>
+            <div class="mob-vehicle-gauge__ticks">
+              <span class="mob-vehicle-gauge__tick mob-vehicle-gauge__tick--major" style="transform: rotate(-135deg);"></span>
+              <span class="mob-vehicle-gauge__tick" style="transform: rotate(-90deg);"></span>
+              <span class="mob-vehicle-gauge__tick mob-vehicle-gauge__tick--major" style="transform: rotate(-45deg);"></span>
+              <span class="mob-vehicle-gauge__tick" style="transform: rotate(0deg);"></span>
+              <span class="mob-vehicle-gauge__tick mob-vehicle-gauge__tick--major" style="transform: rotate(45deg);"></span>
+              <span class="mob-vehicle-gauge__tick" style="transform: rotate(90deg);"></span>
+              <span class="mob-vehicle-gauge__tick mob-vehicle-gauge__tick--major" style="transform: rotate(135deg);"></span>
+            </div>
+            <div class="mob-vehicle-gauge__center">
+              <div class="mob-vehicle-gauge__velocity">
+                <span class="mob-vehicle-gauge__velocity-value">45</span>
+                <span class="mob-vehicle-gauge__velocity-unit">MPH</span>
+              </div>
+              <div class="mob-vehicle-gauge__gear-mode">
+                <span class="mob-vehicle-gauge__mode">Auto</span>
+                <span class="mob-vehicle-gauge__gear">D3</span>
+              </div>
+            </div>
+            <div class="mob-vehicle-gauge__speed-limit">65</div>
+          </div>
+        </div>
+      </div>
+      <a class="gauge-card__link" href="../primary-vehicle-gauge/primary-vehicle-gauge.html">View PrimaryVehicleGauge demos &rarr;</a>
+    </div>
+
+    <!-- BoomFeedbackGauge -->
+    <div class="gauge-card">
+      <h3 class="gauge-card__title">BoomFeedbackGauge</h3>
+      <div class="gauge-card__demo gauge-card__demo--column">
+        <!-- XAML: BoomFeedbackGauge ControlTemplate — 48x48 SVG boom vehicle illustration -->
+        <div class="mob-boom-feedback-gauge">
+          <svg class="mob-boom-feedback-gauge__svg" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+            <g class="mob-boom-feedback-gauge__chassis">
+              <rect x="18" y="24" width="28" height="12" rx="2" />
+              <rect x="36" y="18" width="10" height="6" rx="1" />
+              <circle cx="24" cy="40" r="4" />
+              <circle cx="24" cy="40" r="2" fill="var(--GaugeInvertBackground)" />
+              <circle cx="40" cy="40" r="4" />
+              <circle cx="40" cy="40" r="2" fill="var(--GaugeInvertBackground)" />
+              <rect x="22" y="36" width="20" height="1" />
+            </g>
+            <g class="mob-boom-feedback-gauge__arm" transform="rotate(-10, 40, 21)">
+              <rect class="mob-boom-feedback-gauge__arm-bar"
+                    x="6" y="19" width="34" height="4" rx="1" />
+              <rect class="mob-boom-feedback-gauge__arm-head"
+                    x="2" y="16" width="8" height="10" rx="1" />
+            </g>
+          </svg>
+        </div>
+        <span style="font: var(--font-bodySm); color: var(--GaugeInvertForeground);">Boom at -10&deg;</span>
+      </div>
+      <a class="gauge-card__link" href="../boom-feedback-gauge/boom-feedback-gauge.html">View BoomFeedbackGauge demos &rarr;</a>
+    </div>
+
+  </div>
+
+
+  <!-- ============================================================
+       SECTION 5: VEHICLE / COMPLEX GAUGES
+       ============================================================ -->
+  <hr class="section-divider" />
+  <h2>Vehicle Controls</h2>
+  <p class="section-desc">Complex multi-part gauges for tractor/vehicle operation: gears, RPM, row bars, and view tabs.</p>
+
+  <div class="gauge-grid">
+
+    <!-- PrimaryTractorGauge -->
+    <div class="gauge-card gauge-card--wide">
+      <h3 class="gauge-card__title">PrimaryTractorGauge</h3>
+      <div class="gauge-card__demo gauge-card__demo--left" style="width: 100%;">
+        <!-- XAML: PrimaryTractorGauge ControlTemplate — 5-column grid [shuttle][*][gears][*][readouts] -->
+        <div class="mob-tractor-gauge" data-direction="forward">
+          <div class="mob-tractor-gauge__shuttle">
+            <div class="mob-tractor-gauge__arrow mob-tractor-gauge__arrow--up mob-tractor-gauge__arrow--active">
+              <svg viewBox="0 0 24 24"><path d="M12 4l-8 8h5v8h6v-8h5z"/></svg>
+            </div>
+            <div class="mob-tractor-gauge__shuttle-icon">F</div>
+            <div class="mob-tractor-gauge__arrow mob-tractor-gauge__arrow--down">
+              <svg viewBox="0 0 24 24"><path d="M12 20l8-8h-5V4H9v8H4z"/></svg>
+            </div>
+            <span class="mob-tractor-gauge__mode-label">Auto</span>
+          </div>
+          <div class="mob-tractor-gauge__spacer"></div>
+          <div class="mob-tractor-gauge__gears">
+            <span class="mob-tractor-gauge__gear-value">3</span>
+            <span class="mob-tractor-gauge__gear-label">Forward</span>
+            <span class="mob-tractor-gauge__gear-value mob-tractor-gauge__gear-value--inactive">2</span>
+            <span class="mob-tractor-gauge__gear-label">Reverse</span>
+          </div>
+          <div class="mob-tractor-gauge__spacer"></div>
+          <div class="mob-tractor-gauge__readouts">
+            <div class="mob-tractor-gauge__rpm">
+              <div class="mob-tractor-gauge__rpm-value">1850</div>
+              <span class="mob-tractor-gauge__rpm-label">RPM</span>
+            </div>
+            <div class="mob-tractor-gauge__velocity">
+              <span class="mob-tractor-gauge__velocity-value">12.4</span>
+              <span class="mob-tractor-gauge__velocity-label">MPH</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <a class="gauge-card__link" href="../primary-tractor-gauge/primary-tractor-gauge.html">View PrimaryTractorGauge demos &rarr;</a>
+    </div>
+
+    <!-- MultipleRowGauge -->
+    <div class="gauge-card gauge-card--wide">
+      <h3 class="gauge-card__title">MultipleRowGauge</h3>
+      <div class="gauge-card__demo gauge-card__demo--left" style="width: 100%;">
+        <!-- XAML: MultipleRowGauge ControlTemplate — multi-column vertical bars + toggle switches -->
+        <div class="mob-multi-row-gauge" style="width: 100%;">
+          <div class="mob-multi-row-gauge__main">
+            <div class="mob-multi-row-gauge__controls">
+              <span class="mob-multi-row-gauge__target-label">Target</span>
+              <div class="mob-multi-row-gauge__toggle mob-multi-row-gauge__toggle--on">
+                <div class="mob-multi-row-gauge__toggle-knob"></div>
+              </div>
+              <span class="mob-multi-row-gauge__target-label">All</span>
+            </div>
+            <div class="mob-multi-row-gauge__items">
+              <div class="mob-multi-row-gauge__item">
+                <div class="mob-multi-row-gauge__bar-track">
+                  <div class="mob-multi-row-gauge__bar-fill" style="--bar-fill: 75%;"></div>
+                </div>
+                <div class="mob-multi-row-gauge__item-toggle mob-multi-row-gauge__item-toggle--on">
+                  <div class="mob-multi-row-gauge__item-toggle-knob">1</div>
+                </div>
+              </div>
+              <div class="mob-multi-row-gauge__item-spacer"></div>
+              <div class="mob-multi-row-gauge__item">
+                <div class="mob-multi-row-gauge__bar-track">
+                  <div class="mob-multi-row-gauge__bar-fill" style="--bar-fill: 60%;"></div>
+                </div>
+                <div class="mob-multi-row-gauge__item-toggle mob-multi-row-gauge__item-toggle--on">
+                  <div class="mob-multi-row-gauge__item-toggle-knob">2</div>
+                </div>
+              </div>
+              <div class="mob-multi-row-gauge__item-spacer"></div>
+              <div class="mob-multi-row-gauge__item">
+                <div class="mob-multi-row-gauge__bar-track">
+                  <div class="mob-multi-row-gauge__bar-fill" style="--bar-fill: 85%;"></div>
+                </div>
+                <div class="mob-multi-row-gauge__item-toggle mob-multi-row-gauge__item-toggle--on">
+                  <div class="mob-multi-row-gauge__item-toggle-knob">3</div>
+                </div>
+              </div>
+              <div class="mob-multi-row-gauge__item-spacer"></div>
+              <div class="mob-multi-row-gauge__item">
+                <div class="mob-multi-row-gauge__bar-track">
+                  <div class="mob-multi-row-gauge__bar-fill" style="--bar-fill: 45%;"></div>
+                </div>
+                <div class="mob-multi-row-gauge__item-toggle mob-multi-row-gauge__item-toggle--on">
+                  <div class="mob-multi-row-gauge__item-toggle-knob">4</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <a class="gauge-card__link" href="../multiple-row-gauge/multiple-row-gauge.html">View MultipleRowGauge demos &rarr;</a>
+    </div>
+
+    <!-- ViewSwitchGauge -->
+    <div class="gauge-card gauge-card--wide">
+      <h3 class="gauge-card__title">ViewSwitchGauge</h3>
+      <div class="gauge-card__demo gauge-card__demo--left" style="width: 100%;">
+        <!-- XAML: ViewSwitchGauge ControlTemplate — ListBox as tab bar (UniformGrid Rows=1) -->
+        <div class="mob-view-switch-gauge" role="tablist" style="width: 100%;">
+          <div class="mob-view-switch-gauge__tab mob-view-switch-gauge__tab--selected"
+               role="tab" aria-selected="true">
+            <span class="mob-view-switch-gauge__highlight"></span>
+            <span class="mob-view-switch-gauge__label">Overview</span>
+          </div>
+          <div class="mob-view-switch-gauge__tab" role="tab" aria-selected="false">
+            <span class="mob-view-switch-gauge__highlight"></span>
+            <span class="mob-view-switch-gauge__label">Details</span>
+          </div>
+          <div class="mob-view-switch-gauge__tab" role="tab" aria-selected="false">
+            <span class="mob-view-switch-gauge__highlight"></span>
+            <span class="mob-view-switch-gauge__label">History</span>
+          </div>
+        </div>
+      </div>
+      <a class="gauge-card__link" href="../view-switch-gauge/view-switch-gauge.html">View ViewSwitchGauge demos &rarr;</a>
+    </div>
+
+  </div>
+
+
+  <!-- ============================================================
+       SECTION 6: GAUGE PANEL EXAMPLE
+       Source: T8360-GaugeSetup.json page 1 in DisplayGaugePanel.xaml
+       ============================================================ -->
+  <hr class="section-divider" />
+  <h2>Gauge Panel Example: T8360, Page 1</h2>
+  <p class="section-desc">Columns 0 to 3 and rows 0 to 3 of T8360-GaugeSetup.json in a DisplayGaugePanel. 312 x 374, cells 48 x 48 with 24 spacing. Built from IndicatorGauge, BarGauge and TextGauge.</p>
+
+  <div class="gauge-grid">
+
+    <!-- DisplayGaugePanel with T8360 page 1 -->
+    <div class="gauge-card gauge-card--full">
+      <h3 class="gauge-card__title">DisplayGaugePanel + T8360 gauges</h3>
+      <div class="gauge-card__demo gauge-card__demo--left">
+      <!-- XAML: DisplayGaugePanel Grid x:Name="Container" (DisplayGaugePanel.xaml line 34) -->
+      <div class="mob-display-gauge-panel mob-display-gauge-panel--page-4x4">
+        <!-- XAML: DisplayGaugePanel.GaugeScrollViewer (line 47) -->
+        <div class="mob-display-gauge-panel__grid">
+          <!-- XAML: DisplayGaugePanel.GaugePanelGrid (line 84) -->
+          <div class="mob-display-gauge-panel__cells">
+
+          <!-- T8360-GaugeSetup.json Gauges[0] IndicatorGaugeDto_V1, Col 0, Row 0. Label "RPM", units hidden. -->
+          <!-- XAML: ListViewItem (DisplayGaugePanel.xaml line 135) -->
+          <div class="mob-display-gauge-panel__cell mob-display-gauge-panel__cell--col-0 mob-display-gauge-panel__cell--row-0">
+            <!-- XAML: IndicatorGauge._templateRoot (IndicatorGauge.xaml line 14), HideIcons state -->
+            <div class="mob-indicator-gauge mob-indicator-gauge--cell">
+              <!-- XAML: IndicatorGauge._primaryContainer (line 24) -->
+              <div class="mob-indicator-gauge__circle">
+                <!-- XAML: IndicatorGauge._gaugeValueLarge > _inGaugeText (lines 137-149) -->
+                <span class="mob-indicator-gauge__ring-value mob-indicator-gauge__ring-value--fit-3">787</span>
+              </div>
+              <!-- XAML: IndicatorGauge._labelBorder > StackPanel (lines 174-218) -->
+              <div class="mob-indicator-gauge__label-strip"><span class="mob-indicator-gauge__strip-text">RPM</span></div>
+            </div>
+          </div>
+
+          <!-- T8360-GaugeSetup.json Gauges[1] IndicatorGaugeDto_V1, Col 1, Row 0. Label hidden, Units "MPH". -->
+          <!-- XAML: ListViewItem (DisplayGaugePanel.xaml line 135) -->
+          <div class="mob-display-gauge-panel__cell mob-display-gauge-panel__cell--col-1 mob-display-gauge-panel__cell--row-0">
+            <!-- XAML: IndicatorGauge._templateRoot (IndicatorGauge.xaml line 14), HideIcons state -->
+            <div class="mob-indicator-gauge mob-indicator-gauge--cell">
+              <!-- XAML: IndicatorGauge._primaryContainer (line 24) -->
+              <div class="mob-indicator-gauge__circle">
+                <!-- XAML: IndicatorGauge._gaugeValueLarge > _inGaugeText (lines 137-149) -->
+                <span class="mob-indicator-gauge__ring-value mob-indicator-gauge__ring-value--fit-4">0.00</span>
+              </div>
+              <!-- XAML: IndicatorGauge._labelBorder > StackPanel (lines 174-218) -->
+              <div class="mob-indicator-gauge__label-strip"><span class="mob-indicator-gauge__strip-text">MPH</span></div>
+            </div>
+          </div>
+
+          <!-- T8360-GaugeSetup.json Gauges[2] IndicatorGaugeDto_V1, Col 2, Row 0. Label "XTE" + Units "in". -->
+          <!-- XAML: ListViewItem (DisplayGaugePanel.xaml line 135) -->
+          <div class="mob-display-gauge-panel__cell mob-display-gauge-panel__cell--col-2 mob-display-gauge-panel__cell--row-0">
+            <!-- XAML: IndicatorGauge._templateRoot (IndicatorGauge.xaml line 14), HideIcons state -->
+            <div class="mob-indicator-gauge mob-indicator-gauge--cell">
+              <!-- XAML: IndicatorGauge._primaryContainer (line 24) -->
+              <div class="mob-indicator-gauge__circle">
+                <!-- XAML: IndicatorGauge._gaugeValueLarge > _inGaugeText (lines 137-149) -->
+                <span class="mob-indicator-gauge__ring-value mob-indicator-gauge__ring-value--fit-4">-7.49</span>
+              </div>
+              <!-- XAML: IndicatorGauge._labelBorder > StackPanel (lines 174-218) -->
+              <div class="mob-indicator-gauge__label-strip"><span class="mob-indicator-gauge__strip-text">XTE</span><span class="mob-indicator-gauge__strip-text">in</span></div>
+            </div>
+          </div>
+
+          <!-- T8360-GaugeSetup.json Gauges[8] IndicatorGaugeDto_V1, Col 3, Row 0. Label "GPS", units hidden. -->
+          <!-- XAML: ListViewItem (DisplayGaugePanel.xaml line 135) -->
+          <div class="mob-display-gauge-panel__cell mob-display-gauge-panel__cell--col-3 mob-display-gauge-panel__cell--row-0">
+            <!-- XAML: IndicatorGauge._templateRoot (IndicatorGauge.xaml line 14), HideIcons state -->
+            <div class="mob-indicator-gauge mob-indicator-gauge--cell">
+              <!-- XAML: IndicatorGauge._primaryContainer (line 24) -->
+              <div class="mob-indicator-gauge__circle">
+                <!-- XAML: IndicatorGauge._gaugeValueLarge > _inGaugeText (lines 137-149) -->
+                <span class="mob-indicator-gauge__ring-value mob-indicator-gauge__ring-value--fit-8">Rtk Fixed</span>
+              </div>
+              <!-- XAML: IndicatorGauge._labelBorder > StackPanel (lines 174-218) -->
+              <div class="mob-indicator-gauge__label-strip"><span class="mob-indicator-gauge__strip-text">GPS</span></div>
+            </div>
+          </div>
+
+          <!-- T8360-GaugeSetup.json Gauges[10] IndicatorGaugeDto_V1, Col 0, Row 1. Label hidden, Units "Gear". -->
+          <!-- XAML: ListViewItem (DisplayGaugePanel.xaml line 135) -->
+          <div class="mob-display-gauge-panel__cell mob-display-gauge-panel__cell--col-0 mob-display-gauge-panel__cell--row-1">
+            <!-- XAML: IndicatorGauge._templateRoot (IndicatorGauge.xaml line 14), HideIcons state -->
+            <div class="mob-indicator-gauge mob-indicator-gauge--cell">
+              <!-- XAML: IndicatorGauge._primaryContainer (line 24) -->
+              <div class="mob-indicator-gauge__circle">
+                <!-- XAML: IndicatorGauge._gaugeValueLarge > _inGaugeText (lines 137-149) -->
+                <span class="mob-indicator-gauge__ring-value mob-indicator-gauge__ring-value--fit-1">0</span>
+              </div>
+              <!-- XAML: IndicatorGauge._labelBorder > StackPanel (lines 174-218) -->
+              <div class="mob-indicator-gauge__label-strip"><span class="mob-indicator-gauge__strip-text">Gear</span></div>
+            </div>
+          </div>
+
+          <!-- T8360-GaugeSetup.json Gauges[5] BarGaugeDto_V1, Col 1, Row 1, ColSpan 3.
+               Min 0, Max 100, no icon, no status icon, no range bands. -->
+          <!-- XAML: ListViewItem (DisplayGaugePanel.xaml line 135) -->
+          <div class="mob-display-gauge-panel__cell mob-display-gauge-panel__cell--col-1 mob-display-gauge-panel__cell--row-1 mob-display-gauge-panel__cell--colspan-3">
+            <!-- XAML: BarGauge._templateRoot (BarGauge.xaml line 19) -->
+            <div class="mob-bar-gauge" data-status="unknown">
+              <!-- XAML: BarGauge Grid Row 0 (line 29) -->
+              <div class="mob-bar-gauge__header">
+                <!-- XAML: BarGauge._labelStatusIcon (line 38) -->
+                <div class="mob-bar-gauge__label-group">
+                  <!-- XAML: LabelStatusIcon._labelString (LabelStatusIcon.xaml line 69) -->
+                  <span class="mob-bar-gauge__label">Progress</span>
+                </div>
+                <!-- XAML: BarGauge._displayValue (line 51) -->
+                <span class="mob-bar-gauge__value">0</span>
+              </div>
+              <!-- XAML: BarGauge Grid Row 3 (line 86) -->
+              <div class="mob-bar-gauge__track-wrapper">
+                <!-- XAML: BarGauge edge tick, right (line 69) -->
+                <div class="mob-bar-gauge__tick--edge-right"></div>
+                <!-- XAML: BarGauge edge tick, left (line 76) -->
+                <div class="mob-bar-gauge__tick--edge-left"></div>
+                <!-- XAML: BarGauge bar background (line 102) -->
+                <div class="mob-bar-gauge__track"></div>
+                <!-- XAML: BarGauge tick StackPanels, columns 0, 2, 4, 6, 8 (lines 108-186) -->
+                <div class="mob-bar-gauge__ticks">
+                  <span class="mob-bar-gauge__tick"></span>
+                  <span class="mob-bar-gauge__tick"></span>
+                  <span class="mob-bar-gauge__tick"></span>
+                  <span class="mob-bar-gauge__tick"></span>
+                  <span class="mob-bar-gauge__tick"></span>
+                </div>
+                <!-- XAML: BarGauge ProgressBar template Grid "Background" (line 236) -->
+                <div class="mob-bar-gauge__fill-area">
+                  <!-- XAML: BarGauge PART_Indicator (line 241). Value 0 = MinWidth 4. -->
+                  <div class="mob-bar-gauge__fill">
+                    <!-- XAML: BarGauge fill Rectangle (line 246) -->
+                    <div class="mob-bar-gauge__fill-bar"></div>
+                    <!-- XAML: BarGauge needle Rectangle (line 260) -->
+                    <div class="mob-bar-gauge__needle"></div>
+                  </div>
+                </div>
+              </div>
+              <!-- XAML: BarGauge min / max TextBlocks (lines 282, 298) -->
+              <div class="mob-bar-gauge__range-labels">
+                <span class="mob-bar-gauge__range-label">0</span>
+                <span class="mob-bar-gauge__range-label">100</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- T8360-GaugeSetup.json Gauges[3] TextGaugeDto_V1, Col 0, Row 2, ColSpan 2 -->
+          <!-- XAML: ListViewItem (DisplayGaugePanel.xaml line 135) -->
+          <div class="mob-display-gauge-panel__cell mob-display-gauge-panel__cell--col-0 mob-display-gauge-panel__cell--row-2 mob-display-gauge-panel__cell--colspan-2">
+            <!-- XAML: TextGauge._templateRoot (TextGauge.xaml line 15) -->
+            <div class="mob-text-gauge mob-text-gauge--fit-48">
+              <!-- XAML: TextGauge.GaugeLabel (line 24) -->
+              <span class="mob-text-gauge__label">Remaining</span>
+              <!-- XAML: TextGauge Grid Row 2 (line 38) -->
+              <div class="mob-text-gauge__value-row">
+                <!-- XAML: TextGauge Viewbox > TextBlock (lines 47-59) -->
+                <span class="mob-text-gauge__value">00:00:00</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- T8360-GaugeSetup.json Gauges[4] TextGaugeDto_V1, Col 2, Row 2, ColSpan 2 -->
+          <!-- XAML: ListViewItem (DisplayGaugePanel.xaml line 135) -->
+          <div class="mob-display-gauge-panel__cell mob-display-gauge-panel__cell--col-2 mob-display-gauge-panel__cell--row-2 mob-display-gauge-panel__cell--colspan-2">
+            <!-- XAML: TextGauge._templateRoot (TextGauge.xaml line 15) -->
+            <div class="mob-text-gauge mob-text-gauge--fit-48">
+              <!-- XAML: TextGauge.GaugeLabel (line 24) -->
+              <span class="mob-text-gauge__label">Area Completed</span>
+              <!-- XAML: TextGauge Grid Row 2 (line 38) -->
+              <div class="mob-text-gauge__value-row">
+                <!-- XAML: TextGauge Viewbox > TextBlock (lines 47-59) -->
+                <span class="mob-text-gauge__value mob-text-gauge__value--number">0.00</span>
+                <!-- XAML: TextGauge.GaugeUnits (line 61) -->
+                <span class="mob-text-gauge__unit">Acres</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- T8360-GaugeSetup.json Gauges[9] TextGaugeDto_V1, Col 0, Row 3, ColSpan 2 -->
+          <!-- XAML: ListViewItem (DisplayGaugePanel.xaml line 135) -->
+          <div class="mob-display-gauge-panel__cell mob-display-gauge-panel__cell--col-0 mob-display-gauge-panel__cell--row-3 mob-display-gauge-panel__cell--colspan-2">
+            <!-- XAML: TextGauge._templateRoot (TextGauge.xaml line 15) -->
+            <div class="mob-text-gauge mob-text-gauge--fit-48">
+              <!-- XAML: TextGauge.GaugeLabel (line 24) -->
+              <span class="mob-text-gauge__label">In Work</span>
+            </div>
+          </div>
+
+          <!-- T8360-GaugeSetup.json Gauges[6] IndicatorGaugeDto_V1, Col 2, Row 3.
+               Label "Lift", Units "Lower", commandable, icon from CustomIconPaths.
+               Icon uses Mobius-System-Icons Arrow_DirectionDown (U+E016) in place of the JSON path data. -->
+          <!-- XAML: ListViewItem (DisplayGaugePanel.xaml line 135) -->
+          <div class="mob-display-gauge-panel__cell mob-display-gauge-panel__cell--col-2 mob-display-gauge-panel__cell--row-3">
+            <!-- XAML: IndicatorGauge._templateRoot + _commandButton (lines 14, 221), ShowIcons + CanCommandButton + IconOff states -->
+            <button class="mob-indicator-gauge mob-indicator-gauge--cell mob-indicator-gauge--commandable" type="button" data-icon-state="off">
+              <!-- XAML: IndicatorGauge._primaryContainer (line 24) -->
+              <span class="mob-indicator-gauge__circle">
+                <!-- XAML: IndicatorGauge._inactiveIcon (line 99) -->
+                <span class="mob-indicator-gauge__icon" aria-hidden="true">&#xE016;</span>
+              </span>
+              <!-- XAML: IndicatorGauge._labelBorder > _gaugeUnits (lines 174, 211). Label is collapsed in ShowIcons (line 287). -->
+              <span class="mob-indicator-gauge__label-strip"><span class="mob-indicator-gauge__strip-text">Lower</span></span>
+            </button>
+          </div>
+
+          <!-- T8360-GaugeSetup.json Gauges[7] IndicatorGaugeDto_V1, Col 3, Row 3.
+               Label "Lift", Units "Lift", commandable, icon from CustomIconPaths.
+               Icon uses Mobius-System-Icons Arrow_DirectionUp (U+E011) in place of the JSON path data. -->
+          <!-- XAML: ListViewItem (DisplayGaugePanel.xaml line 135) -->
+          <div class="mob-display-gauge-panel__cell mob-display-gauge-panel__cell--col-3 mob-display-gauge-panel__cell--row-3">
+            <!-- XAML: IndicatorGauge._templateRoot + _commandButton (lines 14, 221), ShowIcons + CanCommandButton + IconOff states -->
+            <button class="mob-indicator-gauge mob-indicator-gauge--cell mob-indicator-gauge--commandable" type="button" data-icon-state="off">
+              <!-- XAML: IndicatorGauge._primaryContainer (line 24) -->
+              <span class="mob-indicator-gauge__circle">
+                <!-- XAML: IndicatorGauge._inactiveIcon (line 99) -->
+                <span class="mob-indicator-gauge__icon" aria-hidden="true">&#xE011;</span>
+              </span>
+              <!-- XAML: IndicatorGauge._labelBorder > _gaugeUnits (lines 174, 211). Label is collapsed in ShowIcons (line 287). -->
+              <span class="mob-indicator-gauge__label-strip"><span class="mob-indicator-gauge__strip-text">Lift</span></span>
+            </button>
+          </div>
+
+          </div>
+        </div>
+        <!-- XAML: DisplayGaugePanel.PageNavigation (line 167) -->
+        <div class="mob-display-gauge-panel__page-nav">
+          <!-- XAML: DisplayGaugePanel.PageListBox (line 193). 8 x 8 gauge layout = 4 pages. -->
+          <div class="mob-display-gauge-panel__page-dots">
+            <!-- XAML: ListBoxItem, ListBoxItemDotHorizontal template (DefaultControls.xaml line 4004) -->
+            <button class="mob-display-gauge-panel__dot is-active" type="button" aria-label="Page 1" aria-current="true"></button>
+            <button class="mob-display-gauge-panel__dot" type="button" aria-label="Page 2"></button>
+            <button class="mob-display-gauge-panel__dot" type="button" aria-label="Page 3"></button>
+            <button class="mob-display-gauge-panel__dot" type="button" aria-label="Page 4"></button>
+          </div>
+        </div>
+      </div>
+      </div>
+      <a class="gauge-card__link" href="../display-gauge-panel/display-gauge-panel.html">View DisplayGaugePanel demos &rarr;</a>
+    </div>
+
+  </div>
+
+  </main>
+
+</div>
+
+<script src="../js/nav.js"></script>
+</body>
+</html>
