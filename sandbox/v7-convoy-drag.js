@@ -28,28 +28,42 @@
 
   function clamp01(n) { return Math.max(0, Math.min(1, n)); }
 
+  // Where --p is right now, including part-way through a CSS transition
+  function currentP() {
+    var n = parseFloat(getComputedStyle(device).getPropertyValue('--p'));
+    return isNaN(n) ? (toggle.checked ? 1 : 0) : clamp01(n);
+  }
+
   handle.addEventListener('pointerdown', function (e) {
     if (e.button !== undefined && e.button !== 0) return;
+    if (drag) settle(drag.startP === 1);              // an earlier drag never got its release: tidy it up first
+    var p = currentP();
     drag = {
       id: e.pointerId,
       startY: e.clientY,
-      startP: toggle.checked ? 1 : 0,
-      p: toggle.checked ? 1 : 0,
+      startP: p,                                      // grab it where it is, even mid-animation
+      wasOpen: toggle.checked,
+      p: p,
       moved: false,
       lastY: e.clientY,
       lastT: e.timeStamp,
-      speed: 0             // px per ms, up is positive
+      speed: 0                                        // px per ms, up is positive
     };
     // Keep getting this finger's moves even after it leaves the 26px handle
-    handle.setPointerCapture(e.pointerId);
+    try { handle.setPointerCapture(e.pointerId); } catch (err) { /* older browsers */ }
   });
 
-  handle.addEventListener('pointermove', function (e) {
+  function move(e) {
     if (!drag || e.pointerId !== drag.id) return;
+    // Mouse button already up but we never heard about it: finish now
+    if (e.pointerType === 'mouse' && e.buttons === 0) { release(e); return; }
     var dy = drag.startY - e.clientY;                 // up is positive
     if (!drag.moved) {
       if (Math.abs(dy) < SLOP) return;
       drag.moved = true;
+      drag.startP = currentP();                       // take over from exactly where it is, so nothing jumps
+      drag.startY = e.clientY;
+      dy = 0;
       device.classList.add('is-dragging');            // CSS: no easing, names and gauges tuck away
     }
     var dt = e.timeStamp - drag.lastT;
@@ -58,26 +72,31 @@
     drag.lastT = e.timeStamp;
     drag.p = clamp01(drag.startP + dy / TRAVEL);
     device.style.setProperty('--p', drag.p.toFixed(4));
-  });
+  }
 
-  function finish(e) {
-    if (!drag || e.pointerId !== drag.id) return;
+  // Hand the sheet back to CSS: it runs on to open or closed from wherever it is.
+  function settle(open) {
     var d = drag;
     drag = null;
-    if (!d.moved) return;                             // a tap: the label toggles the checkbox itself
-
-    // Open or closed? A flick wins, otherwise whichever end is nearer.
-    var open = Math.abs(d.speed) > FLICK ? d.speed > 0 : d.p > 0.5;
-    if (e.type === 'pointercancel') open = d.startP === 1;
-
-    // Time for CSS to cover the distance that is left
-    var left = Math.abs((open ? 1 : 0) - d.p);
+    var from = d && d.moved ? d.p : currentP();
+    var left = Math.abs((open ? 1 : 0) - from);
     stage.style.setProperty('--sandbox-settle', Math.round(Math.max(120, SETTLE_FULL * left)) + 'ms');
     stage.style.setProperty('--sandbox-settle-delay', '0ms');
-
     toggle.checked = open;
     device.classList.remove('is-dragging');
     device.style.removeProperty('--p');               // CSS takes over from where the finger left it
+  }
+
+  function release(e) {
+    if (!drag) return;
+    if (e && e.pointerId !== undefined && e.pointerId !== drag.id) return;
+    var d = drag;
+    if (!d.moved) { drag = null; return; }            // a tap: the label toggles the checkbox itself
+
+    // Open or closed? A flick wins, otherwise whichever end is nearer.
+    var open = Math.abs(d.speed) > FLICK ? d.speed > 0 : d.p > 0.5;
+    if (!e || e.type !== 'pointerup') open = d.p > 0.5;   // lost the finger: go to the nearer end
+    settle(open);
 
     // The release would also "click" the label and flip the checkbox back. Swallow that one click.
     var swallow = function (ev) { ev.preventDefault(); ev.stopPropagation(); };
@@ -85,8 +104,19 @@
     setTimeout(function () { handle.removeEventListener('click', swallow, true); }, 300);
   }
 
-  handle.addEventListener('pointerup', finish);
-  handle.addEventListener('pointercancel', finish);
+  // The sheet must never be left hanging part-way. Every way a drag can end
+  // leads to release(): finger up, gesture cancelled, capture lost, window
+  // loses focus, tab hidden. The window listeners catch a release that
+  // happens off the handle or outside the page.
+  handle.addEventListener('pointermove', move);
+  window.addEventListener('pointermove', function (e) { if (drag && e.target !== handle && !handle.contains(e.target)) move(e); });
+  handle.addEventListener('pointerup', release);
+  handle.addEventListener('pointercancel', release);
+  handle.addEventListener('lostpointercapture', function (e) { if (drag && drag.moved) release(e); });
+  window.addEventListener('pointerup', release);
+  window.addEventListener('pointercancel', release);
+  window.addEventListener('blur', function () { release(null); });
+  document.addEventListener('visibilitychange', function () { if (document.hidden) release(null); });
 
   // A plain tap (or keyboard) goes back to the tap timing in the CSS.
   toggle.addEventListener('change', function () {
