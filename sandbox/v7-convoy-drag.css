@@ -1,0 +1,498 @@
+/* =============================================
+   iPAD SANDBOX, VARIANT v7 "convoy, finger drag"
+   Started from v5-convoy.css, 2026-11-18. The motion is rebuilt around
+   one number, --p, so a finger can drive it.
+   Sandbox-only styles. Not part of Mobius2Blazor.
+   Component styles come from the library:
+     ../styles/css/main.css
+     ../ipad-vehicle-drawer/ipad-vehicle-drawer.css
+   Put experiments at the bottom of this file. When one is ready,
+   move it into the library component's CSS.
+
+   State lives in hidden inputs and CSS reads it with :has(). All the
+   geometry is CSS. The only JavaScript (v7-convoy-drag.js) turns a finger
+   drag on the handle into the number --p. Without it, tapping still works.
+   ============================================= */
+
+
+/* --- Page ------------------------------------------------------- */
+.sandbox {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--BackgroundStrong);
+  color: var(--ForegroundPrimary);
+  font: var(--font-default);
+}
+
+
+/* --- Toolbar ----------------------------------------------------
+   Removed (Ben, 2026-11-18). The Device and Transition pickers went with
+   it. To change them now, edit two values in this file:
+     speed   --sandbox-duration on .sandbox-stage
+     device  width / height on .sandbox-device (portrait is 820 x 1180) */
+
+
+/* --- Device stage ----------------------------------------------- */
+.sandbox-stage {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 24px;
+  overflow: auto;
+}
+
+/* The iPad screen. Sizes are iPad Air points (an assumption: Figma's
+   drawer is 820 tall, which matches this device in landscape). */
+.sandbox-device {
+  position: relative;
+  flex: none;
+  width: 1180px;
+  height: 820px;
+  overflow: hidden;
+  background: var(--BackgroundPrimary);
+  border: var(--border-width) solid var(--InnerLines);
+}
+
+/* Hidden state inputs: invisible but still focusable from the keyboard */
+.sandbox-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.sandbox-device:has(#sandbox-drawer-open:focus-visible) .ipad-drawer__handle-pill,
+.sandbox-device .mob-listbox__item--vehicle:has(.sandbox-radio:focus-visible) {
+  outline: 2px solid var(--MouseOverPrimary);
+  outline-offset: 2px;
+}
+
+
+/* =============================================
+   EXPERIMENTS
+   Add sandbox-only overrides below this line.
+   ============================================= */
+
+/* --- Variant v7: convoy, finger drag ------------------------------
+   Ben, 2026-11-18:
+     "convoy, create a new version. Can I time transition with finger drag?"
+
+   Yes. Everything that moves between closed and open is written as a
+   function of one number:
+
+     --p   0 = closed card, 1 = open sheet
+
+   Drag the handle and the script sets --p from how far the finger has
+   moved (724px of drag = 0 to 1). The sheet follows the finger 1:1 and
+   the convoy drives exactly as far as you have dragged. Drag back down
+   and it reverses. Let go and --p runs on to 0 or 1 by itself.
+   Tap instead of drag and CSS animates --p for you.
+
+   What follows the finger (functions of --p):
+     sheet     left, bottom, width, corner radius, height
+     convoy    each vehicle's place on its route: along the row to the
+               corner, then up the column to its row
+
+   What still plays by itself once the sheet has settled open:
+     names + status slide out, then the left status edge and the selected
+     state fade in, and the gauges + tab slide up. They tuck away again
+     the moment a drag starts.
+
+   Convoy numbers, in px of route. Vehicle n runs on its own clock
+   c = --p x (723 + 20n):
+     waits         15n   (so the gap along the route is 80)
+     row leg       65n   left to the corner, from c = 15n to 80n
+     column leg    723 - 60n up to its row, from c = 80n to 723 + 20n
+   The first vehicle (n = 0) is c = 723 x --p: it rides just under the
+   sheet's top edge, which moves 724 x --p. The gap between two vehicles
+   along the route is 80 - 20 x --p, never less than 60, so they do not
+   overlap (rings are 50). */
+@property --p {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+.sandbox-stage {
+  --sandbox-duration: var(--transition-expand);                /* 500ms, GeneralExpandDuration */
+  --sandbox-ease-in: cubic-bezier(0.64, 0, 1, 1);
+  --sandbox-ease-out: cubic-bezier(0, 0, 0.58, 1);
+  --sandbox-ease-in-out: cubic-bezier(0.42, 0, 0.58, 1);
+  --sandbox-list-open: 792px;                                  /* 820 sheet - 26 handle - 2 divider */
+  --sandbox-gauges-open: 448px;                                /* library --split-second-length */
+  --sandbox-names: 250ms;                                      /* name + status slide, my pick, not a token */
+
+  /* How long --p takes when it runs by itself. A tap uses these. After a
+     drag the script shortens them to suit the distance left to go. */
+  --sandbox-settle: 1000ms;                                    /* tap: about the v5 convoy time */
+  --sandbox-settle-delay: var(--sandbox-names);                /* tap to close: names tuck in first */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sandbox .sandbox-stage {
+    --sandbox-duration: 0ms;
+    --sandbox-names: 0ms;
+    --sandbox-settle: 0ms;
+  }
+}
+
+/* --p itself */
+.sandbox-device {
+  --p: 0;
+  transition: --p var(--sandbox-settle) var(--sandbox-ease-in-out) var(--sandbox-settle-delay);   /* closing */
+}
+
+.sandbox-device:has(#sandbox-drawer-open:checked) {
+  --p: 1;
+  transition: --p var(--sandbox-settle) var(--sandbox-ease-in-out);                                /* opening */
+}
+
+/* While a finger is down the script writes --p directly. No easing.
+   :not(#sandbox-none) matches everything. It is only there to outweigh
+   the open rule above, which carries an id inside :has(). */
+.sandbox-device.is-dragging:not(#sandbox-none) {
+  transition: none;
+}
+
+
+/* --- Drawer box ---------------------------------------------------- */
+/* --p 0: 360 wide card, 10px from the left and bottom, all corners round
+   --p 1: docked in the corner, 400 wide, square bottom corners */
+.sandbox-device .ipad-drawer {
+  position: absolute;
+  left: calc(10px * (1 - var(--p)));                  /* Ben: 10px from the left */
+  bottom: calc(10px * (1 - var(--p)));                /* Ben: 10px from the bottom */
+  width: calc(360px + 40px * var(--p));               /* Ben: 360 closed. Library: 400 open */
+  height: auto;                                       /* handle + list + divider */
+  max-height: 100%;
+  border-radius: 14px 14px calc(14px * (1 - var(--p))) calc(14px * (1 - var(--p)));
+}
+
+.sandbox-device .ipad-drawer__handle {
+  box-sizing: border-box;            /* the handle is a <label> here, not a <button> */
+  touch-action: none;                /* a drag on the handle moves the sheet, not the page */
+  cursor: grab;
+}
+
+.sandbox-device.is-dragging .ipad-drawer__handle {
+  cursor: grabbing;
+}
+
+
+/* --- SplitPanel: rows sized by their panes --------------------------- */
+.sandbox-device .ipad-drawer__split.split-panel {
+  position: relative;
+  flex: none;
+  height: auto;
+  grid-template-rows: auto 2px auto;
+  pointer-events: none;              /* closed or mid-drag: the list is not tappable */
+}
+
+.sandbox-device:has(#sandbox-drawer-open:checked):not(.is-dragging) .ipad-drawer__split.split-panel {
+  pointer-events: auto;
+}
+
+/* List pane: 68 closed (fills the 96 card under the handle), 792 open.
+   This is what makes the sheet's top edge follow the finger. */
+.sandbox-device .ipad-drawer__split .split-panel__pane--first {
+  height: calc(68px + 724px * var(--p));
+}
+
+/* The list runs under the gauges, so it gets the gauges' height as bottom
+   padding while they are shown. That keeps the last vehicles reachable by
+   scrolling. */
+.sandbox-device:has(#sandbox-gauges:checked) .ipad-drawer__list {
+  padding-bottom: calc(var(--sandbox-gauges-open) + 2px);
+}
+
+/* Gauge area: a layer over the bottom of the list, pinned to the bottom
+   of the sheet. Its top border is the SplitPanel divider.
+     translate   settled open or not   (slides up once --p has arrived)
+     transform   the tab chevron       (no wait) */
+.sandbox-device .ipad-drawer__split .split-panel__pane--second {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  box-sizing: border-box;
+  height: calc(var(--sandbox-gauges-open) + 2px);              /* gauges + the 2px divider */
+  border-top: 2px solid var(--BackgroundInvertStrongStepOne);  /* library: SplitPanel spacer, SplitPanel.xaml line 39 */
+  background: var(--BackgroundInvertPrimary);                  /* library: drawer background, so it covers the list */
+  translate: 0 100%;
+  transition:
+    translate var(--sandbox-names) var(--sandbox-ease-in),     /* leaving: quick, out of the convoy's way */
+    transform var(--sandbox-duration) var(--sandbox-ease-in-out);
+}
+
+.sandbox-device:has(#sandbox-drawer-open:checked):not(.is-dragging) .ipad-drawer__split .split-panel__pane--second {
+  translate: 0 0;
+  transition:
+    translate var(--sandbox-duration) var(--sandbox-ease-out) var(--sandbox-settle),
+    transform var(--sandbox-duration) var(--sandbox-ease-in-out);
+}
+
+.sandbox-device:has(#sandbox-gauges:not(:checked)) .ipad-drawer__split .split-panel__pane--second {
+  transform: translateY(100%);
+}
+
+.sandbox-device .ipad-drawer__gauges {
+  flex: none;
+  height: var(--sandbox-gauges-open);
+}
+
+/* SplitPanel tab: rides on the top edge of the gauge layer */
+.sandbox-device .ipad-drawer .split-panel__toggle-area {
+  z-index: 2;
+  translate: 0 calc(var(--sandbox-gauges-open) + 44px);   /* below the sheet's bottom edge, clipped */
+  pointer-events: none;
+  opacity: 0;
+  transition:
+    opacity var(--sandbox-names) var(--sandbox-ease-in),
+    translate var(--sandbox-names) var(--sandbox-ease-in),
+    transform var(--sandbox-duration) var(--sandbox-ease-in-out);
+}
+
+.sandbox-device:has(#sandbox-drawer-open:checked):not(.is-dragging) .ipad-drawer .split-panel__toggle-area {
+  translate: 0 0;
+  opacity: 1;
+  pointer-events: auto;
+  transition:
+    translate var(--sandbox-duration) var(--sandbox-ease-out) var(--sandbox-settle),
+    transform var(--sandbox-duration) var(--sandbox-ease-in-out),
+    opacity 0s linear var(--sandbox-settle);
+}
+
+.sandbox-device:has(#sandbox-gauges:checked) .ipad-drawer .split-panel__toggle-area {
+  transform: translateY(calc(var(--sandbox-gauges-open) * -1));   /* up on the gauge layer's top edge */
+}
+
+.sandbox-device .ipad-drawer .split-panel__toggle {
+  cursor: pointer;
+}
+
+/* Chevron: down while the gauges are shown (library: .is-checked rotates 180deg) */
+.sandbox-device .ipad-drawer .split-panel__toggle-icon {
+  transition: transform var(--sandbox-duration) var(--sandbox-ease-in-out);
+}
+
+.sandbox-device:has(#sandbox-gauges:checked) .ipad-drawer .split-panel__toggle-icon {
+  transform: rotate(180deg);
+}
+
+
+/* --- Rings overlay: the convoy ------------------------------------------ */
+/* One set of rings laid over the drawer. They are the vehicles while
+   closed and while --p is anywhere between 0 and 1. Once the sheet has
+   settled open they hand over to the real list thumbnails underneath.
+
+   Closed, the row is left aligned and scrolls sideways. The overlay is a
+   fixed 360 wide scroller that starts under the 26 handle, so the handle
+   stays tappable, and stops at the 2px divider. */
+.sandbox-device .ipad-drawer__rings {
+  display: block;
+  position: absolute;
+  top: 26px;                         /* library: handle height */
+  bottom: 2px;                       /* library: SplitPanel spacer */
+  left: 0;
+  width: 360px;                      /* Ben: closed drawer width. Fixed so the scroll range never changes */
+  padding: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;             /* iPad: no visible scrollbar */
+  opacity: 1;
+  pointer-events: auto;
+  transition: opacity 0s linear;     /* leaving the open state: appear at once */
+
+  /* How far the closed row is scrolled, for the ring rule below.
+     Needs Chrome / Edge 115+ or Safari 26+. */
+  animation: sandbox-ring-scroll linear both;
+  animation-timeline: scroll(self x);
+}
+
+.sandbox-device .ipad-drawer__rings::-webkit-scrollbar {
+  display: none;
+}
+
+/* Right padding of the row: an empty box 24 past the last ring.
+   24 + 6 x 50 + 5 x 15 = 399, + 24 = 423 of content in a 360 window. */
+.sandbox-device .ipad-drawer__rings::after {
+  content: "";
+  position: absolute;
+  left: 399px;
+  top: 0;
+  width: 24px;
+  height: 1px;
+}
+
+@property --ring-scroll {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 0px;
+}
+
+@keyframes sandbox-ring-scroll {
+  from { --ring-scroll: 0px; }
+  to   { --ring-scroll: 63px; }      /* 423 content - 360 window */
+}
+
+/* Mid-drag the row must not scroll sideways under the finger */
+.sandbox-device.is-dragging .ipad-drawer__rings,
+.sandbox-device:has(#sandbox-drawer-open:checked) .ipad-drawer__rings {
+  pointer-events: none;
+}
+
+.sandbox-device:has(#sandbox-drawer-open:checked):not(.is-dragging) .ipad-drawer__rings {
+  opacity: 0;
+  transition: opacity 0s linear var(--sandbox-settle);   /* vanish when --p has arrived */
+}
+
+.sandbox-device .ipad-drawer__ring:nth-child(1) { --ring-index: 0; }
+.sandbox-device .ipad-drawer__ring:nth-child(2) { --ring-index: 1; }
+.sandbox-device .ipad-drawer__ring:nth-child(3) { --ring-index: 2; }
+.sandbox-device .ipad-drawer__ring:nth-child(4) { --ring-index: 3; }
+.sandbox-device .ipad-drawer__ring:nth-child(5) { --ring-index: 4; }
+.sandbox-device .ipad-drawer__ring:nth-child(6) { --ring-index: 5; }
+
+/* One vehicle. Placed from the bottom left of the overlay: the sheet is
+   anchored to the bottom of the screen, so a vehicle's height on screen
+   does not depend on how tall the sheet is.
+     --c      this vehicle's clock, in px of route
+     --over   how far it has gone along the row, 0 to 65n
+     --up     how far it has gone up the column, 0 to 723 - 60n
+   Start: left 24 + 65n (rings of 50, 15 between, Figma), 10 below the
+   handle (Figma) = 8 above the overlay's bottom edge.
+   The closed row's scroll distance is added back in the first 12% of the
+   drag, so a scrolled row still lines up with the list column. */
+.sandbox-device .ipad-drawer__ring {
+  --c: calc(var(--p) * (723 + 20 * var(--ring-index)));
+  --over: clamp(0, var(--c) - 15 * var(--ring-index), 65 * var(--ring-index));
+  --up: clamp(0, var(--c) - 80 * var(--ring-index), 723 - 60 * var(--ring-index));
+  position: absolute;
+  top: auto;
+  left: calc(24px + (65 * var(--ring-index) - var(--over)) * 1px + var(--ring-scroll) * min(1, var(--p) * 8));
+  bottom: calc(8px + var(--up) * 1px);
+}
+
+/* List thumbnails under the rings: hidden until the rings hand over */
+.sandbox-device .mob-listbox__item--vehicle:nth-child(-n+6) .mob-listbox__vehicle-thumb {
+  visibility: hidden;
+  transition: visibility 0s linear;
+}
+
+.sandbox-device:has(#sandbox-drawer-open:checked):not(.is-dragging) .mob-listbox__item--vehicle:nth-child(-n+6) .mob-listbox__vehicle-thumb {
+  visibility: visible;
+  transition: visibility 0s linear var(--sandbox-settle);
+}
+
+
+/* --- Names and status: slide out from the vehicle -------------------- */
+/* Tucked behind the vehicle (clipped and shifted left). They slide out
+   to the right once the sheet has settled open, top row first, 40ms
+   apart, and tuck back in as soon as it starts to close. */
+.sandbox-device .mob-listbox__item--vehicle:nth-child(1) { --row-index: 0; }
+.sandbox-device .mob-listbox__item--vehicle:nth-child(2) { --row-index: 1; }
+.sandbox-device .mob-listbox__item--vehicle:nth-child(3) { --row-index: 2; }
+.sandbox-device .mob-listbox__item--vehicle:nth-child(4) { --row-index: 3; }
+.sandbox-device .mob-listbox__item--vehicle:nth-child(5) { --row-index: 4; }
+.sandbox-device .mob-listbox__item--vehicle:nth-child(6) { --row-index: 5; }
+
+.sandbox-device .mob-listbox__vehicle-text {
+  clip-path: inset(0 100% 0 0);
+  transform: translateX(-24px);
+  opacity: 0;
+  transition:
+    clip-path var(--sandbox-names) var(--sandbox-ease-in),
+    transform var(--sandbox-names) var(--sandbox-ease-in),
+    opacity var(--sandbox-names) var(--sandbox-ease-in);
+}
+
+.sandbox-device:has(#sandbox-drawer-open:checked):not(.is-dragging) .mob-listbox__vehicle-text {
+  clip-path: inset(0 0 0 0);
+  transform: translateX(0);
+  opacity: 1;
+  transition:
+    clip-path var(--sandbox-names) var(--sandbox-ease-out) calc(var(--sandbox-settle) + var(--row-index) * 40ms),
+    transform var(--sandbox-names) var(--sandbox-ease-out) calc(var(--sandbox-settle) + var(--row-index) * 40ms),
+    opacity var(--sandbox-names) var(--sandbox-ease-out) calc(var(--sandbox-settle) + var(--row-index) * 40ms);
+}
+
+
+/* --- Left status edge and selected state: fade in last ---------------- */
+/* --row-reveal goes 0 to 1 on the list once the last name has finished
+   sliding out. The status edge, the selected fill and the selected ring
+   mix their color by that number, so tapping a different vehicle while
+   the drawer is open still changes selection at once. */
+@property --row-reveal {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+.sandbox-device .ipad-drawer__list {
+  --row-reveal: 0;
+  transition: --row-reveal var(--sandbox-names) var(--sandbox-ease-in);
+}
+
+.sandbox-device:has(#sandbox-drawer-open:checked):not(.is-dragging) .ipad-drawer__list {
+  --row-reveal: 1;
+  transition: --row-reveal var(--sandbox-names) var(--sandbox-ease-out) calc(var(--sandbox-settle) + var(--sandbox-names) + 200ms);
+}
+
+/* Left status edge (library colors, mixed in by --row-reveal) */
+.sandbox-device .mob-listbox__item--vehicle[data-status="critical"] {
+  border-left-color: color-mix(in srgb, var(--MessageDeliveryIconCritical) calc(var(--row-reveal) * 100%), transparent);
+}
+
+.sandbox-device .mob-listbox__item--vehicle[data-status="warning"] {
+  border-left-color: color-mix(in srgb, var(--MessageDeliveryIconWarning) calc(var(--row-reveal) * 100%), transparent);
+}
+
+
+/* --- Selection, CSS only ------------------------------------------------ */
+/* Same look as the library's .is-selected, driven by the row's radio. */
+.sandbox-device .mob-listbox__item--vehicle:has(.sandbox-radio:checked) {
+  color: var(--SelectionForeground);
+  border-left-color: transparent;
+}
+
+.sandbox-device .mob-listbox__item--vehicle:has(.sandbox-radio:checked)::before {
+  opacity: var(--row-reveal);
+}
+
+.sandbox-device .mob-listbox__item--vehicle:not([data-status]):has(.sandbox-radio:checked) .mob-listbox__vehicle-thumb {
+  border-color: color-mix(in srgb, var(--MessageDeliveryIconInfo) calc(var(--row-reveal) * 100%), transparent);
+  background: color-mix(in srgb, var(--MessageDeliveryBackgroundInfo) calc(var(--row-reveal) * 100%), transparent);
+}
+
+/* The convoy shows no selection: the selected vehicle's ring stays plain
+   while it drives and turns blue with the rest of the selected state. */
+
+/* --- Scrollable page that opens on the drawer ------------------------
+   2026-11-18. Dev feedback: "just blank pages with a grey box". The
+   stage is a fixed 1180 x 820 and the closed drawer sits at the bottom,
+   so on a laptop it was below the fold.
+   Ben: "Make pages scrollable". The stage stays at its real size and the
+   page scrolls both ways. It starts scrolled to the bottom left, where
+   the closed drawer is: a column-reverse flex box begins its scroll at
+   the end. Scroll up to see the top of the open sheet. */
+.sandbox {
+  height: 100vh;                     /* the stage does the scrolling, not the body */
+}
+
+.sandbox .sandbox-stage {
+  min-height: 0;
+  overflow: auto;
+  flex-direction: column-reverse;    /* scroll starts at the bottom */
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+.sandbox .sandbox-device {
+  margin: 0 auto auto;               /* at the top and centered when it fits, bottom left reachable when it does not */
+}
