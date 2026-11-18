@@ -64,7 +64,7 @@
   right: var(--size-12);
   z-index: 100;
   min-width: 220px;
-  margin-top: var(--size-4);
+  margin-top: var(--size-6);
   padding: var(--size-16) 0;
   background: var(--BackgroundStrong);
   border: var(--line-size) solid var(--InnerLines);

@@ -304,7 +304,7 @@
   /* XAML: TextBlock Style="PopupTitle" Padding="24,12" FontSize="18" */
   padding: var(--size-12) var(--size-24);
   font-size: 18px;
-  font-family: var(--font-regular);
+  font-family: var(--default-font);
   background: var(--BackgroundPrimary);
   color: var(--ForegroundPrimary);
 }
@@ -369,7 +369,7 @@
 
 .mob-popup--editor .mob-popup__field-label {
   /* XAML: FieldInput header label */
-  font: var(--font-captionSm);
+  font: var(--font-default);
   color: var(--ForegroundPrimary);
 }
 
@@ -407,7 +407,7 @@
 
 .mob-popup--editor .mob-popup__field-unit {
   /* XAML: unit suffix label (m, m/s², km/h) */
-  font: var(--font-captionSm);
+  font: var(--font-default);
   color: var(--ForegroundWatermark);
   flex-shrink: 0;
 }
@@ -530,7 +530,7 @@
   border: var(--border-width) solid transparent;
   background: transparent;
   color: var(--ForegroundPrimary);
-  font: var(--font-captionSm);
+  font: var(--font-default);
   cursor: pointer;
   min-width: 75px;
   transition: background-color var(--transition-mouse-out) ease,
@@ -568,7 +568,7 @@
 
 .mob-popup--settings .mob-popup__option-label {
   /* XAML: TextBlock label below icon */
-  font: var(--font-captionSm);
+  font: var(--font-default);
   color: var(--ForegroundPrimary);
   text-align: center;
 }
@@ -603,7 +603,7 @@
 .mob-popup--list .mob-popup__group-header {
   /* XAML: GroupStyle ContainerStyle — group heading */
   padding: var(--size-6) var(--size-12);
-  font: var(--font-captionSm);
+  font: var(--font-default);
   font-weight: var(--font-bold);
   color: var(--ForegroundWatermark);
   background: var(--BackgroundStepTwo);
@@ -669,7 +669,7 @@
 
 .mob-popup--list .mob-popup__list-item-meta {
   /* XAML: secondary text (date, status) */
-  font: var(--font-captionSm);
+  font: var(--font-default);
   color: var(--ForegroundWatermark);
   flex-shrink: 0;
 }

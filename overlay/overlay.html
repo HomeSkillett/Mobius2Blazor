@@ -13,14 +13,14 @@
     h1 { font: var(--font-hdrMd); margin: 0 0 32px; color: var(--ForegroundStrong); }
     h2 { font: var(--font-hdrSm); margin: 40px 0 16px; color: var(--ForegroundStrong); }
     h2:first-of-type { margin-top: 0; }
-    .demo-label { font: var(--font-captionSm); color: var(--ForegroundPrimary); margin-bottom: var(--spacing-label-to-control-sm); }
+    .demo-label { font: var(--font-default); color: var(--ForegroundPrimary); margin-bottom: var(--spacing-label-to-control-sm); }
     .section-divider { border: none; border-top: var(--line-size) solid var(--InnerLines); margin: 32px 0 0; }
     code { font-family: "Roboto Mono", monospace; font-size: 12px; background: var(--BackgroundStepOne); padding: 2px 6px; border-radius: 3px; }
-    .xaml-note { font: var(--font-captionSm); color: var(--ForegroundWatermark); margin-top: var(--spacing-label-to-control-sm); }
+    .xaml-note { font: var(--font-default); color: var(--ForegroundWatermark); margin-top: var(--spacing-label-to-control-sm); }
     .demo-row { display: flex; flex-wrap: wrap; gap: var(--spacing-section-to-section); align-items: flex-start; margin-top: var(--spacing-label-to-control-md); }
     .demo-block { display: flex; flex-direction: column; gap: var(--spacing-label-to-control-sm); }
-    .demo-block__label { font: var(--font-captionSm); font-weight: var(--font-bold); color: var(--ForegroundStrong); }
-    .demo-hint { display: inline-block; font: var(--font-captionSm); color: var(--SelectionSecondary); background: color-mix(in srgb, var(--SelectionPrimary) 8%, transparent); border: var(--border-width) solid color-mix(in srgb, var(--SelectionPrimary) 20%, transparent); border-radius: var(--size-3); padding: 2px 8px; margin-bottom: var(--spacing-label-to-control-sm); }
+    .demo-block__label { font: var(--font-default); font-weight: var(--font-bold); color: var(--ForegroundStrong); }
+    .demo-hint { display: inline-block; font: var(--font-default); color: var(--SelectionSecondary); background: color-mix(in srgb, var(--SelectionPrimary) 8%, transparent); border: var(--border-width) solid color-mix(in srgb, var(--SelectionPrimary) 20%, transparent); border-radius: var(--size-3); padding: 2px 8px; margin-bottom: var(--spacing-label-to-control-sm); }
     /* Demo trigger button styling */
     .demo-trigger { min-height: var(--touch); padding: 0 var(--size-20); border: var(--border-width) solid var(--BackgroundInputOutline); background: var(--BackgroundInput); color: var(--ForegroundPrimary); font: var(--font-default); cursor: pointer; }
     .demo-trigger:hover { background: var(--MouseOverBackground); }
@@ -37,7 +37,7 @@
 
     <!-- Section 1: Modal Overlay -->
     <h2>Modal Overlay</h2>
-    <p style="font: var(--font-captionSm); color: var(--ForegroundPrimary); margin: 0 0 16px;">Semi-transparent backdrop with centered content. Click backdrop to dismiss. Fade animation uses <code>GeneralMouseOutDuration</code>.</p>
+    <p style="font: var(--font-default); color: var(--ForegroundPrimary); margin: 0 0 16px;">Semi-transparent backdrop with centered content. Click backdrop to dismiss. Fade animation uses <code>GeneralMouseOutDuration</code>.</p>
 
     <div class="demo-block">
       <span class="demo-hint">Click the button, then click backdrop to dismiss</span>
@@ -66,7 +66,7 @@
 
     <!-- Section 2: Side Panel -->
     <h2>Side Panel</h2>
-    <p style="font: var(--font-captionSm); color: var(--ForegroundPrimary); margin: 0 0 16px;">Slide-in panel from the right edge. 0.5s quintic easing. Used for configuration forms.</p>
+    <p style="font: var(--font-default); color: var(--ForegroundPrimary); margin: 0 0 16px;">Slide-in panel from the right edge. 0.5s quintic easing. Used for configuration forms.</p>
 
     <div class="demo-block">
       <span class="demo-hint">Click the button to slide in panel from the right</span>
@@ -89,12 +89,12 @@
               <p style="font:var(--font-default);color:var(--ForegroundPrimary);margin:0 0 var(--size-12);">Configure node settings for the selected element.</p>
               <!-- XAML: TextBlock + TextBox for Node Name -->
               <div style="margin-bottom:var(--size-12);">
-                <label style="font:var(--font-captionSm);color:var(--ForegroundPrimary);display:block;margin-bottom:var(--spacing-label-to-control-sm);">Node Name</label>
+                <label style="font:var(--font-default);color:var(--ForegroundPrimary);display:block;margin-bottom:var(--spacing-label-to-control-sm);">Node Name</label>
                 <input type="text" value="Intersection-A4" style="width:100%;height:var(--field-height);padding:0 var(--size-12);border:var(--border-width) solid var(--BackgroundInputOutline);background:var(--BackgroundInput);font:var(--font-default);color:var(--ForegroundStrong);box-sizing:border-box;" />
               </div>
               <!-- XAML: TextBlock + TextBox for Speed Limit -->
               <div style="margin-bottom:var(--size-12);">
-                <label style="font:var(--font-captionSm);color:var(--ForegroundPrimary);display:block;margin-bottom:var(--spacing-label-to-control-sm);">Speed Limit</label>
+                <label style="font:var(--font-default);color:var(--ForegroundPrimary);display:block;margin-bottom:var(--spacing-label-to-control-sm);">Speed Limit</label>
                 <input type="text" value="15.0 km/h" style="width:100%;height:var(--field-height);padding:0 var(--size-12);border:var(--border-width) solid var(--BackgroundInputOutline);background:var(--BackgroundInput);font:var(--font-default);color:var(--ForegroundStrong);box-sizing:border-box;" />
               </div>
             </div>
@@ -109,7 +109,7 @@
 
     <!-- Section 3: History Inspector -->
     <h2>History Inspector (ConfigurationHistory)</h2>
-    <p style="font: var(--font-captionSm); color: var(--ForegroundPrimary); margin: 0 0 16px;">Two-column inspector with timeline on the left and detail entries on the right. 5px divider.</p>
+    <p style="font: var(--font-default); color: var(--ForegroundPrimary); margin: 0 0 16px;">Two-column inspector with timeline on the left and detail entries on the right. 5px divider.</p>
 
     <div class="demo-block">
       <span class="demo-hint">Click to open history. Select timeline items to view details</span>
@@ -191,7 +191,7 @@
     <!-- Section 4: Blazor Usage -->
     <h2>Blazor Usage</h2>
     <p style="font: var(--font-default); color: var(--ForegroundPrimary); margin: 0 0 16px;">CSS classes for implementing overlay components in Blazor:</p>
-    <div style="font: var(--font-captionSm); color: var(--ForegroundPrimary); margin: 0;">
+    <div style="font: var(--font-default); color: var(--ForegroundPrimary); margin: 0;">
       <div style="margin-bottom: var(--size-12);"><strong>.mob-overlay</strong> — Base container (required)</div>
       <div style="margin-bottom: var(--size-12);"><strong>.mob-overlay--modal</strong> — Centered modal with backdrop</div>
       <div style="margin-bottom: var(--size-12);"><strong>.mob-overlay--panel</strong> — Slide-in side panel</div>

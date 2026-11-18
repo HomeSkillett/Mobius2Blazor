@@ -13,14 +13,14 @@
     h1 { font: var(--font-hdrMd); margin: 0 0 32px; color: var(--ForegroundStrong); }
     h2 { font: var(--font-hdrSm); margin: 40px 0 16px; color: var(--ForegroundStrong); }
     h2:first-of-type { margin-top: 0; }
-    .demo-label { font: var(--font-captionSm); color: var(--ForegroundPrimary); margin-bottom: var(--spacing-label-to-control-sm); }
+    .demo-label { font: var(--font-default); color: var(--ForegroundPrimary); margin-bottom: var(--spacing-label-to-control-sm); }
     .section-divider { border: none; border-top: var(--line-size) solid var(--InnerLines); margin: 32px 0 0; }
     code { font-family: "Roboto Mono", monospace; font-size: 12px; background: var(--BackgroundStepOne); padding: 2px 6px; border-radius: 3px; }
-    .xaml-note { font: var(--font-captionSm); color: var(--ForegroundWatermark); margin-top: var(--spacing-label-to-control-sm); }
+    .xaml-note { font: var(--font-default); color: var(--ForegroundWatermark); margin-top: var(--spacing-label-to-control-sm); }
     .demo-row { display: flex; flex-wrap: wrap; gap: var(--spacing-section-to-section); align-items: flex-start; margin-top: var(--spacing-label-to-control-md); }
     .demo-block { display: flex; flex-direction: column; gap: var(--spacing-label-to-control-sm); }
-    .demo-block__label { font: var(--font-captionSm); font-weight: var(--font-bold); color: var(--ForegroundStrong); }
-    .demo-hint { display: inline-block; font: var(--font-captionSm); color: var(--SelectionSecondary); background: color-mix(in srgb, var(--SelectionPrimary) 8%, transparent); border: var(--border-width) solid color-mix(in srgb, var(--SelectionPrimary) 20%, transparent); border-radius: var(--size-3); padding: 2px 8px; margin-bottom: var(--spacing-label-to-control-sm); }
+    .demo-block__label { font: var(--font-default); font-weight: var(--font-bold); color: var(--ForegroundStrong); }
+    .demo-hint { display: inline-block; font: var(--font-default); color: var(--SelectionSecondary); background: color-mix(in srgb, var(--SelectionPrimary) 8%, transparent); border: var(--border-width) solid color-mix(in srgb, var(--SelectionPrimary) 20%, transparent); border-radius: var(--size-3); padding: 2px 8px; margin-bottom: var(--spacing-label-to-control-sm); }
     .demo-trigger { min-height: var(--touch); padding: 0 var(--size-20); border: var(--border-width) solid var(--BackgroundInputOutline); background: var(--BackgroundInput); color: var(--ForegroundPrimary); font: var(--font-default); cursor: pointer; }
     .demo-trigger:hover { background: var(--MouseOverBackground); }
     .demo-overlay-scope { position: relative; width: 100%; height: 400px; border: var(--border-width) solid var(--InnerLines); overflow: hidden; background: var(--BackgroundStepOne); margin-top: var(--spacing-label-to-control-sm); }
@@ -63,11 +63,11 @@
           </div>
           <div class="mob-overlay__panel-body">
             <div style="margin-bottom:var(--size-12);">
-              <label style="font:var(--font-captionSm);color:var(--ForegroundPrimary);display:block;margin-bottom:var(--spacing-label-to-control-sm);">Node Name</label>
+              <label style="font:var(--font-default);color:var(--ForegroundPrimary);display:block;margin-bottom:var(--spacing-label-to-control-sm);">Node Name</label>
               <input type="text" value="Intersection-A4" style="width:100%;height:var(--field-height);padding:0 var(--size-12);border:var(--border-width) solid var(--BackgroundInputOutline);background:var(--BackgroundInput);font:var(--font-default);color:var(--ForegroundStrong);box-sizing:border-box;" />
             </div>
             <div>
-              <label style="font:var(--font-captionSm);color:var(--ForegroundPrimary);display:block;margin-bottom:var(--spacing-label-to-control-sm);">Speed Limit</label>
+              <label style="font:var(--font-default);color:var(--ForegroundPrimary);display:block;margin-bottom:var(--spacing-label-to-control-sm);">Speed Limit</label>
               <input type="text" value="15.0 km/h" style="width:100%;height:var(--field-height);padding:0 var(--size-12);border:var(--border-width) solid var(--BackgroundInputOutline);background:var(--BackgroundInput);font:var(--font-default);color:var(--ForegroundStrong);box-sizing:border-box;" />
             </div>
           </div>
@@ -92,15 +92,15 @@
           </div>
           <div class="mob-overlay__panel-body">
             <div style="margin-bottom:var(--size-12);">
-              <label style="font:var(--font-captionSm);color:var(--ForegroundPrimary);display:block;margin-bottom:var(--spacing-label-to-control-sm);">Vehicle ID</label>
+              <label style="font:var(--font-default);color:var(--ForegroundPrimary);display:block;margin-bottom:var(--spacing-label-to-control-sm);">Vehicle ID</label>
               <input type="text" value="CAT 797F-01" style="width:100%;height:var(--field-height);padding:0 var(--size-12);border:var(--border-width) solid var(--BackgroundInputOutline);background:var(--BackgroundInput);font:var(--font-default);color:var(--ForegroundStrong);box-sizing:border-box;" />
             </div>
             <div style="margin-bottom:var(--size-12);">
-              <label style="font:var(--font-captionSm);color:var(--ForegroundPrimary);display:block;margin-bottom:var(--spacing-label-to-control-sm);">Max Speed</label>
+              <label style="font:var(--font-default);color:var(--ForegroundPrimary);display:block;margin-bottom:var(--spacing-label-to-control-sm);">Max Speed</label>
               <input type="text" value="65.0 km/h" style="width:100%;height:var(--field-height);padding:0 var(--size-12);border:var(--border-width) solid var(--BackgroundInputOutline);background:var(--BackgroundInput);font:var(--font-default);color:var(--ForegroundStrong);box-sizing:border-box;" />
             </div>
             <div>
-              <label style="font:var(--font-captionSm);color:var(--ForegroundPrimary);display:block;margin-bottom:var(--spacing-label-to-control-sm);">Operating Zone</label>
+              <label style="font:var(--font-default);color:var(--ForegroundPrimary);display:block;margin-bottom:var(--spacing-label-to-control-sm);">Operating Zone</label>
               <input type="text" value="Zone A — North Pit" style="width:100%;height:var(--field-height);padding:0 var(--size-12);border:var(--border-width) solid var(--BackgroundInputOutline);background:var(--BackgroundInput);font:var(--font-default);color:var(--ForegroundStrong);box-sizing:border-box;" />
             </div>
           </div>
@@ -125,19 +125,19 @@
           </div>
           <div class="mob-overlay__panel-body">
             <div style="margin-bottom:var(--size-12);">
-              <label style="font:var(--font-captionSm);color:var(--ForegroundPrimary);display:block;margin-bottom:var(--spacing-label-to-control-sm);">Path Name</label>
+              <label style="font:var(--font-default);color:var(--ForegroundPrimary);display:block;margin-bottom:var(--spacing-label-to-control-sm);">Path Name</label>
               <input type="text" value="Haul Road East" style="width:100%;height:var(--field-height);padding:0 var(--size-12);border:var(--border-width) solid var(--BackgroundInputOutline);background:var(--BackgroundInput);font:var(--font-default);color:var(--ForegroundStrong);box-sizing:border-box;" />
             </div>
             <div style="margin-bottom:var(--size-12);">
-              <label style="font:var(--font-captionSm);color:var(--ForegroundPrimary);display:block;margin-bottom:var(--spacing-label-to-control-sm);">Revision</label>
+              <label style="font:var(--font-default);color:var(--ForegroundPrimary);display:block;margin-bottom:var(--spacing-label-to-control-sm);">Revision</label>
               <input type="text" value="3" disabled style="width:100%;height:var(--field-height);padding:0 var(--size-12);border:var(--border-width) solid var(--BackgroundInputOutline);background:var(--BackgroundStepOne);font:var(--font-default);color:var(--ForegroundWatermark);box-sizing:border-box;" />
             </div>
             <div style="margin-bottom:var(--size-12);">
-              <label style="font:var(--font-captionSm);color:var(--ForegroundPrimary);display:block;margin-bottom:var(--spacing-label-to-control-sm);">Turn Radius</label>
+              <label style="font:var(--font-default);color:var(--ForegroundPrimary);display:block;margin-bottom:var(--spacing-label-to-control-sm);">Turn Radius</label>
               <input type="text" value="5.0 m" style="width:100%;height:var(--field-height);padding:0 var(--size-12);border:var(--border-width) solid var(--BackgroundInputOutline);background:var(--BackgroundInput);font:var(--font-default);color:var(--ForegroundStrong);box-sizing:border-box;" />
             </div>
             <div>
-              <label style="font:var(--font-captionSm);color:var(--ForegroundPrimary);display:block;margin-bottom:var(--spacing-label-to-control-sm);">Tags</label>
+              <label style="font:var(--font-default);color:var(--ForegroundPrimary);display:block;margin-bottom:var(--spacing-label-to-control-sm);">Tags</label>
               <input type="text" value="priority, main-route" style="width:100%;height:var(--field-height);padding:0 var(--size-12);border:var(--border-width) solid var(--BackgroundInputOutline);background:var(--BackgroundInput);font:var(--font-default);color:var(--ForegroundStrong);box-sizing:border-box;" />
             </div>
           </div>

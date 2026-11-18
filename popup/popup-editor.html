@@ -13,15 +13,15 @@
     h1 { font: var(--font-hdrMd); margin: 0 0 32px; color: var(--ForegroundStrong); }
     h2 { font: var(--font-hdrSm); margin: 40px 0 16px; color: var(--ForegroundStrong); }
     h2:first-of-type { margin-top: 0; }
-    .demo-label { font: var(--font-captionSm); color: var(--ForegroundPrimary); margin-bottom: var(--spacing-label-to-control-sm); }
+    .demo-label { font: var(--font-default); color: var(--ForegroundPrimary); margin-bottom: var(--spacing-label-to-control-sm); }
     .section-divider { border: none; border-top: var(--line-size) solid var(--InnerLines); margin: 32px 0 0; }
     code { font-family: "Roboto Mono", monospace; font-size: 12px; background: var(--BackgroundStepOne); padding: 2px 6px; border-radius: 3px; }
-    .xaml-note { font: var(--font-captionSm); color: var(--ForegroundWatermark); margin-top: var(--spacing-label-to-control-sm); }
+    .xaml-note { font: var(--font-default); color: var(--ForegroundWatermark); margin-top: var(--spacing-label-to-control-sm); }
     .demo-row { display: flex; flex-wrap: wrap; gap: var(--spacing-section-to-section); align-items: flex-start; margin-top: var(--spacing-label-to-control-md); }
     .demo-block { display: flex; flex-direction: column; gap: var(--spacing-label-to-control-sm); }
-    .demo-block__label { font: var(--font-captionSm); font-weight: var(--font-bold); color: var(--ForegroundStrong); }
+    .demo-block__label { font: var(--font-default); font-weight: var(--font-bold); color: var(--ForegroundStrong); }
     .demo-arena { padding: 40px 40px 200px; min-height: 80px; }
-    .demo-hint { display: inline-block; font: var(--font-captionSm); color: var(--SelectionSecondary); background: color-mix(in srgb, var(--SelectionPrimary) 8%, transparent); border: var(--border-width) solid color-mix(in srgb, var(--SelectionPrimary) 20%, transparent); border-radius: var(--size-3); padding: 2px 8px; margin-bottom: var(--spacing-label-to-control-sm); }
+    .demo-hint { display: inline-block; font: var(--font-default); color: var(--SelectionSecondary); background: color-mix(in srgb, var(--SelectionPrimary) 8%, transparent); border: var(--border-width) solid color-mix(in srgb, var(--SelectionPrimary) 20%, transparent); border-radius: var(--size-3); padding: 2px 8px; margin-bottom: var(--spacing-label-to-control-sm); }
     .demo-switch { position: relative; width: 40px; height: 20px; background: var(--BackgroundInputOutline); border-radius: 10px; cursor: pointer; transition: background 0.2s; }
     .demo-switch.is-on { background: var(--SelectionPrimary); }
     .demo-switch::after { content: ""; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; background: var(--BackgroundStrong); border-radius: 50%; transition: transform 0.2s; }
@@ -84,7 +84,7 @@
             </button>
             <div class="mob-popup mob-popup--editor">
               <div class="mob-popup__switch">
-                <label style="font: var(--font-captionSm); color: var(--ForegroundPrimary); display: flex; align-items: center; gap: 12px; cursor: pointer;">
+                <label style="font: var(--font-default); color: var(--ForegroundPrimary); display: flex; align-items: center; gap: 12px; cursor: pointer;">
                   <span>Custom / Default</span>
                   <div class="demo-switch is-on"></div>
                 </label>
@@ -121,7 +121,7 @@
             </button>
             <div class="mob-popup mob-popup--editor">
               <div class="mob-popup__switch">
-                <label style="font: var(--font-captionSm); color: var(--ForegroundPrimary); display: flex; align-items: center; gap: 12px; cursor: pointer;">
+                <label style="font: var(--font-default); color: var(--ForegroundPrimary); display: flex; align-items: center; gap: 12px; cursor: pointer;">
                   <span>Custom / Default</span>
                   <div class="demo-switch is-on"></div>
                 </label>
@@ -158,7 +158,7 @@
             </button>
             <div class="mob-popup mob-popup--editor mob-popup--editor-md">
               <div class="mob-popup__switch">
-                <label style="font: var(--font-captionSm); color: var(--ForegroundPrimary); display: flex; align-items: center; gap: 12px; cursor: pointer;">
+                <label style="font: var(--font-default); color: var(--ForegroundPrimary); display: flex; align-items: center; gap: 12px; cursor: pointer;">
                   <span>Enable Error Tolerance</span>
                   <div class="demo-switch is-on"></div>
                 </label>

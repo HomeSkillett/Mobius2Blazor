@@ -22,7 +22,7 @@
     }
     h2:first-of-type { margin-top: 0; }
     .demo-label {
-      font: var(--font-captionSm);
+      font: var(--font-default);
       color: var(--ForegroundPrimary);
       margin-bottom: var(--spacing-label-to-control-sm);
     }
@@ -39,7 +39,7 @@
       border-radius: 3px;
     }
     .xaml-note {
-      font: var(--font-captionSm);
+      font: var(--font-default);
       color: var(--ForegroundWatermark);
       margin-top: var(--spacing-label-to-control-sm);
     }
@@ -57,7 +57,7 @@
       gap: var(--spacing-label-to-control-sm);
     }
     .demo-block__label {
-      font: var(--font-captionSm);
+      font: var(--font-default);
       font-weight: var(--font-bold);
       color: var(--ForegroundStrong);
     }
@@ -80,7 +80,7 @@
     /* Interaction hint badge */
     .demo-hint {
       display: inline-block;
-      font: var(--font-captionSm);
+      font: var(--font-default);
       color: var(--SelectionSecondary);
       background: color-mix(in srgb, var(--SelectionPrimary) 8%, transparent);
       border: var(--border-width) solid color-mix(in srgb, var(--SelectionPrimary) 20%, transparent);
@@ -334,7 +334,7 @@
       <!-- XAML: ClockBasedTimePicker > Grid -->
       <div class="mob-popup-anchor" style="display:flex;flex-direction:column;width:220px;" data-popup="picker">
         <!-- XAML: TextBlock Label style — floating label -->
-        <span style="font:var(--font-captionSm);color:var(--ForegroundPrimary);background:var(--BackgroundPrimary);padding:0 0 0 14px;font-size:12px;">Start Time</span>
+        <span style="font:var(--font-default);color:var(--ForegroundPrimary);background:var(--BackgroundPrimary);padding:0 0 0 14px;font-size:12px;">Start Time</span>
         <!-- XAML: Border PickerBorder — click target -->
         <div data-popup="click-trigger" style="border:var(--border-width) solid var(--BackgroundInputOutline);background:var(--BackgroundInput);height:53px;padding:16px 15px 16px 21px;display:flex;align-items:center;gap:var(--spacing-label-to-control-sm);box-sizing:border-box;cursor:pointer;">
           <!-- XAML: Button with Icon_Clock path -->
@@ -373,7 +373,7 @@
     <span class="demo-hint">Click the field</span>
     <div class="demo-arena--bottom">
       <div class="mob-popup-anchor" style="display:flex;flex-direction:column;width:220px;" data-popup="picker">
-        <span style="font:var(--font-captionSm);color:var(--ForegroundPrimary);background:var(--BackgroundPrimary);padding:0 0 0 14px;font-size:12px;">Duration</span>
+        <span style="font:var(--font-default);color:var(--ForegroundPrimary);background:var(--BackgroundPrimary);padding:0 0 0 14px;font-size:12px;">Duration</span>
         <div data-popup="click-trigger" style="border:var(--border-width) solid var(--BackgroundInputOutline);background:var(--BackgroundInput);height:53px;padding:16px 15px 16px 21px;display:flex;align-items:center;gap:var(--spacing-label-to-control-sm);box-sizing:border-box;cursor:pointer;">
           <span style="color:var(--ForegroundPrimary);font-size:16px;">&#128339;</span>
           <span style="font-size:18px;color:var(--ForegroundAction);" data-picker-display>1:00:00</span>
@@ -388,7 +388,7 @@
               <input type="number" min="0" max="59" value="0" data-picker-minute
                 style="width:64px;height:56px;text-align:center;font-size:32px;border:none;border-radius:8px;background:var(--BackgroundPrimary);color:var(--ForegroundStrong);" />
             </div>
-            <p style="font:var(--font-captionSm);color:var(--ForegroundWatermark);margin:var(--spacing-label-to-control-sm) 0 0;">
+            <p style="font:var(--font-default);color:var(--ForegroundWatermark);margin:var(--spacing-label-to-control-sm) 0 0;">
               Hours : Minutes
             </p>
           </div>

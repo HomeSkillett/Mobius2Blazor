@@ -273,7 +273,7 @@
 
 .mob-overlay__timeline-group-header {
   /* XAML: ExpanderItem header */
-  font: var(--font-captionSm);
+  font: var(--font-default);
   font-weight: var(--font-bold);
   color: var(--ForegroundWatermark);
   padding: var(--size-6) 0;
@@ -320,7 +320,7 @@
   align-items: baseline;
   gap: var(--size-6);
   padding: var(--size-3) 0;
-  font: var(--font-captionSm);
+  font: var(--font-default);
   color: var(--ForegroundPrimary);
 }
 
@@ -364,7 +364,7 @@
   gap: var(--size-6);
   padding: var(--size-12);
   color: var(--InformationPurple);
-  font: var(--font-captionSm);
+  font: var(--font-default);
 }
 
 /* Empty/warning state — XAML: Path warning icon + orange text */
@@ -374,5 +374,5 @@
   gap: var(--size-6);
   padding: var(--size-12);
   color: var(--InformationOrange);
-  font: var(--font-captionSm);
+  font: var(--font-default);
 }
