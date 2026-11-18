@@ -198,6 +198,17 @@
   --MapLabelOutline: rgba(77, 77, 77, 0.902);
   --WaterHazardShapeOutline: rgba(103, 180, 234, 1);
   --WaterHazardShapeFill: rgba(208, 241, 252, 1);
+  --CutShapeDottedLineOutline: rgba(51, 51, 51, 1);
+  --CutShapeSpacingMaskOutline: rgba(255, 255, 255, 1);
+  --CutShapeOuterOutline: rgba(62, 83, 26, 1);
+  --CutShapeInnerOutline: rgba(128, 166, 57, 1);
+  --CutShapeFill: rgba(178, 215, 91, 1);
+  --FillShapeDottedLineOutline: rgba(51, 51, 51, 1);
+  --FillShapeSpacingMaskOutline: rgba(217, 234, 187, 1);
+  --FillShapeFill: rgba(128, 166, 57, 1);
+  --CartPathShapeOutline: rgba(74, 74, 74, 1);
+  --CartPathShapeFill: rgba(112, 112, 112, 1);
+  --GuidanceLineOutline: rgba(0, 128, 0, 0.302);
 
   /* Path Assignment Colors */
   --PathAssignment_Planning_Connection_Outline: rgba(151, 128, 192, 1);
@@ -294,6 +305,10 @@
   --ChoreographerPink: rgba(255, 0, 162, 0.188);
   --ChoreographerPurple: rgba(79, 0, 217, 0.188);
   --ChoreographerGreenYellow: rgba(119, 217, 0, 0.188);
+  --SeeAndStopBoundary: rgba(79, 0, 217, 0.188);
+  --ConvoySafetyCorridorOutline: rgba(196, 153, 247, 1);
+  --ConvoySafetyCorridorHash: rgba(196, 153, 247, 0.498);
+  --ConvoySafetyCorridorFill: rgba(0, 0, 0, 0);
 
   /* Planning Obstacle Colors */
   --PlanningObstacleOrange: rgba(249, 126, 67, 1);
